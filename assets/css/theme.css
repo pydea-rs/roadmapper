@@ -1,0 +1,149 @@
+/* theme.css — design tokens, reset, light/dark themes.
+ * Loaded first. Everything else references these custom properties. */
+
+/* ------------------------------------------------------------------ *
+ *  Reset
+ * ------------------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;                 /* the app owns scrolling regions; page never scrolls */
+}
+img, svg { display: block; max-width: 100%; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: none; }
+a { color: inherit; text-decoration: none; }
+code, pre, kbd { font-family: var(--font-mono); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+/* ------------------------------------------------------------------ *
+ *  Tokens — shared
+ * ------------------------------------------------------------------ */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+               "Inter", system-ui, sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+
+  /* spacing scale */
+  --s1: 4px;  --s2: 8px;  --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+
+  /* radii */
+  --r1: 6px; --r2: 10px; --r3: 14px; --r4: 20px; --r-pill: 999px;
+
+  /* type scale */
+  --t-xs: 11px; --t-sm: 13px; --t-md: 15px; --t-lg: 18px; --t-xl: 24px; --t-2xl: 32px; --t-3xl: 42px;
+
+  /* the accent — a roadmap can override --accent inline on its view */
+  --accent-h: 265;
+  --accent: hsl(var(--accent-h) 85% 62%);
+  --accent-soft: hsl(var(--accent-h) 85% 62% / 0.14);
+  --accent-ink: hsl(var(--accent-h) 90% 72%);
+
+  /* category colors (chips) */
+  --cat-read:      #4a9eff;
+  --cat-watch:     #ff6b9d;
+  --cat-code:      #34d399;
+  --cat-drill:     #f59e0b;
+  --cat-exercise:  #a78bfa;
+  --cat-challenge: #ef4444;
+  --cat-project:   #22d3ee;
+  --cat-review:    #94a3b8;
+  --cat-api:       #14b8a6;
+  --cat-book:      #c084fc;
+  --cat-prep:      #eab308;
+  --cat-alt:       #64748b;
+
+  /* status */
+  --ok: #22c55e; --warn: #f59e0b; --bad: #ef4444; --info: #38bdf8;
+
+  --dur-fast: 120ms; --dur: 220ms; --dur-slow: 380ms;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --ease-out: cubic-bezier(.16,1,.3,1);
+
+  --sidebar-w: 264px;
+  --sidebar-w-collapsed: 60px;
+  --maxread: 1080px;
+}
+
+/* ------------------------------------------------------------------ *
+ *  Light theme (default) + dark via media query, both overridable by
+ *  an explicit data-theme on <html> set by the settings toggle.
+ * ------------------------------------------------------------------ */
+:root, :root[data-theme="light"] {
+  --bg:        #f4f5f8;
+  --bg-2:      #eaecf1;
+  --surface:   #ffffff;
+  --surface-2: #f7f8fb;
+  --surface-3: #eef0f5;
+  --border:    #e2e5ec;
+  --border-2:  #d3d7e0;
+  --text:      #1c2230;
+  --text-2:    #5a6376;
+  --text-3:    #8b93a7;
+  --shadow-sm: 0 1px 2px rgba(20,25,40,.06), 0 1px 3px rgba(20,25,40,.05);
+  --shadow:    0 4px 12px rgba(20,25,40,.08), 0 2px 4px rgba(20,25,40,.05);
+  --shadow-lg: 0 18px 48px rgba(20,25,40,.16), 0 6px 16px rgba(20,25,40,.10);
+  --scrim:     rgba(28,34,48,.42);
+  --track:     #e6e9f0;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0e1017;
+    --bg-2:      #0a0c12;
+    --surface:   #171a23;
+    --surface-2: #1d212c;
+    --surface-3: #252a37;
+    --border:    #262b38;
+    --border-2:  #333a4a;
+    --text:      #e8ebf2;
+    --text-2:    #9aa3b7;
+    --text-3:    #6b7488;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+    --shadow:    0 6px 18px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.35);
+    --shadow-lg: 0 24px 60px rgba(0,0,0,.6), 0 8px 20px rgba(0,0,0,.45);
+    --scrim:     rgba(0,0,0,.6);
+    --track:     #232834;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #0e1017;
+  --bg-2:      #0a0c12;
+  --surface:   #171a23;
+  --surface-2: #1d212c;
+  --surface-3: #252a37;
+  --border:    #262b38;
+  --border-2:  #333a4a;
+  --text:      #e8ebf2;
+  --text-2:    #9aa3b7;
+  --text-3:    #6b7488;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow:    0 6px 18px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.35);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,.6), 0 8px 20px rgba(0,0,0,.45);
+  --scrim:     rgba(0,0,0,.6);
+  --track:     #232834;
+  color-scheme: dark;
+}
+
+/* density */
+:root[data-density="compact"] { --s4: 12px; --s5: 18px; font-size: 14px; }
+
+/* reduce motion — both the OS setting and the in-app toggle */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
+:root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after {
+  animation-duration: .001ms !important; transition-duration: .001ms !important;
+}

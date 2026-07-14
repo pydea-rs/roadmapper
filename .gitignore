@@ -1,0 +1,23 @@
+# Secrets & local state — never commit
+.env
+journey.sqlite
+journey.sqlite-wal
+journey.sqlite-shm
+journey.sqlite-journal
+*.sqlite
+*.sqlite-*
+.sessions/
+
+# Exports / scratch
+*.out
+_research.md
+roadmaps/_research.md
+journey-*.json
+
+# Editor / OS cruft
+.claude
+.DS_Store
+Thumbs.db
+*~
+.idea/
+.vscode/

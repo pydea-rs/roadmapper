@@ -1,0 +1,285 @@
+A Basic Web Application
+Troubleshooting and Slack
+Packages and Imports
+Editors and Automatic Imports
+The "Hello, world" Part of our Code
+Web Requests
+HTTP Methods
+Our Handler Function
+Registering our Handler Function and Starting the Web Server
+Go Modules
+Dynamic Reloading
+Setting Header Values
+Creating a Contact Page
+Examining the http.Request Type
+Custom Routing
+URL Path vs RawPath
+Not Found Page
+The http.Handler Type
+The http.HandlerFunc Type
+Exploring Handler Conversions
+FAQ Exercise 
+Router Requirements
+Using Git
+Installing Chi
+Using Chi
+Chi Exercises 
+What are Templates?
+Why Do We Use Server Side Rendering?
+Creating Our First Template
+Cross Site Scripting (XSS)
+Alternative Template Libraries
+Contextual Encoding
+Home Page via Template
+Contact Page via Template
+FAQ Page via Template
+Template Exercises 
+Code Organization
+MVC Overview
+Walking Through a Web Request with MVC
+MVC Exercises 
+Creating the Views Package
+fmt.Errorf
+Validating Templates at Startup
+Must Functions
+Exercises 
+Embedding Template Files
+Variadic Parameters
+Named Templates
+Dynamic FAQ Page
+Reusable Layouts
+Tailwind CSS
+Utility-first CSS
+Adding a Navigation Bar
+Exercises 
+Creating the Signup Page
+Styling the Signup Page
+Intro to REST
+Users Controller
+Decouple with Interfaces
+Parsing the Signup Form
+URL Query Parameters
+Exercises 
+Intro to Databases
+Installing Postgres
+Connecting to Postgres
+Update: Docker Container Names
+Creating SQL Tables
+Postgres Data Types
+Postgres Constraints
+Creating a Users Table
+Inserting Records
+Querying Records
+Filtering Queries
+Updating Records
+Deleting Records
+Additional SQL Resources 
+Connecting to Postgres with Go
+Imports with Side Effects
+Postgres Config Type
+Executing SQL with Go
+Inserting Records with Go
+SQL Injection
+Acquire a new Record's ID
+Querying a Single Record
+Creating Sample Orders
+Querying Multiple Records
+ORMs vs SQL
+Exercises
+Syncing the Book and Screencasts Source Code 
+Steps for Securing Passwords
+Third Party Authentication Options
+What is a Hash Function?
+Store Password Hashes, Not Encrypted or Plaintext Values
+Salt Passwords
+Learning bcrypt with a CLI
+Hashing Passwords with bcrypt
+Comparing a Password with a bcrypt Hash 
+Defining the User Model
+Creating the UserService
+Create User Method
+Postgres Config for the Models Package
+UserService in the Users Controller
+Create Users on Signup
+Sign In View
+Authenticate Users
+Process Sign In Attempts 
+Stateless Servers
+Creating Cookies
+Viewing Cookies with Chrome
+Viewing Cookies with Go
+Securing Cookies from XSS
+Cookie Theft
+CSRF Attacks
+CSRF Middleware
+Providing CSRF to Templates via Data
+Custom Template Functions
+Adding the HTTP Request to Execute
+Request Specific CSRF Template Function
+Template Function Errors
+Securing Cookies from Tampering
+Random Strings with crypto/rand
+Exploring math/rand
+Wrapping the crypto/rand Package
+Why Do We Use 32 Bytes for Session Tokens?
+Defining the Sessions Table
+Stubbing the SessionService
+Sessions in the Users Controller
+Cookie Helper Functions
+Create Session Tokens
+Refactor the rand Package
+Hash Session Tokens
+Insert Sessions into the Database
+Updating Existing Sessions
+Querying Users via Session Token
+Deleting Sessions
+Sign Out Handler
+Sign Out Link
+SQL Relationships
+Foreign Keys
+On Delete Cascade
+Inner Join
+Left, Right, and Full Outer Join
+Using Join in the SessionService
+SQL Indexes
+Creating PostgreSQL Indexes
+On Conflict
+What Are Schema Migrations?
+How Schema Migration Tools Work
+Installing pressly/goose
+Converting to Schema Migrations
+Schema Versioning Problem
+Running Goose with Go
+Embedding Migrations
+Go Migration Files
+Removing Old SQL Files 
+Using Context to Store Values
+Improved Context Keys
+Context Values with Types
+Storing Users as Context Values
+Reading Request Context Values
+Set the User via Middleware
+Requiring a User via Middleware
+Accessing the Current User in Templates
+Request-Scoped Values 
+Password Reset Overview
+SMTP Services
+Building Emails with SMTP
+Sending Emails with SMTP
+Building an Email Service
+EmailService.Send
+Forgot Password Email
+ENV Variables 
+Password Reset DB Migration
+Password Reset Service Stubs
+Forgot Password HTTP Handler
+Asynchronous Emails
+Forgot Password HTML Template
+Initializing Services with ENV Vars
+Check Your Email HTML Template
+Reset Password HTTP Handlers
+Reset Password HTML Template
+Update Password Function 
+PasswordReset Creation
+Implementing Consume
+Inspecting Errors
+Inspecting Wrapped Errors
+Designing the Alert Banner
+Dynamic Alerts
+Removing Alerts with JavaScript
+Detecting Existing Emails
+Accepting Errors in Templates
+Public vs Internal Errors
+Creating Public Errors
+Using Public Errors
+Galleries Overview
+Gallery Model and Migration
+Creating Gallery Records
+Querying for Galleries by ID
+Querying Galleries by UserID
+Updating Gallery Records
+Deleting Gallery Records
+New Gallery Handler
+views.Template Name Bug
+New Gallery Template
+Gallery Routing and CSRF Bug Fixes
+Create Gallery Handler
+Edit Gallery Handler
+Edit Gallery Template`
+Update Gallery Handler
+Gallery Index Handler
+Discovering and Fixing a Gallery Index Bug
+Gallery Index Template Continued
+Show Gallery Handler
+Show Gallery Template and a Tailwind Update
+Extracting Common Gallery Code
+Extra Gallery Checks with Functional Options
+Delete Gallery Handler
+Images Overview
+Setting Up Test Images
+Adding the ImagesDir to the GalleryService
+Globbing Image Files
+Adding Filename and GalleryID to the Image Type
+Adding Images to the Show Gallery Page
+Show Image Handler
+Querying for a Single Image
+URL Path Escaping Image Filenames
+Adding Images to the Edit Gallery Page
+Delete Image Form
+Delete Image Service Func
+Delete Image Handler
+Checking for Filename Vulnerabilities
+Upload Image Form
+Image Upload Handler
+Creating Images in the GalleryService
+Detecting Content Type
+Rendering Content Type Errors
+Deleting Images on Gallery Deletion
+Redirect to Galleries After Auth
+Loading All Config via ENV
+Docker Compose Overrides
+Building Tailwind Locally
+Tailwind Via Docker
+Serving Static Assets
+Making main Easier to Test
+Running our Go Server via Docker
+Multi-Stage Docker Builds
+Tailwind Production Build
+Caddy Server via Docker
+Creating a Digital Ocean Droplet
+Setting up DNS
+Installing Git on the Server
+Setting Up a Bare Git Repo
+Setting Up a Local Git Repo
+Checking Out Our Code on the Server
+Email Sending Server Setup
+Production .env File
+Install Docker in Prod
+Production Caddyfile
+Production Data Directories
+Running Our App in Prod
+Post-receive Deploy Updates
+Deploy via Git
+Logging Services
+Intro to OAuth
+OAuth Example Code
+Dropbox App Setup
+Offline OAuth Demo
+OAuth Tokens
+Online vs Offline Access Types
+Redirect URIs
+OAuth Connect HTTP Handler
+Determine Redirect URI Host
+OAuth Routes and Config Setup
+OAuth Callback Handler
+Testing OAuth with API Calls
+Dropbox Chooser Overview
+Embedding the Dropbox Chooser
+Images via Dropbox Form
+Chooser Success Function
+Images Via URL Handler
+Downloading Images
+Creating Images Without Seek
+Concurrent Downloads
+Using errgroup
+Page Specific JS
