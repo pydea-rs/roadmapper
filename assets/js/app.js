@@ -10,6 +10,7 @@ import * as store from "./store.js";
 import * as sync from "./sync.js";
 import { renderRoadmap, setRenderHooks, rerender } from "./render.js";
 import { sidebarStats } from "./stats.js";
+import { reconcile } from "./reconcile.js";
 import {
   initLock, loadSettings, initDrawer, initFab, renderSidebar,
   toast, confirmModal, setDrawerSync, refreshDrawer, closeDrawer,
@@ -54,6 +55,11 @@ async function startApp() {
   if (problems.length) showDevError(problems);
 
   const roadmaps = getRoadmaps();
+  // Reconcile stored journey against current content (DESIGN §7.4): apply id
+  // aliases, then prune rows whose referent no longer exists so counts stay
+  // truthful and the DB doesn't drift. Runs before first render.
+  for (const rm of roadmaps) reconcile(rm);
+
   if (!roadmaps.length) { $("#view").innerHTML =
     `<div class="center-note"><div class="big">🗺️</div>No roadmaps registered yet.<br>Add one in <code>roadmaps/</code>.</div>`;
     return; }
@@ -146,9 +152,24 @@ function drawerHooks() {
   return {
     exportAll: exportAllIO, importAll: importAllIO,
     resetAll: resetAllIO,
+    resetRoadmap: resetRoadmapIO,
+    activeTitle: () => { const rm = getRoadmap(activeSlug); return rm ? rm.title : null; },
     syncNow: async () => { await sync.flush(); await sync.loadAndReconcile(); rerender(); updateSidebar(); toast("Synced", { type: "ok" }); },
     lock: lockNowIO,
   };
+}
+
+async function resetRoadmapIO() {
+  const rm = getRoadmap(activeSlug); if (!rm) return;
+  const ok = await confirmModal({ title: `Reset ${rm.title}?`, icon: "🗑️", danger: true,
+    body: "Clears all ticks, moves and notes for this roadmap only. A stash is kept on the server.",
+    confirmLabel: "Reset this roadmap", });
+  if (!ok) return;
+  const ids = Object.keys(store.rawState()[activeSlug] || {});
+  store.resetRoadmap(activeSlug);
+  if (ids.length) await sync.saveRoadmapFull(activeSlug, ids.map(id => ({ id, value: null })),
+    { stashFirst: true, reason: "reset-roadmap" });
+  closeDrawer(); rerender(); updateSidebar(); toast("Roadmap reset", { type: "ok" });
 }
 
 function exportRoadmapIO(slug) {

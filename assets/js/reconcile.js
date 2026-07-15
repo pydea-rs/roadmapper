@@ -1,0 +1,53 @@
+// reconcile.js — reconcile stored journey state against current roadmap content
+// at load time (DESIGN §7.4): apply id aliases (deliberate renames), then prune
+// rows whose referent task/soft no longer exists so counts stay truthful and the
+// DB doesn't drift. Notes and settings are never auto-pruned. No DOM deps.
+
+import * as store from "./store.js";
+
+/** Map a stored item id to the content element it depends on, or null to keep. */
+export function referentOf(item) {
+  if (item.startsWith("note:")) return null;            // user content — never auto-prune
+  if (item.startsWith("soft:")) return { kind: "soft", id: item.slice(5) };
+  if (item.startsWith("move:")) return { kind: "task", id: item.slice(5) };
+  if (item.startsWith("done_at:")) return { kind: "task", id: item.slice(8) };
+  if (item.startsWith("flag:")) { const p = item.split(":"); return { kind: "task", id: p.slice(2).join(":") }; }
+  if (/^d\d+\..+/.test(item)) return { kind: "task", id: item };   // a bare task tick "d03.t2"
+  return null;                                          // view/settings/other → keep
+}
+
+/** @return {{aliased:number, pruned:number}} */
+export function reconcile(rm) {
+  const slug = rm.slug;
+  const bucket = store.rawState()[slug];
+  let aliased = 0, pruned = 0;
+  if (!bucket) return { aliased, pruned };
+
+  // 1. aliases: migrate an old task id's rows to a new id (rename), non-destructively.
+  const aliases = rm.aliases || {};
+  for (const [oldId, newId] of Object.entries(aliases)) {
+    for (const prefix of ["", "done_at:", "move:", "soft:"]) {
+      const from = prefix + oldId, to = prefix + newId;
+      const cell = store.getCell(slug, from);
+      if (cell && !store.getCell(slug, to)) {
+        store.setCell(slug, to, cell.kind, cell.value);
+        store.setCell(slug, from, cell.kind, null);
+        aliased++;
+      }
+    }
+  }
+
+  // 2. prune orphans: rows whose referent task/soft no longer exists in content.
+  const tasks = rm.tasksById, softs = rm.softById;
+  for (const item of Object.keys(store.rawState()[slug] || {})) {
+    const ref = referentOf(item);
+    if (!ref) continue;                                 // notes/settings/unknown → keep
+    const exists = ref.kind === "soft" ? softs.has(ref.id) : tasks.has(ref.id);
+    if (!exists) {
+      const cell = store.getCell(slug, item);
+      store.setCell(slug, item, cell ? cell.kind : "task", null);   // delete + queue null
+      pruned++;
+    }
+  }
+  return { aliased, pruned };
+}

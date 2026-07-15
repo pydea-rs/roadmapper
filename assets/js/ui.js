@@ -319,7 +319,7 @@ export function initDrawer(hooks = {}) {
   document.addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("open")) closeDrawer(); });
   buildDrawerBody();
 }
-export function openDrawer() { $("#drawer-root").classList.add("open"); }
+export function openDrawer() { buildDrawerBody(); $("#drawer-root").classList.add("open"); }
 export function closeDrawer() { $("#drawer-root").classList.remove("open"); }
 
 function buildDrawerBody() {
@@ -339,6 +339,20 @@ function buildDrawerBody() {
   body.append(appear);
 
   body.append(el("hr.hr"));
+
+  // Current roadmap — per-roadmap reset (per-roadmap export/import live on the hero)
+  const activeTitle = drawerHooks.activeTitle && drawerHooks.activeTitle();
+  if (activeTitle) {
+    const one = el("div.set-group");
+    one.append(el("h3", { text: "Current roadmap" }));
+    one.append(el("p", { style: "color:var(--text-3);font-size:var(--t-xs);margin-bottom:var(--s2)", text: activeTitle }));
+    one.append(rowButtons([
+      { label: "Reset this roadmap", variant: "danger",
+        onClick: () => drawerHooks.resetRoadmap && drawerHooks.resetRoadmap() },
+    ]));
+    body.append(one);
+    body.append(el("hr.hr"));
+  }
 
   // Journey (import/export/reset) — hooks provided by app.js
   const journey = el("div.set-group");
