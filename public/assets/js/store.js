@@ -13,7 +13,7 @@
 // Item ids:  "d03.t2" (task) · "move:d03.t2" (move) · "soft:d03.s1" · "flag:..." · "note:<ulid>"
 // Absence is expressed by value:null in a change, which the server turns into a row delete.
 
-const SEP = "\x01";                   // must match sync.php KEY_SEP ("\x01")
+const SEP = "\x01";                   // must match api.php KEY_SEP ("\x01")
 const listeners = new Set();          // (slug, itemId) => void  — for re-render
 let sink = null;                      // (slug, change) => void  — for DB write
 

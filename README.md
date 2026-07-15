@@ -15,11 +15,12 @@ Requires **PHP 8+** (uses PDO SQLite, bundled with PHP). No build step, no npm.
 
 ```bash
 # 1. Create your .env from the template and set the secret's bcrypt hash:
-cp .env.example .env
+cp roadmapper/.env.example roadmapper/.env
 php -r 'echo password_hash("whatevertheFx", PASSWORD_DEFAULT), "\n";'   # paste into JOURNEY_PASSWORD_HASH=
 
-# 2. Start the server (router.php blocks .env / *.sqlite / dotfiles from being served):
-php -S localhost:8000 router.php
+# 2. Start the dev server. Note -t public: only public/ is web-exposed; the
+#    secrets, DB and backend live in roadmapper/, OUTSIDE the served root.
+php -S localhost:8000 -t public router.php
 
 # 3. Open http://localhost:8000 and unlock with your secret.
 ```
@@ -28,8 +29,26 @@ The default secret for this project is **`whatevertheFx`** (change it by regener
 A successful unlock lasts `SESSION_EXPIRY_DAYS` (default 7). Five wrong tries → a 1-minute lockout,
 five more → 2 minutes, and so on (server-side, per client).
 
-`journey.sqlite` is created automatically on first save. It, `.env`, and `.sessions/` are all
-gitignored and never served over HTTP.
+`roadmapper/journey.sqlite` is created automatically on first save. The whole `roadmapper/` dir —
+`.env`, the DB, `.sessions/` — lives outside the web root and is gitignored; nothing in it is
+reachable over HTTP.
+
+### Deploying to cPanel (or any Apache host)
+
+The layout is a **docroot split** so it's safe on hosts where `router.php` never runs:
+
+1. Upload the **contents of `public/`** into `public_html/` (so `public_html/index.php` exists).
+2. Upload the **`roadmapper/` folder into your home directory** — one level *above* `public_html`,
+   as its sibling. `public/sync.php` finds it automatically at `../roadmapper`.
+3. `cp roadmapper/.env.example roadmapper/.env` and set `JOURNEY_PASSWORD_HASH`.
+4. Make sure `roadmapper/` is writable by PHP (for the SQLite DB and sessions).
+
+Because `roadmapper/` sits outside `public_html`, no URL can reach your secret or database — that's
+the primary protection. `public/.htaccess` adds defense in depth: it disables directory listing and
+denies `.env`/`*.sqlite*`/dot-files even if one is ever misplaced into the web root. If your host
+*can't* place a folder above the docroot, you may instead drop `roadmapper/` inside `public_html`
+(the endpoint falls back to it); `.htaccess` then hard-blocks it — acceptable, but the sibling
+placement is strictly safer. You can also point anywhere with `SetEnv ROADMAPPER_DIR /abs/path`.
 
 ---
 
@@ -84,15 +103,25 @@ To back up everything at the file level, copy `journey.sqlite` (stop the server 
 ## Project layout
 
 ```
-router.php          front controller; 404s .env / *.sqlite / dotfiles / *.md
-index.php           app shell (HTML)
-sync.php            SQLite persistence + auth + escalating login throttle
-assets/css/         theme.css (tokens/themes) · shell.css (layout) · roadmap.css (content view)
-assets/js/          app.js (bootstrap/routing) · registry.js (register+validate) · render.js
+public/             ← the ONLY web-exposed dir (its contents go into public_html/)
+  .htaccess         no directory listing; denies .env/*.sqlite*/dot-files (defense in depth)
+  index.php         app shell (HTML)
+  sync.php          thin public endpoint → forwards to roadmapper/api.php
+  app-path.php      locates the private roadmapper/ dir (sibling of the web root)
+  assets/css/       theme.css (tokens/themes) · shell.css (layout) · roadmap.css (content view)
+  assets/js/        app.js (bootstrap/routing) · registry.js (register+validate) · render.js
                     stats.js (dual progress, milestones, projection) · moves.js (task moves)
-                    store.js (journey state) · sync.js (server mirror) · ui.js (modals/drawer/lock)
+                    store.js (journey state) · sync.js (DB read/write) · ui.js (modals/drawer/lock)
                     util.js (helpers)
-roadmaps/           _index.js (registers each) + one module per roadmap
+  roadmaps/         _index.js (registers each) + one module per roadmap
+
+roadmapper/         ← PRIVATE app dir; place OUTSIDE public_html. Never web-served.
+  api.php           SQLite persistence + auth + escalating login throttle
+  .env              the secret's bcrypt hash + session lifetime (gitignored)
+  journey.sqlite    your progress (created on first save; gitignored)
+  .sessions/        PHP session files (gitignored)
+
+router.php          DEV-ONLY front controller (php -S … -t public router.php); unused on cPanel
 ```
 
 Data model, security, scheduling, and the actual/original progress semantics are all documented in

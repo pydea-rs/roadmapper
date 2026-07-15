@@ -1,0 +1,35 @@
+# Roadmaps — web-root hardening for Apache / cPanel.
+#
+# The app's secrets, database and backend code live in roadmapper/, OUTSIDE this
+# directory, so they are unreachable by URL by construction. These rules are
+# defense in depth: they stop directory browsing and make sure nothing sensitive
+# leaks even if a private file is ever placed inside the web root by mistake.
+
+# 1) No directory browsing — visitors can never list a folder's contents.
+Options -Indexes
+
+# 2) Default document.
+DirectoryIndex index.php
+
+# --- Deny sensitive files by name (Apache 2.4; cPanel runs 2.4). -------------
+<IfModule mod_authz_core.c>
+  # Any dot-file (.env, .git*, .htaccess, .htpasswd, ...) and known-sensitive
+  # extensions, should one ever end up here.
+  <FilesMatch "(^\.|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+# Fallback for the older 2.2 authz module.
+<IfModule !mod_authz_core.c>
+  <FilesMatch "(^\.|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# --- Block the private app dir outright, if it ever gets uploaded in here. ---
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^roadmapper(/|$)  - [F,L]
+  RewriteRule (^|/)\.(?!well-known)  - [F,L]
+</IfModule>

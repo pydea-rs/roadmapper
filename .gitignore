@@ -1,17 +1,19 @@
 # Secrets & local state — never commit
+# (kept in the private roadmapper/ app dir, outside the web root)
 .env
-journey.sqlite
-journey.sqlite-wal
-journey.sqlite-shm
-journey.sqlite-journal
+roadmapper/.env
 *.sqlite
 *.sqlite-*
+roadmapper/*.sqlite
+roadmapper/*.sqlite-*
 .sessions/
+roadmapper/.sessions/
 
 # Exports / scratch
 *.out
 _research.md
 roadmaps/_research.md
+public/roadmaps/_research.md
 journey-*.json
 
 # Editor / OS cruft

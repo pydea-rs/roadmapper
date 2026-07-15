@@ -92,10 +92,12 @@ versionable in git, and — per §7 — removes any need to "seed" the database 
 
 ## 3. Technology & runtime
 
-- **Server:** PHP built-in server behind a front-controller `router.php`
-  (`php -S localhost:8000 router.php`). The router 404s sensitive files (`.env`, `*.sqlite*`,
-  `.sessions/`, dot-files) so the dev server can't leak them; everything else is served normally
-  (static as-is, `*.php` executed).
+- **Server:** PHP 8+. **Docroot split** for host-agnostic safety: only `public/` is web-exposed;
+  all secrets, the DB and the backend live in `roadmapper/`, *outside* the served root, so no URL can
+  reach them by construction. In dev, `php -S localhost:8000 -t public router.php` serves `public/`;
+  in production (cPanel/Apache) `public/`'s contents go into `public_html/` with `roadmapper/` placed
+  as its sibling, and `public/.htaccess` (no directory listing + deny `.env`/`*.sqlite*`/dot-files)
+  provides defense in depth. `router.php` is a dev-only convenience; Apache never uses it.
 - **Database:** **SQLite** via PDO (single file, WAL mode, busy-timeout). Zero-config, single-owner,
   file-portable. More than enough.
 - **Frontend:** one HTML shell + modular vanilla JS + modern CSS. Journey state is an in-memory JS object
@@ -400,8 +402,9 @@ Scope: a *reasonable* personal lock, single owner, not fort-knox. Model from the
 ### 8.1 Secret & storage
 - One **secret** unlocks the app. Its **bcrypt hash** lives in `.env` as `JOURNEY_PASSWORD_HASH`. The
   plaintext for this project is **`whatevertheFx`**.
-- `.env` is generated at setup, **gitignored**, and **web-blocked** by `router.php`. It also holds
-  `SESSION_EXPIRY_DAYS` (default 7).
+- `.env` lives in `roadmapper/`, **outside the web root**, so it is unreachable by any URL by
+  construction (not merely blocked by a rules file); it is also **gitignored**, and `public/.htaccess`
+  denies it as defense in depth. It also holds `SESSION_EXPIRY_DAYS` (default 7).
 
 ### 8.2 Flow
 1. Boot → client calls `?action=status`. Authed within expiry → app loads directly.
@@ -792,30 +795,35 @@ projection accounts for the overlap tax.
 
 ```
 Roadmaps/
-├── router.php            # front controller; 404s .env/*.sqlite*/.sessions/dot-files
-├── index.php             # app shell
-├── sync.php              # SQLite persistence + auth + throttle endpoints
-├── .env                  # JOURNEY_PASSWORD_HASH (bcrypt of `whatevertheFx`), SESSION_EXPIRY_DAYS  (gitignored)
-├── .env.example          # template + instructions
-├── .gitignore            # .env, *.sqlite*, .sessions/, etc.
-├── journey.sqlite        # created on first run                                (gitignored)
-├── assets/
-│   ├── css/              # shell.css, components, themes
-│   └── js/
-│       ├── app.js        # bootstrap, routing, lock gate
-│       ├── registry.js   # registerRoadmap(), boot validation
-│       ├── render.js     # roadmap → DOM (days, tasks, soft items, groups)
-│       ├── stats.js      # actual/original, objectives, milestones, projection
-│       ├── moves.js      # task-move engine
-│       ├── sync.js       # DB read/write layer (single source of truth)
-│       ├── ui.js         # modals, toasts, drawer, sidebar, move picker
-│       └── util.js       # ids (ULID), dates, formatting
-├── roadmaps/
-│   ├── _index.js         # imports/registers each roadmap
-│   ├── rust-fastapi.js   # Roadmap 1 content
-│   └── interp-go.js      # Roadmap 2 content
-├── DESIGN.md             # this document
-└── TASKS.md              # build plan
+├── public/               # THE WEB ROOT — its contents go into public_html/ on cPanel
+│   ├── .htaccess         # Options -Indexes + deny .env/*.sqlite*/dot-files (defense in depth)
+│   ├── index.php         # app shell
+│   ├── sync.php          # thin public endpoint → forwards to roadmapper/api.php
+│   ├── app-path.php      # locates roadmapper/ (sibling of the web root, then in-root fallback)
+│   ├── assets/
+│   │   ├── css/          # shell.css, components, themes
+│   │       ├── app.js        # bootstrap, routing, lock gate
+│   │       ├── registry.js   # registerRoadmap(), boot validation
+│   │       ├── render.js     # roadmap → DOM (days, tasks, soft items, groups)
+│   │       ├── stats.js      # actual/original, objectives, milestones, projection
+│   │       ├── moves.js      # task-move engine
+│   │       ├── sync.js       # DB read/write layer (single source of truth)
+│   │       ├── ui.js         # modals, toasts, drawer, sidebar, move picker
+│   │       └── util.js       # ids (ULID), dates, formatting
+│   └── roadmaps/
+│       ├── _index.js         # imports/registers each roadmap
+│       ├── rust-fastapi.js   # Roadmap 1 content
+│       └── interp-go.js      # Roadmap 2 content
+├── roadmapper/               # PRIVATE app dir — placed OUTSIDE the web root; never served
+│   ├── api.php               # SQLite persistence + auth + throttle (was sync.php)
+│   ├── .env                  # JOURNEY_PASSWORD_HASH (bcrypt of `whatevertheFx`), SESSION_EXPIRY_DAYS  (gitignored)
+│   ├── .env.example          # template + instructions
+│   ├── journey.sqlite        # created on first save                              (gitignored)
+│   └── .sessions/            # PHP session files                                  (gitignored)
+├── router.php               # DEV-ONLY front controller (php -S … -t public router.php)
+├── .gitignore               # roadmapper/.env, *.sqlite*, .sessions/, etc.
+├── DESIGN.md                # this document
+└── TASKS.md                 # build plan
 ```
 The **shell vs content** separation is the invariant; the exact file split may adjust in
 implementation.

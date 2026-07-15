@@ -1,12 +1,17 @@
 <?php
 /*
- * sync.php — SQLite persistence + auth + throttle for the Roadmaps app.
+ * api.php — SQLite persistence + auth + throttle for the Roadmaps app.
  *
- * The client keeps all dynamic journey state (ticks, moves, soft ticks, notes,
- * flags, settings) in a JS object cached to localStorage, and mirrors it here
- * so the journey survives browser/device switches. When the site is served
- * statically (no PHP), the client detects the non-JSON response and stays
- * dormant — the app then runs local-only. See DESIGN.md §6, §8.
+ * This file lives in the PRIVATE roadmapper/ directory, OUTSIDE the web root; it
+ * is reached only through the thin public/sync.php forwarder. Because its
+ * __DIR__ is roadmapper/, the secret (.env), the SQLite database and the session
+ * files it references all resolve inside this private directory — none of them
+ * sit under the docroot.
+ *
+ * The SQLite database is the single source of truth for all journey state
+ * (ticks, moves, soft ticks, notes, flags). The client mirrors it in memory for
+ * the session and writes every change straight through to here. See DESIGN.md
+ * §6, §8.
  *
  * Actions (data actions require a valid session — see AUTH):
  *   GET  ?action=status            -> { ok, authed }
