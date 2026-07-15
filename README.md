@@ -18,9 +18,10 @@ Requires **PHP 8+** (uses PDO SQLite, bundled with PHP). No build step, no npm.
 cp roadmapper/.env.example roadmapper/.env
 php -r 'echo password_hash("whatevertheFx", PASSWORD_DEFAULT), "\n";'   # paste into JOURNEY_PASSWORD_HASH=
 
-# 2. Start the dev server. Note -t public: only public/ is web-exposed; the
-#    secrets, DB and backend live in roadmapper/, OUTSIDE the served root.
-php -S localhost:8000 -t public router.php
+# 2. Start the dev server. -t public makes only public/ web-exposed; the
+#    secrets, DB and backend live in roadmapper/, OUTSIDE the served root, so
+#    nothing there is reachable — no gatekeeper script needed.
+php -S localhost:8000 -t public
 
 # 3. Open http://localhost:8000 and unlock with your secret.
 ```
@@ -116,13 +117,15 @@ public/             ← the ONLY web-exposed dir (its contents go into public_ht
   roadmaps/         _index.js (registers each) + one module per roadmap
 
 roadmapper/         ← PRIVATE app dir; place OUTSIDE public_html. Never web-served.
+  .htaccess         deny-all (defense in depth if it ever lands inside the docroot)
   api.php           SQLite persistence + auth + escalating login throttle
   .env              the secret's bcrypt hash + session lifetime (gitignored)
   journey.sqlite    your progress (created on first save; gitignored)
   .sessions/        PHP session files (gitignored)
-
-router.php          DEV-ONLY front controller (php -S … -t public router.php); unused on cPanel
 ```
+
+There is no front-controller/router script: `-t public` (dev) and Apache serving
+`public_html` (prod) both expose only `public/`, and `roadmapper/` sits outside it.
 
 Data model, security, scheduling, and the actual/original progress semantics are all documented in
 [DESIGN.md](DESIGN.md).

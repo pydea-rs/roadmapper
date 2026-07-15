@@ -94,10 +94,12 @@ versionable in git, and — per §7 — removes any need to "seed" the database 
 
 - **Server:** PHP 8+. **Docroot split** for host-agnostic safety: only `public/` is web-exposed;
   all secrets, the DB and the backend live in `roadmapper/`, *outside* the served root, so no URL can
-  reach them by construction. In dev, `php -S localhost:8000 -t public router.php` serves `public/`;
-  in production (cPanel/Apache) `public/`'s contents go into `public_html/` with `roadmapper/` placed
-  as its sibling, and `public/.htaccess` (no directory listing + deny `.env`/`*.sqlite*`/dot-files)
-  provides defense in depth. `router.php` is a dev-only convenience; Apache never uses it.
+  reach them by construction. There is **no front-controller/router script** — the folder boundary is
+  the protection. In dev, `php -S localhost:8000 -t public` serves `public/` (the built-in server
+  auto-serves `index.php` and can't see the sibling `roadmapper/`); in production (cPanel/Apache)
+  `public/`'s contents go into `public_html/` with `roadmapper/` as its sibling. Two `.htaccess` files
+  add defense in depth: `public/.htaccess` (no directory listing + deny `.env`/`*.sqlite*`/dot-files)
+  and `roadmapper/.htaccess` (deny-all, in case that dir is ever misplaced inside the docroot).
 - **Database:** **SQLite** via PDO (single file, WAL mode, busy-timeout). Zero-config, single-owner,
   file-portable. More than enough.
 - **Frontend:** one HTML shell + modular vanilla JS + modern CSS. Journey state is an in-memory JS object
@@ -815,12 +817,12 @@ Roadmaps/
 │       ├── rust-fastapi.js   # Roadmap 1 content
 │       └── interp-go.js      # Roadmap 2 content
 ├── roadmapper/               # PRIVATE app dir — placed OUTSIDE the web root; never served
+│   ├── .htaccess             # deny-all (defense in depth if ever inside the docroot)
 │   ├── api.php               # SQLite persistence + auth + throttle (was sync.php)
 │   ├── .env                  # JOURNEY_PASSWORD_HASH (bcrypt of `whatevertheFx`), SESSION_EXPIRY_DAYS  (gitignored)
 │   ├── .env.example          # template + instructions
 │   ├── journey.sqlite        # created on first save                              (gitignored)
 │   └── .sessions/            # PHP session files                                  (gitignored)
-├── router.php               # DEV-ONLY front controller (php -S … -t public router.php)
 ├── .gitignore               # roadmapper/.env, *.sqlite*, .sessions/, etc.
 ├── DESIGN.md                # this document
 └── TASKS.md                 # build plan
