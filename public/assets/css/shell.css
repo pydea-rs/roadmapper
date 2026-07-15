@@ -48,6 +48,8 @@
   transition: background var(--dur-fast), color var(--dur-fast);
 }
 .sb-collapse:hover { background: var(--surface-3); color: var(--text); }
+.sb-collapse svg { transition: transform var(--dur) var(--ease); }
+#app[data-sidebar="collapsed"] .sb-collapse svg { transform: rotate(180deg); }
 
 .sb-list { flex: 1; overflow-y: auto; padding: var(--s3) var(--s2); display: flex; flex-direction: column; gap: 2px; }
 .sb-section-label { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em;
@@ -285,18 +287,33 @@
 /* ------------------------------------------------------------------ *
  *  Settings drawer
  * ------------------------------------------------------------------ */
-#drawer-root { position: fixed; inset: 0; z-index: 80; display: none; }
-#drawer-root.open { display: block; }
+/* The root stays rendered (visibility, not display:none) so the drawer can slide
+ * in/out — a display:none→block flip in the same frame as .open would snap the
+ * transform to its end state with no transition. Visibility hides the closed
+ * drawer without pulling it out of layout; the delay keeps it around long enough
+ * for the slide-out to finish before it's hidden. */
+#drawer-root { position: fixed; inset: 0; z-index: 80; visibility: hidden;
+  transition: visibility 0s linear var(--dur-slow); }
+#drawer-root.open { visibility: visible; transition-delay: 0s; }
 .drawer-scrim { position: absolute; inset: 0; background: var(--scrim); opacity: 0;
-  transition: opacity var(--dur); }
-#drawer-root.open .drawer-scrim { opacity: 1; }
+  pointer-events: none; backdrop-filter: blur(2px);
+  transition: opacity var(--dur-slow) var(--ease); }
+#drawer-root.open .drawer-scrim { opacity: 1; pointer-events: auto; }
 .drawer {
   position: absolute; top: 0; right: 0; height: 100%; width: min(380px, 100%);
   background: var(--surface); border-left: 1px solid var(--border); box-shadow: var(--shadow-lg);
-  transform: translateX(102%); transition: transform var(--dur) var(--ease);
+  transform: translateX(102%); transition: transform var(--dur-slow) var(--ease-out);
   display: flex; flex-direction: column;
 }
 #drawer-root.open .drawer { transform: none; }
+/* staggered reveal of the setting groups as the drawer slides in */
+#drawer-root.open .drawer-body > * { animation: drawerItem .42s var(--ease-out) both; }
+#drawer-root.open .drawer-body > *:nth-child(2) { animation-delay: .05s; }
+#drawer-root.open .drawer-body > *:nth-child(3) { animation-delay: .09s; }
+#drawer-root.open .drawer-body > *:nth-child(4) { animation-delay: .13s; }
+#drawer-root.open .drawer-body > *:nth-child(5) { animation-delay: .17s; }
+#drawer-root.open .drawer-body > *:nth-child(n+6) { animation-delay: .21s; }
+@keyframes drawerItem { from { opacity: 0; transform: translateY(10px); } }
 .drawer-head { display: flex; align-items: center; padding: var(--s5); border-bottom: 1px solid var(--border); }
 .drawer-head h2 { font-size: var(--t-lg); }
 .drawer-head .x { margin-left: auto; }

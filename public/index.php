@@ -1,7 +1,7 @@
 <?php
 /* index.php — the app shell. All dynamic behaviour is client-side; this file
  * only ships the markup + asset links. Data lives behind sync.php (auth-gated).
- * Served at "/" by router.php. */
+ * Served at "/" as the docroot's DirectoryIndex (public/ is the web root). */
 ?><!doctype html>
 <html lang="en">
 <head>
