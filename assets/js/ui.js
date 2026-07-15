@@ -245,8 +245,10 @@ export function initLock({ onLogin, onUnlock }) {
  *  Theme engine
  * ================================================================== */
 const SETTINGS_KEY = "roadmaps_settings_v1";
-const ACCENTS = { violet: 265, blue: 215, teal: 172, green: 145, rose: 340, amber: 35 };
-let settings = { theme: "auto", accent: "violet", density: "cozy", motion: "on", sidebar: "expanded" };
+const ACCENTS = { violet: 265, indigo: 245, blue: 215, cyan: 190, teal: 172, green: 145,
+  amber: 35, orange: 22, rose: 340 };
+let settings = { theme: "auto", accent: "violet", accentHue: 265, roadmapAccent: "on",
+  density: "cozy", motion: "on", sidebar: "expanded" };
 
 export function loadSettings() {
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}")); } catch {}
@@ -262,7 +264,8 @@ export function applySettings() {
   else root.setAttribute("data-theme", settings.theme);
   root.setAttribute("data-density", settings.density === "compact" ? "compact" : "cozy");
   root.setAttribute("data-motion", settings.motion === "off" ? "off" : "on");
-  const h = ACCENTS[settings.accent] ?? ACCENTS.violet;
+  const h = (settings.accent === "custom" && Number.isFinite(settings.accentHue))
+    ? settings.accentHue : (ACCENTS[settings.accent] ?? ACCENTS.violet);
   root.style.setProperty("--accent-h", h);
 }
 export function setSetting(key, value) { settings[key] = value; saveSettings(); applySettings(); }
@@ -332,6 +335,9 @@ function buildDrawerBody() {
   appear.append(settingRow("Theme", null, segmented(["auto", "light", "dark"], settings.theme,
     v => setSetting("theme", v))));
   appear.append(settingRow("Accent", null, accentSwatches()));
+  appear.append(settingRow("Custom hue", "Dial in any accent", hueSlider()));
+  appear.append(settingRow("Roadmap colours", "Each roadmap keeps its own colour", toggle(settings.roadmapAccent !== "off",
+    on => { setSetting("roadmapAccent", on ? "on" : "off"); drawerHooks.repaint && drawerHooks.repaint(); })));
   appear.append(settingRow("Density", null, segmented(["cozy", "compact"], settings.density,
     v => setSetting("density", v))));
   appear.append(settingRow("Motion", "Animations & transitions", toggle(settings.motion === "on",
@@ -416,10 +422,26 @@ function accentSwatches() {
     const s = el("button.swatch", { "aria-pressed": settings.accent === name ? "true" : "false",
       title: name, style: `background:hsl(${h} 85% 62%)` });
     s.onclick = () => { $$(".swatch", wrap).forEach(x => x.setAttribute("aria-pressed", "false"));
-      s.setAttribute("aria-pressed", "true"); setSetting("accent", name); };
+      s.setAttribute("aria-pressed", "true");
+      settings.accentHue = h; setSetting("accent", name);
+      const sl = $(".hue-slider"); if (sl) sl.value = String(h);
+      drawerHooks.repaint && drawerHooks.repaint(); };
     wrap.append(s);
   }
   return wrap;
+}
+function hueSlider() {
+  const start = settings.accent === "custom" && Number.isFinite(settings.accentHue)
+    ? settings.accentHue : (ACCENTS[settings.accent] ?? ACCENTS.violet);
+  const input = el("input.hue-slider", { type: "range", min: "0", max: "360", step: "1",
+    value: String(start), "aria-label": "Custom accent hue" });
+  input.oninput = () => {
+    settings.accent = "custom"; settings.accentHue = Number(input.value);
+    saveSettings(); applySettings();
+    $$(".swatch").forEach(x => x.setAttribute("aria-pressed", "false"));
+    drawerHooks.repaint && drawerHooks.repaint();
+  };
+  return input;
 }
 function rowButtons(btns) {
   const row = el("div", { style: "display:flex;gap:var(--s2);margin-top:var(--s2)" });

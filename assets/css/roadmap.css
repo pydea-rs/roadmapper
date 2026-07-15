@@ -27,6 +27,11 @@
 .pbar > i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; width: 0;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #7c3aed));
   transition: width var(--dur-slow) var(--ease); }
+/* a slow light sweep travels across the filled portion of the primary bar */
+.pbar:not(.orig) > i::after { content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(100deg, transparent 25%, color-mix(in srgb, #fff 55%, transparent) 50%, transparent 75%);
+  transform: translateX(-120%); animation: barSheen 3.4s var(--ease) 1.2s infinite; }
+@keyframes barSheen { to { transform: translateX(120%); } }
 .pbar.bonus > i.over { background: repeating-linear-gradient(45deg, var(--ok), var(--ok) 6px,
   color-mix(in srgb, var(--ok) 70%, #000) 6px, color-mix(in srgb, var(--ok) 70%, #000) 12px); }
 .pbar.orig > i { background: linear-gradient(90deg, var(--text-3), var(--text-2)); }
@@ -46,7 +51,9 @@
 .stats-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--s3); margin-bottom: var(--s5); }
 .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2);
-  padding: var(--s3) var(--s4); box-shadow: var(--shadow-sm); }
+  padding: var(--s3) var(--s4); box-shadow: var(--shadow-sm);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur-fast); }
+.kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--border-2); }
 .kpi .k { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .05em; color: var(--text-3);
   font-weight: 700; }
 .kpi .v { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.02em; margin-top: 2px;
@@ -56,7 +63,13 @@
 .meters { display: flex; flex-direction: column; gap: var(--s3); margin-bottom: var(--s5); }
 .meter { display: grid; grid-template-columns: 150px 1fr auto; align-items: center; gap: var(--s3);
   padding: var(--s3) var(--s4); background: var(--surface); border: 1px solid var(--border);
-  border-radius: var(--r2); }
+  border-radius: var(--r2); transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.meter:hover { border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+.meter .mbar > i { position: relative; }
+.meter .mbar > i::after { content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, #fff 45%, transparent) 50%, transparent 70%);
+  transform: translateX(-120%); animation: barSheen 3.4s var(--ease) 1.6s infinite; }
+.meter.secondary .mbar > i::after { display: none; }
 .meter.secondary { opacity: .96; border-style: dashed; }
 .meter .mname { font-weight: 600; font-size: var(--t-sm); display: flex; align-items: center; gap: 6px; }
 .meter .mname .tier { font-size: var(--t-xs); color: var(--text-3); font-weight: 700; text-transform: uppercase; }
@@ -76,8 +89,14 @@
 .ms {
   flex: none; width: 210px; background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r2); padding: var(--s3) var(--s4); position: relative;
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease), border-color var(--dur-fast);
 }
+.ms:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 .ms.current { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.ms.met { border-color: color-mix(in srgb, var(--ok) 45%, var(--border));
+  background: color-mix(in srgb, var(--ok) 6%, var(--surface)); }
+.ms.met::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ok) 30%, transparent); }
 .ms .ms-week { font-size: var(--t-xs); color: var(--text-3); font-weight: 700; text-transform: uppercase; }
 .ms .ms-title { font-size: var(--t-sm); font-weight: 600; margin: 4px 0 var(--s2); }
 .ms .ms-status { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-xs); font-weight: 700; }
@@ -112,8 +131,10 @@
 /* day card */
 .day { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
   margin-bottom: var(--s3); overflow: hidden; box-shadow: var(--shadow-sm);
-  transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+  transition: border-color var(--dur), box-shadow var(--dur); }
+.day:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
 .day.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
+.day.complete { border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
 .day.past { opacity: .82; }
 .day.dragover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
@@ -133,10 +154,14 @@
   background: var(--accent-soft); padding: 2px 8px; border-radius: var(--r-pill); }
 .day-figs { display: flex; align-items: center; gap: var(--s3); flex: none; }
 .day-ring { --p: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
-  font-size: var(--t-xs); font-weight: 800; font-variant-numeric: tabular-nums;
-  background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--track) 0); }
+  font-size: var(--t-xs); font-weight: 800; font-variant-numeric: tabular-nums; position: relative;
+  background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--track) 0);
+  transition: --p var(--dur-slow) var(--ease); }
 .day-ring i { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: grid;
-  place-items: center; }
+  place-items: center; transition: color var(--dur-fast); }
+.day-ring.full i { color: var(--ok); }
+.day-ring.pulse { animation: ringPulse .6s var(--ease-spring); }
+@keyframes ringPulse { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
 .day-ring.off i { color: var(--text-3); }
 .day-mini-orig { font-size: var(--t-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
 
@@ -149,8 +174,9 @@
  *  Task rows
  * ------------------------------------------------------------------ */
 .task { display: flex; align-items: flex-start; gap: var(--s3); padding: var(--s3);
-  border-radius: var(--r2); border: 1px solid transparent; transition: background var(--dur-fast); }
-.task:hover { background: var(--surface-2); }
+  border-radius: var(--r2); border: 1px solid transparent;
+  transition: background var(--dur-fast), transform var(--dur-fast); }
+.task:hover { background: var(--surface-2); transform: translateX(2px); }
 .task.done { opacity: .62; }
 .task.done .t-label { text-decoration: line-through; text-decoration-color: var(--text-3); }
 .task.moving { opacity: .4; }
@@ -163,8 +189,10 @@
   transition: stroke-dashoffset var(--dur) var(--ease); }
 .task.done .checkbox { background: var(--accent); border-color: var(--accent); }
 .task.done .checkbox svg { stroke-dashoffset: 0; }
-.checkbox.pop { animation: cbpop .32s var(--ease); }
-@keyframes cbpop { 40% { transform: scale(1.28); } }
+.checkbox.pop { animation: cbpop .42s var(--ease-spring); }
+@keyframes cbpop { 0% { transform: scale(1); } 45% { transform: scale(1.32); } 100% { transform: scale(1); } }
+.task.done .checkbox { animation: cbfill .3s var(--ease); }
+@keyframes cbfill { from { box-shadow: 0 0 0 6px var(--accent-soft); } to { box-shadow: 0 0 0 0 transparent; } }
 
 .t-body { flex: 1; min-width: 0; }
 .t-label { font-size: var(--t-sm); line-height: 1.5; }
@@ -245,3 +273,16 @@
 .move-opt .mo-title { font-size: var(--t-sm); color: var(--text-2); flex: 1; min-width: 0;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .move-opt .mo-load { font-size: var(--t-xs); color: var(--text-3); flex: none; }
+
+/* ------------------------------------------------------------------ *
+ *  Celebration confetti (fixed overlay, spawned by render.js on a
+ *  day reaching 100%). Not clipped by any card; auto-removed.
+ * ------------------------------------------------------------------ */
+.burst { position: fixed; z-index: 96; pointer-events: none; width: 0; height: 0; }
+.burst .confetti { position: absolute; left: 0; top: 0; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--c, var(--accent)); opacity: 0;
+  animation: confettiFly var(--cdur, 850ms) var(--ease-out) forwards; }
+@keyframes confettiFly {
+  0%   { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--cr, 360deg)) scale(.4); }
+}

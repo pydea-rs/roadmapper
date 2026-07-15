@@ -154,6 +154,7 @@ function drawerHooks() {
     resetAll: resetAllIO,
     resetRoadmap: resetRoadmapIO,
     activeTitle: () => { const rm = getRoadmap(activeSlug); return rm ? rm.title : null; },
+    repaint: () => { rerender(); updateSidebar(); },
     syncNow: async () => { await sync.flush(); await sync.loadAndReconcile(); rerender(); updateSidebar(); toast("Synced", { type: "ok" }); },
     lock: lockNowIO,
   };

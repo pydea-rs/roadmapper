@@ -8,9 +8,9 @@
 import * as store from "./store.js";
 import { computeAll, currentDay } from "./stats.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
-import { checkIcon, toast } from "./ui.js";
+import { checkIcon, toast, getSettings } from "./ui.js";
 import {
-  $, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
+  $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
   monthLabel, daysBetween, pct,
 } from "./util.js";
 
@@ -19,6 +19,13 @@ export function setRenderHooks(h) { hooks = h; }
 
 let cur = null;                        // { rm, mount }
 let lastToggled = null;
+let celebrateDay = null;               // dayId whose actual just hit 100% (fire confetti)
+
+/* Is animation allowed right now? (respects the in-app + OS motion prefs) */
+function motionOK() {
+  if (document.documentElement.getAttribute("data-motion") === "off") return false;
+  return !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 /* open-card state, persisted per roadmap */
 const openKey = slug => `roadmaps_open_${slug}`;
@@ -34,43 +41,131 @@ export function renderRoadmap(rm, mount) {
   let open = loadOpen(rm.slug);
   if (!open) { open = new Set(); const t = rm.days.find(d => d.date === todayStr());
     if (t) open.add(t.id); else { const up = rm.days.find(d => d.date >= todayStr()); if (up) open.add(up.id); } }
-  paint(rm, mount, open);
+  paint(rm, mount, open, true);          // full open → play the entrance cascade
 }
 
 function rerender() {
   if (!cur) return;
   const open = new Set($$open());
-  paint(cur.rm, cur.mount, open);
+  paint(cur.rm, cur.mount, open, false); // in-place update → no cascade (stable on ticks)
 }
 function $$open() {
   return [...document.querySelectorAll(".day.open")].map(d => d.dataset.day);
 }
 
-function paint(rm, mount, open) {
+/** Apply per-view accent. A roadmap's identity colour wins unless the owner
+ *  turned "roadmap colours" off in settings, in which case the global accent
+ *  (the hue slider / swatch) shows through everywhere. */
+function applyAccent(rm, mount) {
+  const useOwn = (getSettings().roadmapAccent !== "off") && rm.accent;
+  if (useOwn) {
+    mount.style.setProperty("--accent", rm.accent);
+    mount.style.setProperty("--accent-soft", `color-mix(in srgb, ${rm.accent} 15%, transparent)`);
+    mount.style.setProperty("--accent-ink", `color-mix(in srgb, ${rm.accent}, white 20%)`);
+  } else {
+    mount.style.removeProperty("--accent");
+    mount.style.removeProperty("--accent-soft");
+    mount.style.removeProperty("--accent-ink");
+  }
+}
+
+function paint(rm, mount, open, animateIn = false) {
   const main = document.getElementById("main");
   const scrollTop = main ? main.scrollTop : 0;
   const S = computeAll(rm);
 
-  mount.style.setProperty("--accent", rm.accent || "");
-  if (rm.accent) mount.style.setProperty("--accent", rm.accent);
-  else mount.style.removeProperty("--accent");
+  applyAccent(rm, mount);
 
   mount.innerHTML = "";
-  mount.append(hero(rm, S));
-  mount.append(statsStrip(rm, S));
-  mount.append(meters(rm, S));
-  if (rm.milestones.length) mount.append(milestoneRail(rm, S));
-  mount.append(timeline(rm, S, open));
-  if (rm.features && rm.features.length) mount.append(extras(rm));
+  const blocks = [];
+  blocks.push(hero(rm, S));
+  blocks.push(statsStrip(rm, S));
+  blocks.push(meters(rm, S));
+  if (rm.milestones.length) blocks.push(milestoneRail(rm, S));
+  blocks.push(timeline(rm, S, open));
+  if (rm.features && rm.features.length) blocks.push(extras(rm));
+  for (const b of blocks) mount.append(b);
+
+  // entrance cascade — only when opening a roadmap, and only if motion is on
+  if (animateIn && motionOK()) {
+    blocks.forEach((b, i) => { b.classList.add("reveal"); b.style.setProperty("--rd", i * 55 + "ms"); });
+  }
 
   saveOpen(rm.slug, open);
   if (main) main.scrollTop = scrollTop;
 
+  // just-ticked checkbox: pop it (and a tiny sparkle when it became done)
   if (lastToggled) {
-    const cb = mount.querySelector(`[data-task="${cssEsc(lastToggled)}"] .checkbox`);
-    if (cb) { cb.classList.add("pop"); cb.addEventListener("animationend", () => cb.classList.remove("pop"), { once: true }); }
+    const row = mount.querySelector(`[data-task="${cssEsc(lastToggled)}"]`);
+    const cb = row && row.querySelector(".checkbox");
+    if (cb) { cb.classList.add("pop"); cb.addEventListener("animationend", () => cb.classList.remove("pop"), { once: true });
+      if (row.classList.contains("done") && motionOK()) sparkle(cb); }
     lastToggled = null;
   }
+
+  // a day just reached 100% → pulse its ring + confetti + toast
+  if (celebrateDay) {
+    const card = mount.querySelector(`.day[data-day="${cssEsc(celebrateDay)}"]`);
+    const ring = card && card.querySelector(".day-ring");
+    if (ring && motionOK()) {
+      ring.classList.add("pulse");
+      ring.addEventListener("animationend", () => ring.classList.remove("pulse"), { once: true });
+      const r = ring.getBoundingClientRect();
+      celebrateBurst(r.left + r.width / 2, r.top + r.height / 2);
+    }
+    const day = rm.daysById.get(celebrateDay);
+    toast(`Day complete${day ? " · " + day.title : ""} 🎉`, { type: "ok" });
+    celebrateDay = null;
+  }
+}
+
+/* All non-optional tasks whose CURRENT day is `hostId` are done. */
+function isDayComplete(rm, hostId) {
+  let any = false;
+  for (const d of rm.days) for (const t of d.tasks) {
+    if (t.optional) continue;
+    if (currentDay(rm, rm.slug, t) !== hostId) continue;
+    any = true;
+    if (!store.isDone(rm.slug, t.id)) return false;
+  }
+  return any;
+}
+
+/* A few confetti dots flung from (x,y); auto-removed. */
+function celebrateBurst(x, y) {
+  const N = 14;
+  const cols = ["var(--accent)", "var(--ok)", "var(--cat-watch)", "var(--cat-project)", "var(--warn)"];
+  const burst = el("div.burst", { style: `left:${x}px;top:${y}px` });
+  for (let i = 0; i < N; i++) {
+    const ang = (Math.PI * 2 * i) / N + (i % 2 ? .4 : 0);
+    const dist = 46 + (i % 5) * 12;
+    const p = el("span.confetti", { style:
+      `--dx:${Math.cos(ang) * dist}px; --dy:${Math.sin(ang) * dist - 10}px;` +
+      `--c:${cols[i % cols.length]}; --cr:${(i % 2 ? 1 : -1) * 300}deg; --cdur:${820 + (i % 4) * 90}ms` });
+    burst.append(p);
+  }
+  document.body.append(burst);
+  setTimeout(() => burst.remove(), 1300);
+}
+
+/* Small sparkle ring around a just-completed checkbox. */
+function sparkle(cb) {
+  const r = cb.getBoundingClientRect();
+  celebrateBurstSmall(r.left + r.width / 2, r.top + r.height / 2);
+}
+function celebrateBurstSmall(x, y) {
+  const N = 7;
+  const burst = el("div.burst", { style: `left:${x}px;top:${y}px` });
+  for (let i = 0; i < N; i++) {
+    const ang = (Math.PI * 2 * i) / N;
+    const dist = 16 + (i % 3) * 6;
+    const p = el("span.confetti", { style:
+      `--dx:${Math.cos(ang) * dist}px; --dy:${Math.sin(ang) * dist}px;` +
+      `--c:var(--accent); --cdur:520ms; width:5px; height:5px` });
+    burst.append(p);
+  }
+  document.body.append(burst);
+  setTimeout(() => burst.remove(), 700);
 }
 const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/[^\w-]/g, "\\$&");
 
@@ -266,8 +361,9 @@ function dayCard(rm, S, day, open) {
   const isOpen = open.has(day.id);
   const df = S.days[day.id] || { actual: { pct: 0, done: 0, total: 0 }, original: { pct: 0, done: 0, total: 0 } };
 
-  const card = el("div.day" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (isOpen ? ".open" : ""),
-    { dataset: { day: day.id } });
+  const isComplete = df.actual.total > 0 && df.actual.pct >= 100;
+  const card = el("div.day" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (isOpen ? ".open" : "") +
+    (isComplete ? ".complete" : ""), { dataset: { day: day.id } });
 
   // header
   const head = el("div.day-head", { role: "button", tabindex: "0", "aria-expanded": isOpen ? "true" : "false" });
@@ -285,7 +381,8 @@ function dayCard(rm, S, day, open) {
   head.append(info);
 
   const figs = el("div.day-figs");
-  const ring = el("div.day-ring", { style: `--p:${df.actual.pct}`, title: `Actual ${df.actual.pct}%` });
+  const ring = el("div.day-ring" + (isComplete ? ".full" : ""),
+    { style: `--p:${df.actual.pct}`, title: `Actual ${df.actual.pct}%` });
   ring.append(el("i", { text: df.actual.pct + "%" }));
   figs.append(ring);
   if (df.original.total && (df.original.done !== df.actual.done || df.original.total !== df.actual.total))
@@ -313,10 +410,10 @@ function dayCard(rm, S, day, open) {
   const bonus = day.tasks.filter(t => t.optional);
   const movedIn = movedInTasks(rm, day.id);
 
-  renderTaskList(pad, rm, S, required);
+  renderTaskList(pad, rm, S, required, false, day.id);
   if (movedIn.length) {
     pad.append(el("div.sec-title", { style: "margin-top:var(--s2)", text: "Moved in" }));
-    renderTaskList(pad, rm, S, movedIn, true);
+    renderTaskList(pad, rm, S, movedIn, true, day.id);
   }
   if (bonus.length) pad.append(bonusTrack(rm, S, bonus));
   for (const s of day.soft) pad.append(softItem(rm, s));
@@ -340,7 +437,7 @@ function movedInTasks(rm, dayId) {
   return out;
 }
 
-function renderTaskList(container, rm, S, tasks, isMovedIn = false) {
+function renderTaskList(container, rm, S, tasks, isMovedIn = false, hostId = null) {
   // handle grouping: consecutive tasks with same group get wrapped
   let i = 0;
   while (i < tasks.length) {
@@ -350,23 +447,29 @@ function renderTaskList(container, rm, S, tasks, isMovedIn = false) {
       while (j < tasks.length && tasks[j].group === t.group) { grp.push(tasks[j]); j++; }
       if (grp.length > 1) {
         const box = el("div.tgroup");
-        for (const gt of grp) box.append(taskRow(rm, S, gt, isMovedIn));
+        for (const gt of grp) box.append(taskRow(rm, S, gt, isMovedIn, hostId));
         container.append(box); i = j; continue;
       }
     }
-    container.append(taskRow(rm, S, t, isMovedIn));
+    container.append(taskRow(rm, S, t, isMovedIn, hostId));
     i++;
   }
 }
 
-function taskRow(rm, S, task, isMovedIn = false) {
+function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
   const slug = rm.slug;
   const done = store.isDone(slug, task.id);
   const row = el("div.task" + (done ? ".done" : ""), { dataset: { task: task.id } });
 
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
     "aria-label": "Toggle task", html: checkIcon() });
-  cb.onclick = () => { lastToggled = task.id; store.setTask(slug, task.id, !store.isDone(slug, task.id)); rerender(); };
+  cb.onclick = () => {
+    lastToggled = task.id;
+    const willDo = !store.isDone(slug, task.id);
+    store.setTask(slug, task.id, willDo);
+    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    rerender();
+  };
   row.append(cb);
 
   const bodyEl = el("div.t-body");

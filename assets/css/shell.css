@@ -57,10 +57,10 @@
   display: flex; align-items: center; gap: var(--s3);
   padding: var(--s2) var(--s3); border-radius: var(--r2);
   color: var(--text-2); position: relative;
-  transition: background var(--dur-fast), color var(--dur-fast);
+  transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
   width: 100%; text-align: left; min-width: 0;
 }
-.sb-item:hover { background: var(--surface-3); color: var(--text); }
+.sb-item:hover { background: var(--surface-3); color: var(--text); transform: translateX(2px); }
 .sb-item[aria-current="true"] { background: var(--accent-soft); color: var(--text); }
 .sb-item[aria-current="true"]::before {
   content: ""; position: absolute; left: 0; top: 20%; bottom: 20%;
@@ -323,9 +323,22 @@
 .switch[aria-pressed="true"]::after { transform: translateX(17px); }
 
 /* accent swatches */
-.swatches { display: flex; gap: var(--s2); }
-.swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent; }
-.swatch[aria-pressed="true"] { border-color: var(--text); }
+.swatches { display: flex; gap: var(--s2); flex-wrap: wrap; justify-content: flex-end; max-width: 210px; }
+.swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid transparent;
+  transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-fast); }
+.swatch:hover { transform: scale(1.15); }
+.swatch[aria-pressed="true"] { border-color: var(--text); box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent-soft); }
+
+/* custom-hue slider */
+.hue-slider { -webkit-appearance: none; appearance: none; width: 170px; height: 12px; border-radius: var(--r-pill);
+  background: linear-gradient(90deg, hsl(0 85% 60%), hsl(60 85% 60%), hsl(120 85% 60%),
+    hsl(180 85% 60%), hsl(240 85% 60%), hsl(300 85% 60%), hsl(360 85% 60%)); cursor: pointer; }
+.hue-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; border: 3px solid var(--accent); box-shadow: var(--shadow); cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-spring); }
+.hue-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.hue-slider::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  border: 3px solid var(--accent); box-shadow: var(--shadow); cursor: pointer; }
 
 .hr { height: 1px; background: var(--border); border: 0; }
 
