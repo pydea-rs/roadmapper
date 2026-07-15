@@ -27,20 +27,20 @@ registerRoadmap({
   ],
 
   weeks: [
-    { id: "w1",  title: "Week 1 — jlox: Control Flow → Functions", start: "2026-07-13" },
-    { id: "w2",  title: "Week 2 — jlox: Resolving, Classes", start: "2026-07-20" },
-    { id: "w3",  title: "Week 3 — Finish jlox; clox begins", start: "2026-07-27" },
-    { id: "w4",  title: "Week 4 — clox: VM & scanning", start: "2026-08-03" },
-    { id: "w5",  title: "Week 5 — clox: compiling & values", start: "2026-08-10" },
-    { id: "w6",  title: "Week 6 — clox: hash tables & variables", start: "2026-08-17" },
-    { id: "w7",  title: "Week 7 — clox: control flow & calls", start: "2026-08-24" },
-    { id: "w8",  title: "Week 8 — clox: closures & GC", start: "2026-08-31" },
-    { id: "w9",  title: "Week 9 — clox: classes; finish CI", start: "2026-09-07" },
-    { id: "w10", title: "Week 10 — Phase B: Monkey begins", start: "2026-09-14" },
-    { id: "w11", title: "Week 11 — Monkey parsing/eval; Go deploy", start: "2026-09-21" },
-    { id: "w12", title: "Week 12 — Finish Go course", start: "2026-09-28" },
-    { id: "w13", title: "Week 13 — Phase C: finish Monkey", start: "2026-10-05" },
-    { id: "w14", title: "Week 14 — Extend & retro", start: "2026-10-12" },
+    { id: "w1",  title: "Week 1 — jlox: Control Flow → Functions", start: "2026-07-16" },
+    { id: "w2",  title: "Week 2 — jlox: Resolving, Classes", start: "2026-07-23" },
+    { id: "w3",  title: "Week 3 — Finish jlox; clox begins", start: "2026-07-30" },
+    { id: "w4",  title: "Week 4 — clox: VM & scanning", start: "2026-08-06" },
+    { id: "w5",  title: "Week 5 — clox: compiling & values", start: "2026-08-13" },
+    { id: "w6",  title: "Week 6 — clox: hash tables & variables", start: "2026-08-20" },
+    { id: "w7",  title: "Week 7 — clox: control flow & calls", start: "2026-08-27" },
+    { id: "w8",  title: "Week 8 — clox: closures & GC", start: "2026-09-03" },
+    { id: "w9",  title: "Week 9 — clox: classes; finish CI", start: "2026-09-10" },
+    { id: "w10", title: "Week 10 — Phase B: Monkey begins", start: "2026-09-17" },
+    { id: "w11", title: "Week 11 — Monkey parsing/eval; Go deploy", start: "2026-09-24" },
+    { id: "w12", title: "Week 12 — Finish Go course", start: "2026-10-01" },
+    { id: "w13", title: "Week 13 — Phase C: finish Monkey", start: "2026-10-08" },
+    { id: "w14", title: "Week 14 — Extend & retro", start: "2026-10-15" },
   ],
 
   days: [
@@ -48,7 +48,7 @@ registerRoadmap({
 
     /* -- Week 1 -- */
     {
-      id: "d01", date: "2026-07-14", week: "w1", title: "CI Ch9 — Control Flow (jlox)",
+      id: "d01", date: "2026-07-16", week: "w1", title: "CI Ch9 — Control Flow (jlox)",
       theme: "Resume Crafting Interpreters in the Java tree-walker.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -64,7 +64,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d02", date: "2026-07-16", week: "w1", title: "Go — Templates (videos 27–36)",
+      id: "d02", date: "2026-07-18", week: "w1", title: "Go — Templates (videos 27–36)",
       theme: "Server-side rendering, XSS, contextual encoding.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 60, group: "g1",
@@ -79,7 +79,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d03", date: "2026-07-18", week: "w1", title: "CI Ch10 — Functions (jlox)",
+      id: "d03", date: "2026-07-20", week: "w1", title: "CI Ch10 — Functions (jlox)",
       theme: "First-class functions, closures, return values.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 50, group: "g1",
@@ -93,7 +93,7 @@ registerRoadmap({
 
     /* -- Week 2 -- */
     {
-      id: "d04", date: "2026-07-20", week: "w2", title: "CI Ch11 — Resolving & Binding (jlox)",
+      id: "d04", date: "2026-07-23", week: "w2", title: "CI Ch11 — Resolving & Binding (jlox)",
       theme: "The static resolution pass — the subtle one.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -108,7 +108,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-07-22", week: "w2", title: "Go — Code Org & MVC (videos 37–54)",
+      id: "d05", date: "2026-07-25", week: "w2", title: "Go — Code Org & MVC (videos 37–54)",
       theme: "Package structure, MVC, views, layouts, Tailwind.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 75, group: "g1",
@@ -121,7 +121,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d06", date: "2026-07-24", week: "w2", title: "CI Ch12 — Classes (jlox, heavy)",
+      id: "d06", date: "2026-07-27", week: "w2", title: "CI Ch12 — Classes (jlox, heavy)",
       theme: "27-page chapter — its own day.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1",
@@ -133,7 +133,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d07", date: "2026-07-25", week: "w2", title: "Let's Go — read chunk 1 + starter",
+      id: "d07", date: "2026-07-29", week: "w2", title: "Let's Go — read chunk 1 + starter",
       theme: "Biweekly mandatory read; SnippetBox skeleton.",
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 60,
@@ -148,7 +148,7 @@ registerRoadmap({
 
     /* -- Week 3 -- */
     {
-      id: "d08", date: "2026-07-27", week: "w3", title: "CI Ch13 — Inheritance (jlox done!)",
+      id: "d08", date: "2026-07-30", week: "w3", title: "CI Ch13 — Inheritance (jlox done!)",
       theme: "Superclasses, super calls — finishes the tree-walker.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
@@ -163,7 +163,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-07-29", week: "w3", title: "Go — Signup & REST (videos 55–62)",
+      id: "d09", date: "2026-08-01", week: "w3", title: "Go — Signup & REST (videos 55–62)",
       theme: "Signup page, REST intro, controllers, form parsing.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 55, group: "g1",
@@ -173,7 +173,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d10", date: "2026-07-31", week: "w3", title: "CI Ch14 — Chunks of Bytecode (clox)",
+      id: "d10", date: "2026-08-03", week: "w3", title: "CI Ch14 — Chunks of Bytecode (clox)",
       theme: "clox begins — the C bytecode VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 50, group: "g1",
@@ -190,7 +190,7 @@ registerRoadmap({
 
     /* -- Week 4 -- */
     {
-      id: "d11", date: "2026-08-03", week: "w4", title: "CI Ch15 — A Virtual Machine (clox)",
+      id: "d11", date: "2026-08-06", week: "w4", title: "CI Ch15 — A Virtual Machine (clox)",
       theme: "The interpreter loop, the value stack.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -202,7 +202,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-08-05", week: "w4", title: "Go — Databases (videos 63–89)",
+      id: "d12", date: "2026-08-08", week: "w4", title: "Go — Databases (videos 63–89)",
       theme: "Postgres, SQL, querying with Go — a big cluster.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1",
@@ -216,7 +216,7 @@ registerRoadmap({
       note: "Heavy watch day — no CI block.",
     },
     {
-      id: "d13", date: "2026-08-07", week: "w4", title: "CI Ch16 — Scanning on Demand (clox)",
+      id: "d13", date: "2026-08-10", week: "w4", title: "CI Ch16 — Scanning on Demand (clox)",
       theme: "The clox scanner — no separate token list.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -233,7 +233,7 @@ registerRoadmap({
 
     /* -- Week 5 -- */
     {
-      id: "d14", date: "2026-08-10", week: "w5", title: "CI Ch17 — Compiling Expressions (clox, Pratt)",
+      id: "d14", date: "2026-08-13", week: "w5", title: "CI Ch17 — Compiling Expressions (clox, Pratt)",
       theme: "Short chapter, dense idea: the Pratt parser. Own day.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 55, group: "g1",
@@ -249,7 +249,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d15", date: "2026-08-12", week: "w5", title: "CI Ch18 — Types of Values (clox)",
+      id: "d15", date: "2026-08-15", week: "w5", title: "CI Ch18 — Types of Values (clox)",
       theme: "A tagged union for Lox values.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 35, group: "g1",
@@ -261,7 +261,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d16", date: "2026-08-14", week: "w5", title: "CI Ch19 — Strings (clox)",
+      id: "d16", date: "2026-08-17", week: "w5", title: "CI Ch19 — Strings (clox)",
       theme: "Heap-allocated objects enter the VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
@@ -275,7 +275,7 @@ registerRoadmap({
 
     /* -- Week 6 -- */
     {
-      id: "d17", date: "2026-08-17", week: "w6", title: "Let's Go — read chunk 2 + Go forms tryout",
+      id: "d17", date: "2026-08-20", week: "w6", title: "Let's Go — read chunk 2 + Go forms tryout",
       theme: "Biweekly mandatory read; DB + dynamic templates.",
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 65,
@@ -288,7 +288,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d18", date: "2026-08-19", week: "w6", title: "Go — Passwords & bcrypt (videos 90–106)",
+      id: "d18", date: "2026-08-22", week: "w6", title: "Go — Passwords & bcrypt (videos 90–106)",
       theme: "Hashing, salting, bcrypt, sign-in.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 65, group: "g1",
@@ -301,7 +301,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-08-21", week: "w6", title: "CI Ch20 — Hash Tables (clox)",
+      id: "d19", date: "2026-08-24", week: "w6", title: "CI Ch20 — Hash Tables (clox)",
       theme: "Build a hash table from scratch in C.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -315,7 +315,7 @@ registerRoadmap({
 
     /* -- Week 7 -- */
     {
-      id: "d20", date: "2026-08-24", week: "w7", title: "CI Ch21 — Global Variables (clox)",
+      id: "d20", date: "2026-08-27", week: "w7", title: "CI Ch21 — Global Variables (clox)",
       theme: "Global variable statements and the string-intern table.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
@@ -327,7 +327,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d21", date: "2026-08-26", week: "w7", title: "Go — SQL relations & migrations (videos 138–155)",
+      id: "d21", date: "2026-08-29", week: "w7", title: "Go — SQL relations & migrations (videos 138–155)",
       theme: "Foreign keys, joins, indexes, schema migrations (goose).",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 70, group: "g1",
@@ -338,7 +338,7 @@ registerRoadmap({
       note: "Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d24; this week jumps to the SQL cluster to balance load — reorder freely.",
     },
     {
-      id: "d22", date: "2026-08-28", week: "w7", title: "CI Ch22 — Local Variables (clox)",
+      id: "d22", date: "2026-08-31", week: "w7", title: "CI Ch22 — Local Variables (clox)",
       theme: "Locals on the stack, scope resolution at compile time.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
@@ -352,7 +352,7 @@ registerRoadmap({
 
     /* -- Week 8 -- */
     {
-      id: "d23", date: "2026-08-31", week: "w8", title: "CI Ch23 — Jumping Back and Forth (clox)",
+      id: "d23", date: "2026-09-03", week: "w8", title: "CI Ch23 — Jumping Back and Forth (clox)",
       theme: "Control flow via jump bytecodes + backpatching.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -369,7 +369,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d24", date: "2026-09-02", week: "w8", title: "Go — Cookies, Sessions & CSRF (videos 107–137)",
+      id: "d24", date: "2026-09-05", week: "w8", title: "Go — Cookies, Sessions & CSRF (videos 107–137)",
       theme: "The big auth-state cluster.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 95, group: "g1",
@@ -383,7 +383,7 @@ registerRoadmap({
       note: "Heavy watch day — no CI block.",
     },
     {
-      id: "d25", date: "2026-09-04", week: "w8", title: "CI Ch24 — Calls and Functions (clox, heavy)",
+      id: "d25", date: "2026-09-07", week: "w8", title: "CI Ch24 — Calls and Functions (clox, heavy)",
       theme: "32-page chapter — call frames, the C call stack.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1",
@@ -397,7 +397,7 @@ registerRoadmap({
 
     /* -- Week 9 -- */
     {
-      id: "d26", date: "2026-09-07", week: "w9", title: "CI Ch25 — Closures (clox, longest)",
+      id: "d26", date: "2026-09-10", week: "w9", title: "CI Ch25 — Closures (clox, longest)",
       theme: "35-page chapter — upvalues and closing over the stack.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 65, group: "g1",
@@ -413,7 +413,7 @@ registerRoadmap({
       note: "Heaviest CI day — no Go block.",
     },
     {
-      id: "d27", date: "2026-09-09", week: "w9", title: "CI Ch26 — Garbage Collection (clox, hardest)",
+      id: "d27", date: "2026-09-12", week: "w9", title: "CI Ch26 — Garbage Collection (clox, hardest)",
       theme: "Mark-sweep GC — conceptually the toughest chapter. Own day.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 65, group: "g1",
@@ -428,7 +428,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d28", date: "2026-09-11", week: "w9", title: "CI Ch27 — Classes and Instances (clox)",
+      id: "d28", date: "2026-09-14", week: "w9", title: "CI Ch27 — Classes and Instances (clox)",
       theme: "Lightest clox chapter — classes and fields.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 35, group: "g1",
@@ -442,7 +442,7 @@ registerRoadmap({
 
     /* -- Week 10 (finish CI; Phase B begins) -- */
     {
-      id: "d29", date: "2026-09-14", week: "w10", title: "CI Ch28 — Methods & Initializers (clox, heavy)",
+      id: "d29", date: "2026-09-17", week: "w10", title: "CI Ch28 — Methods & Initializers (clox, heavy)",
       theme: "26-page chapter — bound methods, initializers, invocation opt.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 55, group: "g1",
@@ -454,7 +454,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d30", date: "2026-09-16", week: "w10", title: "Go — Password reset & email (videos 165–194)",
+      id: "d30", date: "2026-09-19", week: "w10", title: "Go — Password reset & email (videos 165–194)",
       theme: "Video-only cluster (Calhoun ended) — pair with Let's Go.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1",
@@ -467,7 +467,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d31", date: "2026-09-18", week: "w10", title: "CI Ch29 — Superclasses (clox)",
+      id: "d31", date: "2026-09-21", week: "w10", title: "CI Ch29 — Superclasses (clox)",
       theme: "Inheritance and super calls in the VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
@@ -479,7 +479,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2026-09-19", week: "w10", title: "CI Ch30 — Optimization → 🎉 CI DONE",
+      id: "d32", date: "2026-09-23", week: "w10", title: "CI Ch30 — Optimization → 🎉 CI DONE",
       theme: "Final chapter — hashing & NaN boxing. Crafting Interpreters complete.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
@@ -497,7 +497,7 @@ registerRoadmap({
 
     /* -- Week 11: Phase B — Monkey (secondary) + Go continues -- */
     {
-      id: "d33", date: "2026-09-21", week: "w11", title: "Monkey Ch1 — Lexing (secondary)",
+      id: "d33", date: "2026-09-24", week: "w11", title: "Monkey Ch1 — Lexing (secondary)",
       theme: "Phase B: the Go interpreter book activates.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 40, group: "g1",
@@ -511,7 +511,7 @@ registerRoadmap({
       note: "Secondary work — shows on the muted meter, excluded from primary %.",
     },
     {
-      id: "d34", date: "2026-09-23", week: "w11", title: "Go — Galleries CRUD (videos 195–217)",
+      id: "d34", date: "2026-09-26", week: "w11", title: "Go — Galleries CRUD (videos 195–217)",
       theme: "Video-only — the galleries feature.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 80, group: "g1",
@@ -521,7 +521,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d35", date: "2026-09-25", week: "w11", title: "Monkey Ch2 — Parsing (secondary, Pratt)",
+      id: "d35", date: "2026-09-28", week: "w11", title: "Monkey Ch2 — Parsing (secondary, Pratt)",
       theme: "Ball's Pratt parser — you just built one in CI Ch17.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 55, group: "g1",
@@ -536,7 +536,7 @@ registerRoadmap({
 
     /* -- Week 12: finish Go course; Monkey eval -- */
     {
-      id: "d36", date: "2026-09-28", week: "w12", title: "Let's Go — read chunk 4 (auth + testing)",
+      id: "d36", date: "2026-10-01", week: "w12", title: "Let's Go — read chunk 4 (auth + testing)",
       theme: "Biweekly mandatory read; user accounts + full test suite.",
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 70,
@@ -547,7 +547,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d37", date: "2026-09-30", week: "w12", title: "Go — Images & config (videos 218–248)",
+      id: "d37", date: "2026-10-03", week: "w12", title: "Go — Images & config (videos 218–248)",
       theme: "Image uploads + config/Docker/Tailwind.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1",
@@ -561,7 +561,7 @@ registerRoadmap({
       note: "Heavy watch day.",
     },
     {
-      id: "d38", date: "2026-10-02", week: "w12", title: "Monkey Ch3 — Evaluation (secondary)",
+      id: "d38", date: "2026-10-05", week: "w12", title: "Monkey Ch3 — Evaluation (secondary)",
       theme: "Tree-walking eval, environments, closures in Go.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 50, group: "g1",
@@ -576,7 +576,7 @@ registerRoadmap({
 
     /* -- Week 13: Phase C — finish Go course, then finish Monkey -- */
     {
-      id: "d39", date: "2026-10-05", week: "w13", title: "Go — Deployment (videos 249–263)",
+      id: "d39", date: "2026-10-08", week: "w13", title: "Go — Deployment (videos 249–263)",
       theme: "Ship it: droplet, DNS, prod env, deploy via git.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 70, group: "g1",
@@ -586,7 +586,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d40", date: "2026-10-07", week: "w13", title: "Go — OAuth & finish → 🎉 course DONE",
+      id: "d40", date: "2026-10-10", week: "w13", title: "Go — OAuth & finish → 🎉 course DONE",
       theme: "OAuth/Dropbox + the final videos. 285/285.",
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 80, group: "g1",
@@ -597,7 +597,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2026-10-09", week: "w13", title: "Monkey Ch4 — Extending (secondary)",
+      id: "d41", date: "2026-10-12", week: "w13", title: "Monkey Ch4 — Extending (secondary)",
       theme: "Phase C: strings, built-ins, arrays, hashes — finishes Ball's book.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 45, group: "g1",
@@ -612,7 +612,7 @@ registerRoadmap({
 
     /* -- Week 14: extend & retro -- */
     {
-      id: "d42", date: "2026-10-12", week: "w14", title: "Monkey — extend it (secondary)",
+      id: "d42", date: "2026-10-15", week: "w14", title: "Monkey — extend it (secondary)",
       theme: "Make Monkey yours.",
       tasks: [
         { id: "t1", obj: GX, cat: "project", est: 70, group: "g1",
@@ -623,7 +623,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d43", date: "2026-10-14", week: "w14", title: "Let's Go — guided exercises (project)",
+      id: "d43", date: "2026-10-17", week: "w14", title: "Let's Go — guided exercises (project)",
       theme: "Turn the side-book's exercises into real practice.",
       tasks: [
         { id: "t1", obj: GO, cat: "project", est: 60, group: "g1",
@@ -634,7 +634,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d44", date: "2026-10-16", week: "w14", title: "Retro — three languages, two interpreters",
+      id: "d44", date: "2026-10-19", week: "w14", title: "Retro — three languages, two interpreters",
       theme: "Close the roadmap; capture what you learned.",
       tasks: [
         { id: "t1", obj: CI, cat: "review", est: 35, group: "g1",

@@ -436,7 +436,7 @@ Rationale for explicit dates over "start + offset": it makes off-day variation, 
 milestone-by-calendar-week trivial and unambiguous, and matches the proven reference model. Day **ids**
 (`d01…`) stay stable regardless of date, so moves and progress never depend on dates.
 
-Start anchor: **2026-07-14 (Tuesday)** — today — since the reading positions are "as of now."
+Start anchor: **2026-07-16 (Thursday)** — the day the journey begins — since the reading positions are "as of now." Each roadmap's week is a rolling 7-day block anchored to this start (so no active day ever lands on a Sunday), preserving 4–5 active days/week for Roadmap 1 and 3–4 for Roadmap 2.
 
 ### 9.3 Overlaps (both roadmaps active on the same date)
 Overlap is allowed and expected. On an overlap date, the day is split across two roadmaps → **less time
@@ -615,7 +615,7 @@ registerRoadmap({
     { id: "go-interpreter",       title: "Writing an Interpreter in Go", tier: "secondary" },
   ],
 
-  weeks: [ { id: "w1", title: "jlox: Control Flow → Functions", start: "2026-07-14" }, /* … */ ],
+  weeks: [ { id: "w1", title: "jlox: Control Flow → Functions", start: "2026-07-16" }, /* … */ ],
 
   days: [
     {
@@ -676,9 +676,9 @@ deprecated / see also"** callouts (older-edition books), **project & tryout idea
 
 ## 15. The two concrete roadmaps — content plan
 
-Source files verified on disk; page counts from `pdfinfo`. Start anchor **2026-07-14 (Tue)**.
+Source files verified on disk; page counts from `pdfinfo`. Start anchor **2026-07-16 (Thu)**.
 
-### 15.1 Roadmap 1 — **Rust + FastAPI** (slug `rust-fastapi`) · priority HIGH · 5–6 active days/week
+### 15.1 Roadmap 1 — **Rust + FastAPI** (slug `rust-fastapi`) · priority HIGH · 4–5 active days/week
 Two **primary** objectives.
 
 **Objective `rust` — *The Rust Programming Language*** (Klabnik & Nichols) · `~/Desktop/rust.pdf` · 554 pp

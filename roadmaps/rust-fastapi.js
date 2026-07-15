@@ -1,4 +1,4 @@
-// rust-fastapi.js — Roadmap 1 (priority HIGH, 5–6 active days/week).
+// rust-fastapi.js — Roadmap 1 (priority HIGH, 4–5 active days/week).
 // Two PRIMARY objectives: `rust` (The Rust Programming Language, resume Ch15/PDF335)
 // and `fastapi` (Mastering FastAPI, resume Ch4/PDF52 — brief book, supplemented
 // heavily with official docs). Page ranges are real PDF pages (see _research.md).
@@ -17,7 +17,7 @@ registerRoadmap({
   subtitle: "Finish The Rust Programming Language (Ch15→20) and Mastering FastAPI (Ch4→), doc-supplemented.",
   accent: "#f0803c",
   schemaVersion: 1,
-  cadence: { activeDaysPerWeek: [5, 6] },
+  cadence: { activeDaysPerWeek: [4, 5] },
 
   objectives: [
     { id: R, title: "Rust — The Book", tier: "primary", weight: 1 },
@@ -25,17 +25,17 @@ registerRoadmap({
   ],
 
   weeks: [
-    { id: "w1", title: "Week 1 — Smart pointers & DB foundations", start: "2026-07-13" },
-    { id: "w2", title: "Week 2 — OOP, patterns, security", start: "2026-07-20" },
-    { id: "w3", title: "Week 3 — Advanced Rust & the web-server arc", start: "2026-07-27" },
-    { id: "w4", title: "Week 4 — Finish the server; deploy FastAPI", start: "2026-08-03" },
-    { id: "w5", title: "Week 5 — Capstone & wrap", start: "2026-08-10" },
+    { id: "w1", title: "Week 1 — Smart pointers & DB foundations", start: "2026-07-16" },
+    { id: "w2", title: "Week 2 — OOP, patterns, security", start: "2026-07-23" },
+    { id: "w3", title: "Week 3 — Advanced Rust & the web-server arc", start: "2026-07-30" },
+    { id: "w4", title: "Week 4 — Finish the server; deploy FastAPI", start: "2026-08-06" },
+    { id: "w5", title: "Week 5 — Capstone & wrap", start: "2026-08-13" },
   ],
 
   days: [
     /* ---------------- Week 1 ---------------- */
     {
-      id: "d01", date: "2026-07-14", week: "w1", title: "Resume: Box & Deref",
+      id: "d01", date: "2026-07-16", week: "w1", title: "Resume: Box & Deref",
       theme: "Back into Rust at Ch15 — smart pointers on the heap.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
@@ -49,7 +49,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d02", date: "2026-07-15", week: "w1", title: "Rc, RefCell & Weak",
+      id: "d02", date: "2026-07-17", week: "w1", title: "Rc, RefCell & Weak",
       theme: "Interior mutability and reference cycles — the tricky half of Ch15.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 40, group: "g1",
@@ -66,7 +66,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d03", date: "2026-07-16", week: "w1", title: "FastAPI databases",
+      id: "d03", date: "2026-07-18", week: "w1", title: "FastAPI databases",
       theme: "Switch objective — SQLAlchemy models, CRUD, sessions.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30, group: "g1",
@@ -80,7 +80,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d04", date: "2026-07-17", week: "w1", title: "Fearless concurrency",
+      id: "d04", date: "2026-07-20", week: "w1", title: "Fearless concurrency",
       theme: "Threads, channels, Mutex/Arc — Ch16 (book is snippet-y, so we build).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
@@ -94,7 +94,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-07-18", week: "w1", title: "FastAPI project structure",
+      id: "d05", date: "2026-07-21", week: "w1", title: "FastAPI project structure",
       theme: "Split the app with APIRouter — book §5.1 + official docs.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
@@ -112,7 +112,7 @@ registerRoadmap({
 
     /* ---------------- Week 2 ---------------- */
     {
-      id: "d06", date: "2026-07-20", week: "w2", title: "OOP in Rust",
+      id: "d06", date: "2026-07-23", week: "w2", title: "OOP in Rust",
       theme: "Trait objects & the State pattern — Ch17 (example-rich).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
@@ -125,7 +125,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d07", date: "2026-07-21", week: "w2", title: "FastAPI security (JWT)",
+      id: "d07", date: "2026-07-24", week: "w2", title: "FastAPI security (JWT)",
       theme: "The book's §5.2 is thin (9pp) — supplement heavily with official auth docs.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 20, group: "g1",
@@ -139,7 +139,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-07-23", week: "w2", title: "Patterns & matching",
+      id: "d08", date: "2026-07-25", week: "w2", title: "Patterns & matching",
       theme: "Ch18 is reference-y — so we build one thing that uses it all.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
@@ -152,7 +152,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-07-24", week: "w2", title: "FastAPI dependencies",
+      id: "d09", date: "2026-07-27", week: "w2", title: "FastAPI dependencies",
       theme: "Depends done properly — DI, sub-dependencies, yield teardown.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30, group: "g1",
@@ -166,7 +166,7 @@ registerRoadmap({
       note: "Lighter FastAPI day — a likely Roadmap-2 overlap date.",
     },
     {
-      id: "d10", date: "2026-07-25", week: "w2", title: "Advanced Rust I",
+      id: "d10", date: "2026-07-28", week: "w2", title: "Advanced Rust I",
       theme: "Unsafe & advanced lifetimes — Ch19 part 1.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
@@ -181,7 +181,7 @@ registerRoadmap({
 
     /* ---------------- Week 3 ---------------- */
     {
-      id: "d11", date: "2026-07-27", week: "w3", title: "Advanced Rust II",
+      id: "d11", date: "2026-07-30", week: "w3", title: "Advanced Rust II",
       theme: "Advanced traits/types/closures — the Book's most reference-like pages.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
@@ -195,7 +195,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-07-28", week: "w3", title: "FastAPI testing",
+      id: "d12", date: "2026-07-31", week: "w3", title: "FastAPI testing",
       theme: "TestClient + background tasks — the book barely covers testing.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
@@ -208,7 +208,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d13", date: "2026-07-29", week: "w3", title: "Web server I — single-threaded",
+      id: "d13", date: "2026-08-01", week: "w3", title: "Web server I — single-threaded",
       theme: "Ch20 begins. It IS the tryout — one continuous project.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
@@ -221,7 +221,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d14", date: "2026-07-31", week: "w3", title: "Web server II — the thread pool",
+      id: "d14", date: "2026-08-03", week: "w3", title: "Web server II — the thread pool",
       theme: "The heavy section: design a ThreadPool API from scratch (pp 490–508).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
@@ -235,7 +235,7 @@ registerRoadmap({
       note: "Heaviest Rust day of the roadmap — no FastAPI block.",
     },
     {
-      id: "d15", date: "2026-08-01", week: "w3", title: "FastAPI microservices (light)",
+      id: "d15", date: "2026-08-04", week: "w3", title: "FastAPI microservices (light)",
       theme: "Ch6 is prose-heavy/thin — read for concepts, keep it light (overlap day).",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30,
@@ -251,7 +251,7 @@ registerRoadmap({
 
     /* ---------------- Week 4 ---------------- */
     {
-      id: "d16", date: "2026-08-03", week: "w4", title: "Web server III — graceful shutdown",
+      id: "d16", date: "2026-08-06", week: "w4", title: "Web server III — graceful shutdown",
       theme: "Finish Ch20: Drop for the pool, signal workers to stop (pp 509–515).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
@@ -266,7 +266,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-08-04", week: "w4", title: "FastAPI deploy",
+      id: "d17", date: "2026-08-07", week: "w4", title: "FastAPI deploy",
       theme: "Ch7 is thin on code — supplement with a real Docker deploy.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
@@ -279,7 +279,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d18", date: "2026-08-05", week: "w4", title: "Lifespan & Pydantic v2",
+      id: "d18", date: "2026-08-08", week: "w4", title: "Lifespan & Pydantic v2",
       theme: "Modernize the app — kill deprecated patterns.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
@@ -293,7 +293,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-08-06", week: "w4", title: "Rust appendices & macros",
+      id: "d19", date: "2026-08-10", week: "w4", title: "Rust appendices & macros",
       theme: "Reference appendices (light) + the one with a real example: macros.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 25,
@@ -309,7 +309,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d20", date: "2026-08-08", week: "w4", title: "Capstone I — real API",
+      id: "d20", date: "2026-08-11", week: "w4", title: "Capstone I — real API",
       theme: "Pull FastAPI together: a CRUD+auth+tests service from scratch.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 80, group: "g1",
@@ -322,7 +322,7 @@ registerRoadmap({
 
     /* ---------------- Week 5 ---------------- */
     {
-      id: "d21", date: "2026-08-10", week: "w5", title: "Capstone II — auth & tests",
+      id: "d21", date: "2026-08-13", week: "w5", title: "Capstone II — auth & tests",
       theme: "Finish the capstone with JWT auth and a real test suite.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 70, group: "g1",
@@ -333,7 +333,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d22", date: "2026-08-11", week: "w5", title: "Async SQLAlchemy 2.0",
+      id: "d22", date: "2026-08-14", week: "w5", title: "Async SQLAlchemy 2.0",
       theme: "The async DB pattern the book skipped.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
@@ -346,7 +346,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d23", date: "2026-08-13", week: "w5", title: "Rust consolidation",
+      id: "d23", date: "2026-08-15", week: "w5", title: "Rust consolidation",
       theme: "Cement the advanced material with one integrative exercise.",
       tasks: [
         { id: "t1", obj: R, cat: "project", est: 60, group: "g1",
@@ -357,7 +357,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d24", date: "2026-08-14", week: "w5", title: "Wrap & retro",
+      id: "d24", date: "2026-08-17", week: "w5", title: "Wrap & retro",
       theme: "Both objectives closed — review and plan what's next.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 30, group: "g1",
