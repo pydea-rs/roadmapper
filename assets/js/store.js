@@ -1,32 +1,23 @@
 // store.js — the journey state: ticks, moves, soft ticks, flags, notes.
+//
+// SINGLE SOURCE OF TRUTH = the SQLite database (via sync.php). This module holds
+// only an in-memory working copy of that data for the running session, because
+// the render/stats engine reads it synchronously many times per repaint and JS
+// can't read SQLite synchronously. It is NOT persisted to localStorage — every
+// change is handed to the sink (sync.js) and written straight to the DB.
+//
 // Absence of an entry = the default (not done / on origin / unset), mirroring
 // the DB's "absence of a row = default" rule (DESIGN §7). Nothing is ever seeded.
 //
 // Shape:  state[slug][itemId] = { kind, value }   (value is always a string)
 // Item ids:  "d03.t2" (task) · "move:d03.t2" (move) · "soft:d03.s1" · "flag:..." · "note:<ulid>"
-//
-// The store is persistence-agnostic: it caches to localStorage immediately and
-// hands change deltas to a sink (set by app.js → sync.js). Absence is expressed
-// by value:null in a change, which the server turns into a row delete.
+// Absence is expressed by value:null in a change, which the server turns into a row delete.
 
-const LS_KEY = "roadmaps_journey_v1";
-const SEP = "";                 // must match sync.php KEY_SEP ("")
+const SEP = "\x01";                   // must match sync.php KEY_SEP ("\x01")
 const listeners = new Set();          // (slug, itemId) => void  — for re-render
-let sink = null;                      // (slug, change) => void  — for sync
+let sink = null;                      // (slug, change) => void  — for DB write
 
 let state = {};
-
-/* ---------- load / cache ---------- */
-export function loadLocal() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    state = raw ? JSON.parse(raw) : {};
-  } catch { state = {}; }
-  return state;
-}
-function cache() {
-  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {}
-}
 
 export function setSink(fn) { sink = fn; }
 export function onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
@@ -38,7 +29,8 @@ export function getCell(slug, itemId) {
 }
 export function rawState() { return state; }
 
-/** Set (value=string) or clear (value=null → back to default) one item. */
+/** Set (value=string) or clear (value=null → back to default) one item.
+ *  Updates the in-memory copy and pushes the delta to the DB via the sink. */
 export function setCell(slug, itemId, kind, value, { silent = false } = {}) {
   if (!state[slug]) state[slug] = {};
   const bucket = state[slug];
@@ -51,7 +43,6 @@ export function setCell(slug, itemId, kind, value, { silent = false } = {}) {
     if (before && before.value === v && before.kind === kind) return;
     bucket[itemId] = { kind, value: v };
   }
-  cache();
   if (sink && !silent) sink(slug, { id: itemId, kind, value: value === null ? null : bucket[itemId].value });
   emit(slug, itemId);
 }
@@ -101,42 +92,30 @@ export function setNote(slug, refId, text) {
 }
 
 /* ---------- bulk (from server / import) ---------- */
-/** Replace the whole in-memory journey from a server "load" map keyed slugitem. */
+/** Replace the whole in-memory journey from a server "load" map keyed slug<SEP>item. */
 export function hydrateFromServer(flatMap) {
   const next = {};
   for (const [key, cell] of Object.entries(flatMap || {})) {
-    const sep = key.indexOf("");
+    const sep = key.indexOf(SEP);
     if (sep < 0) continue;
     const slug = key.slice(0, sep), item = key.slice(sep + 1);
     (next[slug] ||= {})[item] = { kind: cell.kind, value: cell.value };
   }
-  state = next; cache();
+  state = next;
   emit(null, null);
-}
-
-/** Merge server data into local when local is empty for a slug (server authoritative). */
-export function mergeServer(flatMap) {
-  for (const [key, cell] of Object.entries(flatMap || {})) {
-    const sep = key.indexOf("");
-    if (sep < 0) continue;
-    const slug = key.slice(0, sep), item = key.slice(sep + 1);
-    if (!state[slug]) state[slug] = {};
-    if (!state[slug][item]) state[slug][item] = { kind: cell.kind, value: cell.value };
-  }
-  cache(); emit(null, null);
 }
 
 export function isEmpty() {
   return Object.values(state).every(b => !b || Object.keys(b).length === 0);
 }
 
-/* Flat map for whole-journey export/full-save: { "slugitem": {kind,value} } */
+/* Flat map for whole-journey export/full-save: { "slug<SEP>item": {kind,value} } */
 export function toFlatMap(onlySlug = null) {
   const out = {};
   for (const [slug, bucket] of Object.entries(state)) {
     if (onlySlug && slug !== onlySlug) continue;
     for (const [item, cell] of Object.entries(bucket || {}))
-      out[`${slug}${item}`] = { kind: cell.kind, value: cell.value };
+      out[`${slug}${SEP}${item}`] = { kind: cell.kind, value: cell.value };
   }
   return out;
 }
@@ -151,12 +130,13 @@ export function exportAll() {
     exportedAt: new Date().toISOString(), state };
 }
 
-/** Replace one roadmap's state (import). Returns the change list for sync. */
+/** Replace one roadmap's in-memory state (import). Persistence is done by the
+ *  caller via sync.saveRoadmapFull(). */
 export function importRoadmap(slug, items) {
   state[slug] = {};
   for (const [item, cell] of Object.entries(items || {}))
     state[slug][item] = { kind: cell.kind || "task", value: String(cell.value) };
-  cache(); emit(slug, null);
+  emit(slug, null);
 }
 export function importAll(fullState) {
   state = {};
@@ -165,8 +145,8 @@ export function importAll(fullState) {
     for (const [item, cell] of Object.entries(bucket || {}))
       state[slug][item] = { kind: cell.kind || "task", value: String(cell.value) };
   }
-  cache(); emit(null, null);
+  emit(null, null);
 }
 
-export function resetRoadmap(slug) { delete state[slug]; cache(); emit(slug, null); }
-export function resetAll() { state = {}; cache(); emit(null, null); }
+export function resetRoadmap(slug) { delete state[slug]; emit(slug, null); }
+export function resetAll() { state = {}; emit(null, null); }

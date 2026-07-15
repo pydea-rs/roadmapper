@@ -28,7 +28,8 @@ async function boot() {
   initDrawer(drawerHooks());
   setRenderHooks({ exportRoadmap: exportRoadmapIO, importRoadmap: importRoadmapIO });
 
-  store.loadLocal();
+  // The DB (via sync.php) is the single source of truth for journey data — the
+  // store only mirrors it in memory for the session. Wire the write-through sink.
   store.setSink((slug, change) => sync.queueChange(slug, change));
   store.onChange(debounce(() => { updateSidebar(); }, 120));
 
@@ -40,16 +41,25 @@ async function boot() {
   wireChrome();
 
   const st = await sync.status();
-  if (st.available && !st.authed) { lock.show(); return; }
-  // server says authed, OR no server (local-only) → open the app
+  if (!st.available) { lock.show(); showBackendRequired(); return; }  // no DB → can't run
+  if (!st.authed) { lock.show(); return; }
   startApp();
+}
+
+function showBackendRequired() {
+  const err = $("#lock-err");
+  if (err) {
+    err.textContent = "Backend not reachable. Journey data lives in the database — start the PHP server and reload.";
+    err.classList.add("warn");
+  }
 }
 
 async function startApp() {
   $("#lock").hidden = true;
   $("#app").hidden = false;
 
-  await sync.loadAndReconcile();
+  const loaded = await sync.loadAndReconcile();
+  if (loaded && loaded.error) toast("Couldn't load your journey from the database.", { type: "bad" });
 
   const problems = validateAll();
   if (problems.length) showDevError(problems);
@@ -117,7 +127,7 @@ function updateSyncPill(s) {
   pill.className = "sync-pill " + s;
   $("#sync-pill-text").textContent = syncLabel(s);
 }
-const syncLabel = s => ({ online: "Synced", saving: "Saving…", offline: "Offline", error: "Sync error", local: "Local only" }[s] || s);
+const syncLabel = s => ({ online: "Saved", saving: "Saving…", offline: "Offline", error: "Save error" }[s] || s);
 
 /* ================================================================== *
  *  Chrome wiring (sidebar collapse, mobile, dev banner)

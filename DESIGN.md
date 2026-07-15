@@ -42,10 +42,10 @@ cohesive web app (no iframes, no per-roadmap pages).
 | Concern | Where it lives | Kind |
 |---|---|---|
 | Roadmap structure: objectives, schedule, days, tasks, labels, links, estimates, weeks, milestones, soft items, hints | Hand-authored content modules (code) | **Static** |
-| Which tasks are done + when; which tasks were **moved** and to where | SQLite (via sync) + localStorage cache | **Dynamic** |
-| Notes, missed/re-do flags, stars, custom links, soft-item ticks | SQLite + localStorage | **Dynamic** |
+| Which tasks are done + when; which tasks were **moved** and to where | **SQLite only** (single source of truth) | **Dynamic** |
+| Notes, missed/re-do flags, stars, custom links, soft-item ticks | **SQLite only** | **Dynamic** |
 | Computed stats (actual/original %, streaks, pace, milestone status, projection) | Recomputed at runtime from structure + journey | **Derived** (never stored) |
-| Settings (theme, etc.) | localStorage (+ mirrored to SQLite) | **Dynamic** |
+| UI settings (theme, accent, hue, density, motion) + view state (open cards, last roadmap, sidebar, FAB) | **localStorage only** | **Dynamic** |
 | Auth session, login throttle | SQLite + PHP session files | **Dynamic** |
 
 **Key principle:** the database stores *only the journey* (mutable state) — ticks, moves, notes,
@@ -98,8 +98,9 @@ versionable in git, and — per §7 — removes any need to "seed" the database 
   (static as-is, `*.php` executed).
 - **Database:** **SQLite** via PDO (single file, WAL mode, busy-timeout). Zero-config, single-owner,
   file-portable. More than enough.
-- **Frontend:** one HTML shell + modular vanilla JS + modern CSS. State in a plain JS object, cached to
-  `localStorage`, mirrored to SQLite via a sync endpoint. No build tooling.
+- **Frontend:** one HTML shell + modular vanilla JS + modern CSS. Journey state is an in-memory JS object
+  hydrated from — and written straight back to — SQLite via the sync endpoint (the DB is the single source
+  of truth); localStorage holds UI/view preferences only. No build tooling.
 - **Auth:** PHP sessions + bcrypt hash in `.env`, expiry in days, plus a small server-side escalating
   throttle table.
 
@@ -245,14 +246,24 @@ responsiveness." Direction:
 
 ## 6. Data model & persistence
 
-### 6.1 Storage strategy (offline-first mirror)
-1. Client holds all dynamic state in a JS **journey state** object, namespaced per roadmap.
-2. Cached to `localStorage` (instant, offline).
-3. **Mirrored to SQLite** through `sync.php` (debounced auto-save + on exit).
-4. On load, fetch server copy and reconcile (server authoritative when local empty; else last-write-wins
-   with a safety **stash**; the reference's **empty-overwrite guard** is kept).
-If the endpoint isn't JSON (served statically / not on PHP), sync stays **dormant** and the app runs
-local-only (graceful degradation, as in the reference).
+### 6.1 Storage strategy (SQLite as the single source of truth)
+The **SQLite database (via `sync.php`) is the single source of truth** for all journey data. There is no
+localStorage copy of the journey — this is a personal roadmap tracker, so the write rate is trivially low
+and a direct-to-DB model is simpler and safer than a dual store.
+1. The client holds an **in-memory** journey object (namespaced per roadmap) purely as a session working
+   copy — the render/stats engine reads it synchronously many times per repaint, and JS can't read SQLite
+   synchronously. It is **never** written to localStorage.
+2. On load, the in-memory copy is **hydrated wholesale from the DB** (`action=load`), then reconciled
+   (aliases applied, orphaned rows pruned — §7.4).
+3. Every change is written **straight to the DB** (`action=save`), issued immediately and coalesced only
+   within a single user action (so `setTask`'s tick + timestamp go in one request). Full replaces
+   (import/reset) take a safety **stash** first; the **empty-overwrite guard** is kept.
+4. If the backend is unreachable, pending writes sit in an in-memory retry buffer and the status pill shows
+   **Offline/Save error** — nothing is silently dropped, and nothing falls back to localStorage.
+
+**localStorage holds UI concerns only:** theme, accent, custom hue, density, motion, and view state
+(open day-cards, last-viewed roadmap, sidebar collapse, FAB position). These are per-device preferences,
+not journey data, so they intentionally stay client-side.
 
 ### 6.2 What gets stored (the journey), keyed by stable IDs (§7)
 - **Task completion**: `done` + `done_at` per task id (required, optional, fallback).
@@ -317,8 +328,8 @@ Data actions require a valid session (§8):
 - `POST ?action=save` `{ roadmap?, changes:[…] | full:{…} }` → upsert changed rows, delete dropped rows,
   stash on displacing writes; **empty-overwrite guard** never wipes a populated journey.
 - Import/export handled client-side over `load`/`save` with a stash-first on import.
-Client (`sync.js`): debounced autosave, exit beacon, optimistic UI, offline detection, reconcile on
-load.
+Client (`sync.js`): immediate write-through to the DB (coalesced per user action, serialized on a promise
+chain), exit beacon, optimistic UI, offline detection with an in-memory retry buffer, reconcile on load.
 
 ---
 
@@ -796,7 +807,7 @@ Roadmaps/
 │       ├── render.js     # roadmap → DOM (days, tasks, soft items, groups)
 │       ├── stats.js      # actual/original, objectives, milestones, projection
 │       ├── moves.js      # task-move engine
-│       ├── sync.js       # localStorage + server mirror
+│       ├── sync.js       # DB read/write layer (single source of truth)
 │       ├── ui.js         # modals, toasts, drawer, sidebar, move picker
 │       └── util.js       # ids (ULID), dates, formatting
 ├── roadmaps/
@@ -830,7 +841,7 @@ implementation.
 | Auth | bcrypt in `.env`, PHP session, expiry days | Reference-proven, simple, adequate |
 | Lockout | Server-side **escalating** throttle (5→1m→2m…) | Meets brief; reasonable, not fort-knox |
 | Dialogs | Custom modal/toast system | Brief forbids `window.*`; better UX |
-| Persistence | localStorage cache mirrored to SQLite; debounced; offline-safe; empty-overwrite guard + stash | Instant UI + durable + accident-proof |
+| Persistence | **SQLite = single source of truth**; immediate write-through; empty-overwrite guard + stash; localStorage for UI prefs only | Simple, durable, accident-proof; no dual-store drift |
 | Projection | Derived range from remaining effort ÷ capacity, self-correcting | No deadlines, but keep-up guidance |
 
 ---

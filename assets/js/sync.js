@@ -1,19 +1,18 @@
-// sync.js — mirror the local journey to the server (sync.php) when available.
-//
-// Talks to sync.php. When the endpoint isn't JSON (served statically / no PHP),
-// sync goes dormant and the app runs local-only — the store already persists to
-// localStorage, so nothing breaks. Change deltas from the store are queued per
-// roadmap and flushed debounced + on page hide.
+// sync.js — the data layer. The SQLite database (via sync.php) is the single
+// source of truth for all journey data. Reads hydrate the in-memory copy on
+// load; writes are pushed to the DB immediately (coalesced only within a single
+// user action, not time-debounced). If the backend is unreachable, pending
+// changes are kept in an in-memory retry buffer and the status pill shows it —
+// nothing is written to localStorage, and nothing is silently dropped.
 
-import { debounce } from "./util.js";
 import * as store from "./store.js";
 
 const ENDPOINT = "sync.php";
-let mode = "unknown";                 // "server" | "local" | "unknown"
-const queues = new Map();             // slug -> Map(itemId -> change)
+let available = false;                // is the backend reachable & speaking JSON?
+const queues = new Map();             // slug -> Map(itemId -> change)  (retry buffer)
 const statusListeners = new Set();
 
-let syncState = "local";              // "online" | "saving" | "offline" | "error" | "local"
+let syncState = "offline";            // "online" | "saving" | "offline" | "error"
 export function onSyncStatus(fn) { statusListeners.add(fn); fn(syncState); return () => statusListeners.delete(fn); }
 function setStatus(s) { syncState = s; for (const fn of statusListeners) fn(s); }
 
@@ -25,27 +24,29 @@ async function api(action, { method = "GET", body = null, query = "" } = {}) {
     credentials: "same-origin",
   });
   const ct = res.headers.get("content-type") || "";
-  if (!ct.includes("application/json")) { mode = "local"; throw Object.assign(new Error("not-json"), { local: true }); }
+  if (!ct.includes("application/json")) throw Object.assign(new Error("backend-not-json"), { unreachable: true });
   const data = await res.json().catch(() => ({}));
   return { res, data };
 }
+
+export const isServer = () => available;
+export const getMode = () => (available ? "server" : "offline");
 
 /* ---------- auth ---------- */
 export async function status() {
   try {
     const { data } = await api("status");
-    mode = "server";
+    available = true;
     return { available: true, authed: !!data.authed, expiresInDays: data.expiresInDays };
   } catch (e) {
-    mode = "local";
+    available = false;
     return { available: false, authed: false };
   }
 }
 
 export async function login(password) {
   const { res, data } = await api("login", { method: "POST", body: { password } });
-  if (res.ok && data.ok) return { ok: true, expiresInDays: data.expiresInDays };
-  // 401 (wrong) or 429 (locked) carry throttle info
+  if (res.ok && data.ok) { available = true; return { ok: true, expiresInDays: data.expiresInDays }; }
   return { ok: false, status: res.status, error: data.error,
     remaining: data.remaining, locked: data.locked, retryAfter: data.retryAfter };
 }
@@ -54,41 +55,50 @@ export async function logout() {
   try { await api("logout", { method: "POST", body: {} }); } catch {}
 }
 
-/* ---------- load / reconcile ---------- */
+/* ---------- load ---------- */
 export async function loadAndReconcile() {
-  if (mode === "local") { setStatus("local"); return { mode: "local" }; }
   try {
     const { data } = await api("load");
-    if (!data.ok) { setStatus("error"); return { mode: "server", error: data.error }; }
-    const serverMap = data.data || {};
-    const serverEmpty = data.empty;
-    if (store.isEmpty() && !serverEmpty) {
-      store.hydrateFromServer(serverMap);      // fresh browser adopts the server copy
-    } else if (!serverEmpty) {
-      store.mergeServer(serverMap);            // fill any gaps; local wins on conflict
-    }
+    if (!data.ok) { setStatus("error"); return { error: data.error }; }
+    available = true;
+    store.hydrateFromServer(data.data || {});   // DB is authoritative → adopt it wholesale
     setStatus("online");
-    return { mode: "server", savedAt: data.savedAt };
+    return { savedAt: data.savedAt };
   } catch (e) {
-    if (e.local) { mode = "local"; setStatus("local"); return { mode: "local" }; }
+    available = false;
     setStatus("offline");
-    return { mode: "server", error: String(e) };
+    return { error: String(e) };
   }
 }
 
-/* ---------- save (queued deltas) ---------- */
+/* ---------- save (immediate, coalesced within one action) ---------- */
 export function queueChange(slug, change) {
-  if (mode === "local") return;
   if (!queues.has(slug)) queues.set(slug, new Map());
   queues.get(slug).set(change.id, change);
   setStatus("saving");
-  flushSoon();
+  scheduleFlush();
 }
 
-const flushSoon = debounce(() => { flush(); }, 900);
+let flushScheduled = false;
+function scheduleFlush() {
+  if (flushScheduled) return;
+  flushScheduled = true;
+  // microtask: lets one user action's several setCell writes batch into one
+  // request, then hits the DB right away — no perceptible delay.
+  queueMicrotask(() => { flushScheduled = false; flush(); });
+}
 
-export async function flush() {
-  if (mode === "local" || queues.size === 0) { if (mode !== "local") setStatus("online"); return; }
+// Serialize all flushes on a promise chain so an awaited flush() also waits for
+// any in-flight microtask write — a later load can never race ahead of a save.
+let chain = Promise.resolve();
+export function flush() {
+  const next = chain.then(doFlush, doFlush);
+  chain = next;
+  return next;
+}
+
+async function doFlush() {
+  if (queues.size === 0) { if (syncState === "saving") setStatus("online"); return; }
   const batches = [...queues.entries()].map(([slug, m]) => [slug, [...m.values()]]);
   queues.clear();
   try {
@@ -97,9 +107,10 @@ export async function flush() {
       if (res.status === 401) { setStatus("offline"); requeue(slug, changes); return; }
       if (!data.ok) { setStatus("error"); requeue(slug, changes); return; }
     }
+    available = true;
     setStatus("online");
   } catch (e) {
-    if (e.local) { mode = "local"; setStatus("local"); return; }
+    available = false;
     setStatus("offline");
     for (const [slug, changes] of batches) requeue(slug, changes);
   }
@@ -110,34 +121,30 @@ function requeue(slug, changes) {
   for (const c of changes) if (!m.has(c.id)) m.set(c.id, c);
 }
 
-/* ---------- whole-journey / per-roadmap full replace (import) ---------- */
+/* ---------- whole-journey / per-roadmap full replace (import / reset) ---------- */
 export async function saveFull(flatMap, { stashFirst = true, reason = "import" } = {}) {
-  if (mode === "local") return { ok: true, local: true };
   try {
     const { data } = await api("save", { method: "POST", body: { full: flatMap, stashFirst, reason } });
+    if (data.ok) { available = true; setStatus("online"); } else setStatus("error");
     return data;
-  } catch (e) { return { ok: false, error: String(e) }; }
+  } catch (e) { available = false; setStatus("offline"); return { ok: false, error: String(e) }; }
 }
 export async function saveRoadmapFull(slug, changes, { stashFirst = true, reason = "import" } = {}) {
-  if (mode === "local") return { ok: true, local: true };
   try {
     const { data } = await api("save", { method: "POST", body: { roadmap: slug, changes, stashFirst, reason } });
+    if (data.ok) { available = true; setStatus("online"); } else setStatus("error");
     return data;
-  } catch (e) { return { ok: false, error: String(e) }; }
+  } catch (e) { available = false; setStatus("offline"); return { ok: false, error: String(e) }; }
 }
-
-export const isServer = () => mode === "server";
-export const getMode = () => mode;
 
 /* Flush pending writes when the tab hides / unloads. */
 export function installExitFlush() {
-  const onHide = () => { flushSoon.flush ? flushSoon.flush() : flush(); };
   document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flush(); });
   window.addEventListener("pagehide", () => flush());
   window.addEventListener("beforeunload", () => { if (queues.size) navigatorBeacon(); });
 }
 function navigatorBeacon() {
-  // Best-effort: batch each roadmap's queue via sendBeacon.
+  // Best-effort last-ditch write on unload: batch each roadmap's queue via sendBeacon.
   for (const [slug, m] of queues.entries()) {
     const body = JSON.stringify({ roadmap: slug, changes: [...m.values()] });
     try { navigator.sendBeacon(`${ENDPOINT}?action=save`, new Blob([body], { type: "application/json" })); } catch {}
