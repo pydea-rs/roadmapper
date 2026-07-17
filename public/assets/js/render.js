@@ -9,7 +9,7 @@ import * as store from "./store.js";
 import { computeAll, currentDay } from "./stats.js";
 import { getRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
-import { checkIcon, toast, getSettings, inputModal } from "./ui.js";
+import { checkIcon, toast, getSettings, setSetting, inputModal } from "./ui.js";
 import {
   $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
   monthLabel, daysBetween, pct,
@@ -367,27 +367,150 @@ function meters(rm, S) {
  * ================================================================== */
 function milestoneRail(rm, S) {
   const wrap = el("div.milestones");
-  wrap.append(el("div.sec-title", { text: "Milestones" }));
-  const rail = el("div.ms-rail");
-  const today = todayStr();
-  for (const m of S.milestones) {
-    const week = rm.weeksById.get(m.week);
-    const isCurrent = week && week.start && daysBetween(week.start, today) >= 0 && daysBetween(week.start, today) <= 6;
-    const card = el("div.ms." + m.status + (isCurrent ? ".current" : ""));
-    card.append(el("div.ms-week", { text: (week && week.title) || m.week || "" }));
-    card.append(el("div.ms-title", { text: m.title }));
-    const st = el("div.ms-status", { text: statusText(m) });
-    card.append(st);
-    rail.append(card);
-  }
-  wrap.append(rail);
+  const mode = getSettings().milestoneView === "cards" ? "cards" : "slideshow";
+  const head = el("div.ms-sec-head");
+  head.append(el("div.sec-title", { text: "Milestones" }));
+  head.append(msModeToggle(rm, mode));
+  wrap.append(head);
+  wrap.append(mode === "cards" ? msCardsRail(rm, S) : msSlideshow(rm, S));
   return wrap;
+}
+
+/* Inline view switch — mirrors the Settings option, right on the section. */
+function msModeToggle(rm, mode) {
+  const seg = el("div.ms-mode");
+  const mk = (val, label, icon) => {
+    const b = el("button.ms-mode-btn" + (mode === val ? ".on" : ""),
+      { "aria-pressed": mode === val ? "true" : "false", title: label + " view", html: icon });
+    b.onclick = () => {
+      if (getSettings().milestoneView === val) return;
+      setSetting("milestoneView", val);
+      rerender();
+    };
+    return b;
+  };
+  seg.append(mk("slideshow", "Slideshow", slideIcon()));
+  seg.append(mk("cards", "Cards", gridIcon()));
+  return seg;
+}
+
+/* ---- Mode 2: the classic compact horizontal rail ---- */
+function msCardsRail(rm, S) {
+  const rail = el("div.ms-rail");
+  for (const m of S.milestones) rail.append(msCard(rm, m, false));
+  return rail;
+}
+
+/* ---- Mode 1 (default): a draggable, looping slideshow of larger cards ----
+ * Starts on the first not-yet-met milestone, but you can drag/step back to
+ * the very start and wrap around (circular). 2–3 cards are visible; the
+ * active one is lifted while its neighbours sit dimmed on either side. */
+function msSlideshow(rm, S) {
+  const box = el("div.ms-show");
+  const vp = el("div.ms-show-vp");
+  const track = el("div.ms-show-track");
+  const cards = S.milestones.map(m => msCard(rm, m, true));
+  for (const c of cards) track.append(c);
+  vp.append(track);
+  box.append(vp);
+
+  const n = cards.length;
+  let idx = S.milestones.findIndex(m => !m.met);
+  if (idx < 0) idx = Math.max(0, n - 1);          // all met → rest on the last
+  let animate = false;
+
+  const geom = () => {
+    const cw = cards[0] ? cards[0].offsetWidth : 0;       // layout width (scale-proof)
+    const gap = parseFloat(getComputedStyle(track).gap) || 0;
+    return { step: cw + gap, center: (vp.clientWidth - cw) / 2 };
+  };
+  const applyTx = (tx, withAnim) => {
+    track.style.transition = (withAnim && motionOK()) ? "transform .38s cubic-bezier(.22,.61,.36,1)" : "none";
+    track.style.transform = `translateX(${tx}px)`;
+  };
+  const update = () => {
+    const { step, center } = geom();
+    if (step > 0) applyTx(center - idx * step, animate);
+    cards.forEach((c, i) => c.classList.toggle("is-active", i === idx));
+    $$(".ms-dot", dots).forEach((d, i) => d.setAttribute("aria-current", i === idx ? "true" : "false"));
+    animate = true;                                 // first paint snaps, later moves glide
+  };
+  const go = i => { idx = (i % n + n) % n; update(); };   // wrap-around = "infinite"
+
+  // controls
+  const nav = el("div.ms-show-nav");
+  const prev = el("button.ms-nav-btn", { "aria-label": "Previous milestone", html: caretIcon() });
+  const next = el("button.ms-nav-btn", { "aria-label": "Next milestone", html: caretIcon() });
+  prev.classList.add("prev");
+  prev.onclick = () => go(idx - 1);
+  next.onclick = () => go(idx + 1);
+  const dots = el("div.ms-dots");
+  for (let i = 0; i < n; i++) {
+    const d = el("button.ms-dot", { "aria-label": `Milestone ${i + 1}` });
+    d.onclick = () => go(i);
+    dots.append(d);
+  }
+  nav.append(prev, dots, next);
+  box.append(nav);
+  if (n <= 1) nav.style.display = "none";
+
+  // pointer drag (mouse + touch), with a snap on release
+  let down = false, startX = 0, baseTx = 0, moved = 0, step0 = 0;
+  vp.addEventListener("pointerdown", e => {
+    down = true; moved = 0; startX = e.clientX;
+    const { step, center } = geom(); step0 = step;
+    baseTx = center - idx * step;
+    track.style.transition = "none";
+    vp.classList.add("dragging");
+    vp.setPointerCapture && vp.setPointerCapture(e.pointerId);
+  });
+  vp.addEventListener("pointermove", e => {
+    if (!down) return;
+    const dx = e.clientX - startX; moved = dx;
+    track.style.transform = `translateX(${baseTx + dx}px)`;
+  });
+  const endDrag = () => {
+    if (!down) return;
+    down = false; vp.classList.remove("dragging");
+    if (step0 > 0 && Math.abs(moved) > 4) go(idx - Math.round(moved / step0));
+    else update();
+  };
+  vp.addEventListener("pointerup", endDrag);
+  vp.addEventListener("pointercancel", endDrag);
+  // don't let a real drag also fire link/hover intents
+  vp.addEventListener("click", e => { if (Math.abs(moved) > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+  // position once laid out, and keep centred on resize (self-cleans after repaint)
+  requestAnimationFrame(update);
+  const onResize = () => { if (!track.isConnected) { window.removeEventListener("resize", onResize); return; } update(); };
+  window.addEventListener("resize", onResize);
+
+  return box;
+}
+
+/* One milestone card. `large` = the padded slideshow variant with a progress bar. */
+function msCard(rm, m, large) {
+  const today = todayStr();
+  const week = rm.weeksById.get(m.week);
+  const isCurrent = week && week.start && daysBetween(week.start, today) >= 0 && daysBetween(week.start, today) <= 6;
+  const card = el("div.ms." + m.status + (isCurrent ? ".current" : "") + (large ? ".lg" : ""));
+  card.append(el("div.ms-week", { text: (week && week.title) || m.week || "" }));
+  card.append(el("div.ms-title", { text: m.title }));
+  card.append(el("div.ms-status", { text: statusText(m) }));
+  if (large) {
+    const bar = el("div.ms-prog" + (m.met ? ".met" : ""));
+    bar.append(el("i", { style: `width:${Math.round((m.ratio || 0) * 100)}%` }));
+    card.append(bar);
+  }
+  return card;
 }
 function statusText(m) {
   if (m.met) return "Met";
   if (m.status === "missed") return `Missed (${m.progress}/${m.target})`;
   return `${m.progress}/${m.target}`;
 }
+const slideIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="1.5"/><path d="M4 9v6M20 9v6"/></svg>`;
+const gridIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="14" rx="1.5"/><rect x="14" y="5" width="7" height="14" rx="1.5"/></svg>`;
 
 /* ================================================================== *
  *  Timeline

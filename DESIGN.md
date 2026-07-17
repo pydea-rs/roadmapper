@@ -45,7 +45,7 @@ cohesive web app (no iframes, no per-roadmap pages).
 | Which tasks are done + when; which tasks were **moved** and to where | **SQLite only** (single source of truth) | **Dynamic** |
 | Notes, missed/re-do flags, stars, custom links, soft-item ticks | **SQLite only** | **Dynamic** |
 | Computed stats (actual/original %, streaks, pace, milestone status, projection) | Recomputed at runtime from structure + journey | **Derived** (never stored) |
-| UI settings (theme, accent, hue, density, motion) + view state (open cards, last roadmap, sidebar, FAB) | **localStorage only** | **Dynamic** |
+| UI settings (theme, accent, hue, density, motion, milestones view) + view state (open cards, last roadmap, sidebar, FAB) | **localStorage only** | **Dynamic** |
 | Auth session, login throttle | SQLite + PHP session files | **Dynamic** |
 
 **Key principle:** the database stores *only the journey* (mutable state) — ticks, moves, notes,
@@ -195,7 +195,11 @@ responsiveness." Direction:
   projection, on-track delta. Any charts follow the **dataviz** skill.
 - **Objective meters**: one compact meter per objective; **primary** objectives feed the headline,
   **secondary** objectives shown on a clearly separate, muted meter (§12).
-- **Milestone rail**: current/next weekly milestone + status; full list expandable.
+- **Milestones**: two selectable presentations (default set in Settings, plus an inline toggle on the
+  section head). **Slideshow** (default) — larger cards, 2–3 visible, opening on the first not-yet-met
+  milestone; step with prev/next, dots, or drag, and it loops (wrap-around) so you can reach the start.
+  **Cards** — the classic compact horizontal rail. Each milestone shows its week, target and met/at-risk/
+  missed status; slideshow cards add a progress bar.
 - **Timeline**: months (if long) → week group headers (with the week's dual progress + milestone) →
   **day cards**. Today's card highlighted and auto-opened; past days dim; future closed by default.
   Each card header shows its **actual** and **original** figures, done/total, est-time.
@@ -234,7 +238,7 @@ responsiveness." Direction:
 ### 5.6 Settings (floating button → right drawer)
 - A **floating action button** pinned right (draggable vertically if feasible; static fallback ok).
   Opens a **right drawer**:
-  - Theme (auto/light/dark), accent, density, reduce-motion.
+  - Theme (auto/light/dark), accent, density, reduce-motion, milestones view (slideshow/cards).
   - **Whole-journey Export / Import** (all roadmaps), with a custom overwrite-confirm modal.
   - **Reset**: per-roadmap and reset-everything, each behind an explicit confirm modal.
   - **Sync status**: last saved, online/offline, "sync now."

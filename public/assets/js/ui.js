@@ -248,7 +248,7 @@ const SETTINGS_KEY = "roadmaps_settings_v1";
 const ACCENTS = { violet: 265, indigo: 245, blue: 215, cyan: 190, teal: 172, green: 145,
   amber: 35, orange: 22, rose: 340 };
 let settings = { theme: "auto", accent: "violet", accentHue: 265, roadmapAccent: "on",
-  density: "cozy", motion: "on", sidebar: "expanded" };
+  density: "cozy", motion: "on", sidebar: "expanded", milestoneView: "slideshow" };
 
 export function loadSettings() {
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}")); } catch {}
@@ -351,6 +351,9 @@ function buildDrawerBody() {
     v => setSetting("density", v))));
   appear.append(settingRow("Motion", "Animations & transitions", toggle(settings.motion === "on",
     on => setSetting("motion", on ? "on" : "off"))));
+  appear.append(settingRow("Milestones", "How the milestones section is shown",
+    segmented(["slideshow", "cards"], settings.milestoneView === "cards" ? "cards" : "slideshow",
+      v => { setSetting("milestoneView", v); drawerHooks.repaint && drawerHooks.repaint(); })));
   body.append(appear);
 
   body.append(el("hr.hr"));
