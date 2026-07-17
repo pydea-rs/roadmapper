@@ -21,11 +21,19 @@ export function setRenderHooks(h) { hooks = h; }
 let cur = null;                        // { rm, mount }
 let lastToggled = null;
 let celebrateDay = null;               // dayId whose actual just hit 100% (fire confetti)
+let revealedDays = new Set();          // day ids already slid into view (this roadmap session)
+let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
 
 /* Is animation allowed right now? (respects the in-app + OS motion prefs) */
 function motionOK() {
   if (document.documentElement.getAttribute("data-motion") === "off") return false;
   return !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+/* Scroll-reveal is a separate, independently-toggleable animation: it needs
+ * motion on AND its own switch on AND IntersectionObserver support (progressive
+ * enhancement — without it, cards just render in place). */
+function dayRevealOK() {
+  return motionOK() && getSettings().dayReveal !== "off" && typeof IntersectionObserver !== "undefined";
 }
 
 /* open-card state, persisted per roadmap */
@@ -39,6 +47,7 @@ function saveOpen(slug, set) { try { localStorage.setItem(openKey(slug), JSON.st
 
 export function renderRoadmap(rm, mount) {
   cur = { rm, mount };
+  revealedDays = new Set();              // fresh entrance → cards may reveal again as you scroll
   let open = loadOpen(rm.slug);
   if (!open) { open = new Set(); const t = rm.days.find(d => d.date === todayStr());
     if (t) open.add(t.id); else { const up = rm.days.find(d => d.date >= todayStr()); if (up) open.add(up.id); } }
@@ -52,6 +61,55 @@ function rerender() {
 }
 function $$open() {
   return [...document.querySelectorAll(".day.open")].map(d => d.dataset.day);
+}
+
+/* ---- scroll-reveal for day cards --------------------------------------
+ * Day cards slide in (alternating from the left / right) as they scroll into
+ * the timeline. Correct-by-construction:
+ *  - Cheap: one IntersectionObserver (root = the #main scroll area), no scroll
+ *    handler, no per-frame work. Cards are unobserved the moment they reveal.
+ *  - Repaint-safe: a `revealedDays` set survives tick rerenders, so already-seen
+ *    cards snap straight to their final state — the visible list never re-animates
+ *    when you tick a task. Only not-yet-seen cards below the fold are observed.
+ *  - Motion-safe: the hidden start-state is applied in JS, never in blanket CSS,
+ *    so with reveal (or motion) off, cards are simply never hidden.
+ *  - Leak-free: the previous observer is disconnected on every paint; `will-change`
+ *    is set only while a card is actually animating, then cleared. */
+function setupDayReveal(mount) {
+  if (dayRevealIO) { dayRevealIO.disconnect(); dayRevealIO = null; }
+  if (!dayRevealOK()) return;                       // off → cards already render in place
+  const root = document.getElementById("main");
+  const pending = [];
+  mount.querySelectorAll(".day").forEach((card, i) => {
+    if (revealedDays.has(card.dataset.day)) return; // already shown this session → leave visible
+    card.style.setProperty("--rv-x", (i % 2 ? 34 : -34) + "px");   // alternate right / left
+    card.classList.add("rv-init");
+    pending.push(card);
+  });
+  if (!pending.length) return;
+  dayRevealIO = new IntersectionObserver((entries, obs) => {
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      obs.unobserve(e.target);
+      revealedDays.add(e.target.dataset.day);
+      revealCard(e.target);
+    }
+  }, { root, rootMargin: "0px 0px -8% 0px", threshold: 0.04 });
+  for (const c of pending) dayRevealIO.observe(c);
+}
+function revealCard(card) {
+  card.style.willChange = "opacity, transform";     // promote only while animating
+  requestAnimationFrame(() => {
+    card.classList.add("rv-show");
+    const done = e => {
+      if (e && e.propertyName !== "transform") return;   // wait for the longer track
+      card.classList.remove("rv-init", "rv-show");
+      card.style.removeProperty("--rv-x");
+      card.style.willChange = "";                   // drop the layer → no lingering cost
+      card.removeEventListener("transitionend", done);
+    };
+    card.addEventListener("transitionend", done);
+  });
 }
 
 /* ================================================================== *
@@ -183,6 +241,7 @@ function paint(rm, mount, open, animateIn = false) {
 
   saveOpen(rm.slug, open);
   if (main) main.scrollTop = scrollTop;
+  setupDayReveal(mount);                 // wire scroll-in reveals (after scroll is restored)
 
   // just-ticked checkbox: pop it (and a tiny sparkle when it became done)
   if (lastToggled) {

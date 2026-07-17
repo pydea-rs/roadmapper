@@ -45,7 +45,7 @@ cohesive web app (no iframes, no per-roadmap pages).
 | Which tasks are done + when; which tasks were **moved** and to where | **SQLite only** (single source of truth) | **Dynamic** |
 | Notes, missed/re-do flags, stars, custom links, soft-item ticks | **SQLite only** | **Dynamic** |
 | Computed stats (actual/original %, streaks, pace, milestone status, projection) | Recomputed at runtime from structure + journey | **Derived** (never stored) |
-| UI settings (theme, accent, hue, density, motion, milestones view) + view state (open cards, last roadmap, sidebar, FAB) | **localStorage only** | **Dynamic** |
+| UI settings (theme, accent, hue, density, motion, card-reveal, milestones view) + view state (open cards, last roadmap, sidebar, FAB) | **localStorage only** | **Dynamic** |
 | Auth session, login throttle | SQLite + PHP session files | **Dynamic** |
 
 **Key principle:** the database stores *only the journey* (mutable state) — ticks, moves, notes,
@@ -230,6 +230,12 @@ responsiveness." Direction:
 - **Toasts** for lightweight feedback.
 - **Motion**: card expand, bar fill, drawer slide, toast rise, checkbox pop, move animation — all
   respecting `prefers-reduced-motion` and a settings toggle.
+- **Scroll-reveal**: day cards slide in (alternating left / right) as they scroll into the timeline,
+  driven by an `IntersectionObserver` on the `#main` scroll area (no scroll handler; cards are
+  unobserved once shown). Repaint-safe — a per-session "revealed" set means ticking a task never
+  re-animates already-seen cards; only compositor properties (transform/opacity) animate. It has its
+  **own** on/off switch, independent of Motion: turning Motion off disables it too, but turning only the
+  reveal off leaves every other animation intact.
 - **Responsive**: single-column on mobile; sidebar slide-over; hero/tiles reflow; big touch targets; no
   horizontal page scroll ever; the move gesture degrades to the picker on touch.
 - **Theme**: light/dark/auto via `prefers-color-scheme` + manual override; a primary accent, optionally
@@ -238,7 +244,7 @@ responsiveness." Direction:
 ### 5.6 Settings (floating button → right drawer)
 - A **floating action button** pinned right (draggable vertically if feasible; static fallback ok).
   Opens a **right drawer**:
-  - Theme (auto/light/dark), accent, density, reduce-motion, milestones view (slideshow/cards).
+  - Theme (auto/light/dark), accent, density, reduce-motion, card-reveal-on-scroll, milestones view (slideshow/cards).
   - **Whole-journey Export / Import** (all roadmaps), with a custom overwrite-confirm modal.
   - **Reset**: per-roadmap and reset-everything, each behind an explicit confirm modal.
   - **Sync status**: last saved, online/offline, "sync now."
