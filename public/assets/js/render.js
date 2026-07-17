@@ -405,6 +405,15 @@ function dayCard(rm, S, day, open) {
   const inner = el("div.inner");
   const pad = el("div.pad");
 
+  // planner's note — authored context for the day (why it's light/heavy, a
+  // continuation, an overlap warning, "reorder freely", etc). Plain text.
+  if (day.note) {
+    const n = el("div.day-note");
+    n.append(el("span.ico", { text: "🗒️" }));
+    n.append(el("span", { text: day.note }));
+    pad.append(n);
+  }
+
   // tasks (required first, grouped, then bonus track, then soft)
   const required = day.tasks.filter(t => !t.optional);
   const bonus = day.tasks.filter(t => t.optional);

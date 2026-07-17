@@ -170,6 +170,13 @@
 .day-body > .inner { overflow: hidden; }
 .day-body .pad { padding: 0 var(--s4) var(--s4); display: flex; flex-direction: column; gap: var(--s2); }
 
+/* planner's note — authored context for a day (muted, distinct from task rows) */
+.day-note { display: flex; gap: var(--s2); align-items: flex-start; font-size: var(--t-sm);
+  line-height: 1.5; color: var(--text-2); background: var(--surface-2);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  padding: var(--s2) var(--s3); border-radius: 0 var(--r2) var(--r2) 0; }
+.day-note .ico { flex: none; opacity: .85; }
+
 /* ------------------------------------------------------------------ *
  *  Task rows
  * ------------------------------------------------------------------ */
