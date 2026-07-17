@@ -61,7 +61,7 @@ registerRoadmap({
       theme: "Resume Crafting Interpreters in the Java tree-walker.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch9 Control Flow</b> (jlox): <code>if</code>, logical ops, <code>while</code>, <code>for</code> desugaring (pp 133–146).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/control-flow.html" target="_blank" rel="noopener">Ch9 Control Flow</a></b> (jlox): <code>if</code>, logical ops, <code>while</code>, <code>for</code> desugaring (pp 133–146).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement it in jlox; get <code>for</code>-as-sugar working end to end.` },
         { id: "t3", obj: CI, cat: "challenge", est: 45,
@@ -79,7 +79,7 @@ registerRoadmap({
         { id: "t1", obj: GO, cat: "watch", est: 60, group: "g1",
           label: `Watch <b>videos 27–36</b> — “What Are Templates?” → “Template Exercises”: SSR, XSS, contextual encoding, home/contact/FAQ via templates.` },
         { id: "t2", obj: GO, cat: "review", est: 30, group: "g1",
-          label: `Review <b>Calhoun Ch4 Templates</b> (PDF pp 93–132) alongside the videos.` },
+          label: `Review <b><a href="https://www.usegolang.com/" target="_blank" rel="noopener">Calhoun</a> Ch4 Templates</b> (PDF pp 93–132) alongside the videos.` },
         { id: "t3", obj: GO, cat: "exercise", est: 30, optional: true,
           label: `<b>Bonus:</b> do the video's Template Exercises (v36).` },
       ],
@@ -92,7 +92,7 @@ registerRoadmap({
       theme: "First-class functions, closures, return values.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 50, group: "g1",
-          label: `CI — <b>Ch10 Functions</b> (jlox): function objects, call semantics, native functions, <code>return</code>, closures (pp 147–167).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/functions.html" target="_blank" rel="noopener">Ch10 Functions</a></b> (jlox): function objects, call semantics, native functions, <code>return</code>, closures (pp 147–167).` },
         { id: "t2", obj: CI, cat: "code", est: 55, group: "g1",
           label: `Implement <code>LoxFunction</code>, environments-as-closures, and <code>clock()</code> native.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -106,7 +106,7 @@ registerRoadmap({
       theme: "The static resolution pass — the subtle one.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch11 Resolving and Binding</b> (jlox): the resolver pass, scope depths, closing the closure bug (pp 168–189).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/resolving-and-binding.html" target="_blank" rel="noopener">Ch11 Resolving and Binding</a></b> (jlox): the resolver pass, scope depths, closing the closure bug (pp 168–189).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement the <code>Resolver</code> and wire it before interpretation.` },
         { id: "t3", obj: CI, cat: "challenge", est: 45,
@@ -134,7 +134,7 @@ registerRoadmap({
       theme: "The 27-page chapter, split across two days. Today: declarations → methods.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch12 Classes, part 1</b> (jlox): class declarations, instances, properties, methods (pp 190–205).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/classes.html" target="_blank" rel="noopener">Ch12 Classes, part 1</a></b> (jlox): class declarations, instances, properties, methods (pp 190–205).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement <code>LoxClass</code>/<code>LoxInstance</code>, property get/set, and method binding.` },
       ],
@@ -144,7 +144,7 @@ registerRoadmap({
       theme: "Finish Classes: `this`, initializers, and all three challenges.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 25, group: "g1",
-          label: `CI — <b>Ch12 Classes, part 2</b> (jlox): <code>this</code> and constructors/initializers (pp 206–216).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/classes.html" target="_blank" rel="noopener">Ch12 Classes, part 2</a></b> (jlox): <code>this</code> and constructors/initializers (pp 206–216).` },
         { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
           label: `Implement <code>this</code> binding and <code>init()</code> initializers; a class now constructs and self-references correctly.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -160,7 +160,7 @@ registerRoadmap({
       theme: "Biweekly mandatory read; SnippetBox skeleton.",
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 60,
-          label: `<b>Mandatory read — <i>Let's Go</i> pp 11–85</b> (Ch2 Foundations + Ch3 config/logging/DI/error handling): build the runnable SnippetBox skeleton.` },
+          label: `<b>Mandatory read — <a href="https://lets-go.alexedwards.net/" target="_blank" rel="noopener"><i>Let's Go</i></a> pp 11–85</b> (Ch2 Foundations + Ch3 config/logging/DI/error handling): build the runnable SnippetBox skeleton.` },
       ],
       soft: [
         { id: "s1", type: "tryout", label: `Tryout: type out the SnippetBox skeleton yourself rather than copy-paste — the muscle memory for <code>http.Handler</code> + routing is worth it.` },
@@ -175,7 +175,7 @@ registerRoadmap({
       theme: "Superclasses, super calls — finishes the tree-walker.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch13 Inheritance</b> (jlox): superclasses, method inheritance, <code>super</code> (pp 217–232).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/inheritance.html" target="_blank" rel="noopener">Ch13 Inheritance</a></b> (jlox): superclasses, method inheritance, <code>super</code> (pp 217–232).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement inheritance + <code>super</code>. 🎉 <b>jlox is complete</b> — a full tree-walk Lox.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -200,7 +200,7 @@ registerRoadmap({
       theme: "clox begins — the C bytecode VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 50, group: "g1",
-          label: `CI — <b>Ch14 Chunks of Bytecode</b> (clox): dynamic arrays, op codes, constants, line info, disassembler (pp 233–256).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/chunks-of-bytecode.html" target="_blank" rel="noopener">Ch14 Chunks of Bytecode</a></b> (clox): dynamic arrays, op codes, constants, line info, disassembler (pp 233–256).` },
         { id: "t2", obj: CI, cat: "code", est: 55, group: "g1",
           label: `Build <code>chunk.c</code>, the <code>OpCode</code> set, constant pool, and disassembler in C.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -217,7 +217,7 @@ registerRoadmap({
       theme: "The interpreter loop, the value stack.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch15 A Virtual Machine</b> (clox): the <code>run()</code> loop, the value stack, arithmetic (pp 257–276).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/a-virtual-machine.html" target="_blank" rel="noopener">Ch15 A Virtual Machine</a></b> (clox): the <code>run()</code> loop, the value stack, arithmetic (pp 257–276).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement the VM dispatch loop and stack; get arithmetic executing.` },
         { id: "t3", obj: CI, cat: "challenge", est: 45,
@@ -243,7 +243,7 @@ registerRoadmap({
       theme: "The clox scanner — no separate token list.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch16 Scanning on Demand</b> (clox): the pull-based scanner, tokens without heap allocation (pp 277–296).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/scanning-on-demand.html" target="_blank" rel="noopener">Ch16 Scanning on Demand</a></b> (clox): the pull-based scanner, tokens without heap allocation (pp 277–296).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement <code>scanner.c</code>; the compiler will pull tokens one at a time.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -260,7 +260,7 @@ registerRoadmap({
       theme: "The dense idea — the Pratt parser — split over two days. Today: the core.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch17 Compiling Expressions, part 1</b> (clox): single-pass compilation, the <b>Pratt parser</b> — the precedence table and how prefix/infix rules dispatch (pp 297–310).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">Ch17 Compiling Expressions, part 1</a></b> (clox): single-pass compilation, the <b>Pratt parser</b> — the precedence table and how prefix/infix rules dispatch (pp 297–310).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement the core of the Pratt <code>compiler.c</code> — the precedence-climbing loop and the parse-rule table.` },
       ],
@@ -274,7 +274,7 @@ registerRoadmap({
       theme: "Finish the compiler: the remaining rules, then all three challenges.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 20, group: "g1",
-          label: `CI — <b>Ch17, part 2</b> (clox): unary/grouping/number/literal parse fns and how the table wires them (pp 311–317).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">Ch17, part 2</a></b> (clox): unary/grouping/number/literal parse fns and how the table wires them (pp 311–317).` },
         { id: "t2", obj: CI, cat: "code", est: 25, group: "g1",
           label: `Finish the prefix/infix rule set and emit bytecode for full expressions; run them through the VM.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -287,7 +287,7 @@ registerRoadmap({
       theme: "A tagged union for Lox values.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 35, group: "g1",
-          label: `CI — <b>Ch18 Types of Values</b> (clox): the tagged-union <code>Value</code>, booleans, nil, comparisons (pp 318–331).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/types-of-values.html" target="_blank" rel="noopener">Ch18 Types of Values</a></b> (clox): the tagged-union <code>Value</code>, booleans, nil, comparisons (pp 318–331).` },
         { id: "t2", obj: CI, cat: "code", est: 40, group: "g1",
           label: `Implement the <code>Value</code> union and equality/comparison ops.` },
         { id: "t3", obj: CI, cat: "challenge", est: 30,
@@ -299,7 +299,7 @@ registerRoadmap({
       theme: "Heap-allocated objects enter the VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch19 Strings</b> (clox): the <code>Obj</code> heap type, string objects, concatenation, the object linked-list (pp 332–348).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/strings.html" target="_blank" rel="noopener">Ch19 Strings</a></b> (clox): the <code>Obj</code> heap type, string objects, concatenation, the object linked-list (pp 332–348).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement <code>ObjString</code> and string concatenation; track objects for later GC.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -339,7 +339,7 @@ registerRoadmap({
       theme: "Build a hash table from scratch in C.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch20 Hash Tables</b> (clox): open addressing, FNV-1a hashing, tombstones, string interning setup (pp 349–372).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/hash-tables.html" target="_blank" rel="noopener">Ch20 Hash Tables</a></b> (clox): open addressing, FNV-1a hashing, tombstones, string interning setup (pp 349–372).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement <code>table.c</code> with linear probing and tombstones.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -353,7 +353,7 @@ registerRoadmap({
       theme: "Global variable statements and the string-intern table.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch21 Global Variables</b> (clox): global declarations, the globals table, string interning (pp 373–390).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/global-variables.html" target="_blank" rel="noopener">Ch21 Global Variables</a></b> (clox): global declarations, the globals table, string interning (pp 373–390).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement globals + interning; wire the compiler to emit define/get/set.` },
         { id: "t3", obj: CI, cat: "challenge", est: 30,
@@ -376,7 +376,7 @@ registerRoadmap({
       theme: "Locals on the stack, scope resolution at compile time.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch22 Local Variables</b> (clox): compile-time scope tracking, stack slots, no runtime lookup (pp 391–404).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/local-variables.html" target="_blank" rel="noopener">Ch22 Local Variables</a></b> (clox): compile-time scope tracking, stack slots, no runtime lookup (pp 391–404).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement local slots and scope depth in the compiler.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -390,7 +390,7 @@ registerRoadmap({
       theme: "Control flow via jump bytecodes + backpatching.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch23 Jumping Back and Forth</b> (clox): <code>if</code>/<code>while</code>/<code>for</code> via jumps, backpatching, logical operators (pp 405–424).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/jumping-back-and-forth.html" target="_blank" rel="noopener">Ch23 Jumping Back and Forth</a></b> (clox): <code>if</code>/<code>while</code>/<code>for</code> via jumps, backpatching, logical operators (pp 405–424).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement jump emission + backpatching; get loops running on the VM.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -421,7 +421,7 @@ registerRoadmap({
       theme: "The 32-page chapter, split over two days. Today: function objects + call frames.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch24 Calls and Functions, part 1</b> (clox): function objects, compiling a function body, and the <code>CallFrame</code> model (pp 425–445).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/calls-and-functions.html" target="_blank" rel="noopener">Ch24 Calls and Functions, part 1</a></b> (clox): function objects, compiling a function body, and the <code>CallFrame</code> model (pp 425–445).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement <code>ObjFunction</code>, the compiler's function scaffolding, and the <code>CallFrame</code> array on the VM.` },
       ],
@@ -431,7 +431,7 @@ registerRoadmap({
       theme: "Finish calls: arguments, native functions, stack overflow, then all four challenges.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
-          label: `CI — <b>Ch24, part 2</b> (clox): calling functions, argument passing, native functions, and stack-overflow detection (pp 446–456).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/calls-and-functions.html" target="_blank" rel="noopener">Ch24, part 2</a></b> (clox): calling functions, argument passing, native functions, and stack-overflow detection (pp 446–456).` },
         { id: "t2", obj: CI, cat: "code", est: 35, group: "g1",
           label: `Wire up <code>OP_CALL</code>, argument checking, a native (<code>clock()</code>), and the call-depth guard.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -446,7 +446,7 @@ registerRoadmap({
       theme: "The longest clox chapter (35pp), split over two days. Today: upvalues + capture.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch25 Closures, part 1</b> (clox): <code>ObjClosure</code>, upvalues, and capturing local variables (pp 457–478).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">Ch25 Closures, part 1</a></b> (clox): <code>ObjClosure</code>, upvalues, and capturing local variables (pp 457–478).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement <code>ObjClosure</code> and open upvalues; get a closure that reads a captured local while it's still on the stack.` },
       ],
@@ -460,7 +460,7 @@ registerRoadmap({
       theme: "The subtle half: closing upvalues when a local leaves the stack.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
-          label: `CI — <b>Ch25 Closures, part 2</b> (clox): closing upvalues when the variable pops off the stack, the open-upvalue list (pp 479–491).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">Ch25 Closures, part 2</a></b> (clox): closing upvalues when the variable pops off the stack, the open-upvalue list (pp 479–491).` },
         { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
           label: `Implement <code>OP_CLOSE_UPVALUE</code> and the open-upvalue linked list; a returned closure now outlives its frame correctly.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -473,7 +473,7 @@ registerRoadmap({
       theme: "The toughest chapter, split in two. Today: the mark phase and roots.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch26 GC, part 1</b> (clox): reachability, the tricolor abstraction, marking roots and tracing references (pp 492–508).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/garbage-collection.html" target="_blank" rel="noopener">Ch26 GC, part 1</a></b> (clox): reachability, the tricolor abstraction, marking roots and tracing references (pp 492–508).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement <code>markRoots</code> + the mark/tracing phase and the gray stack; verify live objects go black.` },
       ],
@@ -487,7 +487,7 @@ registerRoadmap({
       theme: "The dangerous half: sweep, when to collect, and the allocation-time bugs.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
-          label: `CI — <b>Ch26 GC, part 2</b> (clox): the sweep phase, weak references (the string table), and the collection-frequency heuristic (pp 509–518).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/garbage-collection.html" target="_blank" rel="noopener">Ch26 GC, part 2</a></b> (clox): the sweep phase, weak references (the string table), and the collection-frequency heuristic (pp 509–518).` },
         { id: "t2", obj: CI, cat: "code", est: 35, group: "g1",
           label: `Implement sweep + the grow-heap heuristic; chase down the "collect during allocation" bugs that make GC infamous.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -500,7 +500,7 @@ registerRoadmap({
       theme: "Lightest clox chapter — classes and fields.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 35, group: "g1",
-          label: `CI — <b>Ch27 Classes and Instances</b> (clox): class objects, instances, fields (pp 519–531).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/classes-and-instances.html" target="_blank" rel="noopener">Ch27 Classes and Instances</a></b> (clox): class objects, instances, fields (pp 519–531).` },
         { id: "t2", obj: CI, cat: "code", est: 40, group: "g1",
           label: `Implement <code>ObjClass</code>/<code>ObjInstance</code> and property get/set.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
@@ -514,7 +514,7 @@ registerRoadmap({
       theme: "26-page chapter, split in two. Today: methods and bound methods.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch28 Methods, part 1</b> (clox): method declarations, <code>ObjBoundMethod</code>, and <code>this</code> on the VM (pp 532–547).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/methods-and-initializers.html" target="_blank" rel="noopener">Ch28 Methods, part 1</a></b> (clox): method declarations, <code>ObjBoundMethod</code>, and <code>this</code> on the VM (pp 532–547).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement methods and bound methods; calling <code>instance.method()</code> now binds <code>this</code> correctly.` },
       ],
@@ -524,7 +524,7 @@ registerRoadmap({
       theme: "Finish: initializers and the OP_INVOKE fast path, then all three challenges.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 25, group: "g1",
-          label: `CI — <b>Ch28, part 2</b> (clox): initializers, and the <code>OP_INVOKE</code>/<code>OP_SUPER_INVOKE</code> fast path that skips the bound-method allocation (pp 548–557).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/methods-and-initializers.html" target="_blank" rel="noopener">Ch28, part 2</a></b> (clox): initializers, and the <code>OP_INVOKE</code>/<code>OP_SUPER_INVOKE</code> fast path that skips the bound-method allocation (pp 548–557).` },
         { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
           label: `Implement <code>init()</code> and the invoke optimization; benchmark a method-heavy loop before/after.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -550,7 +550,7 @@ registerRoadmap({
       theme: "Inheritance and super calls in the VM.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
-          label: `CI — <b>Ch29 Superclasses</b> (clox): inheritance, method copy-down, <code>super</code> invocation (pp 558–573).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/superclasses.html" target="_blank" rel="noopener">Ch29 Superclasses</a></b> (clox): inheritance, method copy-down, <code>super</code> invocation (pp 558–573).` },
         { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
           label: `Implement inheritance + <code>super</code> on the VM.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
@@ -562,7 +562,7 @@ registerRoadmap({
       theme: "Final chapter — hashing & NaN boxing. Crafting Interpreters complete.",
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
-          label: `CI — <b>Ch30 Optimization</b> (clox): faster hashing, NaN boxing, benchmarking (pp 574–597).` },
+          label: `CI — <b><a href="https://craftinginterpreters.com/optimization.html" target="_blank" rel="noopener">Ch30 Optimization</a></b> (clox): faster hashing, NaN boxing, benchmarking (pp 574–597).` },
         { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
           label: `Implement NaN boxing (guarded by a flag) and benchmark before/after. 🎉 <b>Crafting Interpreters finished — both interpreters, all 71 challenges.</b>` },
         { id: "t3", obj: CI, cat: "challenge", est: 30,
@@ -580,7 +580,7 @@ registerRoadmap({
       theme: "Phase B: the Go interpreter book activates.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 40, group: "g1",
-          label: `<i>Writing an Interpreter in Go</i> — <b>Ch1 Lexing</b>: tokens, the lexer, extending the token set, REPL start (pp 11–29).` },
+          label: `<a href="https://interpreterbook.com/" target="_blank" rel="noopener"><i>Writing an Interpreter in Go</i></a> — <b>Ch1 Lexing</b>: tokens, the lexer, extending the token set, REPL start (pp 11–29).` },
         { id: "t2", obj: GX, cat: "code", est: 45, group: "g1",
           label: `Build Monkey's lexer + a REPL in Go.` },
       ],
@@ -750,7 +750,7 @@ registerRoadmap({
       theme: "Ball's sequel turns Monkey into a bytecode VM — clox, reborn in Go.",
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 50, group: "g1",
-          label: `<i>Writing a Compiler in Go</i> — read the intro + compiler/VM basics: how Monkey's AST becomes bytecode, the stack machine, and how it mirrors what you built in clox.` },
+          label: `<a href="https://compilerbook.com/" target="_blank" rel="noopener"><i>Writing a Compiler in Go</i></a> — read the intro + compiler/VM basics: how Monkey's AST becomes bytecode, the stack machine, and how it mirrors what you built in clox.` },
         { id: "t2", obj: GX, cat: "code", est: 55, group: "g1",
           label: `Build the first slice: compile integer + arithmetic expressions to bytecode and execute them on a tiny Monkey VM. You now have <b>two</b> bytecode VMs — one in C (clox), one in Go.` },
       ],
@@ -848,13 +848,13 @@ registerRoadmap({
     { title: "The three implementations at a glance", items: [
       `<b>jlox</b> (CI Ch4–13) — Java, tree-walking, recursive-descent parser, resolver pass.`,
       `<b>clox</b> (CI Ch14–30) — C, bytecode VM, Pratt compiler, mark-sweep GC.`,
-      `<b>Monkey</b> (Writing an Interpreter in Go) — Go, tree-walking, Pratt parser; secondary.`,
+      `<b>Monkey</b> (<a href="https://interpreterbook.com/" target="_blank" rel="noopener">Writing an Interpreter in Go</a>) — Go, tree-walking, Pratt parser; secondary.`,
     ] },
     { title: "Companions & see-also", items: [
       `<a href="https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/" target="_blank" rel="noopener">Pratt Parsers</a> (read at CI Ch17 / Monkey Ch2).`,
       `<a href="https://arxiv.org/abs/1611.00467" target="_blank" rel="noopener">Stack vs register VMs</a> · <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection" target="_blank" rel="noopener">Tracing GC</a>.`,
-      `<i>Let's Go</i> (Edwards) — the idiomatic Go web companion; SnippetBox arc + guided exercises.`,
-      `Next: Ball's <i>Writing a Compiler in Go</i> — turn Monkey into a bytecode VM.`,
+      `<a href="https://lets-go.alexedwards.net/" target="_blank" rel="noopener"><i>Let's Go</i></a> (Edwards) — the idiomatic Go web companion; SnippetBox arc + guided exercises.`,
+      `Next: Ball's <a href="https://compilerbook.com/" target="_blank" rel="noopener"><i>Writing a Compiler in Go</i></a> — turn Monkey into a bytecode VM.`,
     ] },
   ],
 });

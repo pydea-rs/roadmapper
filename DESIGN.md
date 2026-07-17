@@ -452,7 +452,7 @@ Rationale for explicit dates over "start + offset": it makes off-day variation, 
 milestone-by-calendar-week trivial and unambiguous, and matches the proven reference model. Day **ids**
 (`d01…`) stay stable regardless of date, so moves and progress never depend on dates.
 
-Start anchor: **2026-07-16 (Thursday)** — the day the journey begins — since the reading positions are "as of now." Each roadmap's week is a rolling 7-day block anchored to this start (so no active day ever lands on a Sunday), preserving 4–5 active days/week for Roadmap 1 and 3–4 for Roadmap 2.
+Start anchors (current, after the 2026-07-17 shift): **Roadmap 1 begins Sat 2026-07-18**, **Roadmap 2 begins Sun 2026-07-19** — the reading positions are "as of now." Each roadmap's week is a rolling 7-day block anchored to its start, preserving 4–5 active days/week for Roadmap 1 and 3–4 for Roadmap 2. There is **no weekday exclusion** — the owner is fine working any day of the week, so active days may land on weekends/holidays. (Earlier drafts anchored at 2026-07-16 Thu with a "no active day on a Sunday" rule; that constraint has been dropped.)
 
 ### 9.3 Overlaps (both roadmaps active on the same date)
 Overlap is allowed and expected. On an overlap date, the day is split across two roadmaps → **less time

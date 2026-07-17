@@ -8,7 +8,7 @@ import "../../roadmaps/_index.js";
 import { getRoadmaps, getRoadmap, validateAll } from "./registry.js";
 import * as store from "./store.js";
 import * as sync from "./sync.js";
-import { renderRoadmap, setRenderHooks, rerender } from "./render.js";
+import { renderRoadmap, renderToday, setRenderHooks, rerender } from "./render.js";
 import { sidebarStats } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
@@ -86,6 +86,16 @@ function route() {
   const roadmaps = getRoadmaps();
   const hash = location.hash.replace(/^#\/?/, "");
   const [slug, sub] = hash.split("/");
+
+  // Global cross-roadmap "Today" digest (#/today).
+  if (slug === "today" && !sub) {
+    activeSlug = null;
+    renderToday($("#view"));
+    updateSidebar();
+    closeMobileSidebar();
+    return;
+  }
+
   let rm = slug && getRoadmap(slug);
   if (!rm) {
     const last = localStorage.getItem("roadmaps_last") || (roadmaps[0] && roadmaps[0].slug);
@@ -134,12 +144,21 @@ const syncLabel = s => ({ online: "Saved", saving: "Saving…", offline: "Offlin
  * ================================================================== */
 function wireChrome() {
   const app = $("#app");
+  const collapseBtn = $("#sb-collapse");
+  // keep the button's tooltip + a11y label in sync with the current state
+  const syncCollapseBtn = () => {
+    const collapsed = app.dataset.sidebar === "collapsed";
+    collapseBtn.title = collapsed ? "Expand" : "Collapse";
+    collapseBtn.setAttribute("aria-label", collapsed ? "Expand sidebar" : "Collapse sidebar");
+  };
   // restore collapse state
   if (localStorage.getItem("roadmaps_sidebar") === "collapsed") app.dataset.sidebar = "collapsed";
-  $("#sb-collapse").onclick = () => {
+  syncCollapseBtn();
+  collapseBtn.onclick = () => {
     const collapsed = app.dataset.sidebar === "collapsed";
     app.dataset.sidebar = collapsed ? "expanded" : "collapsed";
     localStorage.setItem("roadmaps_sidebar", app.dataset.sidebar);
+    syncCollapseBtn();
   };
   const menu = $("#menu-btn"); if (menu) menu.onclick = () => app.dataset.mobile = app.dataset.mobile === "open" ? "closed" : "open";
   const scrim = $("#sb-scrim"); if (scrim) scrim.onclick = closeMobileSidebar;

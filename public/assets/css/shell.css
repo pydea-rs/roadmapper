@@ -81,6 +81,17 @@
 .track-dot.ahead { background: var(--ok); } .track-dot.on { background: var(--info); }
 .track-dot.behind { background: var(--warn); }
 
+/* global cross-roadmap Today link (top of the sidebar) */
+.sb-today { display: flex; align-items: center; gap: var(--s3); padding: var(--s2) var(--s3);
+  border-radius: var(--r2); color: var(--text-2); position: relative; width: 100%;
+  transition: background var(--dur-fast), color var(--dur-fast), transform var(--dur-fast); }
+.sb-today:hover { background: var(--surface-3); color: var(--text); transform: translateX(2px); }
+.sb-today.active { background: var(--accent-soft); color: var(--text); }
+.sb-today.active::before { content: ""; position: absolute; left: 0; top: 20%; bottom: 20%;
+  width: 3px; border-radius: 3px; background: var(--accent); }
+.sb-today-label { font-weight: 600; font-size: var(--t-sm); white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; }
+
 /* jump list under an expanded sidebar item */
 .sb-sub { display: flex; flex-direction: column; gap: 1px; padding: 2px 0 var(--s2) 42px;
   overflow: hidden; }
@@ -91,10 +102,15 @@
 #app[data-sidebar="collapsed"] .sb-title,
 #app[data-sidebar="collapsed"] .sb-item-body,
 #app[data-sidebar="collapsed"] .sb-section-label,
+#app[data-sidebar="collapsed"] .sb-today-label,
 #app[data-sidebar="collapsed"] .sb-sub { display: none; }
-#app[data-sidebar="collapsed"] .sb-item { justify-content: center; padding: var(--s3) 0; }
-#app[data-sidebar="collapsed"] .sb-head { justify-content: center; padding: var(--s4) 0; }
-#app[data-sidebar="collapsed"] .sb-collapse { margin: 0; position: absolute; top: 14px; right: 8px; }
+#app[data-sidebar="collapsed"] .sb-item,
+#app[data-sidebar="collapsed"] .sb-today { justify-content: center; padding: var(--s3) 0; }
+/* collapsed rail (60px): stack logo over the expand button, both centred and
+   in normal flow — never absolutely positioned (that escaped to the viewport). */
+#app[data-sidebar="collapsed"] .sb-head { flex-direction: column; justify-content: center;
+  height: auto; padding: var(--s3) 0; gap: var(--s2); }
+#app[data-sidebar="collapsed"] .sb-collapse { margin: 0; }
 
 .sb-foot { flex: none; padding: var(--s3); border-top: 1px solid var(--border);
   display: flex; align-items: center; gap: var(--s2); font-size: var(--t-xs); color: var(--text-3); }

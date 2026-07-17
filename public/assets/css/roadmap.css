@@ -293,3 +293,46 @@
   0%   { opacity: 1; transform: translate(0, 0) rotate(0) scale(1); }
   100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--cr, 360deg)) scale(.4); }
 }
+
+/* ------------------------------------------------------------------ *
+ *  Personal per-day note (your own journal line, saved to the DB).
+ *  Distinct from the authored `.day-note` above.
+ * ------------------------------------------------------------------ */
+.usernote { margin-top: var(--s2); border-top: 1px dashed var(--border); padding-top: var(--s2); }
+.usernote-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2);
+  margin-bottom: 4px; }
+.usernote-cap { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); font-weight: 700; }
+.usernote-cap svg { color: var(--accent); }
+.usernote-body { font-size: var(--t-sm); line-height: 1.55; color: var(--text-2);
+  white-space: pre-wrap; word-break: break-word; background: var(--accent-soft);
+  padding: var(--s2) var(--s3); border-radius: var(--r2); }
+.usernote-edit { font-size: var(--t-xs); color: var(--text-3); padding: 2px 8px; border-radius: 6px;
+  transition: background var(--dur-fast), color var(--dur-fast); }
+.usernote-edit:hover { background: var(--surface-3); color: var(--text); }
+.usernote-add { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-sm);
+  color: var(--text-3); padding: 4px 10px; border-radius: var(--r-pill);
+  border: 1px dashed var(--border); transition: background var(--dur-fast), color var(--dur-fast),
+  border-color var(--dur-fast); }
+.usernote-add:hover { background: var(--surface-3); color: var(--text); border-color: var(--border-2); }
+.usernote-add svg { color: var(--accent); }
+
+/* ------------------------------------------------------------------ *
+ *  Cross-roadmap "Today" digest (#/today)
+ * ------------------------------------------------------------------ */
+.today-view { display: flex; flex-direction: column; gap: var(--s4); }
+.today-hero { margin-bottom: 0; }
+.today-summary { display: flex; gap: var(--s3); flex-wrap: wrap; }
+.today-summary span { font-size: var(--t-sm); color: var(--text-2); background: var(--surface-2);
+  padding: var(--s2) var(--s3); border-radius: var(--r-pill); font-variant-numeric: tabular-nums; }
+.today-summary span.od { color: var(--warn); background: color-mix(in srgb, var(--warn) 12%, transparent); }
+.today-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
+  padding: var(--s3) var(--s4) var(--s4); }
+.today-card-head { display: flex; align-items: center; gap: var(--s2); padding: var(--s2) 0 var(--s3);
+  color: var(--text); font-weight: 700; }
+.today-card-head:hover .today-card-title { color: var(--accent-ink, var(--accent)); }
+.today-card-ico { font-size: 20px; }
+.today-card-title { font-size: var(--t-md); letter-spacing: -.01em; }
+.today-sub { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .07em;
+  color: var(--text-3); font-weight: 700; margin: var(--s2) 0 4px; }
+.today-sub.od { color: var(--warn); }

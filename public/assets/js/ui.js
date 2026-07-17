@@ -277,6 +277,15 @@ export { ACCENTS };
 export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expandedSlug }) {
   const list = $("#sb-list");
   list.innerHTML = "";
+
+  // Global cross-roadmap "Today" digest.
+  const onToday = location.hash.replace(/^#\/?/, "") === "today";
+  const todayLink = el("a.sb-today" + (onToday ? ".active" : ""), { href: "#/today",
+    "aria-current": onToday ? "true" : "false" });
+  todayLink.append(el("span.sb-ico", { text: "📅" }));
+  todayLink.append(el("span.sb-today-label", { text: "Today · all roadmaps" }));
+  list.append(todayLink);
+
   list.append(el("div.sb-section-label", { text: "Roadmaps" }));
 
   for (const rm of roadmaps) {

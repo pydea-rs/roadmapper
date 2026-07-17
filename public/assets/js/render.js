@@ -7,8 +7,9 @@
 
 import * as store from "./store.js";
 import { computeAll, currentDay } from "./stats.js";
+import { getRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
-import { checkIcon, toast, getSettings } from "./ui.js";
+import { checkIcon, toast, getSettings, inputModal } from "./ui.js";
 import {
   $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
   monthLabel, daysBetween, pct,
@@ -51,6 +52,95 @@ function rerender() {
 }
 function $$open() {
   return [...document.querySelectorAll(".day.open")].map(d => d.dataset.day);
+}
+
+/* ================================================================== *
+ *  Cross-roadmap "Today" — one digest of everything due today (and
+ *  anything overdue) across every roadmap. Rendered at #/today. Ticking
+ *  here writes through to the DB just like the timeline does.
+ * ================================================================== */
+export function renderToday(mount) {
+  const today = todayStr();
+  mount.innerHTML = "";
+  const view = el("div.today-view");
+
+  const heroEl = el("div.hero.today-hero");
+  const top = el("div.hero-top");
+  top.append(el("div.hero-ico", { text: "📅" }));
+  const tb = el("div");
+  tb.append(el("h1", { text: "Today" }));
+  tb.append(el("p.sub", { text: `${fmtDateHuman(today)} ${today.slice(0, 4)} · across all roadmaps` }));
+  top.append(tb);
+  heroEl.append(top);
+  view.append(heroEl);
+
+  let due = 0, doneToday = 0, overdueN = 0;
+  const cards = [];
+  for (const rm of getRoadmaps()) {
+    const todayList = [], overdueList = [];
+    for (const d of rm.days) for (const t of d.tasks) {
+      if (t.optional) continue;
+      const cur = rm.daysById.get(currentDay(rm, rm.slug, t));
+      if (!cur) continue;
+      const isDone = store.isDone(rm.slug, t.id);
+      if (cur.date === today) { todayList.push({ t, cur }); due++; if (isDone) doneToday++; }
+      else if (cur.date < today && !isDone) { overdueList.push({ t, cur }); overdueN++; }
+    }
+    if (todayList.length || overdueList.length) cards.push(todayCard(rm, todayList, overdueList, mount));
+  }
+
+  const strip = el("div.today-summary");
+  strip.append(el("span", { html: `<b>${doneToday}/${due}</b> due today` }));
+  if (overdueN) strip.append(el("span.od", { html: `<b>${overdueN}</b> overdue` }));
+  view.append(strip);
+
+  if (!cards.length) {
+    const empty = el("div.center-note", { style: "padding:var(--s8)" });
+    empty.append(el("div.big", { text: "✅" }));
+    empty.append(document.createTextNode("Nothing scheduled today. Enjoy the breather — or open a roadmap and pull something forward."));
+    view.append(empty);
+  } else cards.forEach(c => view.append(c));
+
+  mount.append(view);
+}
+
+function todayCard(rm, todayList, overdueList, mount) {
+  const card = el("div.today-card");
+  if ((getSettings().roadmapAccent !== "off") && rm.accent) {
+    card.style.setProperty("--accent", rm.accent);
+    card.style.setProperty("--accent-soft", `color-mix(in srgb, ${rm.accent} 15%, transparent)`);
+  }
+  const head = el("a.today-card-head", { href: `#/${rm.slug}/today` });
+  head.append(el("span.today-card-ico", { text: rm.icon }));
+  head.append(el("span.today-card-title", { text: rm.title }));
+  card.append(head);
+  if (overdueList.length) {
+    card.append(el("div.today-sub.od", { text: `Overdue · ${overdueList.length}` }));
+    for (const { t, cur } of overdueList) card.append(todayRow(rm, t, mount, cur, true));
+  }
+  if (todayList.length) {
+    if (overdueList.length) card.append(el("div.today-sub", { text: "Today" }));
+    for (const { t, cur } of todayList) card.append(todayRow(rm, t, mount, cur, false));
+  }
+  return card;
+}
+
+function todayRow(rm, task, mount, curDay, overdue) {
+  const done = store.isDone(rm.slug, task.id);
+  const row = el("div.task" + (done ? ".done" : ""), { dataset: { task: task.id } });
+  const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
+    "aria-label": "Toggle task", html: checkIcon() });
+  cb.onclick = () => { store.setTask(rm.slug, task.id, !store.isDone(rm.slug, task.id)); renderToday(mount); };
+  row.append(cb);
+  const bodyEl = el("div.t-body");
+  bodyEl.append(el("div.t-label", { html: task.label }));
+  const meta = el("div.t-meta");
+  meta.append(catChip(task.cat, rm));
+  if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
+  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(curDay.date)}` }));
+  bodyEl.append(meta);
+  row.append(bodyEl);
+  return row;
 }
 
 /** Apply per-view accent. A roadmap's identity colour wins unless the owner
@@ -430,6 +520,8 @@ function dayCard(rm, S, day, open) {
   if (!required.length && !bonus.length && !day.soft.length)
     pad.append(el("div.center-note", { style: "padding:var(--s4)", text: "Rest / off day" }));
 
+  pad.append(userNote(rm, day));
+
   inner.append(pad); body.append(inner); card.append(body);
 
   installDayDrop(card, day.id, rm, rm.slug, rerender);
@@ -564,6 +656,46 @@ function softItem(rm, s) {
   return row;
 }
 const stripLead = s => s.replace(/^\s*(💡|🆕|⚠️|🔗)\s*/, "");
+
+/* ================================================================== *
+ *  Personal note (per day) — your own journal line, saved to the DB
+ *  (key `note:<dayId>`). Distinct from the authored `day.note`.
+ * ================================================================== */
+function userNote(rm, day) {
+  const wrap = el("div.usernote");
+  const draw = () => {
+    wrap.innerHTML = "";
+    const text = store.getNote(rm.slug, day.id);
+    if (text) {
+      const head = el("div.usernote-head");
+      head.append(el("span.usernote-cap", { html: `${penIcon()} Your note` }));
+      const edit = el("button.usernote-edit", { text: "Edit" });
+      edit.onclick = () => editNote(rm, day, draw);
+      head.append(edit);
+      wrap.append(head);
+      wrap.append(el("div.usernote-body", { text }));   // white-space:pre-wrap keeps line breaks
+    } else {
+      const add = el("button.usernote-add", { html: `${penIcon()} Add a note` });
+      add.onclick = () => editNote(rm, day, draw);
+      wrap.append(add);
+    }
+  };
+  draw();
+  return wrap;
+}
+async function editNote(rm, day, refresh) {
+  const current = store.getNote(rm.slug, day.id);
+  const text = await inputModal({
+    title: "Note for this day", subtitle: `${day.title} · ${fmtDateHuman(day.date)}`, icon: "🗒️",
+    label: "Private to you — blockers, wins, where you stopped. Clear it to delete.",
+    value: current, multiline: true, confirmLabel: "Save",
+  });
+  if (text === null) return;                            // cancelled
+  store.setNote(rm.slug, day.id, text);                 // empty/whitespace → clears the row
+  refresh();
+  toast(text.trim() ? "Note saved" : "Note cleared", { type: "ok" });
+}
+const penIcon = () => `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>`;
 
 /* ================================================================== *
  *  Extras / features panel
