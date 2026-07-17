@@ -1,0 +1,12 @@
+{
+  "name": "roadmaps-tests",
+  "private": true,
+  "type": "module",
+  "description": "Test suite for the Roadmaps app (pure-logic + a jsdom DOM smoke test).",
+  "scripts": {
+    "test": "bash run.sh"
+  },
+  "devDependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

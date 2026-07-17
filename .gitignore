@@ -16,6 +16,11 @@ roadmaps/_research.md
 public/roadmaps/_research.md
 journey-*.json
 
+# Test tooling (jsdom for the DOM smoke test; installed locally, not committed)
+node_modules/
+tests/node_modules/
+package-lock.json
+
 # Editor / OS cruft
 .claude
 .DS_Store
