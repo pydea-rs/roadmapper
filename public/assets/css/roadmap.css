@@ -178,8 +178,9 @@
 /* scroll-reveal: JS adds .rv-init (+ inline --rv-x) to hide, then .rv-show to
    slide in. Only transform + opacity animate (compositor-only, no reflow). The
    classes are stripped after the run, so this leaves the card pristine. */
-.day.rv-init { opacity: 0; transform: translateX(var(--rv-x, 0));
-  transition: opacity var(--dur-slow) var(--ease-out), transform .55s var(--ease-out); }
+.day.rv-init { opacity: 0;
+  transform: translateX(var(--rv-x, 0)) rotate(var(--rv-r, 0)) scale(.955);
+  transition: opacity .4s var(--ease-out), transform .62s cubic-bezier(.2, 1.13, .32, 1); }
 .day.rv-init.rv-show { opacity: 1; transform: none; }
 .day:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
 .day.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }

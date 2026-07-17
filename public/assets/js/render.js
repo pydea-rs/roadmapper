@@ -82,7 +82,9 @@ function setupDayReveal(mount) {
   const pending = [];
   mount.querySelectorAll(".day").forEach((card, i) => {
     if (revealedDays.has(card.dataset.day)) return; // already shown this session → leave visible
-    card.style.setProperty("--rv-x", (i % 2 ? 34 : -34) + "px");   // alternate right / left
+    const fromRight = i % 2;                          // alternate the side each card enters from
+    card.style.setProperty("--rv-x", (fromRight ? 72 : -72) + "px");
+    card.style.setProperty("--rv-r", (fromRight ? 2.4 : -2.4) + "deg");   // slight lean-in
     card.classList.add("rv-init");
     pending.push(card);
   });
@@ -105,6 +107,7 @@ function revealCard(card) {
       if (e && e.propertyName !== "transform") return;   // wait for the longer track
       card.classList.remove("rv-init", "rv-show");
       card.style.removeProperty("--rv-x");
+      card.style.removeProperty("--rv-r");
       card.style.willChange = "";                   // drop the layer → no lingering cost
       card.removeEventListener("transitionend", done);
     };
