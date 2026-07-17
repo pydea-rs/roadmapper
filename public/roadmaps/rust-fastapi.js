@@ -5,6 +5,12 @@
 // Style: do every listing; invent tryout projects where the book is thin; a
 // multi-day Ch20 web-server arc. Off-days vary per week; some days are lighter
 // (marked) to leave room for Roadmap 2 overlap.
+//
+// EXTENDED (2026-07-17): the books (Rust Ch15–20, FastAPI Ch4–7) still finish at
+// d24, but weeks 6–7 (d25–d32) append the two things worth adding — async Rust
+// (tokio, the Book's biggest gap) and a Rust-service-behind-a-FastAPI-gateway
+// integration capstone — plus a real buffer day (d28). Moves the finish to
+// 2026-08-31. Existing ids/dates unchanged; d24 re-scoped to a checkpoint.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -29,7 +35,9 @@ registerRoadmap({
     { id: "w2", title: "Week 2 — OOP, patterns, security", start: "2026-07-23" },
     { id: "w3", title: "Week 3 — Advanced Rust & the web-server arc", start: "2026-07-30" },
     { id: "w4", title: "Week 4 — Finish the server; deploy FastAPI", start: "2026-08-06" },
-    { id: "w5", title: "Week 5 — Capstone & wrap", start: "2026-08-13" },
+    { id: "w5", title: "Week 5 — Capstone & checkpoint", start: "2026-08-13" },
+    { id: "w6", title: "Week 6 — Async Rust & real deployment", start: "2026-08-20" },
+    { id: "w7", title: "Week 7 — Integration capstone & retro", start: "2026-08-27" },
   ],
 
   days: [
@@ -357,8 +365,8 @@ registerRoadmap({
       ],
     },
     {
-      id: "d24", date: "2026-08-17", week: "w5", title: "Wrap & retro",
-      theme: "Both objectives closed — review and plan what's next.",
+      id: "d24", date: "2026-08-17", week: "w5", title: "Checkpoint — books closed",
+      theme: "The Book (Ch15–20) and Mastering FastAPI (Ch4–7) are done. Take stock before the extension weeks.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 30, group: "g1",
           label: `Rust — skim your notes across Ch15–20; list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).` },
@@ -366,7 +374,124 @@ registerRoadmap({
           label: `FastAPI — write a one-page "cheat sheet" of the DI + security + async patterns you built; note gaps for a future project.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Finishing move: pick <b>one</b> next project that uses both — e.g. a Rust service behind a FastAPI gateway — and jot the first three tasks. Momentum beats a clean stop.` },
+        { id: "s1", type: "hint", label: `💡 Both books are finished a full two weeks before the plan ends — that slack is intentional. Weeks 6–7 turn it into the two things the Book skips and the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
+      ],
+      note: "Milestone checkpoint — the core is done; weeks 6–7 are deepening + buffer.",
+    },
+
+    /* ================================================================ *
+     *  Week 6 — Async Rust & real deployment  (extension: the Book's
+     *  biggest gap is async; here we fill it and ship the FastAPI capstone
+     *  for real. Deliberately lighter/flexible — this is your buffer.)
+     * ================================================================ */
+    {
+      id: "d25", date: "2026-08-20", week: "w6", title: "Async Rust I — futures & tokio",
+      theme: "The Book is threads-only. Meet the other half of Rust concurrency.",
+      tasks: [
+        { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
+          label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model) + the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.` },
+        { id: "t2", obj: R, cat: "code", est: 45, group: "g1",
+          label: `Build a small tokio program: spawn several async tasks that sleep and race, and <code>join!</code> them. Feel how <code>.await</code> yields vs a blocking thread.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Bridge — your Ch16 worker-pool and Ch20 thread pool used OS threads + <code>mpsc</code>. Async is the same idea (concurrent work, message passing) but cooperatively scheduled on a runtime. <code>tokio::sync::mpsc</code> is the async twin of <code>std::sync::mpsc</code>.` },
+        { id: "s2", type: "hint", label: `💡 A <code>Future</code> is a state machine the compiler builds from your <code>async fn</code>; it does nothing until polled by an executor. That "lazy until awaited" model is the single biggest difference from threads.` },
+      ],
+    },
+    {
+      id: "d26", date: "2026-08-21", week: "w6", title: "FastAPI — ship the capstone",
+      theme: "Take the Week-4/5 capstone from 'runs locally' to 'deployed'.",
+      tasks: [
+        { id: "t1", obj: F, cat: "project", est: 50, group: "g1",
+          label: `Deploy your capstone's Docker image to a real host (Fly.io / Railway / a VPS): env-based secrets, a managed Postgres, and a public URL with HTTPS.` },
+        { id: "t2", obj: F, cat: "read", est: 20, group: "g1",
+          label: `Add <b>structured logging</b> + a <code>/health</code> endpoint; skim the <a href="https://fastapi.tiangolo.com/deployment/concepts/" target="_blank" rel="noopener">deployment concepts</a> doc (workers, proxies, restarts).` },
+        { id: "t3", obj: F, cat: "project", est: 30, optional: true,
+          label: `<b>Bonus:</b> wire a GitHub Actions job that runs your pytest suite and builds the image on push.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `⚠️ First real deploy checklist: no secrets in the image, <code>--workers</code> tuned to CPUs, DB migrations run on release (not on every boot), and logs going to stdout so the platform captures them.` },
+      ],
+    },
+    {
+      id: "d27", date: "2026-08-22", week: "w6", title: "Async Rust II — an async web server",
+      theme: "Rebuild the Ch20 server the async way — the payoff of d25.",
+      tasks: [
+        { id: "t1", obj: R, cat: "read", est: 25, group: "g1",
+          label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters; skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.` },
+        { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
+          label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.` },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Notice what disappeared: no manual <code>ThreadPool</code>, no <code>Arc&lt;Mutex&gt;</code> around the job queue. The runtime <i>is</i> the pool. That's why async won for network I/O.` },
+      ],
+    },
+    {
+      id: "d28", date: "2026-08-24", week: "w6", title: "Buffer / catch-up",
+      theme: "Deliberate slack. Use it — don't invent work.",
+      tasks: [
+        { id: "t1", obj: R, cat: "review", est: 20, optional: true,
+          label: `<b>If caught up:</b> a set of <a href="https://github.com/rust-lang/rustlings" target="_blank" rel="noopener">Rustlings</a> drills on the topics that felt shakiest (lifetimes, traits, error handling).` },
+      ],
+      soft: [
+        { id: "s1", type: "tryout", label: `Tryout: if you fell behind anywhere in weeks 1–5, this is the day to close it — a chapter's challenges you skipped, a listing that didn't compile, notes you meant to write.` },
+        { id: "s2", type: "callout", label: `🔗 Nothing due today by design. A plan with zero slack is a plan that breaks on the first bad week; this day is the shock absorber.` },
+      ],
+      note: "Pure buffer day — required load is near zero on purpose.",
+    },
+
+    /* ================================================================ *
+     *  Week 7 — Integration capstone & retro  (fuse both stacks, then a
+     *  real close-out. The finishing move d24 used to only hint at.)
+     * ================================================================ */
+    {
+      id: "d29", date: "2026-08-27", week: "w7", title: "Integration capstone I — design",
+      theme: "One system that uses both languages: a Rust service behind a FastAPI gateway.",
+      tasks: [
+        { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
+          label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d27, exposing a JSON endpoint or two) fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.` },
+        { id: "t2", obj: R, cat: "project", est: 60, group: "g1",
+          label: `<b>Build (Rust side):</b> give the async server a couple of real JSON routes backed by an <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> (or sqlite) store — exercises smart pointers + concurrency + traits together.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 This is the project d24 used to only hint at. Doing it proves you can pick the right tool per layer: Rust for the hot path, FastAPI for the ergonomic edge.` },
+      ],
+    },
+    {
+      id: "d30", date: "2026-08-28", week: "w7", title: "Integration capstone II — wire it up",
+      theme: "One end-to-end request path across both services.",
+      tasks: [
+        { id: "t1", obj: F, cat: "project", est: 70, group: "g1",
+          label: `<b>Build (FastAPI side):</b> a gateway that validates a JWT, forwards the request to the Rust service (httpx), and shapes the response with a <code>response_model</code>. Get one request flowing user → FastAPI → Rust → back.` },
+      ],
+      soft: [
+        { id: "s1", type: "tryout", label: `Tryout: add a timeout + graceful error when the Rust service is down, so the gateway degrades instead of hanging. Real systems fail at the seams — practice the seam.` },
+      ],
+    },
+    {
+      id: "d31", date: "2026-08-29", week: "w7", title: "Polish & tests",
+      theme: "Make the capstone something you'd show.",
+      tasks: [
+        { id: "t1", obj: F, cat: "code", est: 40, group: "g1",
+          label: `Add a <code>pytest</code> happy-path + one failure test for the gateway; write a short README with a run command and an architecture line.` },
+        { id: "t2", obj: R, cat: "project", est: 30, optional: true,
+          label: `<b>Bonus:</b> dockerize both services with a <code>docker-compose.yml</code> so the whole thing comes up with one command.` },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 A capstone you can run with one command and explain in one sentence is worth more than three half-finished ones. Depth over breadth for the finale.` },
+      ],
+    },
+    {
+      id: "d32", date: "2026-08-31", week: "w7", title: "Grand retro & next-project plan",
+      theme: "Close the journey; capture what you learned and where you go next.",
+      tasks: [
+        { id: "t1", obj: R, cat: "review", est: 35, group: "g1",
+          label: `Write the one-page map: the Rust ideas you'll reuse (ownership, traits, concurrency, async) and the FastAPI ideas (DI, security, async DB). Note the 2–3 you'd re-read first.` },
+        { id: "t2", obj: F, cat: "review", est: 25, group: "g1",
+          label: `Pick the <b>one</b> next real project (a service you actually want) and write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 After here: async depth (<a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> + the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a>), the <a href="https://doc.rust-lang.org/nomicon/" target="_blank" rel="noopener">Nomicon</a> for unsafe, and a real FastAPI service with a queue. You have the fundamentals; now build something you'll keep.` },
       ],
     },
   ],
@@ -386,6 +511,12 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d17.t2", "d18.t2"] } },
     { id: "w5.m1", week: "w5", title: "🎓 FastAPI capstone shipped",
       rule: { type: "tasks", require: ["d20.t1", "d21.t1"] } },
+    { id: "w6.m1", week: "w6", title: "Async Rust: tokio server running",
+      rule: { type: "tasks", require: ["d25.t2", "d27.t2"] } },
+    { id: "w6.m2", week: "w6", title: "FastAPI capstone deployed",
+      rule: { type: "tasks", require: ["d26.t1"] } },
+    { id: "w7.m1", week: "w7", title: "🏁 Integration capstone (Rust + FastAPI)",
+      rule: { type: "tasks", require: ["d29.t2", "d30.t1"] } },
   ],
 
   features: [

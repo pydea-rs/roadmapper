@@ -6,6 +6,13 @@
 // Phases: A = CI + Go (+ light gointerp see-alsos); B = gointerp activates
 // alongside Go; C = appended tail finishes gointerp. Pages are real (see
 // _research.md). Owner does ALL Crafting Interpreters challenges.
+//
+// EXTENDED (2026-07-17): the six heaviest CI chapters (Ch12/17/24/25/26/28,
+// 150–175m) are each split across two adjacent calendar days — the parent day
+// (dNN) keeps read+code part 1; a continuation day (d45–d50, on the previously
+// empty next date) carries part 2 + that chapter's challenges. No existing id
+// changes; every day is now ~90–105m. Weeks 15–16 (d51–d56) append a
+// consolidation/compiler-bridge/capstone tail, moving the finish to 2026-11-02.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -40,7 +47,9 @@ registerRoadmap({
     { id: "w11", title: "Week 11 — Monkey parsing/eval; Go deploy", start: "2026-09-24" },
     { id: "w12", title: "Week 12 — Finish Go course", start: "2026-10-01" },
     { id: "w13", title: "Week 13 — Phase C: finish Monkey", start: "2026-10-08" },
-    { id: "w14", title: "Week 14 — Extend & retro", start: "2026-10-15" },
+    { id: "w14", title: "Week 14 — Extend & consolidate", start: "2026-10-15" },
+    { id: "w15", title: "Week 15 — Consolidation & the compiler bridge", start: "2026-10-22" },
+    { id: "w16", title: "Week 16 — Capstone & grand retro", start: "2026-10-29" },
   ],
 
   days: [
@@ -121,16 +130,30 @@ registerRoadmap({
       ],
     },
     {
-      id: "d06", date: "2026-07-27", week: "w2", title: "CI Ch12 — Classes (jlox, heavy)",
-      theme: "27-page chapter — its own day.",
+      id: "d06", date: "2026-07-27", week: "w2", title: "CI Ch12 — Classes I (jlox)",
+      theme: "The 27-page chapter, split across two days. Today: declarations → methods.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 60, group: "g1",
-          label: `CI — <b>Ch12 Classes</b> (jlox): class declarations, instances, properties, methods, <code>this</code>, initializers (pp 190–216).` },
-        { id: "t2", obj: CI, cat: "code", est: 60, group: "g1",
-          label: `Implement <code>LoxClass</code>/<code>LoxInstance</code>, method binding, and <code>this</code>.` },
+        { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
+          label: `CI — <b>Ch12 Classes, part 1</b> (jlox): class declarations, instances, properties, methods (pp 190–205).` },
+        { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
+          label: `Implement <code>LoxClass</code>/<code>LoxInstance</code>, property get/set, and method binding.` },
+      ],
+    },
+    {
+      id: "d45", date: "2026-07-28", week: "w2", title: "CI Ch12 — Classes II + challenges (jlox)",
+      theme: "Finish Classes: `this`, initializers, and all three challenges.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 25, group: "g1",
+          label: `CI — <b>Ch12 Classes, part 2</b> (jlox): <code>this</code> and constructors/initializers (pp 206–216).` },
+        { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
+          label: `Implement <code>this</code> binding and <code>init()</code> initializers; a class now constructs and self-references correctly.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
           label: `<b>Ch12 Challenges (all 3)</b> — incl. static methods & getters (p 214).` },
       ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Splitting a heavy chapter over two short days beats one marathon: you code the mechanics on day 1 and let <code>this</code>/initializers (the subtle part) land fresh on day 2.` },
+      ],
+      note: "Continuation of Ch12 on the next calendar day — lighter than one 27-page sprint.",
     },
     {
       id: "d07", date: "2026-07-29", week: "w2", title: "Let's Go — read chunk 1 + starter",
@@ -233,20 +256,31 @@ registerRoadmap({
 
     /* -- Week 5 -- */
     {
-      id: "d14", date: "2026-08-13", week: "w5", title: "CI Ch17 — Compiling Expressions (clox, Pratt)",
-      theme: "Short chapter, dense idea: the Pratt parser. Own day.",
+      id: "d14", date: "2026-08-13", week: "w5", title: "CI Ch17 — Compiling Expressions I (clox, Pratt)",
+      theme: "The dense idea — the Pratt parser — split over two days. Today: the core.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 55, group: "g1",
-          label: `CI — <b>Ch17 Compiling Expressions</b> (clox): single-pass compilation with a <b>Pratt parser</b> (precedence table, parse rules) (pp 297–317).` },
-        { id: "t2", obj: CI, cat: "code", est: 55, group: "g1",
-          label: `Implement the Pratt <code>compiler.c</code> — the precedence-climbing table and prefix/infix rules.` },
-        { id: "t3", obj: CI, cat: "challenge", est: 40,
-          label: `<b>Ch17 Challenges (all 3)</b> (p 316).` },
+        { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
+          label: `CI — <b>Ch17 Compiling Expressions, part 1</b> (clox): single-pass compilation, the <b>Pratt parser</b> — the precedence table and how prefix/infix rules dispatch (pp 297–310).` },
+        { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
+          label: `Implement the core of the Pratt <code>compiler.c</code> — the precedence-climbing loop and the parse-rule table.` },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 Read alongside — Nystrom's own <a href="https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/" target="_blank" rel="noopener">“Pratt Parsers: Expression Parsing Made Easy”</a>. When the precedence table feels magical, this un-magics it.` },
         { id: "s2", type: "hint", label: `💡 This is <b>the</b> chapter that maps to <i>Writing an Interpreter in Go</i> §2.6 — Monkey's parser is Pratt too, while jlox used recursive descent. You'll recognize this technique when you start Monkey.` },
       ],
+    },
+    {
+      id: "d46", date: "2026-08-14", week: "w5", title: "CI Ch17 — Pratt parser II + challenges (clox)",
+      theme: "Finish the compiler: the remaining rules, then all three challenges.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 20, group: "g1",
+          label: `CI — <b>Ch17, part 2</b> (clox): unary/grouping/number/literal parse fns and how the table wires them (pp 311–317).` },
+        { id: "t2", obj: CI, cat: "code", est: 25, group: "g1",
+          label: `Finish the prefix/infix rule set and emit bytecode for full expressions; run them through the VM.` },
+        { id: "t3", obj: CI, cat: "challenge", est: 40,
+          label: `<b>Ch17 Challenges (all 3)</b> (p 316).` },
+      ],
+      note: "Continuation of the Pratt chapter — the challenges get a fresh head instead of a tired one.",
     },
     {
       id: "d15", date: "2026-08-15", week: "w5", title: "CI Ch18 — Types of Values (clox)",
@@ -383,49 +417,83 @@ registerRoadmap({
       note: "Heavy watch day — no CI block.",
     },
     {
-      id: "d25", date: "2026-09-07", week: "w8", title: "CI Ch24 — Calls and Functions (clox, heavy)",
-      theme: "32-page chapter — call frames, the C call stack.",
+      id: "d25", date: "2026-09-07", week: "w8", title: "CI Ch24 — Calls and Functions I (clox)",
+      theme: "The 32-page chapter, split over two days. Today: function objects + call frames.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 60, group: "g1",
-          label: `CI — <b>Ch24 Calls and Functions</b> (clox): function objects, call frames, argument passing, native functions, stack overflow (pp 425–456).` },
-        { id: "t2", obj: CI, cat: "code", est: 65, group: "g1",
-          label: `Implement <code>CallFrame</code>s and function calls on the VM.` },
+        { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
+          label: `CI — <b>Ch24 Calls and Functions, part 1</b> (clox): function objects, compiling a function body, and the <code>CallFrame</code> model (pp 425–445).` },
+        { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
+          label: `Implement <code>ObjFunction</code>, the compiler's function scaffolding, and the <code>CallFrame</code> array on the VM.` },
+      ],
+    },
+    {
+      id: "d47", date: "2026-09-08", week: "w8", title: "CI Ch24 — Calls II: natives + challenges (clox)",
+      theme: "Finish calls: arguments, native functions, stack overflow, then all four challenges.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
+          label: `CI — <b>Ch24, part 2</b> (clox): calling functions, argument passing, native functions, and stack-overflow detection (pp 446–456).` },
+        { id: "t2", obj: CI, cat: "code", est: 35, group: "g1",
+          label: `Wire up <code>OP_CALL</code>, argument checking, a native (<code>clock()</code>), and the call-depth guard.` },
         { id: "t3", obj: CI, cat: "challenge", est: 40,
           label: `<b>Ch24 Challenges (all 4)</b> (p 455).` },
       ],
+      note: "Continuation of the heavy Ch24 — call frames yesterday, the tricky call/return glue today.",
     },
 
     /* -- Week 9 -- */
     {
-      id: "d26", date: "2026-09-10", week: "w9", title: "CI Ch25 — Closures (clox, longest)",
-      theme: "35-page chapter — upvalues and closing over the stack.",
+      id: "d26", date: "2026-09-10", week: "w9", title: "CI Ch25 — Closures I (clox)",
+      theme: "The longest clox chapter (35pp), split over two days. Today: upvalues + capture.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 65, group: "g1",
-          label: `CI — <b>Ch25 Closures</b> (clox): upvalues, capturing locals, closing upvalues when they leave the stack (pp 457–491).` },
-        { id: "t2", obj: CI, cat: "code", est: 70, group: "g1",
-          label: `Implement upvalues and <code>ObjClosure</code>; get closures capturing correctly.` },
-        { id: "t3", obj: CI, cat: "challenge", est: 40,
-          label: `<b>Ch25 Challenges (all 3)</b> (p 487).` },
+        { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
+          label: `CI — <b>Ch25 Closures, part 1</b> (clox): <code>ObjClosure</code>, upvalues, and capturing local variables (pp 457–478).` },
+        { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
+          label: `Implement <code>ObjClosure</code> and open upvalues; get a closure that reads a captured local while it's still on the stack.` },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Upvalues are the clox answer to the closure problem jlox solved with the resolver (Ch11). Same problem — a captured variable outliving its scope — two very different machines.` },
       ],
-      note: "Heaviest CI day — no Go block.",
+      note: "Split day 1 of the longest chapter — capture today, closing-over-the-stack tomorrow.",
     },
     {
-      id: "d27", date: "2026-09-12", week: "w9", title: "CI Ch26 — Garbage Collection (clox, hardest)",
-      theme: "Mark-sweep GC — conceptually the toughest chapter. Own day.",
+      id: "d48", date: "2026-09-11", week: "w9", title: "CI Ch25 — Closures II: closing upvalues + challenges",
+      theme: "The subtle half: closing upvalues when a local leaves the stack.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 65, group: "g1",
-          label: `CI — <b>Ch26 Garbage Collection</b> (clox): mark-sweep, the tricolor abstraction, roots, weak references, when to collect (pp 492–518).` },
-        { id: "t2", obj: CI, cat: "code", est: 70, group: "g1",
-          label: `Implement the mark-sweep collector; chase down the "collect during allocation" bugs.` },
-        { id: "t3", obj: CI, cat: "challenge", est: 35,
-          label: `<b>Ch26 Challenges (all 3)</b> (p 517).` },
+        { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
+          label: `CI — <b>Ch25 Closures, part 2</b> (clox): closing upvalues when the variable pops off the stack, the open-upvalue list (pp 479–491).` },
+        { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
+          label: `Implement <code>OP_CLOSE_UPVALUE</code> and the open-upvalue linked list; a returned closure now outlives its frame correctly.` },
+        { id: "t3", obj: CI, cat: "challenge", est: 40,
+          label: `<b>Ch25 Challenges (all 3)</b> (p 487).` },
+      ],
+      note: "Continuation of the longest CI chapter — the part where closures actually get hard.",
+    },
+    {
+      id: "d27", date: "2026-09-12", week: "w9", title: "CI Ch26 — Garbage Collection I (clox)",
+      theme: "The toughest chapter, split in two. Today: the mark phase and roots.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 45, group: "g1",
+          label: `CI — <b>Ch26 GC, part 1</b> (clox): reachability, the tricolor abstraction, marking roots and tracing references (pp 492–508).` },
+        { id: "t2", obj: CI, cat: "code", est: 45, group: "g1",
+          label: `Implement <code>markRoots</code> + the mark/tracing phase and the gray stack; verify live objects go black.` },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 Background — <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection" target="_blank" rel="noopener">tracing GC</a> (tricolor, generational) situates clox's collector in the wider family.` },
       ],
+      note: "Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs tomorrow.",
+    },
+    {
+      id: "d49", date: "2026-09-13", week: "w9", title: "CI Ch26 — GC II: sweep + challenges (clox)",
+      theme: "The dangerous half: sweep, when to collect, and the allocation-time bugs.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 30, group: "g1",
+          label: `CI — <b>Ch26 GC, part 2</b> (clox): the sweep phase, weak references (the string table), and the collection-frequency heuristic (pp 509–518).` },
+        { id: "t2", obj: CI, cat: "code", est: 35, group: "g1",
+          label: `Implement sweep + the grow-heap heuristic; chase down the "collect during allocation" bugs that make GC infamous.` },
+        { id: "t3", obj: CI, cat: "challenge", est: 35,
+          label: `<b>Ch26 Challenges (all 3)</b> (p 517).` },
+      ],
+      note: "Continuation of GC — the part where a wrong root eats a live object. Fresh head recommended.",
     },
     {
       id: "d28", date: "2026-09-14", week: "w9", title: "CI Ch27 — Classes and Instances (clox)",
@@ -442,16 +510,27 @@ registerRoadmap({
 
     /* -- Week 10 (finish CI; Phase B begins) -- */
     {
-      id: "d29", date: "2026-09-17", week: "w10", title: "CI Ch28 — Methods & Initializers (clox, heavy)",
-      theme: "26-page chapter — bound methods, initializers, invocation opt.",
+      id: "d29", date: "2026-09-17", week: "w10", title: "CI Ch28 — Methods & Initializers I (clox)",
+      theme: "26-page chapter, split in two. Today: methods and bound methods.",
       tasks: [
-        { id: "t1", obj: CI, cat: "read", est: 55, group: "g1",
-          label: `CI — <b>Ch28 Methods and Initializers</b> (clox): method binding, <code>this</code>, initializers, <code>OP_INVOKE</code> fast path (pp 532–557).` },
-        { id: "t2", obj: CI, cat: "code", est: 60, group: "g1",
-          label: `Implement bound methods, initializers, and the invoke optimization.` },
+        { id: "t1", obj: CI, cat: "read", est: 40, group: "g1",
+          label: `CI — <b>Ch28 Methods, part 1</b> (clox): method declarations, <code>ObjBoundMethod</code>, and <code>this</code> on the VM (pp 532–547).` },
+        { id: "t2", obj: CI, cat: "code", est: 50, group: "g1",
+          label: `Implement methods and bound methods; calling <code>instance.method()</code> now binds <code>this</code> correctly.` },
+      ],
+    },
+    {
+      id: "d50", date: "2026-09-18", week: "w10", title: "CI Ch28 — Initializers + invoke opt + challenges",
+      theme: "Finish: initializers and the OP_INVOKE fast path, then all three challenges.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "read", est: 25, group: "g1",
+          label: `CI — <b>Ch28, part 2</b> (clox): initializers, and the <code>OP_INVOKE</code>/<code>OP_SUPER_INVOKE</code> fast path that skips the bound-method allocation (pp 548–557).` },
+        { id: "t2", obj: CI, cat: "code", est: 30, group: "g1",
+          label: `Implement <code>init()</code> and the invoke optimization; benchmark a method-heavy loop before/after.` },
         { id: "t3", obj: CI, cat: "challenge", est: 35,
           label: `<b>Ch28 Challenges (all 3)</b> (p 555).` },
       ],
+      note: "Continuation of Ch28 — the optimization half lands better on a fresh day.",
     },
     {
       id: "d30", date: "2026-09-19", week: "w10", title: "Go — Password reset & email (videos 165–194)",
@@ -634,8 +713,8 @@ registerRoadmap({
       ],
     },
     {
-      id: "d44", date: "2026-10-19", week: "w14", title: "Retro — three languages, two interpreters",
-      theme: "Close the roadmap; capture what you learned.",
+      id: "d44", date: "2026-10-19", week: "w14", title: "Checkpoint — everything shipped",
+      theme: "Both primaries + Monkey are done. Consolidate before the capstone weeks.",
       tasks: [
         { id: "t1", obj: CI, cat: "review", est: 35, group: "g1",
           label: `Write a one-page comparison: <b>jlox vs clox vs Monkey</b> — scanning, parsing (recursive-descent vs Pratt), eval (tree-walk vs bytecode), memory (GC vs Go's runtime).` },
@@ -643,7 +722,96 @@ registerRoadmap({
           label: `List the Go web-dev patterns you'll reuse (MVC, sessions, migrations, middleware) and one project to build with them.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 You finished two full interpreters and a production-shaped Go web app. Pick one thread to pull next — a compiler (Ball's sequel), or a real Go service — and write its first three tasks while the momentum is hot.` },
+        { id: "s1", type: "hint", label: `💡 You finished two interpreters and a production-shaped Go web app — with two weeks still on the plan. Weeks 15–16 spend that runway on the natural sequel (a compiler) and a capstone that fuses the interpreter with the web stack.` },
+      ],
+    },
+
+    /* ================================================================ *
+     *  Week 15 — Consolidation & the compiler bridge  (extension: absorb
+     *  any CI challenge backlog, then the natural sequel — turning Monkey
+     *  into a bytecode VM, the clox idea reborn in Go.)
+     * ================================================================ */
+    {
+      id: "d51", date: "2026-10-22", week: "w15", title: "clox challenge catch-up + review",
+      theme: "Buffer + mastery: revisit the clox challenges that fought back.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "review", est: 30, group: "g1",
+          label: `Re-read your notes on the three hardest clox chapters (Ch24 Calls, Ch25 Closures, Ch26 GC) and re-run their challenges in your head — can you explain each without the book?` },
+        { id: "t2", obj: CI, cat: "challenge", est: 40, optional: true,
+          label: `<b>If any challenge slipped:</b> finish it now — this is the deliberate catch-up slot for the whole clox challenge set (71 total across the book).` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Nothing new to learn today by design — this is a shock-absorber day. If clox's 17 chapters all landed, use it to skim the Lox grammar appendix (pp 599–601) and dream up a language feature.` },
+      ],
+      note: "Buffer / consolidation — required load is light on purpose.",
+    },
+    {
+      id: "d52", date: "2026-10-24", week: "w15", title: "Writing a Compiler in Go — the bridge (secondary)",
+      theme: "Ball's sequel turns Monkey into a bytecode VM — clox, reborn in Go.",
+      tasks: [
+        { id: "t1", obj: GX, cat: "read", est: 50, group: "g1",
+          label: `<i>Writing a Compiler in Go</i> — read the intro + compiler/VM basics: how Monkey's AST becomes bytecode, the stack machine, and how it mirrors what you built in clox.` },
+        { id: "t2", obj: GX, cat: "code", est: 55, group: "g1",
+          label: `Build the first slice: compile integer + arithmetic expressions to bytecode and execute them on a tiny Monkey VM. You now have <b>two</b> bytecode VMs — one in C (clox), one in Go.` },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 This is the single best consolidation of the whole roadmap: clox taught you a bytecode VM in C; here you rebuild the same machine in Go for the language you already wrote a tree-walker for. Three angles on one idea.` },
+      ],
+      note: "Secondary — on the muted meter, excluded from primary %.",
+    },
+    {
+      id: "d53", date: "2026-10-26", week: "w15", title: "Go — production hardening (pick one)",
+      theme: "Turn the course knowledge into one production-grade improvement.",
+      tasks: [
+        { id: "t1", obj: GO, cat: "project", est: 60, group: "g1",
+          label: `Pick <b>one</b> and add it properly to your Calhoun/SnippetBox app: (a) structured request logging + a <code>/healthz</code>; (b) per-IP rate limiting middleware; or (c) graceful shutdown on SIGTERM with in-flight request draining.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <i>Let's Go</i> covers middleware (Ch6) and the server lifecycle; the video course covered deploy. This day fuses them into the kind of hardening real services need before launch.` },
+      ],
+    },
+
+    /* ================================================================ *
+     *  Week 16 — Capstone & grand retro  (fuse the interpreter with the
+     *  web stack, ship it, then the real close-out.)
+     * ================================================================ */
+    {
+      id: "d54", date: "2026-10-29", week: "w16", title: "Capstone I — a Monkey web playground",
+      theme: "One project that uses both primaries: a Go web app that runs Monkey.",
+      tasks: [
+        { id: "t1", obj: GO, cat: "project", est: 45, group: "g1",
+          label: `<b>Build (web side):</b> a small Go web app (MVC + templates from the course) with a code box that POSTs a Monkey snippet and renders the result.` },
+        { id: "t2", obj: GX, cat: "code", est: 45, group: "g1",
+          label: `<b>Wire the interpreter:</b> feed the submitted source through your Monkey lexer → parser → evaluator and return the output (or a parse/eval error) safely.` },
+      ],
+      soft: [
+        { id: "s1", type: "tryout", label: `Tryout: sandbox it — cap execution steps/time so an infinite Monkey loop can't hang the server. You built the evaluator, so you know exactly where to put the guard.` },
+      ],
+    },
+    {
+      id: "d55", date: "2026-10-31", week: "w16", title: "Capstone II — ship the playground",
+      theme: "Deploy it with the course's deployment skills.",
+      tasks: [
+        { id: "t1", obj: GO, cat: "project", est: 55, group: "g1",
+          label: `Deploy the playground: build it, put it behind Caddy/HTTPS on a droplet (or a container host), and load it from a real URL — reuse the bare-git / post-receive deploy from d39.` },
+        { id: "t2", obj: GO, cat: "project", est: 30, optional: true,
+          label: `<b>Bonus:</b> add a couple of Monkey example snippets as one-click buttons and a short "how it works" page linking the interpreter internals.` },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 A running URL where anyone can type Monkey and see it evaluate is the most tangible possible proof you built a language. That's the whole journey in one link.` },
+      ],
+    },
+    {
+      id: "d56", date: "2026-11-02", week: "w16", title: "Grand retro — three languages, two interpreters, one web stack",
+      theme: "Close it out; capture the whole arc and choose what's next.",
+      tasks: [
+        { id: "t1", obj: CI, cat: "review", est: 35, group: "g1",
+          label: `Write the finale note: tree-walk (jlox, Monkey) vs bytecode (clox, Monkey-compiler) — when each wins; and the Go web patterns you'll carry into real work.` },
+        { id: "t2", obj: GO, cat: "review", est: 25, group: "g1",
+          label: `Pick the <b>one</b> next real project and write its first three tasks. 🎉 Roadmap complete — three languages, two interpreters, a compiler, and a shipped web app.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Where the threads go next: finish <i>Writing a Compiler in Go</i> (closures + a real VM), or take a Go service to production with a queue and observability. You have the fundamentals cold now — build something you'll keep.` },
       ],
     },
   ],
@@ -670,6 +838,10 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d40.t1"] } },
     { id: "w14.m1", week: "w14", title: "🎓 Monkey (secondary) finished",
       rule: { type: "tasks", require: ["d41.t2"] } },
+    { id: "w15.m1", week: "w15", title: "Compiler bridge: Monkey → bytecode",
+      rule: { type: "tasks", require: ["d52.t2"] } },
+    { id: "w16.m1", week: "w16", title: "🏁 Monkey web playground shipped",
+      rule: { type: "tasks", require: ["d54.t2", "d55.t1"] } },
   ],
 
   features: [
