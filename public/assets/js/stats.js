@@ -33,7 +33,7 @@ export function computeAll(rm) {
   const objAcc = new Map();            // objId -> {req:{a,o}, bonus:{done,total,est}}
   const catDist = {};
   let overallReqDone = 0, overallReqTotal = 0;
-  let bonusDone = 0, bonusTotal = 0, bonusEstDone = 0;
+  let bonusDone = 0, bonusTotal = 0, bonusEstDone = 0, bonusEstRemaining = 0;
   let remainingReqMins = 0, investedMins = 0;
   let remainingSecMins = 0;
 
@@ -50,10 +50,13 @@ export function computeAll(rm) {
       const oa = objOf(task.obj);
 
       if (task.optional) {
-        // bonus / optional / secondary-as-bonus: counts past 100%, not in required denominator
+        // bonus / optional: tracked entirely on its OWN meter — both count and time.
+        // It counts "past 100%", never in the required denominator, and — crucially —
+        // undone bonus work does NOT inflate the required Remaining / finish ETA.
+        // Completed bonus time is reported as bonusInvested, kept out of `invested`.
         bonusTotal++; oa.bonus.total++; oa.bonus.estTot += task.est;
-        if (done) { bonusDone++; oa.bonus.done++; bonusEstDone += task.est; oa.bonus.estDone += task.est; investedMins += task.est; }
-        else { if (obj.tier === "secondary") remainingSecMins += task.est; else remainingReqMins += task.est; }
+        if (done) { bonusDone++; oa.bonus.done++; bonusEstDone += task.est; oa.bonus.estDone += task.est; }
+        else bonusEstRemaining += task.est;
         continue;
       }
 
@@ -93,12 +96,13 @@ export function computeAll(rm) {
 
   // ---- objective summaries ----
   const objectives = rm.objectives.map(o => {
-    const a = objAcc.get(o.id) || { req:{aDone:0,aTot:0,oDone:0,oTot:0,estTot:0,estDone:0}, bonus:{done:0,total:0} };
+    const a = objAcc.get(o.id) || { req:{aDone:0,aTot:0,oDone:0,oTot:0,estTot:0,estDone:0}, bonus:{done:0,total:0,estDone:0,estTot:0} };
     return {
       id: o.id, title: o.title, tier: o.tier, weight: o.weight,
       actual: withPct({ done: a.req.aDone, total: a.req.aTot }),
       original: withPct({ done: a.req.oDone, total: a.req.oTot }),
-      bonus: { done: a.bonus.done, total: a.bonus.total, pct: pct(a.bonus.done, a.bonus.total) },
+      bonus: { done: a.bonus.done, total: a.bonus.total, pct: pct(a.bonus.done, a.bonus.total),
+        estDone: a.bonus.estDone, estTotal: a.bonus.estTot },
       estTotal: a.req.estTot, estDone: a.req.estDone,
     };
   });
@@ -141,12 +145,14 @@ export function computeAll(rm) {
     slug,
     overall: {
       actual: primary.actual, original: primary.original,
-      bonus: { done: bonusDone, total: bonusTotal, pct: pct(bonusDone, bonusTotal) },
+      bonus: { done: bonusDone, total: bonusTotal, pct: pct(bonusDone, bonusTotal),
+        estDone: bonusEstDone, estRemaining: bonusEstRemaining },
     },
     objectives, primary, secondary,
     days, weeks, months, milestones,
     projection, secProjection,
     invested: investedMins, remaining: remainingReqMins, remainingSecondary: remainingSecMins,
+    bonusInvested: bonusEstDone, bonusRemaining: bonusEstRemaining,
     softStats, streak, catDist,
     hasSecondary: secObjs.length > 0,
   };

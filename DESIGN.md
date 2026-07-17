@@ -191,8 +191,10 @@ responsiveness." Direction:
 - **Hero**: title + subtitle; **overall progress** shown as **two bars/figures — actual and original**
   (§10); **live projection** ("≈ finish 2026-xx-xx at your pace"); per-roadmap **Export/Import** icon
   buttons (top-right).
-- **Stats strip**: KPI tiles — actual %, original %, this-week (both), streak, time invested,
-  projection, on-track delta. Any charts follow the **dataviz** skill.
+- **Stats strip**: KPI tiles — actual %, original %, this-week (both), streak, time invested
+  (**required-only**, with **bonus time** shown beside it as `+Xh`), remaining, projection, on-track
+  delta. The overall actual/original figures also surface completed bonus **count** inline as `+N`
+  (e.g. `4/5 tasks [+1]`). Any charts follow the **dataviz** skill.
 - **Objective meters**: one compact meter per objective; **primary** objectives feed the headline,
   **secondary** objectives shown on a clearly separate, muted meter (§12).
 - **Milestones**: two selectable presentations (default set in Settings, plus an inline toggle on the
@@ -210,7 +212,10 @@ responsiveness." Direction:
 - **Soft items** rendered with a *distinct* visual language (see §11): hints as inset callouts;
   tryouts/suggestions as dashed, differently-shaped "extra" checkboxes that clearly read as
   *not counting* toward real progress.
-- **Optional/bonus track**: collapsible, "counts past 100%," full-or-fallback = 1.
+- **Optional/bonus track**: collapsible, "counts past 100%," full-or-fallback = 1. Bonus is tracked on
+  its **own meter — both count and time** — surfaced inline as `+N` next to required counts and `+time`
+  beside Invested. Undone bonus work is **excluded** from Remaining and the finish projection, so
+  optional reading never delays your ETA.
 - **Extras**: references, "what's new / deprecated" callouts, project ideas — placed inline or in a
   panel per the roadmap.
 
@@ -604,7 +609,9 @@ All derived at runtime from `structure + journey`; never stored; always truthful
   rail highlights the **current** week's target.
 
 ### 13.3 Pace / "on track" & projection
-- **Remaining effort** = Σ est of undone tasks (primary; secondary tracked separately).
+- **Remaining effort** = Σ est of undone **required** tasks (primary; secondary tracked separately).
+  Optional/bonus tasks are **not** included, so they never inflate the remaining figure or the ETA;
+  their done/undone time is reported separately as bonus-invested / bonus-remaining.
 - **Weekly capacity** = active-days/week × per-day budget − overlap tax.
 - **Projection** = today + ceil(remaining ÷ capacity), refined by a rolling average of **actual**
   recent pace (tasks/day, minutes/day). Surfaced as "≈ finish <date>" + an ahead/on/behind delta vs a
@@ -614,10 +621,25 @@ All derived at runtime from `structure + journey`; never stored; always truthful
 
 ### 13.4 Extra stats (dataviz skill for any charts)
 - **Streak** (consecutive active days with the day's **original** required tasks done).
-- **Time invested** (Σ est of done) and remaining.
+- **Time invested** (Σ est of done **required** work) and remaining; **bonus time** (Σ est of done
+  optional) tracked and shown separately, never merged into the required figures.
 - **Category / objective distribution** of work done.
 - **Soft-item extra stats** (tryouts/suggestions completed) — shown apart from real progress.
 - Per-week completion sparkline.
+
+### 13.5 Activity log & the cross-roadmap "Today" effort panel
+- Derived purely from the `done_at:<taskId>` timestamps the store writes on tick (`activity.js`) — no
+  new storage. It is an **activity** view keyed by the calendar day the work was *done* (independent of
+  the day a task was *scheduled* for), and it naturally spans **every roadmap**.
+- The **Today** tab (`#/today`) shows an **effort panel** above the due/overdue digest:
+  - Headline numbers for the selected day: **time on tasks**, **tasks done**, **roadmaps touched**, and
+    a **bonus** `+N · time` when any optional work was done that day.
+  - **Comparisons**: vs the previous day, vs a **trailing 7-day daily average** (rest days count as
+    zero), and **this 7 days vs the previous 7** — each a green-up / red-down delta pill.
+  - A **14-day bar chart** of daily minutes (selected day highlighted; bars are clickable to select).
+  - A **breakdown** of exactly which tasks were completed that day, grouped by roadmap.
+  - A **day stepper** (and clickable bars) let you move to any past day back to the journey start; the
+    due/overdue digest below always stays anchored to the real *today*.
 
 ---
 

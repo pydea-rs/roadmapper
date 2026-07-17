@@ -11,8 +11,11 @@ import { getRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal } from "./ui.js";
 import {
+  activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
+} from "./activity.js";
+import {
   $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
-  monthLabel, daysBetween, pct,
+  monthLabel, daysBetween, addDays, pct,
 } from "./util.js";
 
 let hooks = {};                        // { exportRoadmap, importRoadmap }
@@ -23,6 +26,7 @@ let lastToggled = null;
 let celebrateDay = null;               // dayId whose actual just hit 100% (fire confetti)
 let revealedDays = new Set();          // day ids already slid into view (this roadmap session)
 let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
+let effortDate = null;                 // selected date in the Today effort panel (null → today)
 
 /* Is animation allowed right now? (respects the in-app + OS motion prefs) */
 function motionOK() {
@@ -121,7 +125,13 @@ function revealCard(card) {
  *  here writes through to the DB just like the timeline does.
  * ================================================================== */
 export function renderToday(mount) {
+  effortDate = todayStr();                 // opening the tab always starts on today
+  drawToday(mount);
+}
+
+function drawToday(mount) {
   const today = todayStr();
+  if (!effortDate || effortDate > today) effortDate = today;   // never the future
   mount.innerHTML = "";
   const view = el("div.today-view");
 
@@ -134,6 +144,9 @@ export function renderToday(mount) {
   top.append(tb);
   heroEl.append(top);
   view.append(heroEl);
+
+  // effort panel — your development over time (date-selectable, cross-roadmap)
+  view.append(effortPanel(mount));
 
   let due = 0, doneToday = 0, overdueN = 0;
   const cards = [];
@@ -191,7 +204,7 @@ function todayRow(rm, task, mount, curDay, overdue) {
   const row = el("div.task" + (done ? ".done" : ""), { dataset: { task: task.id } });
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
     "aria-label": "Toggle task", html: checkIcon() });
-  cb.onclick = () => { store.setTask(rm.slug, task.id, !store.isDone(rm.slug, task.id)); renderToday(mount); };
+  cb.onclick = () => { store.setTask(rm.slug, task.id, !store.isDone(rm.slug, task.id)); drawToday(mount); };
   row.append(cb);
   const bodyEl = el("div.t-body");
   bodyEl.append(el("div.t-label", { html: task.label }));
@@ -202,6 +215,127 @@ function todayRow(rm, task, mount, curDay, overdue) {
   bodyEl.append(meta);
   row.append(bodyEl);
   return row;
+}
+
+/* ================================================================== *
+ *  Today · effort panel — a simple, honest view of how much you got
+ *  done on a given day, how that compares to your recent pace, and a
+ *  14-day bar chart of daily effort. All derived from done_at stamps
+ *  (activity.js), so it needs no new storage and spans every roadmap.
+ *  You can step back to any past day (chart bars are clickable too).
+ * ================================================================== */
+function effortPanel(mount) {
+  const map = activityByDate();
+  const today = todayStr();
+  const date = effortDate;
+  const e = dayEffort(date, map);
+  const prev = dayEffort(addDays(date, -1), map);
+  const avg7 = trailingAvg(date, 7, map);
+  const wk = weekDelta(date, map);
+  const journeyStart = getRoadmaps().reduce((m, rm) => {
+    const f = rm.days[0] && rm.days[0].date; return f && (!m || f < m) ? f : m; }, null);
+
+  const panel = el("div.effort");
+
+  // header: title + day stepper
+  const head = el("div.effort-head");
+  head.append(el("div.sec-title", { text: "Your effort" }));
+  const nav = el("div.effort-nav");
+  const prevBtn = el("button.effort-navbtn.prev", { "aria-label": "Previous day", html: caretIcon() });
+  const label = el("span.effort-date", { text: `${relDay(date)} · ${fmtDateHuman(date)}` });
+  const nextBtn = el("button.effort-navbtn", { "aria-label": "Next day", html: caretIcon() });
+  prevBtn.onclick = () => { effortDate = addDays(effortDate, -1); drawToday(mount); };
+  nextBtn.onclick = () => { if (effortDate < today) { effortDate = addDays(effortDate, 1); drawToday(mount); } };
+  if (date >= today) nextBtn.disabled = true;
+  if (journeyStart && date <= journeyStart) prevBtn.disabled = true;
+  nav.append(prevBtn, label, nextBtn);
+  head.append(nav);
+  panel.append(head);
+
+  // headline numbers for the selected day
+  const stats = el("div.effort-stats");
+  stats.append(effortStat(fmtMins(e.mins), "time on tasks"));
+  stats.append(effortStat(String(e.tasks), e.tasks === 1 ? "task done" : "tasks done"));
+  stats.append(effortStat(String(e.roadmaps.size), e.roadmaps.size === 1 ? "roadmap" : "roadmaps"));
+  if (e.bonusTasks) stats.append(effortStat(`+${e.bonusTasks}`, `bonus · ${fmtMins(e.bonusMins)}`));
+  panel.append(stats);
+
+  // comparisons — how this day stacks up against your recent pace
+  const cmp = el("div.effort-cmp");
+  cmp.append(deltaChip("vs prev day", e.mins - prev.mins));
+  cmp.append(deltaChip("vs 7-day avg", e.mins - avg7, `avg ${fmtMins(Math.round(avg7))}/day`));
+  cmp.append(deltaChip("wk vs last wk", wk.delta, `${fmtMins(wk.thisMins)} vs ${fmtMins(wk.lastMins)}`));
+  panel.append(cmp);
+
+  // 14-day bar chart (minutes/day), selected day highlighted, bars clickable
+  panel.append(effortChart(series(date, 14, map), date, mount));
+
+  // what actually got done that day
+  panel.append(effortBreakdown(date, today));
+  return panel;
+}
+
+function effortStat(big, sub) {
+  const s = el("div.effort-stat");
+  s.append(el("div.es-v", { text: big }));
+  s.append(el("div.es-k", { text: sub }));
+  return s;
+}
+
+/* A labelled delta pill: green up / red down / neutral flat. `note` is an
+ * optional context line (the baseline it's measured against). */
+function deltaChip(label, delta, note) {
+  const dir = delta > 0.5 ? "up" : delta < -0.5 ? "down" : "flat";
+  const sign = dir === "up" ? "+" : dir === "down" ? "−" : "±";
+  const chip = el("div.effort-delta." + dir, note ? { title: note } : {});
+  chip.append(el("span.d-label", { text: label }));
+  chip.append(el("span.d-val", { text: `${sign}${fmtMins(Math.abs(Math.round(delta)))}` }));
+  return chip;
+}
+
+function effortChart(data, selected, mount) {
+  const wrap = el("div.effort-chart", { role: "list", "aria-label": "Daily effort, last 14 days" });
+  const max = Math.max(1, ...data.map(d => d.mins));
+  for (const d of data) {
+    const h = Math.round((d.mins / max) * 100);
+    const col = el("button.ec-col" + (d.date === selected ? ".sel" : "") + (d.mins === 0 ? ".empty" : ""),
+      { role: "listitem", title: `${fmtDateHuman(d.date)} · ${fmtMins(d.mins)} · ${d.tasks} task${d.tasks === 1 ? "" : "s"}`,
+        "aria-label": `${d.date}: ${fmtMins(d.mins)}, ${d.tasks} tasks` });
+    const bar = el("div.ec-bar");
+    bar.append(el("i.ec-fill", { style: `height:${Math.max(h, d.mins ? 4 : 0)}%` }));
+    col.append(bar);
+    col.append(el("span.ec-x", { text: String(new Date(d.date.replace(/-/g, "/")).getDate()) }));
+    col.onclick = () => { effortDate = d.date; drawToday(mount); };
+    wrap.append(col);
+  }
+  return wrap;
+}
+
+/* The day's completed tasks, grouped by roadmap. */
+function effortBreakdown(date, today) {
+  const rows = tasksDoneOn(date);
+  const wrap = el("div.effort-log");
+  if (!rows.length) {
+    wrap.append(el("div.effort-empty", { text: date === today
+      ? "Nothing completed yet today — tick something off below."
+      : "No tasks completed on this day." }));
+    return wrap;
+  }
+  const byRm = new Map();
+  for (const r of rows) {
+    if (!byRm.has(r.rm.slug)) byRm.set(r.rm.slug, { rm: r.rm, items: [] });
+    byRm.get(r.rm.slug).items.push(r);
+  }
+  for (const { rm, items } of byRm.values()) {
+    wrap.append(el("div.effort-log-rm", { text: `${rm.icon} ${rm.title}` }));
+    for (const { task } of items) {
+      const row = el("div.effort-log-row" + (task.optional ? ".bonus" : ""));
+      row.append(el("span.elr-time", { text: fmtMins(task.est || 0) }));
+      row.append(el("span.elr-label", { text: task.label.replace(/<[^>]+>/g, "") }));
+      wrap.append(row);
+    }
+  }
+  return wrap;
 }
 
 /** Apply per-view accent. A roadmap's identity colour wins unless the owner
@@ -353,13 +487,19 @@ function dualBlock(cap, figure, bonus, isOrig) {
   const lead = el("div.lead");
   lead.append(el("b", { text: figure.pct + "%" }));
   lead.append(el("span", { text: `${figure.done}/${figure.total} tasks` }));
+  // bonus/optional work is tracked on its own meter — surface it inline as "+N"
+  // (count) right next to the required tasks, e.g. 4/5 tasks [+1].
+  if (bonus && bonus.done) lead.append(el("span.bonus-plus", { text: `+${bonus.done}`,
+    title: `${bonus.done} bonus task${bonus.done === 1 ? "" : "s"} done` +
+      (bonus.estDone ? ` · +${fmtMins(bonus.estDone)}` : "") }));
   b.append(lead);
   const bar = el("div.pbar" + (bonus && bonus.total ? ".bonus" : "") + (isOrig ? ".orig" : ""));
   bar.append(el("i", { style: `width:${Math.min(100, figure.pct)}%` }));
   b.append(bar);
   if (bonus && bonus.total) {
+    const t = bonus.estDone ? ` · +${fmtMins(bonus.estDone)}` : "";
     b.append(el("div.day-mini-orig", { style: "margin-top:6px",
-      text: `+ ${bonus.done}/${bonus.total} bonus done` }));
+      text: `+ ${bonus.done}/${bonus.total} bonus done${t}` }));
   }
   return b;
 }
@@ -397,7 +537,7 @@ function statsStrip(rm, S) {
   const wk = currentWeekFigure(rm, S);
   strip.append(kpi("This week", wk));
   strip.append(kpi("Streak", S.streak, S.streak === 1 ? "day" : "days"));
-  strip.append(kpi("Invested", fmtMins(S.invested)));
+  strip.append(kpi("Invested", fmtMins(S.invested), S.bonusInvested ? `+${fmtMins(S.bonusInvested)} bonus` : null));
   strip.append(kpi("Remaining", fmtMins(S.remaining)));
   if (S.softStats.total) strip.append(kpi("Tryouts", `${S.softStats.done}/${S.softStats.total}`));
   return strip;
