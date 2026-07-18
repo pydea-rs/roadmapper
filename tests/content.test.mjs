@@ -26,20 +26,42 @@ t.ok(registry.getMainRoadmaps().every(r => r.kind !== "side"), "main roadmaps ex
 t.ok(bedrock.days.every(d => d.tasks.every(x => bedrock.objById.has(x.obj))),
   "every bedrock task maps to a domain objective");
 
-// core + extension: the extension continues the same roadmap (weeks 13–25) and
-// adds the Distributed-systems thread; nothing here should re-date the core.
-t.ok(bedrock.days.length >= 77, "bedrock has the core + extension days (>= 77)");
-t.ok(bedrock.objById.has("dist"), "the extension adds a Distributed-systems objective");
-t.ok(bedrock.weeksById.has("w25"), "the extension reaches week 25");
-t.ok(bedrock.days.some(d => d.date >= "2026-10-12"), "extension days are dated after the core");
-// recall cards: authored on tasks, and every card is a well-formed {q, a}
-const withCards = bedrock.days.flatMap(d => d.tasks).filter(x => x.cards && x.cards.length);
-t.ok(withCards.length >= 77, "every bedrock task carries recall cards");
-t.ok(withCards.every(x => x.cards.every(c => c.q && c.a)),
+// core + two extensions continue the SAME roadmap: Extension I (weeks 13–25)
+// adds the Distributed-systems thread; Extension II (weeks 26–29) adds the
+// Data-structure & runtime internals thread. Nothing here should re-date the core.
+t.ok(bedrock.days.length >= 88, "bedrock has core + both extensions (>= 88 days)");
+t.ok(bedrock.objById.has("dist"), "Extension I adds a Distributed-systems objective");
+t.ok(bedrock.objById.has("internals"), "Extension II adds a Data-structure & runtime internals objective");
+t.ok(bedrock.weeksById.has("w29"), "Extension II reaches week 29");
+t.ok(bedrock.days.some(d => d.date >= "2026-10-12"), "Extension I days are dated after the core");
+t.ok(bedrock.days.some(d => d.date >= "2027-01-11"), "Extension II days are dated after Extension I");
+t.ok(bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "internals").length >= 6,
+  "the internals thread has its full run of tasks");
+
+// no two side-days may share a calendar date (the digest/effort views key off date)
+const bDates = bedrock.days.map(d => d.date);
+t.eq(new Set(bDates).size, bDates.length, "bedrock day dates are unique (no collisions)");
+
+// threads stay INTERLEAVED: consecutive days switch topics, save the one
+// deliberate security capstone pair (d37 → d38). Guards the core design rule.
+let sameThread = 0;
+for (let i = 1; i < bedrock.days.length; i++) {
+  const a = bedrock.days[i - 1].tasks[0]?.obj, b = bedrock.days[i].tasks[0]?.obj;
+  if (a && a === b) sameThread++;
+}
+t.ok(sameThread <= 1, `threads interleave — at most the one capstone pair repeats (found ${sameThread})`);
+
+// recall cards: EVERY task carries >= 2 well-formed {q, a} cards (the whole point
+// of the recall feature is that no completed task is left without prompts).
+const allBedrockTasks = bedrock.days.flatMap(d => d.tasks);
+t.ok(allBedrockTasks.every(x => x.cards && x.cards.length >= 2),
+  "every bedrock task carries >= 2 recall cards");
+t.ok(allBedrockTasks.every(x => x.cards.every(c => c.q && c.a)),
   "every recall card has both a question and an answer");
-// milestone task references still resolve (incl. extension milestones)
+
+// milestone task references still resolve (incl. both extensions' milestones)
 t.ok(bedrock.milestones.every(m => (m.rule.require || []).every(id => bedrock.tasksById.has(id))),
-  "every milestone (core + extension) references a real task");
+  "every milestone (core + both extensions) references a real task");
 
 for (const rm of roadmaps) {
   t.group(`${rm.slug} — structure`);

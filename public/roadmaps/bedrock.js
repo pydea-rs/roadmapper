@@ -24,7 +24,8 @@
 import { registerRoadmap } from "../assets/js/registry.js";
 
 const NET = "net", SYS = "sys", DATA = "data", CACHE = "cache", MSG = "msg",
-      OPS = "devops", CHAIN = "chain", SEC = "sec", REV = "review", DIST = "dist";
+      OPS = "devops", CHAIN = "chain", SEC = "sec", REV = "review", DIST = "dist",
+      CORE = "internals";
 
 registerRoadmap({
   slug: "bedrock",
@@ -46,6 +47,7 @@ registerRoadmap({
     { id: CHAIN, title: "Blockchain internals",    tier: "primary", color: "#c084fc" },
     { id: SEC,   title: "Security",                tier: "primary", color: "#f43f5e" },
     { id: DIST,  title: "Distributed systems",     tier: "primary", color: "#22d3ee" },
+    { id: CORE,  title: "Data-structure & runtime internals", tier: "primary", color: "#f472b6" },
     { id: REV,   title: "Language & framework review", tier: "primary", color: "#94a3b8" },
   ],
 
@@ -76,6 +78,11 @@ registerRoadmap({
     { id: "w23", title: "Week 23 — Quorums, LSM-trees & XDP",                start: "2026-12-21" },
     { id: "w24", title: "Week 24 — Firedancer, the C++ memory model & streams", start: "2026-12-28" },
     { id: "w25", title: "Week 25 — Flame graphs, signatures & async internals", start: "2027-01-04" },
+    // ---- Extension II: "the cool internals" — data structures & runtime under the hood ----
+    { id: "w26", title: "Week 26 — Amortized O(1), false sharing & hash maps",      start: "2027-01-11" },
+    { id: "w27", title: "Week 27 — The JS heap, garbage collection & the allocator", start: "2027-01-18" },
+    { id: "w28", title: "Week 28 — Floats, the JIT & Unicode",                       start: "2027-01-25" },
+    { id: "w29", title: "Week 29 — Branch prediction & Bloom filters",               start: "2027-02-01" },
   ],
 
   days: [
@@ -489,7 +496,7 @@ registerRoadmap({
         { id: "t1", obj: CACHE, cat: "read", est: 50,
           lead: `<b>Caching ①</b> — how one thread does millions of ops/sec.`,
           refs: [
-            `Read the Redis <a href="https://redis.io/docs/latest/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.`,
+            `Read the Redis <a href="https://redis.io/docs/latest/develop/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.`,
             `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.`,
             `Structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log; HLL → cardinality.`,
           ],
@@ -578,7 +585,7 @@ registerRoadmap({
         { id: "t1", obj: MSG, cat: "read", est: 55,
           lead: `<b>Messaging ①</b> — the distinction that unlocks all of streaming.`,
           refs: [
-            `Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a>.`,
+            `Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://web.archive.org/web/20260609223006/https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a> (archived — LinkedIn removed the original).`,
             `<b>Queue/broker</b> (RabbitMQ, SQS): message deleted on ack, load-balanced across competing consumers, weak ordering. <b>Log</b> (Kafka): append-only, retained, each consumer tracks its own <b>offset</b> — replayable, ordered within a partition.`,
           ],
           model: `"RabbitMQ or Kafka?" → task/RPC work with per-message ack/priority/TTL → broker/queue; event streaming, replay, multiple independent consumers, high throughput → log/Kafka. The axis is delete-on-ack vs retain-with-offset.`,
@@ -1770,10 +1777,277 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🏁 Extension complete — the threads have run from the wire up to distributed consensus, storage engines, chains and language runtimes. Core + extension together are your interview-and-tech-talk bedrock.` },
+        { id: "s1", type: "callout", label: `🏁 Extension I complete — the threads ran from the wire up to distributed consensus, storage engines, chains and language runtimes. <b>Extension II</b> continues right below (weeks 26–29): the "cool internals" — amortized O(1), hash maps, garbage collection, the JS heap, floats, Unicode & Bloom filters.` },
         { id: "s2", type: "hint", label: `💡 Callback to d29/d03: the executor is the event loop; the Future is the non-blocking unit; the Waker is "the fd is ready". Async, all the way down.` },
       ],
-      note: "🎓 25-week Bedrock complete — from the OSI myth to Rust's async state machine, wire to runtime.",
+      note: "🎓 Core + Extension I done — from the OSI myth to Rust's async state machine. Extension II (data-structure & runtime internals) runs weeks 26–29.",
+    },
+
+    /* ================================================================== *
+     *  EXTENSION II — "the cool internals": the data structures and runtime
+     *  machinery under the code you write every day. A NEW thread —
+     *  Data-structure & runtime internals — is interleaved with more Systems
+     *  and language Review days (same rule: consecutive days switch topics).
+     *  References verified 2026-07-18, status-flagged for fast-moving items
+     *  (Go maps→Swiss tables in 1.24, Go's GC, V8's pipeline, Unicode 17).
+     *  Dates 2027-01-11 → 2027-02-03.
+     * ================================================================== */
+
+    /* ==================== WEEK 26 ==================== */
+    {
+      id: "d78", date: "2027-01-11", week: "w26", title: "Amortized O(1): dynamic arrays & the doubling trick",
+      theme: "Data-structure internals · part 1 — a rare O(n) resize, amortized to nothing.",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 50,
+          lead: `<b>Internals ①</b> — why "append is O(1)" is honest, and the analysis that proves it.`,
+          refs: [
+            `Read the Rust <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#method.push" target="_blank" rel="noopener">Vec::push</a> docs: append "takes <b>amortized O(1)</b> time. If the length would exceed capacity, O(capacity) to copy to a larger allocation — offset by the capacity O(1) insertions it allows."`,
+            `The trick: a dynamic array (Vec / ArrayList / Go slice / Python list) <b>doubles</b> capacity when full and copies everything (an O(n) event). Because doublings are exponentially spaced, total copy work over n appends is ≤ 2n → O(1) each on average.`,
+            `The growth factor is a real design choice: read folly's <a href="https://github.com/facebook/folly/blob/main/folly/docs/FBVector.md" target="_blank" rel="noopener">FBVector</a> on why <b>1.5×</b> beats 2× — with 2× a new block always exceeds the sum of all freed ones, so the allocator can never reuse them.`,
+          ],
+          model: `<b>Amortized</b> ≠ "average-case hope": it's a worst-case bound spread over a sequence. n appends cost ≤ 2n total work no matter when resizes hit → O(1) each — but any <i>single</i> append can still stall O(n) at a doubling (a real p99 spike when a 1 GB slice reallocates). Growth factor k trades speed vs memory reuse: k < φ≈1.618 lets freed blocks be recycled (Python ≈1.125×, folly 1.5×); k = 2 never can.`,
+          cards: [
+            { q: `Why is dynamic-array append O(1) if a resize copies everything?`, a: `Resizes double capacity and are exponentially spaced, so total copy work over n appends is ≤ 2n → <b>O(1) amortized</b>. A single append can still spike to O(n) at a doubling.` },
+            { q: `Why grow by 1.5× instead of 2×?`, a: `With 2× a new allocation always exceeds the sum of all freed ones, so they can't be reused; a factor < φ≈1.618 (e.g. 1.5×) lets the allocator recycle freed blocks.` },
+            { q: `What does "amortized O(1)" actually promise?`, a: `A worst-case bound on a <i>sequence</i> (n ops cost O(n) total) — <b>not</b> that every op is O(1). The occasional resize is real latency.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 This is the same doubling trick a hash map uses when its load factor crosses the threshold (next internals day) — one O(n) rehash, amortized to O(1) per insert.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d09: a resize isn't just algorithmic cost — copying a big array blows the cache and faults fresh pages. Preallocate (<code>Vec::with_capacity</code> / <code>make([]T, 0, n)</code>) when you know the size to skip both.` },
+      ],
+      note: "Extension II begins — the 'cool internals': the data structures and runtime machinery under the code you write daily.",
+    },
+    {
+      id: "d79", date: "2027-01-13", week: "w26", title: "NUMA, cache coherence (MESI) & false sharing",
+      theme: "Systems · part 7 — you never own a variable, you own its 64-byte cache line.",
+      tasks: [
+        { id: "t1", obj: SYS, cat: "read", est: 55,
+          lead: `<b>Systems ⑦</b> — why two threads touching <i>different</i> variables can still cripple each other.`,
+          refs: [
+            `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d09).`,
+            `Then Martin Thompson, <a href="https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html" target="_blank" rel="noopener">"False Sharing"</a> — a benchmark + the padding fix.`,
+            `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.`,
+          ],
+          model: `<b>False sharing</b>: two cores repeatedly write different variables that happen to share one cache line — no logical dependency, but each write invalidates the other's copy, so the line <b>ping-pongs</b> across the interconnect and throughput collapses. Fix by <i>layout</i>: pad/align to separate lines (<code>alignas(64)</code>, C++17 <code>hardware_destructive_interference_size</code>, per-thread structs). <b>NUMA</b>: remote memory is ~1.5–2× slower, and Linux places a page on the node that <b>first writes</b> it (first-touch) — not where you malloc'd it.`,
+          cards: [
+            { q: `What is false sharing?`, a: `Two cores writing <i>different</i> variables on the <b>same cache line</b> — each write invalidates the other's copy, so the line ping-pongs across cores. A pure layout/perf bug, not a correctness one.` },
+            { q: `On which NUMA node does a freshly-malloc'd page live?`, a: `The node of the thread that <b>first writes</b> it (first-touch) — not where <code>malloc</code> ran. So initialize memory on the worker thread that will use it.` },
+            { q: `Why isn't 64 bytes always safe for padding?`, a: `Apple M-series use 128 B lines and x86 adjacent-line prefetch couples pairs — so <code>hardware_destructive_interference_size</code> is often <b>128</b>. Pad to 128 to be safe.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔬 Callback to d09/d73: this is the cache line again — and the acquire/release fences from the C++ memory model (d73) are what make one core's writes <i>visible</i> to another. Coherence + ordering are two halves of shared-memory truth.` },
+        { id: "s2", type: "hint", label: `💡 The classic tell: an array of per-thread counters that gets <i>slower</i> with more threads. They're colliding on cache lines — pad each to its own line and it scales.` },
+      ],
+    },
+    {
+      id: "d80", date: "2027-01-15", week: "w26", title: "Hash maps: why O(1), collisions & Swiss tables",
+      theme: "Data-structure internals · part 2 — expected O(1), and how it degrades to O(n).",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 55,
+          lead: `<b>Internals ②</b> — the structure you reach for daily, and why its O(1) has fine print.`,
+          refs: [
+            `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d78).`,
+            `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).`,
+            `Modern layout: read Abseil's <a href="https://abseil.io/about/design/swisstables" target="_blank" rel="noopener">Swiss Tables</a> — open addressing + a parallel array of 1-byte control words, SIMD-scanned a group at a time (Go's built-in map adopted this in <a href="https://go.dev/blog/swisstable" target="_blank" rel="noopener">Go 1.24</a>).`,
+          ],
+          model: `"O(1)" is <b>expected / amortized</b>, not worst-case: adversarial or unlucky keys can pile into one bucket → O(n). That's exploitable — <b>hash-flooding DoS</b> feeds colliding keys to force O(n²); the fix is a keyed PRF hash, <b>SipHash</b>, seeded per-process so collisions are unpredictable (Python, Rust, Ruby default to it). Swiss/flat maps store entries inline (no per-node alloc) for cache locality; a SIMD compare on control bytes checks ~16 slots at once.`,
+          cards: [
+            { q: `Is a hash-map lookup O(1)?`, a: `<b>Expected</b> O(1+α) with a good hash and bounded load factor — but worst case is O(n) (O(log n) if buckets treeify) when keys collide.` },
+            { q: `What is hash-flooding, and the fix?`, a: `An attacker submits keys that all collide → O(n) per op, O(n²) overall. Fix: a <b>keyed hash (SipHash)</b> seeded with a per-process secret so collisions are unpredictable.` },
+            { q: `Chaining vs open addressing?`, a: `Chaining: buckets hold lists (tolerates α>1, more pointer-chasing). Open addressing (Swiss tables): probe in-array, inline storage, great cache locality, needs α<1.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d78: the O(n) rehash on a doubling amortizes to O(1) per insert — hash maps and dynamic arrays share the exact same trick.` },
+        { id: "s2", type: "callout", label: `🔬 "Go maps are chained buckets" is now outdated — Go 1.24 (2025) switched the built-in map to Swiss Tables. And your <code>HashMap</code> iteration order changing across runs is SipHash's per-process seed, not a bug.` },
+      ],
+    },
+
+    /* ==================== WEEK 27 ==================== */
+    {
+      id: "d81", date: "2027-01-18", week: "w27", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC",
+      theme: "Review · the engine under every line of JavaScript you ship.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 50,
+          lead: `<b>Review</b> — why "just an object" is secretly a typed shape, and how V8 collects it.`,
+          refs: [
+            `Read Mathias Bynens, <a href="https://mathiasbynens.be/notes/shapes-ics" target="_blank" rel="noopener">"Shapes and Inline Caches"</a> + V8's <a href="https://v8.dev/docs/hidden-classes" target="_blank" rel="noopener">hidden classes</a> doc.`,
+            `Then V8's <a href="https://v8.dev/blog/trash-talk" target="_blank" rel="noopener">"Trash Talk"</a> on the <b>Orinoco</b> GC (generational: a Scavenger young-gen + concurrent mark-sweep-compact old-gen).`,
+            `Without looking, explain aloud: why does assigning object properties in a <i>different order</i> make code slower?`,
+          ],
+          model: `Every object has a <b>hidden class</b> (V8 calls it a <b>Map</b>, unrelated to the <code>Map</code> builtin) mapping property→offset; objects given the same properties <i>in the same order</i> share one. <b>Inline caches</b> memoize Map→offset at each access site: monomorphic (1 shape — fast, inlinable) → polymorphic → megamorphic (falls back to a dictionary lookup). GC is generational: the <b>Scavenger</b> copies survivors in a semispace young gen (minor GC), promoting to an old gen collected by concurrent mark-sweep-compact. <code>delete</code> or out-of-order init drops an object to slow dictionary mode.`,
+          cards: [
+            { q: `What is a V8 "hidden class" (Map / Shape)?`, a: `A runtime-built descriptor mapping property → offset; objects given the same properties <b>in the same order</b> share one, so a single pointer compare identifies the shape.` },
+            { q: `Monomorphic vs megamorphic call site?`, a: `An inline cache sees 1 shape (monomorphic — fast, inlinable) vs many (megamorphic — falls back to a generic dictionary lookup). Keep hot sites monomorphic.` },
+            { q: `V8's young-generation collector?`, a: `The <b>Scavenger</b> — a semispace copying collector (minor GC); survivors are promoted to the old generation (concurrent mark-sweep-compact). Part of the Orinoco project.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🧭 Review tasks re-derive runtime models you already use (Rust d32, Go d49, Python d61, C++ d73, Rust async d77). This is the JS engine's turn.` },
+        { id: "s2", type: "hint", label: `💡 Don't conflate <b>Oilpan</b> (V8's GC for C++/DOM objects) with <b>Orinoco</b> (the JS-heap collector) — different heaps, different collectors. "Shape" is the ecosystem word; V8's source says "Map".` },
+      ],
+    },
+    {
+      id: "d82", date: "2027-01-21", week: "w27", title: "Garbage collection: tracing, generational & tri-color",
+      theme: "Data-structure internals · part 3 — reclaim the unreachable without stopping the world.",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 55,
+          lead: `<b>Internals ③</b> — the collectors under every managed runtime (contrast d81's V8, d49's Go).`,
+          refs: [
+            `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).`,
+            `Read the <a href="https://go.dev/doc/gc-guide" target="_blank" rel="noopener">Go GC guide</a> + Rick Hudson's <a href="https://go.dev/blog/ismmkeynote" target="_blank" rel="noopener">"Getting to Go"</a> for a real low-latency concurrent design.`,
+            `The <b>generational hypothesis</b> ("most objects die young") + a <b>write barrier</b>/remembered set let you collect a small young gen often and the old gen rarely.`,
+          ],
+          model: `<b>Tri-color marking</b>: white (unreached) / grey (reached, children unscanned) / black (done); the invariant is "no black→white pointer without a grey between", and a <b>write barrier</b> on pointer writes preserves it while the mutator runs concurrently. Reclamation styles: mark-<b>sweep</b> (fast, fragments), mark-<b>compact</b> (defrags, costlier), <b>copying</b> (bump-allocate, wastes half the heap). Modern concurrent GCs (Go, ZGC, Shenandoah) hold pauses sub-millisecond.`,
+          cards: [
+            { q: `Why can't reference counting reclaim everything?`, a: `<b>Cycles</b> — a self-referential island keeps counts > 0 forever. Refcounting needs a backup tracer (CPython) or weak refs.` },
+            { q: `Tri-color marking — the colors and the barrier?`, a: `White (unreached) / grey (reached, unscanned) / black (scanned). A <b>write barrier</b> on pointer writes keeps "no black→white", so marking can run concurrently with the program.` },
+            { q: `Is Go's GC generational?`, a: `No — it's deliberately <b>non-generational and non-moving</b> concurrent tri-color mark-sweep (escape analysis stack-allocates most short-lived objects instead). A common interview trap.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔬 Callback to d81: V8 <i>is</i> generational + moving (the copying Scavenger); Go is neither. Two valid, opposite answers to the same problem — know why each chose as it did.` },
+        { id: "s2", type: "hint", label: `💡 As of 2026 Go's GC is still concurrent non-generational mark-sweep; an experimental page-scanning "Green Tea" collector (<code>GOEXPERIMENT=greenteagc</code>, Go 1.25) is being trialed for better locality.` },
+      ],
+    },
+    {
+      id: "d83", date: "2027-01-23", week: "w27", title: "The heap allocator: malloc, size classes & fragmentation",
+      theme: "Systems · part 8 — what actually happens on malloc(), and why free() doesn't shrink RSS.",
+      tasks: [
+        { id: "t1", obj: SYS, cat: "read", est: 50,
+          lead: `<b>Systems ⑧</b> — the allocator sitting between your code and the kernel's pages.`,
+          refs: [
+            `Read Doug Lea's <a href="https://gee.cs.oswego.edu/dl/html/malloc.html" target="_blank" rel="noopener">"A Memory Allocator"</a> (dlmalloc — the design behind glibc) + Google's <a href="https://google.github.io/tcmalloc/design.html" target="_blank" rel="noopener">tcmalloc design</a>.`,
+            `Small requests grow the heap via <b>brk</b>/sbrk; large ones (glibc ≥ 128 KB) go straight to <b>mmap</b> (and are unmapped on free). Otherwise <code>free</code> returns blocks to internal <b>bins</b>, not the OS.`,
+          ],
+          model: `Allocators bin free blocks by <b>size class</b> so alloc/free is an O(1) list pop/push with no search — the cost is <b>internal fragmentation</b> (a 12-byte request rounds up to a 16-byte class). <b>Boundary tags</b> let adjacent free chunks <b>coalesce</b>, fighting <b>external fragmentation</b> (free memory scattered too finely to satisfy a big request). Per-thread caches (glibc tcache, tcmalloc per-CPU) make the common path lock-free; multiple <b>arenas</b> avoid one global lock.`,
+          cards: [
+            { q: `Does <code>free()</code> return memory to the OS?`, a: `Usually no — it returns the block to allocator <b>free lists/bins</b> (RSS stays high). Only large <code>mmap</code>'d blocks are actually unmapped.` },
+            { q: `Why do allocators use size classes?`, a: `Rounding to fixed classes makes alloc/free an O(1) bin pop/push (every block in a bin is interchangeable) — trading a little <b>internal</b> fragmentation for speed + less external fragmentation.` },
+            { q: `Internal vs external fragmentation?`, a: `Internal = wasted space <i>inside</i> a block (rounding/metadata); external = free memory scattered in pieces too small to place a large request contiguously.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d41/d83: brk/mmap hand you virtual pages; the allocator sub-divides them. "Out of memory" from fragmentation isn't a leak — the bytes are free, just not contiguous.` },
+        { id: "s2", type: "callout", label: `🔬 This is why long-running services swap in jemalloc/tcmalloc: better fragmentation behavior and per-CPU caching under many-thread load than default glibc ptmalloc.` },
+      ],
+    },
+
+    /* ==================== WEEK 28 ==================== */
+    {
+      id: "d84", date: "2027-01-26", week: "w28", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
+      theme: "Data-structure internals · part 4 — floats are exact binary fractions, just not the ones you typed.",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 45,
+          lead: `<b>Internals ④</b> — the number format that surprises everyone, made unsurprising.`,
+          refs: [
+            `Read <a href="https://floating-point-gui.de/" target="_blank" rel="noopener">floating-point-gui.de</a> for intuition, then skim Goldberg's canonical <a href="https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html" target="_blank" rel="noopener">"What Every Computer Scientist Should Know About Floating-Point Arithmetic"</a>.`,
+            `See it: every language prints <code>0.1 + 0.2 = 0.30000000000000004</code> (<a href="https://0.30000000000000004.com/" target="_blank" rel="noopener">0.30000000000000004.com</a>).`,
+          ],
+          model: `A <code>double</code> is 64 bits: 1 sign + 11 exponent (bias 1023) + 52 fraction, with an implicit leading 1 → 53 bits ≈ 15–17 significant decimals. 0.1 and 0.2 have <b>no finite binary expansion</b> (like 1/3 in decimal), so each is stored as the nearest double and their sum rounds to a value ≠ the nearest double to 0.3. Default rounding is <b>round-to-nearest, ties-to-even</b>. Specials: ±Inf, NaN (and <b>NaN ≠ NaN</b>), signed zeros. <b>Money uses integer minor units or a decimal type</b>, never binary floats.`,
+          cards: [
+            { q: `Why is <code>0.1 + 0.2 ≠ 0.3</code>?`, a: `0.1 and 0.2 have no finite <b>binary</b> expansion, so each is rounded to the nearest double; their sum rounds to 0.30000000000000004 ≠ the nearest double to 0.3. Correct rounding, not a bug.` },
+            { q: `Layout of a 64-bit double?`, a: `1 sign + 11 exponent (bias 1023) + 52 fraction, implicit leading 1 → <b>53 bits</b> of precision ≈ 15–17 significant decimal digits.` },
+            { q: `How should you represent money?`, a: `Integer <b>minor units</b> (cents) or an exact <b>decimal</b> type — never binary floating point, which can't represent 0.10 and accumulates error.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `⚠️ Never compare floats with <code>==</code> (compare within an epsilon), and remember <code>NaN != NaN</code> — the only value not equal to itself (use <code>isNaN</code>). <b>Catastrophic cancellation</b>: subtracting near-equal values annihilates significant digits.` },
+        { id: "s2", type: "hint", label: `💡 Floats are fully <b>deterministic</b>, not random — same ops, same bits, per IEEE 754 (current edition 754-2019). The "error" is representation, not chance.` },
+      ],
+    },
+    {
+      id: "d85", date: "2027-01-28", week: "w28", title: "Review: the JVM — tiered JIT, warmup & deoptimization",
+      theme: "Review · why the JVM starts slow, gets fast, and can briefly re-slow.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 50,
+          lead: `<b>Review</b> — how HotSpot turns bytecode into specialized native code at runtime (contrast d49's Go, d61's Python).`,
+          refs: [
+            `Read the <a href="https://docs.oracle.com/en/java/javase/21/vm/" target="_blank" rel="noopener">Java Virtual Machine Guide</a> (HotSpot compilation) + OpenJDK's <a href="https://wiki.openjdk.org/display/HotSpot/" target="_blank" rel="noopener">HotSpot wiki</a> (tiered compilation, deopt).`,
+            `Without looking, explain aloud: why is a Java microbenchmark meaningless until it's "warmed up"?`,
+          ],
+          model: `HotSpot runs bytecode in an <b>interpreter</b>, then JIT-compiles <i>hot</i> methods with two compilers — <b>C1</b> (fast, light) and <b>C2</b> (slow, aggressive). <b>Tiered compilation</b> (levels 0–4) interprets + profiles, compiles at C1 with profiling, then recompiles the hottest at C2 using that profile (inlining, devirtualization, escape analysis). <b>On-stack replacement</b> swaps a long-running loop to compiled code mid-execution. <b>Deoptimization</b>: when a speculative assumption breaks (a call site thought monomorphic sees a new type), it bails back to the interpreter — why perf can briefly regress.`,
+          cards: [
+            { q: `Why is the JVM slow at first, then fast?`, a: `It <b>interprets + profiles</b> cold code, then JIT-compiles hot methods (C1 → C2) using the profile for aggressive speculative optimization. Cold code stays interpreted.` },
+            { q: `What is deoptimization?`, a: `When a speculative assumption breaks (e.g. a call site thought monomorphic sees a new type), HotSpot <b>bails compiled code back to the interpreter</b> and may recompile — a brief slowdown.` },
+            { q: `C1 vs C2 in tiered compilation?`, a: `C1 ("client") compiles fast with light optimization + profiling; C2 ("server") compiles the hottest methods slowly with aggressive optimization. Tiered mode uses <b>both</b>.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d81: HotSpot's monomorphic-call-site specialization + deopt is the same idea as V8's inline caches — profile the common case, guard it, fall back when the guard fails.` },
+        { id: "s2", type: "callout", label: `🧭 As of 2026 the built-in Graal JIT was removed from OpenJDK (JDK 17); GraalVM is a separate distribution (Graal compiler + native-image AOT). Warmup work continues in Project Leyden.` },
+      ],
+    },
+    {
+      id: "d86", date: "2027-01-30", week: "w28", title: "Unicode, UTF-8 & grapheme clusters",
+      theme: "Data-structure internals · part 5 — 'length' has four different answers.",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 50,
+          lead: `<b>Internals ⑤</b> — why string handling breaks on emoji, and the model that fixes it.`,
+          refs: [
+            `Read Joel Spolsky's <a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="noopener">"The Absolute Minimum… about Unicode"</a>, then the <a href="https://utf8everywhere.org/" target="_blank" rel="noopener">UTF-8 Everywhere</a> manifesto.`,
+            `Keep four layers distinct: <b>code point</b> (U+…) → <b>code unit</b> (8/16/32-bit per encoding) → <b>byte</b> → <b>grapheme cluster</b> (one user-perceived character).`,
+          ],
+          model: `<b>Unicode</b> is the character set; <b>UTF-8/16/32</b> are encodings of it. UTF-8 is variable 1–4 bytes, ASCII-compatible and <b>self-synchronizing</b>. UTF-16 (JS/Java/C# in memory) is <i>also</i> variable — non-BMP chars need a <b>surrogate pair</b>, so JS <code>"😀".length === 2</code>. "One character" is a <b>grapheme cluster</b> that can be many code points (é = e + combining accent; a family emoji is ~7 ZWJ-joined code points, one glyph). Compare after <b>normalizing</b> (NFC for storage).`,
+          cards: [
+            { q: `Why is <code>"😀".length === 2</code> in JavaScript?`, a: `JS strings are <b>UTF-16</b>; a non-BMP char needs a <b>surrogate pair</b> (two 16-bit code units), and <code>.length</code> counts code units, not characters.` },
+            { q: `Code point vs grapheme cluster?`, a: `A code point is one U+ integer; a <b>grapheme cluster</b> is one user-perceived character — which may be many code points (combining marks, ZWJ emoji). Neither equals a byte or a UTF-16 unit.` },
+            { q: `What makes UTF-8 self-synchronizing?`, a: `Lead bytes (<code>0/110/1110/11110…</code>) and continuation bytes (<code>10…</code>) are disjoint, so a character boundary is findable from any byte — plus it's 1–4 bytes and ASCII-compatible.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `⚠️ Truncating/reversing a string by code unit splits emoji and mangles accents. For a user-visible count use a grapheme segmenter (<code>Intl.Segmenter</code>, ICU) — <code>.length</code>/<code>len()</code>/<code>strlen</code> give units, code points, or bytes respectively.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d17: hashes/signatures operate on <b>bytes</b>, so always hash a defined encoding (UTF-8, usually NFC-normalized) — the same text in NFC vs NFD hashes differently. Unicode 17.0 is current (2025).` },
+      ],
+    },
+
+    /* ==================== WEEK 29 ==================== */
+    {
+      id: "d87", date: "2027-02-01", week: "w29", title: "Branch prediction & speculative execution (Spectre)",
+      theme: "Systems · part 9 — the CPU guesses your branches, and Spectre is the bill.",
+      tasks: [
+        { id: "t1", obj: SYS, cat: "read", est: 50,
+          lead: `<b>Systems ⑨</b> — why a sorted array runs faster, and why speculation broke CPU security.`,
+          refs: [
+            `Read the famous <a href="https://stackoverflow.com/questions/11227809/" target="_blank" rel="noopener">"Why is processing a sorted array faster?"</a> answer, then Dan Luu's <a href="https://danluu.com/branch-prediction/" target="_blank" rel="noopener">branch-prediction</a> walkthrough.`,
+            `For the security fallout, skim <a href="https://spectreattack.com/" target="_blank" rel="noopener">Spectre</a> + <a href="https://meltdownattack.com/" target="_blank" rel="noopener">Meltdown</a> (2018).`,
+          ],
+          model: `A deep pipelined out-of-order CPU must <b>predict</b> each branch and execute <b>speculatively</b> down the guess; a misprediction flushes the pipeline (~10–20 cycles). A <b>sorted</b> array makes <code>if (x >= 128)</code> a long predictable run (~100% accuracy); unsorted is ~50/50 → constant flushes. Rollback restores <b>architectural</b> state but <i>not</i> microarchitectural state — the cache keeps the residue, and <b>Spectre</b> reads a secret out of it via cache timing. <b>Meltdown</b> ≠ Spectre: it transiently reads kernel memory across the user/kernel boundary (fixed by page-table isolation).`,
+          cards: [
+            { q: `Why does a sorted array process faster than an unsorted one?`, a: `The data-dependent branch becomes highly <b>predictable</b> (long runs of one outcome, ~100% accuracy); unsorted is ~50/50, so the CPU pays a pipeline-flush penalty on ~half the iterations.` },
+            { q: `Why doesn't rollback of speculation prevent Spectre?`, a: `Architectural state (registers/memory) is rolled back, but <b>cache/TLB state is not</b> — the secret's footprint remains and is read via a cache-timing side channel.` },
+            { q: `Spectre vs Meltdown?`, a: `Meltdown reads kernel memory across the user/kernel boundary (fixed by KPTI page-table isolation, mainly Intel). Spectre mistrains the predictor to make a victim leak its <i>own</i> memory — a whole class, hard to fully fix.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Branchless code (masks / <code>cmov</code> / SIMD) only wins when the branch is <i>unpredictable</i> — a well-predicted branch is nearly free. Measure before de-branching.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d09: this is the memory hierarchy weaponized — the cache side-channel that makes speculation observable. Speculation is fundamental to all fast CPUs (Intel/AMD/ARM), so the class keeps spawning variants.` },
+      ],
+    },
+    {
+      id: "d88", date: "2027-02-03", week: "w29", title: "🎓 Bloom filters & probabilistic data structures",
+      theme: "Data-structure internals · part 6 — trade a little accuracy for enormous space savings.",
+      tasks: [
+        { id: "t1", obj: CORE, cat: "read", est: 50,
+          lead: `<b>Internals ⑥ (capstone)</b> — the sketches that answer set/count questions in kilobytes.`,
+          refs: [
+            `Read the <a href="https://en.wikipedia.org/wiki/Bloom_filter" target="_blank" rel="noopener">Bloom filter</a> overview (the math + use cases), then play with the <a href="https://llimllib.github.io/bloomfilter-tutorial/" target="_blank" rel="noopener">interactive visual tutorial</a>.`,
+            `Place its siblings: <b>HyperLogLog</b> (cardinality — d19's Redis <code>PFCOUNT</code>) and <b>Count-Min Sketch</b> (frequency). All hash-based, sublinear-space, one-sided error.`,
+          ],
+          model: `A <b>Bloom filter</b> is an m-bit array + k hashes: insert sets k bits; query checks them — any 0 ⇒ <b>definitely absent</b>, all 1 ⇒ <i>possibly</i> present. So it has <b>no false negatives</b>, only tunable false positives (~9.6 bits/element for 1%), at O(k) per op independent of item size. You can't delete from a plain one (shared bits) — use a counting variant. The classic use: skip a disk read in an <b>LSM-tree</b> (d70) when the filter says a key isn't in an SSTable.`,
+          cards: [
+            { q: `What can a Bloom filter never do?`, a: `Give a <b>false negative</b> — "absent" is always true. It only has tunable <b>false positives</b> ("possibly present"), in O(k) time and ~9.6 bits/element at 1%.` },
+            { q: `Bloom vs HyperLogLog vs Count-Min Sketch?`, a: `Bloom = set <b>membership</b>; HLL = <b>cardinality</b> (count-distinct, d19); Count-Min = per-item <b>frequency</b>. All hash-based & sublinear, but not interchangeable.` },
+            { q: `Where do LSM-tree engines use Bloom filters?`, a: `One per SSTable — a point lookup skips reading that file from disk when the filter says the key is <b>definitely not</b> there (callback d70).` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🏁 Bedrock complete — 29 weeks, wire → runtime → data structure. From the OSI myth to why a hash map is O(1): the theory a backend/blockchain engineer is expected to own, taught from the ground up.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d19/d70: you met HyperLogLog (Redis) and Bloom filters (LSM-trees) in passing — now you own the machinery. Reach for a sketch when exact answers cost too much memory.` },
+      ],
+      note: "🎓 Bedrock complete — 29 weeks across 11 threads, from the OSI myth to Bloom filters. Your interview-and-tech-talk bedrock, end to end.",
     },
   ],
 
@@ -1789,15 +2063,18 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d39.t1", "d40.t1", "d42.t1", "d45.t1", "d51.t1"] } },
     { id: "w21.m2", week: "w21", title: "Extension II — chains deep, replication & sagas",
       rule: { type: "tasks", require: ["d54.t1", "d57.t1", "d60.t1", "d63.t1", "d64.t1"] } },
-    { id: "w25.m2", week: "w25", title: "🎓 Extension complete — under the hood, end to end",
+    { id: "w25.m2", week: "w25", title: "🎓 Extension I complete — distributed systems & internals",
       rule: { type: "tasks", require: ["d69.t1", "d72.t1", "d74.t1", "d77.t1"] } },
+    // ---- Extension II (internals) milestone ----
+    { id: "w29.m3", week: "w29", title: "🎓 Extension II complete — data-structure & runtime internals",
+      rule: { type: "tasks", require: ["d78.t1", "d80.t1", "d82.t1", "d84.t1", "d88.t1"] } },
   ],
 
   features: [
     { title: "How this track works", items: [
       `Each domain is an ordered <b>thread</b>; threads are <b>interleaved</b> across days, so consecutive side-days switch topics but each thread advances in order.`,
       `Progress, streak and effort are <b>separate from your main roadmaps</b> — only the Today panel's "Main + Side" line combines them.`,
-      `<b>Core</b> (weeks 1–12) lays the foundations; the <b>extension</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a new <b>Distributed systems</b> thread (Raft, CAP, quorums…).`,
+      `<b>Core</b> (weeks 1–12) lays the foundations; <b>Extension I</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–29) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters).`,
       `Complete a task to <b>unlock its recall cards</b> 🎴 — short Q/A prompts you can re-test yourself on; the Today view resurfaces a few from earlier days so knowledge sticks.`,
     ] },
   ],
