@@ -20,6 +20,9 @@ export async function loadRoadmap(file) { await import(r(file)); }
 /** The deterministic hand-written test fixture (slug "fixture"). */
 export async function loadFixture() { await import(r("_fixture.js")); return registry.getRoadmap("fixture"); }
 
+/** The tiny SIDE-track fixture (slug "fixture-side", kind:"side"). */
+export async function loadFixtureSide() { await import(r("_fixture-side.js")); return registry.getRoadmap("fixture-side"); }
+
 /** Mark a task done and stamp its done_at to a controlled LOCAL-noon date.
  *  Local-noon round-trips through toISOString()/new Date() in any timezone. */
 export function doneOn(slug, taskId, y, m, d) {

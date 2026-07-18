@@ -16,7 +16,7 @@ if command -v tput >/dev/null 2>&1 && [ -t 1 ]; then
 else B=""; G=""; R=""; Y=""; D=""; Z=""; fi
 
 # Preferred order (foundations first); any other *.test.mjs is appended.
-order=(util store stats activity reconcile content render)
+order=(util store stats activity sidetrack reconcile content render)
 files=()
 for name in "${order[@]}"; do [ -f "$name.test.mjs" ] && files+=("$name.test.mjs"); done
 for f in *.test.mjs; do

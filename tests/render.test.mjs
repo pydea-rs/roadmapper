@@ -34,7 +34,8 @@ const rmBase = new URL("../public/roadmaps/", import.meta.url);
 const reg = await import(new URL("registry.js", base).href);
 await import(new URL("rust-fastapi.js", rmBase).href);
 await import(new URL("interp-go.js", rmBase).href);
-await import(new URL("store.js", base).href);       // registers the write-through sink path
+await import(new URL("_fixture-side.js", rmBase).href);   // a SIDE-track roadmap
+const store = await import(new URL("store.js", base).href);  // registers the write-through sink path
 const render = await import(new URL("render.js", base).href);
 
 const view = document.getElementById("view");
@@ -49,7 +50,17 @@ t.group("Today view + the 'Your effort' panel");
 render.renderToday(view);
 t.ok(view.querySelector(".today-view"), "today view rendered");
 t.ok(view.querySelector(".effort"), "effort panel present");
-t.eq(view.querySelectorAll(".ec-col").length, 14, "effort chart has 14 day-bars");
+t.eq(view.querySelectorAll(".effort-chart:not(.mini) .ec-col").length, 14, "main effort chart has 14 day-bars");
+
+t.group("Side track surfaces separately");
+t.ok(view.querySelector(".effort-side"), "effort panel shows a Side track section");
+t.eq(view.querySelectorAll(".effort-side .effort-chart.mini .ec-col").length, 14, "side mini-chart has 14 day-bars");
+t.ok(view.querySelector(".effort-combined"), "combined Main + Side total is shown");
+t.ok(view.querySelector(".today-track-sep"), "Today digest has a Side track divider (side fixture days are overdue)");
+// The side fixture's overdue task must live under the side divider, and its slug
+// must NOT appear among the main cards above it.
+const sideCardTitles = [...view.querySelectorAll(".today-card-title")].map(n => n.textContent);
+t.ok(sideCardTitles.includes("Side Test Fixture"), "the side roadmap renders its own Today card");
 const prevNav = view.querySelector(".effort-navbtn.prev");
 t.ok(!!prevNav, "day-stepper present");
 if (prevNav) { prevNav.onclick(); t.ok(view.querySelector(".effort"), "stepping to prev day re-renders without throwing"); }
