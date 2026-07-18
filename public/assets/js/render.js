@@ -7,7 +7,7 @@
 
 import * as store from "./store.js";
 import { computeAll, currentDay } from "./stats.js";
-import { getRoadmaps } from "./registry.js";
+import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal } from "./ui.js";
 import {
@@ -148,9 +148,36 @@ function drawToday(mount) {
   // effort panel — your development over time (date-selectable, cross-roadmap)
   view.append(effortPanel(mount));
 
+  // Main track digest, then the Side track digest under its own divider. The two
+  // groups never share a summary line, so side progress stays visually separate —
+  // the same principle their stats follow everywhere else.
+  const main = collectDue(getMainRoadmaps(), today, mount);
+  const side = collectDue(getSideRoadmaps(), today, mount);
+
+  view.append(todaySummary(main, false));
+
+  if (!main.cards.length && !side.cards.length) {
+    const empty = el("div.center-note", { style: "padding:var(--s8)" });
+    empty.append(el("div.big", { text: "✅" }));
+    empty.append(document.createTextNode("Nothing scheduled today. Enjoy the breather — or open a roadmap and pull something forward."));
+    view.append(empty);
+  } else {
+    main.cards.forEach(c => view.append(c));
+    if (side.cards.length) {
+      view.append(sideDivider());
+      view.append(todaySummary(side, true));
+      side.cards.forEach(c => view.append(c));
+    }
+  }
+
+  mount.append(view);
+}
+
+/* Gather the due-today / overdue cards for a set of roadmaps (one track). */
+function collectDue(roadmaps, today, mount) {
   let due = 0, doneToday = 0, overdueN = 0;
   const cards = [];
-  for (const rm of getRoadmaps()) {
+  for (const rm of roadmaps) {
     const todayList = [], overdueList = [];
     for (const d of rm.days) for (const t of d.tasks) {
       if (t.optional) continue;
@@ -162,20 +189,19 @@ function drawToday(mount) {
     }
     if (todayList.length || overdueList.length) cards.push(todayCard(rm, todayList, overdueList, mount));
   }
-
-  const strip = el("div.today-summary");
-  strip.append(el("span", { html: `<b>${doneToday}/${due}</b> due today` }));
-  if (overdueN) strip.append(el("span.od", { html: `<b>${overdueN}</b> overdue` }));
-  view.append(strip);
-
-  if (!cards.length) {
-    const empty = el("div.center-note", { style: "padding:var(--s8)" });
-    empty.append(el("div.big", { text: "✅" }));
-    empty.append(document.createTextNode("Nothing scheduled today. Enjoy the breather — or open a roadmap and pull something forward."));
-    view.append(empty);
-  } else cards.forEach(c => view.append(c));
-
-  mount.append(view);
+  return { cards, due, doneToday, overdueN };
+}
+function todaySummary(g, isSide) {
+  const strip = el("div.today-summary" + (isSide ? ".side" : ""));
+  strip.append(el("span", { html: `<b>${g.doneToday}/${g.due}</b> due today` }));
+  if (g.overdueN) strip.append(el("span.od", { html: `<b>${g.overdueN}</b> overdue` }));
+  return strip;
+}
+function sideDivider() {
+  const d = el("div.today-track-sep");
+  d.append(el("span.tts-ico", { text: "🧱" }));
+  d.append(el("span.tts-label", { text: "Side track" }));
+  return d;
 }
 
 function todayCard(rm, todayList, overdueList, mount) {
@@ -225,9 +251,14 @@ function todayRow(rm, task, mount, curDay, overdue) {
  *  You can step back to any past day (chart bars are clickable too).
  * ================================================================== */
 function effortPanel(mount) {
-  const map = activityByDate();
   const today = todayStr();
   const date = effortDate;
+  const hasSide = getSideRoadmaps().length > 0;
+
+  // Main-track maps drive the headline numbers, comparisons and 14-day chart, so
+  // the main figures are never inflated by the side track. (With no side roadmap
+  // registered this is identical to the old cross-roadmap behaviour.)
+  const map = activityByDate("main");
   const e = dayEffort(date, map);
   const prev = dayEffort(addDays(date, -1), map);
   const avg7 = trailingAvg(date, 7, map);
@@ -270,9 +301,51 @@ function effortPanel(mount) {
   // 14-day bar chart (minutes/day), selected day highlighted, bars clickable
   panel.append(effortChart(series(date, 14, map), date, mount));
 
-  // what actually got done that day
-  panel.append(effortBreakdown(date, today));
+  // what actually got done that day (main track)
+  panel.append(effortBreakdown(date, today, "main"));
+
+  // Side track gets its own persistent section (never summed into the numbers
+  // above) plus the one explicitly-combined Main+Side total.
+  if (hasSide) panel.append(sideEffort(date, today, e, mount));
   return panel;
+}
+
+/* The Side track's own effort for the selected day — its numbers, a small
+ * comparison, a mini 14-day chart and its completions — kept compact so it reads
+ * as an extra section, not a duplicate panel. Ends with the combined Main+Side
+ * figure, the single place the two tracks are deliberately summed. */
+function sideEffort(date, today, mainE, mount) {
+  const map = activityByDate("side");
+  const se = dayEffort(date, map);
+  const prev = dayEffort(addDays(date, -1), map);
+  const avg7 = trailingAvg(date, 7, map);
+
+  const wrap = el("div.effort-side");
+  const head = el("div.effort-side-head");
+  head.append(el("span.esh-ico", { text: "🧱" }));
+  head.append(el("span.esh-title", { text: "Side track" }));
+  wrap.append(head);
+
+  const stats = el("div.effort-stats");
+  stats.append(effortStat(fmtMins(se.mins), "time on tasks"));
+  stats.append(effortStat(String(se.tasks), se.tasks === 1 ? "task done" : "tasks done"));
+  if (se.bonusTasks) stats.append(effortStat(`+${se.bonusTasks}`, `bonus · ${fmtMins(se.bonusMins)}`));
+  wrap.append(stats);
+
+  const cmp = el("div.effort-cmp");
+  cmp.append(deltaChip("vs prev day", se.mins - prev.mins));
+  cmp.append(deltaChip("vs 7-day avg", se.mins - avg7, `avg ${fmtMins(Math.round(avg7))}/day`));
+  wrap.append(cmp);
+
+  wrap.append(effortChart(series(date, 14, map), date, mount, true));
+  wrap.append(effortBreakdown(date, today, "side"));
+
+  const combined = el("div.effort-combined");
+  combined.append(el("span.ecm-label", { text: "Main + Side" }));
+  const tMins = mainE.mins + se.mins, tTasks = mainE.tasks + se.tasks;
+  combined.append(el("span.ecm-val", { text: `${fmtMins(tMins)} · ${tTasks} task${tTasks === 1 ? "" : "s"}` }));
+  wrap.append(combined);
+  return wrap;
 }
 
 function effortStat(big, sub) {
@@ -293,8 +366,8 @@ function deltaChip(label, delta, note) {
   return chip;
 }
 
-function effortChart(data, selected, mount) {
-  const wrap = el("div.effort-chart", { role: "list", "aria-label": "Daily effort, last 14 days" });
+function effortChart(data, selected, mount, mini) {
+  const wrap = el("div.effort-chart" + (mini ? ".mini" : ""), { role: "list", "aria-label": "Daily effort, last 14 days" });
   const max = Math.max(1, ...data.map(d => d.mins));
   for (const d of data) {
     const h = Math.round((d.mins / max) * 100);
@@ -311,14 +384,18 @@ function effortChart(data, selected, mount) {
   return wrap;
 }
 
-/* The day's completed tasks, grouped by roadmap. */
-function effortBreakdown(date, today) {
-  const rows = tasksDoneOn(date);
+/* The day's completed tasks for one track, grouped by roadmap. */
+function effortBreakdown(date, today, kind) {
+  const rows = tasksDoneOn(date, kind);
   const wrap = el("div.effort-log");
   if (!rows.length) {
-    wrap.append(el("div.effort-empty", { text: date === today
+    const emptyMain = date === today
       ? "Nothing completed yet today — tick something off below."
-      : "No tasks completed on this day." }));
+      : "No tasks completed on this day.";
+    const emptySide = date === today
+      ? "No side-track work logged yet today."
+      : "No side-track work logged on this day.";
+    wrap.append(el("div.effort-empty", { text: kind === "side" ? emptySide : emptyMain }));
     return wrap;
   }
   const byRm = new Map();

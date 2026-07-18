@@ -286,9 +286,8 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
   todayLink.append(el("span.sb-today-label", { text: "Today · all roadmaps" }));
   list.append(todayLink);
 
-  list.append(el("div.sb-section-label", { text: "Roadmaps" }));
-
-  for (const rm of roadmaps) {
+  // Render one roadmap's sidebar entry (+ its quick-jumps when expanded).
+  const renderItem = rm => {
     const st = statsFor ? statsFor(rm.slug) : { pct: 0, track: "on" };
     const item = el("button.sb-item", {
       "aria-current": rm.slug === active ? "true" : "false",
@@ -314,6 +313,21 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
         sub.append(el("a", { href: `#/${rm.slug}/${w.id}`, text: w.title || w.id }));
       list.append(sub);
     }
+  };
+
+  // Main track first, then the "Side track" section (Bedrock etc.) below a
+  // separator. Both are always their own group so their progress never visually
+  // merges — matching how their stats stay separate everywhere else.
+  const mains = roadmaps.filter(rm => rm.kind !== "side");
+  const sides = roadmaps.filter(rm => rm.kind === "side");
+
+  list.append(el("div.sb-section-label", { text: "Roadmaps" }));
+  mains.forEach(renderItem);
+
+  if (sides.length) {
+    list.append(el("div.sb-sep", { "aria-hidden": "true" }));
+    list.append(el("div.sb-section-label.side", { text: "Side track" }));
+    sides.forEach(renderItem);
   }
 }
 const trackLabel = t => ({ ahead: "Ahead of pace", on: "On track", behind: "Behind pace" }[t] || "On track");

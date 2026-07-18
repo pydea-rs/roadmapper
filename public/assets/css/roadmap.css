@@ -434,6 +434,31 @@
 .effort-log-row .elr-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .effort-empty { font-size: var(--t-sm); color: var(--text-3); padding: var(--s2) 0; }
 
+/* ---- Today · Side track divider + its own effort section ------------ */
+.today-track-sep { display: flex; align-items: center; gap: var(--s2); margin: var(--s3) 0 var(--s1);
+  color: var(--text-3); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em;
+  font-weight: 700; }
+.today-track-sep::after { content: ""; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border-2), transparent); }
+.today-track-sep .tts-ico { font-size: 14px; }
+.today-summary.side span { background: color-mix(in srgb, var(--text-3) 10%, transparent); }
+
+.effort-side { margin-top: var(--s2); padding-top: var(--s3);
+  border-top: 1px dashed var(--border-2); display: flex; flex-direction: column; gap: var(--s3); }
+.effort-side-head { display: flex; align-items: center; gap: 6px; }
+.esh-ico { font-size: 15px; }
+.esh-title { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-2); font-weight: 700; }
+/* mini chart for the side track — shorter than the main one */
+.effort-chart.mini { height: 60px; }
+.effort-chart.mini .ec-x { font-size: 8px; }
+.effort-combined { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3);
+  padding: var(--s2) var(--s3); border-radius: var(--r2); background: var(--surface-2);
+  font-variant-numeric: tabular-nums; }
+.ecm-label { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--text-3); font-weight: 700; }
+.ecm-val { font-size: var(--t-sm); font-weight: 700; color: var(--text); }
+
 /* bonus "+N" chip shown inline next to required task counts */
 .bonus-plus { color: var(--accent-ink, var(--accent)); font-weight: 700; font-size: var(--t-xs);
   background: var(--accent-soft); padding: 1px 6px; border-radius: var(--r-pill); margin-left: 6px; }

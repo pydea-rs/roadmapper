@@ -81,6 +81,12 @@
 .track-dot.ahead { background: var(--ok); } .track-dot.on { background: var(--info); }
 .track-dot.behind { background: var(--warn); }
 
+/* divider + label between the main roadmaps and the "Side track" section */
+.sb-sep { height: 1px; margin: var(--s3) var(--s3) var(--s2);
+  background: linear-gradient(90deg, transparent, var(--border-2) 20%, var(--border-2) 80%, transparent); }
+.sb-section-label.side { color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+.sb-section-label.side::before { content: "🧱"; font-size: 12px; filter: grayscale(.2); }
+
 /* global cross-roadmap Today link (top of the sidebar) */
 .sb-today { display: flex; align-items: center; gap: var(--s3); padding: var(--s2) var(--s3);
   border-radius: var(--r2); color: var(--text-2); position: relative; width: 100%;
@@ -103,7 +109,8 @@
 #app[data-sidebar="collapsed"] .sb-item-body,
 #app[data-sidebar="collapsed"] .sb-section-label,
 #app[data-sidebar="collapsed"] .sb-today-label,
-#app[data-sidebar="collapsed"] .sb-sub { display: none; }
+#app[data-sidebar="collapsed"] .sb-sub,
+#app[data-sidebar="collapsed"] .sb-sep { display: none; }
 #app[data-sidebar="collapsed"] .sb-item,
 #app[data-sidebar="collapsed"] .sb-today { justify-content: center; padding: var(--s3) 0; }
 /* collapsed rail (60px): stack logo over the expand button, both centred and

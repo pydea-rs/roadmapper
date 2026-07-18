@@ -12,7 +12,14 @@ const _roadmaps = [];        // in registration order (sidebar order)
 const _bySlug = new Map();
 const _errors = [];
 
-export const getRoadmaps = () => _roadmaps.slice();
+// `kind` splits roadmaps into two tracks that never sum into each other's stats:
+//   "main" — the focused subject roadmaps (default)
+//   "side" — the ongoing "Bedrock" self-improvement track (its own progress/effort)
+// getRoadmaps() with no arg returns every roadmap (registration order); pass a
+// kind to filter, or use the explicit main/side helpers.
+export const getRoadmaps = kind => kind ? _roadmaps.filter(r => r.kind === kind) : _roadmaps.slice();
+export const getMainRoadmaps = () => _roadmaps.filter(r => r.kind !== "side");
+export const getSideRoadmaps = () => _roadmaps.filter(r => r.kind === "side");
 export const getRoadmap = slug => _bySlug.get(slug) || null;
 export const registryErrors = () => _errors.slice();
 
@@ -109,6 +116,7 @@ function normalize(def) {
 
   return {
     slug, title: def.title || slug, icon: def.icon || "🗺️",
+    kind: def.kind === "side" ? "side" : "main",
     subtitle: def.subtitle || "", accent: def.accent || null,
     schemaVersion: def.schemaVersion || 1,
     cadence: def.cadence || null, aliases: def.aliases || {},

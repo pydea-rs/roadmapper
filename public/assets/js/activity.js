@@ -23,10 +23,13 @@ function blankDay() {
   return { tasks: 0, mins: 0, reqTasks: 0, reqMins: 0, bonusTasks: 0, bonusMins: 0, roadmaps: new Set() };
 }
 
-/** Map: date(YYYY-MM-DD) -> aggregated effort from every completed, timestamped task. */
-export function activityByDate() {
+/** Map: date(YYYY-MM-DD) -> aggregated effort from every completed, timestamped task.
+ *  `kind` optionally restricts the log to one track ("main" | "side"); omitted =
+ *  every roadmap (the combined Main+Side view). Because the derived helpers below
+ *  all take the map as an argument, one call to this decides the whole track. */
+export function activityByDate(kind) {
   const map = new Map();
-  for (const rm of getRoadmaps()) {
+  for (const rm of getRoadmaps(kind)) {
     for (const day of rm.days) for (const t of day.tasks) {
       if (!store.isDone(rm.slug, t.id)) continue;
       const date = localDate(store.doneAt(rm.slug, t.id));
@@ -84,10 +87,11 @@ export function series(endStr, n, map = activityByDate()) {
 }
 
 /** The actual tasks completed on `dateStr`, ordered by completion time, with
- *  their roadmap — for the day's "what got done" breakdown. */
-export function tasksDoneOn(dateStr) {
+ *  their roadmap — for the day's "what got done" breakdown. `kind` optionally
+ *  restricts to one track ("main" | "side"); omitted = every roadmap. */
+export function tasksDoneOn(dateStr, kind) {
   const out = [];
-  for (const rm of getRoadmaps()) {
+  for (const rm of getRoadmaps(kind)) {
     for (const day of rm.days) for (const t of day.tasks) {
       if (!store.isDone(rm.slug, t.id)) continue;
       const at = store.doneAt(rm.slug, t.id);
