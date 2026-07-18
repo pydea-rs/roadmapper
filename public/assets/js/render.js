@@ -233,7 +233,7 @@ function todayRow(rm, task, mount, curDay, overdue) {
   cb.onclick = () => { store.setTask(rm.slug, task.id, !store.isDone(rm.slug, task.id)); drawToday(mount); };
   row.append(cb);
   const bodyEl = el("div.t-body");
-  bodyEl.append(el("div.t-label", { html: task.label }));
+  bodyEl.append(taskLabelBlock(task));
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
@@ -976,7 +976,7 @@ function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
   row.append(cb);
 
   const bodyEl = el("div.t-body");
-  bodyEl.append(el("div.t-label", { html: task.label }));
+  bodyEl.append(taskLabelBlock(task));
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
@@ -1021,7 +1021,7 @@ function bonusRow(rm, task) {
   cb.onclick = () => { lastToggled = task.id; store.setTask(slug, task.id, !store.isDone(slug, task.id)); rerender(); };
   row.append(cb);
   const bodyEl = el("div.t-body");
-  bodyEl.append(el("div.t-label", { html: task.label }));
+  bodyEl.append(taskLabelBlock(task));
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
@@ -1118,6 +1118,23 @@ function extras(rm) {
 /* ================================================================== *
  *  Small pieces
  * ================================================================== */
+/* A task's body. If the task uses the structured form (lead / refs / model) it is
+ * laid out as distinct, scannable blocks — a bold lead line, a bulleted list of
+ * reading/do items, and a highlighted takeaway. Otherwise it falls back to the
+ * single-string `label` (how the older roadmaps are authored). */
+function taskLabelBlock(task) {
+  if (!(task.lead || (task.refs && task.refs.length) || task.model))
+    return el("div.t-label", { html: task.label });
+  const wrap = el("div.t-label.rich");
+  if (task.lead) wrap.append(el("div.t-lead", { html: task.lead }));
+  if (task.refs && task.refs.length) {
+    const ul = el("ul.t-refs");
+    for (const r of task.refs) ul.append(el("li.t-ref", { html: r }));
+    wrap.append(ul);
+  }
+  if (task.model) wrap.append(el("div.t-model", { html: task.model }));
+  return wrap;
+}
 function catChip(cat, rm) {
   const colorVar = `var(--cat-${cat}, var(--cat-alt))`;
   return el("span.chip", { text: cat, style: `--chip:${colorVar}` });

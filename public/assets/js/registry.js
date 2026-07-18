@@ -67,7 +67,14 @@ function normalize(def) {
       const task = {
         id: fid, localId: t.id, day: day.id, week: day.week, month: day.month, date: day.date,
         obj: t.obj, cat: t.cat || "read", est: Number.isFinite(t.est) ? t.est : 0,
-        label: t.label || "", optional: !!t.optional,
+        // Rich, scannable task body (optional): a `lead` headline, a `refs` list of
+        // reading/do items, and a `model` takeaway. When present the renderer lays
+        // them out as distinct blocks; `label` (plain fallback = lead) is what the
+        // move picker / effort log show as text, so legacy consumers keep working.
+        lead: t.lead || null,
+        refs: Array.isArray(t.refs) ? t.refs.map(String).filter(Boolean) : null,
+        model: t.model || null,
+        label: t.label || t.lead || "", optional: !!t.optional,
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,
         order: i,

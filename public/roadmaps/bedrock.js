@@ -14,12 +14,12 @@
 // each, alongside the main roadmaps. Progress/effort stay OFF the main track's
 // totals (kind:"side") — only the Today panel's "Main + Side" line combines them.
 //
-// References are hand-picked and were link/chapter verified (2026-07-18). Book
-// citations give chapter/section (page numbers drift across editions and are
-// omitted rather than guessed). Where no single source teaches a concept cleanly,
-// the task/soft-note teaches it directly with a backing link. Edition notes:
-// Mastering Bitcoin = 3rd ed, Mastering Ethereum = 2nd ed, DDIA = 1st ed,
-// Kafka: The Definitive Guide = 2nd ed (free from Confluent), OWASP Top 10 = 2025.
+// Tasks use the STRUCTURED form (lead / refs / model): a headline, a scannable
+// list of reading/do items, and a takeaway — so long tasks don't read as a wall
+// of text. References were link/chapter verified (2026-07-18); book citations
+// give chapter/section (page numbers drift across editions and are omitted).
+// Editions: Mastering Bitcoin 3rd, Mastering Ethereum 2nd, DDIA 1st, Kafka: The
+// Definitive Guide 2nd (free from Confluent), OWASP Top 10 2025.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -70,11 +70,17 @@ registerRoadmap({
       theme: "Networking · thread part 1 — encapsulation is the load-bearing idea, not the number 7.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
-          label: `<b>Networking ①.</b> Learn the layering model <i>honestly</i>. Read Cloudflare <a href="https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/" target="_blank" rel="noopener">"What is the OSI Model?"</a> for the diagram — then correct it: the internet runs the <b>TCP/IP</b> model (Link → Internet → Transport → Application); OSI layers 5–6 have no real counterpart. The point is <b>encapsulation</b>: a packet is <code>[Ethernet [IP [TCP [HTTP]]]]</code>; going down adds headers, up strips them. "L7 load balancer / L4 firewall / L3 switch" just names <i>which header the box inspects</i>.` },
+          lead: `<b>Networking ①</b> — learn the layering model <i>honestly</i>.`,
+          refs: [
+            `Read Cloudflare <a href="https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/" target="_blank" rel="noopener">"What is the OSI Model?"</a> for the diagram — then apply the corrections below.`,
+            `The internet runs the <b>TCP/IP</b> model (Link → Internet → Transport → Application); OSI layers 5–6 (session/presentation) have <i>no</i> real counterpart.`,
+            `"L7 load balancer / L4 firewall / L3 switch" is just shorthand for <b>which header a device inspects</b> (L3=IP, L4=port, L7=HTTP).`,
+          ],
+          model: `The load-bearing idea is <b>encapsulation</b>: a packet is <code>[Ethernet [IP [TCP [HTTP]]]]</code> — going down the stack adds headers, up strips them. Not "recite 7 layers".` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The cargo-cult mistake is reciting all 7 OSI layers as if each is real and present in every packet. They aren't. Interview answer: "encapsulation + which header a device reads," not "Please Do Not Throw Sausage Pizza Away."` },
-        { id: "s2", type: "callout", label: `🧭 This is thread <b>Networking</b>, part 1 of 7 in the core. Each time Networking reappears it picks up where it left off (subnets → TCP → DNS → TLS → HTTP → load balancers).` },
+        { id: "s1", type: "hint", label: `💡 The cargo-cult mistake is reciting all 7 OSI layers as if each is real and present in every packet. Interview answer: encapsulation + which header a device reads.` },
+        { id: "s2", type: "callout", label: `🧭 This is thread <b>Networking</b>, part 1 of 7 in the core. Each time it reappears it continues in order (subnets → TCP → DNS → TLS → HTTP → load balancers).` },
       ],
       note: "Bedrock begins. 2–3 short days a week, one topic each — separate from your main roadmaps.",
     },
@@ -83,11 +89,15 @@ registerRoadmap({
       theme: "DevOps · thread part 1 — a container is a Linux process with a restricted view, not a VM.",
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 45,
-          label: `<b>DevOps ①.</b> Watch Liz Rice, <a href="https://www.youtube.com/watch?v=8fi7uSYlOdc" target="_blank" rel="noopener">"Containers From Scratch" (GOTO 2018, ~43 min)</a> — she live-codes a container in Go from raw <code>clone()</code> + namespaces + <code>chroot</code> + cgroups. Takeaway: there is <b>no "container" object in the kernel</b>. <b>Namespaces</b> limit what a process can <i>see</i> (PID, mount, net, UTS, IPC, user); <b>cgroups</b> limit what it can <i>use</i> (CPU, memory, IO). That's the whole trick.` },
+          lead: `<b>DevOps ①</b> — see a container built from raw kernel primitives.`,
+          refs: [
+            `Watch Liz Rice, <a href="https://www.youtube.com/watch?v=8fi7uSYlOdc" target="_blank" rel="noopener">"Containers From Scratch" (GOTO 2018, ~43 min)</a> — she live-codes one in Go from <code>clone()</code> + namespaces + <code>chroot</code> + cgroups.`,
+          ],
+          model: `There is <b>no "container" object in the kernel</b>. <b>Namespaces</b> limit what a process can <i>see</i> (PID, mount, net, UTS, IPC, user); <b>cgroups</b> limit what it can <i>use</i> (CPU, memory, IO). That's the whole trick.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 A VM virtualizes hardware and runs its own kernel; a container shares the host kernel. Lighter, but a weaker isolation boundary — why "container escape" is a real threat and a VM boundary is stronger.` },
-        { id: "s2", type: "callout", label: `🔧 DevOps is a first-class, first-month thread here (Docker → Kubernetes → CI/CD → observability → load testing). "Containers" in this roadmap means the whole real stack, not just <code>docker run</code>.` },
+        { id: "s1", type: "hint", label: `💡 A VM virtualizes hardware and runs its own kernel; a container shares the host kernel — lighter, but a weaker isolation boundary (why "container escape" is a real threat).` },
+        { id: "s2", type: "callout", label: `🔧 DevOps is a first-class, first-month thread here (Docker → Kubernetes → CI/CD → observability → load testing). "Containers" means the whole real stack, not just <code>docker run</code>.` },
       ],
     },
     {
@@ -95,11 +105,16 @@ registerRoadmap({
       theme: "Systems · thread part 1 — who schedules it, and what's shared.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
-          label: `<b>Systems ①.</b> Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Ch 4 "The Abstraction: The Process"</a> + <b>Ch 26 "Concurrency: Threads"</b>. Then map it to your stack: <b>process</b> = own address space + fds (expensive switch); <b>OS thread</b> = shares address space, own stack/registers, <i>kernel</i>-scheduled preemptively; <b>coroutine/goroutine/async task</b> = <i>user-space</i> scheduled, no syscall to switch, cooperative — Go goroutines (M:N), Rust <code>async</code>/tokio & Python <code>asyncio</code> (stackless), Node (single loop + libuv pool).` },
+          lead: `<b>Systems ①</b> — the three units of execution, and the one distinction that matters.`,
+          refs: [
+            `Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Ch 4 "The Abstraction: The Process"</a> + <b>Ch 26 "Concurrency: Threads"</b>.`,
+            `Map it to your stack: Go goroutines (M:N green threads), Rust <code>async</code>/tokio & Python <code>asyncio</code> (stackless coroutines on an event loop), Node (single loop + libuv pool).`,
+          ],
+          model: `<b>Process</b> = own address space + fds (expensive switch). <b>OS thread</b> = shares the address space, kernel-scheduled preemptively. <b>Coroutine</b> = user-space scheduled, no syscall to switch → millions of them, cooperative. The distinction is <i>who schedules it</i> and <i>what's shared</i>.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The load-bearing distinction is <b>who schedules it</b> (kernel vs runtime) and <b>what's shared</b> (address space). That single sentence answers most "goroutine vs thread" interview questions.` },
-        { id: "s2", type: "suggestion", label: `Tie-in for later: coroutines are cheap precisely because they skip the kernel context switch (and often the TLB flush) — we'll quantify that cost when Systems reaches CPU caches.` },
+        { id: "s1", type: "hint", label: `💡 That one sentence — who schedules it (kernel vs runtime) and what's shared (address space) — answers most "goroutine vs thread" interview questions.` },
+        { id: "s2", type: "suggestion", label: `Tie-in: coroutines are cheap precisely because they skip the kernel context switch (and often the TLB flush) — we'll quantify that when Systems reaches CPU caches.` },
       ],
     },
 
@@ -109,11 +124,17 @@ registerRoadmap({
       theme: "Networking · part 2 — stop CIDR from being magic.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
-          label: `<b>Networking ②.</b> Read Cloudflare <a href="https://www.cloudflare.com/learning/network-layer/what-is-a-subnet/" target="_blank" rel="noopener">"What is a subnet?"</a>, then do the binary math yourself: an IPv4 addr is 32 bits; <code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask = prefix as an address (<code>/24</code>=<code>255.255.255.0</code>). Memorize RFC 1918 private ranges: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code> — they're in every VPC/Docker/k8s setup.` },
+          lead: `<b>Networking ②</b> — subnet math you can do in your head.`,
+          refs: [
+            `Read Cloudflare <a href="https://www.cloudflare.com/learning/network-layer/what-is-a-subnet/" target="_blank" rel="noopener">"What is a subnet?"</a>, then do the binary yourself.`,
+            `<code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask <code>/24</code>=<code>255.255.255.0</code>.`,
+            `Memorize the RFC 1918 private ranges: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code> — they're in every VPC/Docker/k8s.`,
+          ],
+          model: `"Same subnet?" → AND both IPs with the mask; equal ⇒ they talk directly at L2, else traffic goes to the <b>default gateway</b>. That's how your machine decides gateway-vs-direct for every packet.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 "Same subnet?" → AND both IPs with the mask; equal ⇒ they talk directly at L2, else traffic goes to the <b>default gateway</b>. That's literally how your machine decides gateway-vs-direct for every packet.` },
-        { id: "s2", type: "tryout", label: `Tryout: run <code>ipcalc 10.20.30.40/22</code> (or any CIDR calculator) and predict the network/broadcast/host-count before it prints them.` },
+        { id: "s1", type: "tryout", label: `Tryout: run <code>ipcalc 10.20.30.40/22</code> and predict network/broadcast/host-count before it prints them.` },
+        { id: "s2", type: "hint", label: `💡 A <code>/32</code> is a single host; a <code>/0</code> is "everything" (the default route). Cloud security groups and route tables are all just CIDR matching.` },
       ],
     },
     {
@@ -121,11 +142,16 @@ registerRoadmap({
       theme: "DevOps · part 2 — an image is a manifest + content-addressed layers.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
-          label: `<b>DevOps ②.</b> Read the <a href="https://github.com/opencontainers/image-spec/blob/main/spec.md" target="_blank" rel="noopener">OCI Image Spec</a> conceptually (manifest + config + layers) and Docker <a href="https://docs.docker.com/build/building/multi-stage/" target="_blank" rel="noopener">Multi-stage builds</a> + <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener">best practices</a>. Model: an image = a JSON <b>manifest</b> + <b>config</b> + ordered <b>layer</b> blobs, all <b>content-addressed by SHA-256</b> (identical layers stored/pulled once). Layers stack via <b>OverlayFS</b>. Order Dockerfile steps by change-frequency (deps before source) for cache hits; <code>COPY --from</code> to ship only the built binary into a tiny final stage.` },
+          lead: `<b>DevOps ②</b> — what a container image really is, and how to build a tiny one.`,
+          refs: [
+            `Read the <a href="https://github.com/opencontainers/image-spec/blob/main/spec.md" target="_blank" rel="noopener">OCI Image Spec</a> conceptually: an image = a JSON <b>manifest</b> + <b>config</b> + ordered <b>layer</b> blobs, all <b>content-addressed by SHA-256</b> (identical layers stored/pulled once).`,
+            `Read Docker <a href="https://docs.docker.com/build/building/multi-stage/" target="_blank" rel="noopener">Multi-stage builds</a> + <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener">best practices</a>: order steps by change-frequency (deps before source) for cache hits; <code>COPY --from</code> to ship only the built binary.`,
+          ],
+          model: `Layers stack via <b>OverlayFS</b> (read-only image lowerdir + writable upperdir; a write triggers <b>copy-up</b>). For your Go/Rust binaries, a multi-stage build into <a href="https://github.com/GoogleContainerTools/distroless" target="_blank" rel="noopener">distroless</a>/<code>scratch</code> = a few-MB image with almost no attack surface.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 For your Go/Rust services: a multi-stage build with a <code>FROM scratch</code> or <a href="https://github.com/GoogleContainerTools/distroless" target="_blank" rel="noopener">distroless</a> final stage yields a few-MB image with almost no attack surface. That's the single biggest image-size/security lever.` },
-        { id: "s2", type: "callout", label: `🔬 Under the hood: OverlayFS unifies a read-only <b>lowerdir</b> (image) and a writable <b>upperdir</b> (container layer); a write triggers <b>copy-up</b>. That's why containers start instantly and why the writable layer is ephemeral.` },
+        { id: "s1", type: "hint", label: `💡 That copy-up mechanic is why containers start instantly and why the writable layer is ephemeral — anything you need to keep goes in a volume, not the container fs.` },
+        { id: "s2", type: "callout", label: `🔬 An image <i>index</i> (manifest list) maps platforms (amd64/arm64) to manifests — that's multi-arch. Content-addressing is what makes layer caching and dedup work.` },
       ],
     },
     {
@@ -133,11 +159,17 @@ registerRoadmap({
       theme: "Databases · part 1 — an index is a second, sorted copy kept balanced.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
-          label: `<b>Databases ①.</b> Read <i>Use The Index, Luke!</i> (free) <a href="https://use-the-index-luke.com/sql/anatomy" target="_blank" rel="noopener">"Anatomy of an SQL Index"</a> → <a href="https://use-the-index-luke.com/sql/anatomy/the-tree" target="_blank" rel="noopener">The B-Tree</a> → <a href="https://use-the-index-luke.com/sql/anatomy/slow-indexes" target="_blank" rel="noopener">Slow Indexes</a>. Model: leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N) so billions of rows are 3–5 levels deep. Helps for high-selectivity equality/range and <code>ORDER BY</code> (walk leaves, no sort). Hurts on low-cardinality columns, when a function wraps the column (<code>WHERE lower(email)=…</code> needs an expression index), and every index is <b>write amplification</b>.` },
+          lead: `<b>Databases ①</b> — the mental model of a B-tree index.`,
+          refs: [
+            `Read <i>Use The Index, Luke!</i> (free): <a href="https://use-the-index-luke.com/sql/anatomy" target="_blank" rel="noopener">Anatomy of an SQL Index</a> → <a href="https://use-the-index-luke.com/sql/anatomy/the-tree" target="_blank" rel="noopener">The B-Tree</a> → <a href="https://use-the-index-luke.com/sql/anatomy/slow-indexes" target="_blank" rel="noopener">Slow Indexes</a>.`,
+            `Leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N), so billions of rows are 3–5 levels deep.`,
+            `Hurts on low-cardinality columns, when a function wraps the column (<code>WHERE lower(email)=…</code> needs an expression index), and every index is <b>write amplification</b>.`,
+          ],
+          model: `<b>Leftmost-prefix rule:</b> <code>INDEX(a,b,c)</code> serves <code>a</code>, <code>a,b</code>, <code>a,b,c</code> — but NOT <code>b</code> alone. Put equality columns first, then the range/sort column. The #1 composite-index mistake.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 <b>Leftmost-prefix rule:</b> <code>INDEX(a,b,c)</code> serves <code>a</code>, <code>a,b</code>, <code>a,b,c</code> — but NOT <code>b</code> alone. Put equality columns first, then the range/sort column. This is the #1 composite-index mistake.` },
-        { id: "s2", type: "suggestion", label: `Next time Databases appears we read the query planner (EXPLAIN) — the tool that tells you whether the planner actually chose your index.` },
+        { id: "s1", type: "hint", label: `💡 An index is just a second, <i>sorted</i> copy of some columns — great for high-selectivity lookups and <code>ORDER BY</code> (walk leaves, no sort), useless when a predicate matches most rows.` },
+        { id: "s2", type: "suggestion", label: `Next Databases day: the query planner (EXPLAIN) — the tool that tells you whether the planner actually chose your index.` },
       ],
     },
 
@@ -147,11 +179,17 @@ registerRoadmap({
       theme: "Networking · part 3 — reliability is a feature you pay for.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
-          label: `<b>Networking ③.</b> Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>. Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window / flow control, and <b>head-of-line blocking</b>. UDP = no handshake, no ordering, no congestion control — you build reliability yourself (or use QUIC).` },
+          lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you.`,
+          refs: [
+            `Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>.`,
+            `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.`,
+            `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).`,
+          ],
+          model: `Two different HOL blockings: TCP's byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams). The latter is what QUIC/HTTP-3 fixes — and what interviewers usually mean.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Two different HOL blockings: TCP's own byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams) — the latter is what QUIC/HTTP-3 fixes, and what interviewers usually mean.` },
-        { id: "s2", type: "tryout", label: `Tryout: <code>sudo tcpdump -n -i any port 443</code> while you <code>curl https://example.com</code> — watch the real SYN → SYN-ACK → ACK, then the TLS records. 5 minutes that make the handshake concrete.` },
+        { id: "s1", type: "tryout", label: `Tryout: <code>sudo tcpdump -n -i any port 443</code> while you <code>curl https://example.com</code> — watch the real SYN → SYN-ACK → ACK, then the TLS records.` },
+        { id: "s2", type: "hint", label: `💡 "Why is a new connection slow?" → handshake RTT + TLS RTT + TCP slow-start ramping the window. Keep-alive and HTTP/2 exist largely to avoid paying that repeatedly.` },
       ],
     },
     {
@@ -159,11 +197,16 @@ registerRoadmap({
       theme: "DevOps · part 3 — everything in k8s is a controller driving current → desired.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
-          label: `<b>DevOps ③.</b> Read k8s <a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener">"Controllers"</a> (the thermostat: observe current → compare to <code>.spec</code> → act → repeat, forever — <b>level-triggered</b>), then skim the core objects: <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank" rel="noopener">Pod</a>, <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deployment</a>→ReplicaSet→Pod, <a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Service</a> (stable VIP + label selector), <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>, ConfigMap/Secret. Controllers act only through the <b>API server</b> (+ etcd = source of truth), never nodes directly.` },
+          lead: `<b>DevOps ③</b> — the one mental model that makes all of Kubernetes click.`,
+          refs: [
+            `Read k8s <a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener">"Controllers"</a>: a thermostat loop — observe current → compare to <code>.spec</code> → act → repeat, forever (<b>level-triggered</b>, not edge-triggered).`,
+            `Skim the core objects: <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank" rel="noopener">Pod</a>, <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deployment</a>→ReplicaSet→Pod, <a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Service</a> (stable VIP + label selector), <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>, ConfigMap/Secret.`,
+          ],
+          model: `Controllers act only through the <b>API server</b> (+ etcd = single source of truth), never nodes directly. Desired state is never "done" — a node dies, Pods get rescheduled. Reconciliation is the through-line for GitOps and Terraform too.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ Interview gotcha: a k8s <b>Secret is only base64-encoded, not encrypted</b> at rest by default — you must enable encryption-at-rest / a KMS. Everyone gets this wrong.` },
-        { id: "s2", type: "hint", label: `💡 "Reconciliation" is the through-line of this whole DevOps thread — you'll see the exact same loop in GitOps (Argo) and Terraform (plan/apply vs state). Learn it once here.` },
+        { id: "s1", type: "callout", label: `⚠️ Interview gotcha: a k8s <b>Secret is only base64-encoded, not encrypted</b> at rest by default — you must enable encryption-at-rest / a KMS. Almost everyone gets this wrong.` },
+        { id: "s2", type: "hint", label: `💡 Deployment→ReplicaSet→Pod is an ownership chain: you edit the Deployment, it creates a new ReplicaSet and scales the old one down (that's a rolling update / rollback).` },
       ],
     },
     {
@@ -171,11 +214,16 @@ registerRoadmap({
       theme: "Systems · part 2 — why cache-friendly loops are 10× faster.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 60,
-          label: `<b>Systems ②.</b> Read CS:APP <b>Ch 6 "The Memory Hierarchy"</b> (registers → L1/L2/L3 → DRAM → disk; locality, cache lines, hit/miss) — or the free classic, Ulrich Drepper <a href="https://lwn.net/Articles/250967/" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> (read the CPU-cache parts, ~Parts 2–3). Payoff: a cache line is ~64 bytes; row-major traversal is fast because it uses whole lines; pointer-chasing thrashes cache. This is why arrays beat linked lists in practice.` },
+          lead: `<b>Systems ②</b> — locality, cache lines, and why arrays beat linked lists.`,
+          refs: [
+            `Read CS:APP <b>Ch 6 "The Memory Hierarchy"</b> (registers → L1/L2/L3 → DRAM → disk; locality, cache lines, hit/miss).`,
+            `Free alternative: Ulrich Drepper, <a href="https://lwn.net/Articles/250967/" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — read the CPU-cache parts (≈ Parts 2–3).`,
+          ],
+          model: `A cache line is ~64 bytes; row-major traversal is fast because it uses whole lines, pointer-chasing thrashes cache. Memorize the orders of magnitude: L1 ~1ns, main memory ~100ns, SSD ~16µs, network within a DC ~0.5ms.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Now the callback from d03: a context switch's <i>direct</i> cost (save/restore registers, ~1–few µs) is often dwarfed by the <i>indirect</i> cost — cold caches + a TLB flush. That's the real reason user-space coroutines are cheap.` },
-        { id: "s2", type: "callout", label: `🔬 "Latency numbers every programmer should know" (L1 ~1ns, main memory ~100ns, SSD ~16µs, network within a DC ~0.5ms) — memorize the <i>orders of magnitude</i>; they anchor every performance discussion.` },
+        { id: "s1", type: "hint", label: `💡 Callback from d03: a context switch's <i>direct</i> cost (~1–few µs) is often dwarfed by the <i>indirect</i> cost — cold caches + a TLB flush. That's the real reason user-space coroutines are cheap.` },
+        { id: "s2", type: "callout", label: `🔬 This is why "data-oriented design" and columnar storage win: pack the bytes you touch together so each cache-line fetch does useful work.` },
       ],
     },
     {
@@ -183,11 +231,17 @@ registerRoadmap({
       theme: "Databases · part 2 — estimated vs actual rows is the #1 diagnostic.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
-          label: `<b>Databases ②.</b> Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">14.1 "Using EXPLAIN"</a> and UTIL's <a href="https://use-the-index-luke.com/sql/explain-plan/postgresql" target="_blank" rel="noopener">Postgres execution plans</a>. Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>. Always run <code>EXPLAIN (ANALYZE, BUFFERS)</code> — a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> or raise <code>default_statistics_target</code>).` },
+          lead: `<b>Databases ②</b> — read a plan and diagnose a slow query.`,
+          refs: [
+            `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">14.1 "Using EXPLAIN"</a> and UTIL's <a href="https://use-the-index-luke.com/sql/explain-plan/postgresql" target="_blank" rel="noopener">Postgres execution plans</a>.`,
+            `Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>.`,
+            `Always use <code>EXPLAIN (ANALYZE, BUFFERS)</code>: a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> / raise <code>default_statistics_target</code>).`,
+          ],
+          model: `The planner is <b>cost-based</b>, not rule-based: it will (correctly) ignore your index when a predicate matches a large fraction of rows, because a sequential scan is cheaper. An unused index isn't always a bug.` },
       ],
       soft: [
-        { id: "s1", type: "tryout", label: `Tryout: on any table you have, <code>EXPLAIN (ANALYZE, BUFFERS) SELECT …</code> a query with and without a helpful index; watch the plan flip from Seq Scan to Index Scan and the cost drop.` },
-        { id: "s2", type: "hint", label: `💡 The planner is cost-based, not rule-based: it will (correctly) ignore your index when a predicate matches a large fraction of rows, because a sequential scan is cheaper. An unused index isn't always a bug.` },
+        { id: "s1", type: "tryout", label: `Tryout: <code>EXPLAIN (ANALYZE, BUFFERS) SELECT …</code> a query with and without a helpful index; watch the plan flip from Seq Scan to Index Scan and the cost drop.` },
+        { id: "s2", type: "hint", label: `💡 <b>N+1</b> = 1 query for a list + N queries for each item's relation. Fix by eager-loading / JOIN / <code>IN (…)</code> batch — the most common ORM performance bug.` },
       ],
       note: "End of month 1's first heavy week — Networking + DevOps + Systems + DB all in motion.",
     },
@@ -198,11 +252,17 @@ registerRoadmap({
       theme: "Networking · part 4 — the recursive resolver as middleman.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 40,
-          label: `<b>Networking ④.</b> Read Cloudflare <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">"What is DNS?"</a> + <a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">DNS server types</a>. Trace it: stub resolver → <b>recursive resolver</b> → root (one of 13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA record, with caching (TTL) at every hop. Then run <code>dig +trace google.com</code> to watch the root→TLD→authoritative delegation live.` },
+          lead: `<b>Networking ④</b> — trace a name to an address, hop by hop.`,
+          refs: [
+            `Read Cloudflare <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">"What is DNS?"</a> + <a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">DNS server types</a>.`,
+            `The path: stub resolver → <b>recursive resolver</b> → root (13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA, with caching (TTL) at every hop.`,
+            `Run <code>dig +trace google.com</code> to watch the root→TLD→authoritative delegation live.`,
+          ],
+          model: `DNS is why "it works on my machine" can be a caching lie: resolvers, the OS, and your app each cache records for the TTL, so a stale A record survives long after you change it.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 DNS is why "it works on my machine" can be a caching lie: resolvers, the OS, and your app can each cache records for the TTL. A stale A record survives long after you change it.` },
-        { id: "s2", type: "suggestion", label: `Interview-ready: be able to narrate "what happens when you type a URL and hit Enter" — see <a href="https://github.com/alex/what-happens-when" target="_blank" rel="noopener">alex/what-happens-when</a> for the full ARP→DNS→TCP→TLS→HTTP walk.` },
+        { id: "s1", type: "suggestion", label: `Interview-ready: narrate "what happens when you type a URL and hit Enter" — see <a href="https://github.com/alex/what-happens-when" target="_blank" rel="noopener">alex/what-happens-when</a> for the full ARP→DNS→TCP→TLS→HTTP walk.` },
+        { id: "s2", type: "hint", label: `💡 Lower TTLs = faster propagation but more resolver traffic; you drop TTLs <i>before</i> a planned migration, then raise them after.` },
       ],
     },
     {
@@ -210,11 +270,17 @@ registerRoadmap({
       theme: "DevOps · part 4 — the operational levers you get asked about.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
-          label: `<b>DevOps ④.</b> Read the k8s <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/" target="_blank" rel="noopener">scheduler</a> (filter→score→bind), <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" target="_blank" rel="noopener">liveness/readiness/startup probes</a>, <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank" rel="noopener">requests/limits</a>, and <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">HPA</a>. Nail the distinctions: <b>requests</b> = scheduling guarantee, <b>limits</b> = runtime cap (CPU throttled, memory over-limit → OOMKill); <b>liveness</b> restarts, <b>readiness</b> removes from the Service until ready, <b>startup</b> protects slow boots.` },
+          lead: `<b>DevOps ④</b> — how Pods get placed, kept healthy, and scaled.`,
+          refs: [
+            `Read the k8s <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/" target="_blank" rel="noopener">scheduler</a> (filter→score→bind) and <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" target="_blank" rel="noopener">liveness/readiness/startup probes</a>.`,
+            `Read <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank" rel="noopener">requests/limits</a> and <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">HPA</a>.`,
+            `<b>requests</b> = scheduling guarantee; <b>limits</b> = runtime cap (CPU throttled, memory over-limit → OOMKill).`,
+          ],
+          model: `<b>liveness</b> restarts an unhealthy Pod; <b>readiness</b> removes it from the Service until ready; <b>startup</b> protects slow boots. A failing <i>dependency</i> should flip readiness, not liveness — or you restart-loop a healthy Pod.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ The classic mistake: using a liveness probe that fails when a <i>dependency</i> is down — so k8s restarts your healthy Pod in a loop. A failing dependency should flip <b>readiness</b>, not liveness.` },
-        { id: "s2", type: "hint", label: `💡 requests≠limits is the root of "noisy neighbour" incidents; set memory request = limit for predictable OOM behaviour, and be cautious with CPU limits (throttling adds tail latency).` },
+        { id: "s1", type: "callout", label: `⚠️ requests≠limits is the root of "noisy neighbour" incidents. Set memory request = limit for predictable OOM behaviour; be careful with CPU limits (throttling adds tail latency).` },
+        { id: "s2", type: "hint", label: `💡 HPA scales replica count toward a target metric (CPU/custom). It can't scale below readiness — an unready Pod serves no traffic, so probes and autoscaling are coupled.` },
       ],
     },
     {
@@ -222,11 +288,16 @@ registerRoadmap({
       theme: "Security · part 1 — the vocabulary you're measured against.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 50,
-          label: `<b>Security ①.</b> Skim the <a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">OWASP Top 10 (2025 — the current edition)</a>; note the top risks (Broken Access Control is #1, then Security Misconfiguration, Software Supply-Chain Failures, Cryptographic Failures, Injection…). Then read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener">Authentication Cheat Sheet</a> and keep the split crisp: <b>authentication</b> = who you are; <b>authorization</b> = what you may do. Most "auth" bugs are actually broken <i>authorization</i> (missing object-level checks).` },
+          lead: `<b>Security ①</b> — the risk landscape, and the authn/authz split.`,
+          refs: [
+            `Skim the <a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">OWASP Top 10 (2025 — the current edition)</a>: #1 Broken Access Control, then Security Misconfiguration, Software Supply-Chain Failures, Cryptographic Failures, Injection…`,
+            `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener">Authentication Cheat Sheet</a>.`,
+          ],
+          model: `<b>Authentication</b> = who you are; <b>authorization</b> = what you may do. "Broken Access Control" being #1 means most auth bugs are missing <i>authorization</i> checks — forgetting that <i>this</i> user owns <i>this</i> record (IDOR). Every endpoint needs an ownership check, not just a login gate.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 "Broken Access Control" being #1 means: the interesting bugs aren't crypto — they're forgetting to check that <i>this</i> user owns <i>this</i> record (IDOR). Every endpoint needs an ownership check, not just a login gate.` },
-        { id: "s2", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 12. Today is the map.` },
+        { id: "s1", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 12. Today is the map.` },
+        { id: "s2", type: "hint", label: `💡 "Security misconfiguration" climbing to #2 is a DevOps overlap: default creds, open S3 buckets, verbose errors, missing headers. Config <i>is</i> attack surface.` },
       ],
       note: "🏁 Month-1 checkpoint week: Networking + DevOps foundations laid, plus Systems, DB and the security map.",
     },
@@ -237,11 +308,16 @@ registerRoadmap({
       theme: "Networking · part 5 — how two strangers agree a secret over a wiretap.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
-          label: `<b>Networking ⑤.</b> Read Cloudflare <a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" rel="noopener">"What happens in a TLS handshake?"</a> (TLS 1.3 is <b>1-RTT</b>, with 0-RTT resumption). Key idea: asymmetric keys are used only to <b>agree a symmetric session key</b>; bulk traffic is symmetric (fast). Certificates + a chain to a trusted root CA prove you're talking to the real server (PKI). For the byte level, skim <a href="https://tls13.xargs.org/" target="_blank" rel="noopener">The Illustrated TLS 1.3 Connection</a>.` },
+          lead: `<b>Networking ⑤</b> — what actually happens when the padlock appears.`,
+          refs: [
+            `Read Cloudflare <a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" rel="noopener">"What happens in a TLS handshake?"</a> (TLS 1.3 is <b>1-RTT</b>, with 0-RTT resumption).`,
+            `For the byte level, skim <a href="https://tls13.xargs.org/" target="_blank" rel="noopener">The Illustrated TLS 1.3 Connection</a> (every byte annotated).`,
+          ],
+          model: `Asymmetric keys are used only to <b>agree a symmetric session key</b>; bulk traffic is symmetric (fast). A cert chain (leaf → intermediate → root CA) proves you're talking to the real server. "Cert expired/unknown authority" is usually a missing intermediate, not a broken key.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 <b>SNI</b> (Server Name Indication) is sent in the ClientHello so one IP can host many TLS sites — and historically it was plaintext (privacy leak), which ECH now addresses. <b>ALPN</b> in the same hello is how the client negotiates HTTP/2 vs HTTP/1.1.` },
-        { id: "s2", type: "callout", label: `🔗 A cert chain = leaf → intermediate(s) → root. "Certificate expired / unknown authority" errors are almost always a missing intermediate or an untrusted root, not a broken key.` },
+        { id: "s1", type: "hint", label: `💡 <b>SNI</b> in the ClientHello lets one IP host many TLS sites (historically plaintext — a privacy leak ECH addresses). <b>ALPN</b> in the same hello negotiates HTTP/2 vs HTTP/1.1.` },
+        { id: "s2", type: "callout", label: `🔗 This is the same crypto you'll meet in the blockchain thread: signatures prove identity, hashes prove integrity. TLS just wires them into a handshake.` },
       ],
     },
     {
@@ -249,11 +325,17 @@ registerRoadmap({
       theme: "Databases · part 3 — every row carries its own version stamps.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
-          label: `<b>Databases ③.</b> Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener">Ch 13.1 Concurrency Control (MVCC)</a> + <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 Transaction Isolation</a>. Model: each row version carries <code>xmin</code>/<code>xmax</code> (creating/deleting txn); each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa. The cost: dead tuples accumulate → <b>VACUUM</b> reclaims them (and why table bloat happens). For the tuple-level detail, Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.` },
+          lead: `<b>Databases ③</b> — multi-version concurrency control, and why tables bloat.`,
+          refs: [
+            `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener">Ch 13.1 Concurrency Control (MVCC)</a> + <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 Transaction Isolation</a>.`,
+            `Each row version carries <code>xmin</code>/<code>xmax</code>; each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa.`,
+            `Deeper tuple-level detail: Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.`,
+          ],
+          model: `An <code>UPDATE</code> is really <i>insert a new row version + mark the old dead</i> — so heavy-update tables bloat and need <b>VACUUM</b>/autovacuum. That single fact explains "my table is 5× its data size."` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 MVCC is why an <code>UPDATE</code> in Postgres is really <i>insert a new row version + mark the old dead</i> — so heavy-update tables bloat and need VACUUM/autovacuum. This directly explains "my table is 5× its data size."` },
-        { id: "s2", type: "suggestion", label: `Preview for next DB day: isolation levels are defined by <i>which anomalies</i> they forbid. MVCC snapshots give you Postgres's "Repeatable Read" (= snapshot isolation) for free.` },
+        { id: "s1", type: "suggestion", label: `Preview: isolation levels are defined by which anomalies they forbid. MVCC snapshots give you Postgres's "Repeatable Read" (= snapshot isolation) for free.` },
+        { id: "s2", type: "callout", label: `🔬 MVCC is why long-running transactions are dangerous in Postgres: they hold back the "xmin horizon" so VACUUM can't reclaim dead tuples cluster-wide → bloat.` },
       ],
     },
     {
@@ -261,11 +343,16 @@ registerRoadmap({
       theme: "DevOps · part 5 — rolling vs blue-green vs canary, and config in the environment.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
-          label: `<b>DevOps ⑤.</b> Read Martin Fowler <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a> + <a href="https://martinfowler.com/bliki/CanaryRelease.html" target="_blank" rel="noopener">CanaryRelease</a> (rolling = k8s default), the <a href="https://opengitops.dev/" target="_blank" rel="noopener">4 GitOps principles</a>, and <a href="https://12factor.net/" target="_blank" rel="noopener">The Twelve-Factor App</a> (esp. III Config in env, VI stateless processes, IX disposability, XI logs as stdout streams). Rolling = incremental replace; blue-green = two environments, flip traffic, instant rollback; canary = small %, watch metrics, ramp.` },
+          lead: `<b>DevOps ⑤</b> — how changes reach production safely.`,
+          refs: [
+            `Read Martin Fowler <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a> + <a href="https://martinfowler.com/bliki/CanaryRelease.html" target="_blank" rel="noopener">CanaryRelease</a> (rolling = k8s default).`,
+            `Read the <a href="https://opengitops.dev/" target="_blank" rel="noopener">4 GitOps principles</a> and <a href="https://12factor.net/" target="_blank" rel="noopener">The Twelve-Factor App</a> (esp. III config in env, VI stateless, IX disposability, XI logs to stdout).`,
+          ],
+          model: `Rolling = incremental replace; blue-green = two environments, flip traffic, instant rollback; canary = small %, watch metrics, ramp. <b>GitOps is the reconciliation loop again</b>: Git holds desired state, an agent (Argo/Flux) converges the cluster to it.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 GitOps is just the reconciliation loop again: Git holds desired state, an agent (Argo/Flux) continuously converges the cluster to it. Same shape as k8s controllers and Terraform's plan/apply-vs-state.` },
-        { id: "s2", type: "callout", label: `🔬 12-factor XI (logs to stdout, not files) is exactly why your Loki/Promtail stack works — the platform captures the stream. Apps that write their own log files fight the platform.` },
+        { id: "s1", type: "callout", label: `🔬 12-factor XI (logs to stdout, not files) is exactly why your Loki/Promtail stack works — the platform captures the stream. Apps that write their own log files fight the platform.` },
+        { id: "s2", type: "hint", label: `💡 Same shape three times now: k8s controllers, GitOps agents, and Terraform's plan/apply-vs-state all reconcile desired → actual. Learn it once, recognize it everywhere.` },
       ],
     },
 
@@ -275,11 +362,16 @@ registerRoadmap({
       theme: "Blockchain · part 1 — get the three-way distinction exactly right.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
-          label: `<b>Blockchain ①.</b> Read <i>Mastering Ethereum</i> (2nd ed, free) <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_4.md" target="_blank" rel="noopener">Ch 4 "Cryptography"</a> and <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch11_blockchain.adoc" target="_blank" rel="noopener">Ch 11</a> Merkle-tree section. Nail the distinction: <b>hashing</b> = one-way integrity (SHA-256, keccak256); <b>encryption</b> = reversible secrecy; <b>signing</b> = authenticity + non-repudiation. <b>Merkle trees</b> hash pairs up to one root, so you can prove one leaf is included with ~log(N) hashes.` },
+          lead: `<b>Blockchain ①</b> — the primitives every chain is built from.`,
+          refs: [
+            `Read <i>Mastering Ethereum</i> (2nd ed, free) <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_4.md" target="_blank" rel="noopener">Ch 4 "Cryptography"</a> and <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch11_blockchain.adoc" target="_blank" rel="noopener">Ch 11</a> (Merkle-tree section).`,
+            `The two curves you use: Ethereum/Bitcoin = <b>ECDSA/secp256k1</b> + <b>keccak256</b>; Solana = <b>ed25519 (EdDSA)</b> (<a href="https://datatracker.ietf.org/doc/html/rfc8032" target="_blank" rel="noopener">RFC 8032</a>).`,
+          ],
+          model: `<b>Hashing</b> = one-way integrity (SHA-256/keccak256); <b>encryption</b> = reversible secrecy; <b>signing</b> = authenticity + non-repudiation. A <b>Merkle tree</b> hashes pairs up to one root, so you can prove one leaf is included with ~log(N) hashes.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The two curves you already use: Ethereum/Bitcoin sign with <b>ECDSA over secp256k1</b> and hash with <b>keccak256</b> (≠ finalized NIST SHA-3); Solana signs with <b>ed25519 (EdDSA)</b>. Same idea, different curve — spec: <a href="https://datatracker.ietf.org/doc/html/rfc8032" target="_blank" rel="noopener">RFC 8032</a>.` },
-        { id: "s2", type: "callout", label: `🔬 Ethereum's state is a <b>Merkle-Patricia trie</b> (four tries: state/storage/tx/receipts) — <a href="https://ethereum.org/en/developers/docs/data-structures-and-encoding/patricia-merkle-trie/" target="_blank" rel="noopener">ethereum.org</a>. That's how a light client proves a balance without the whole chain.` },
+        { id: "s1", type: "callout", label: `🔬 Ethereum's state is a <b>Merkle-Patricia trie</b> (four tries: state/storage/tx/receipts) — <a href="https://ethereum.org/en/developers/docs/data-structures-and-encoding/patricia-merkle-trie/" target="_blank" rel="noopener">ethereum.org</a>. That's how a light client proves a balance without the whole chain.` },
+        { id: "s2", type: "hint", label: `💡 keccak256 (Ethereum) ≠ the finalized NIST SHA-3 — a common trick question. Same sponge construction, different padding.` },
       ],
     },
     {
@@ -287,11 +379,16 @@ registerRoadmap({
       theme: "Networking · part 6 — each version fixes the last one's bottleneck.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
-          label: `<b>Networking ⑥.</b> Read HPBN <a href="https://hpbn.co/http1x/" target="_blank" rel="noopener">HTTP/1.X</a> + <a href="https://hpbn.co/http2/" target="_blank" rel="noopener">HTTP/2</a> (persistent connections, why pipelining failed, H2 multiplexing/framing/HPACK). For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: QUIC = reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, no TCP-level HOL blocking, connection migration. Focus on <i>why</i> each exists, not the feature list.` },
+          lead: `<b>Networking ⑥</b> — why HTTP kept getting rewritten.`,
+          refs: [
+            `Read HPBN <a href="https://hpbn.co/http1x/" target="_blank" rel="noopener">HTTP/1.X</a> + <a href="https://hpbn.co/http2/" target="_blank" rel="noopener">HTTP/2</a> (persistent connections, why pipelining failed, H2 multiplexing/framing/HPACK).`,
+            `For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, connection migration.`,
+          ],
+          model: `H2 fixed HTTP-level HOL blocking (multiplexing) but sits on TCP, so one lost packet still stalls all streams at the transport layer. H3 moves multiplexing into QUIC/UDP so a loss stalls only <i>its</i> stream. That's the whole H2→H3 story.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 H2 fixed HTTP-level HOL blocking (multiplexing) but sits on TCP, so one lost packet still stalls all streams at the transport layer. H3 moves multiplexing into QUIC/UDP so a loss only stalls <i>its</i> stream. That's the whole H2→H3 story.` },
-        { id: "s2", type: "suggestion", label: `Pair with keep-alive/connection pooling (MDN <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x" target="_blank" rel="noopener">Connection management</a>) — and check the pooling knobs of a client you ship: Go <code>http.Transport.MaxIdleConnsPerHost</code>, Node <code>http.Agent keepAlive</code>.` },
+        { id: "s1", type: "suggestion", label: `Pair with keep-alive/pooling (MDN <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x" target="_blank" rel="noopener">Connection management</a>) — check a client you ship: Go <code>http.Transport.MaxIdleConnsPerHost</code>, Node <code>http.Agent keepAlive</code>.` },
+        { id: "s2", type: "hint", label: `💡 HPACK/QPACK header compression is why H2/H3 are efficient for many small requests — H1's repeated plaintext headers were a real cost at scale.` },
       ],
     },
     {
@@ -299,11 +396,17 @@ registerRoadmap({
       theme: "Caching · part 1 — one event loop, atomic commands, no locks.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 50,
-          label: `<b>Caching ①.</b> Read the Redis <a href="https://redis.io/docs/latest/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>. Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>), and Redis is memory/network-bound, not CPU-bound. Redis 6+ multithreads only network I/O, not command execution. Learn the structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log w/ consumer groups; HLL → cardinality.` },
+          lead: `<b>Caching ①</b> — how one thread does millions of ops/sec.`,
+          refs: [
+            `Read the Redis <a href="https://redis.io/docs/latest/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.`,
+            `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.`,
+            `Structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log; HLL → cardinality.`,
+          ],
+          model: `Redis is memory/network-bound, not CPU-bound. Because it's one loop, a single O(N) command (<code>KEYS *</code>, a huge <code>SMEMBERS</code>/<code>SORT</code>) blocks <i>every</i> client — use <code>SCAN</code>, keep values small, never <code>KEYS</code> in prod.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ Because it's one loop, a single O(N) command (<code>KEYS *</code>, a huge <code>SMEMBERS</code>/<code>SORT</code>) blocks <i>every</i> client. Use <code>SCAN</code>, keep values small, and never <code>KEYS</code> in production.` },
-        { id: "s2", type: "hint", label: `💡 Directly useful for your prediction game: sorted sets (<code>ZADD</code>/<code>ZRANGEBYSCORE</code>) give you leaderboards and a rate limiter in a handful of atomic ops — no locks, no races.` },
+        { id: "s1", type: "hint", label: `💡 Directly useful for your prediction game: sorted sets (<code>ZADD</code>/<code>ZRANGEBYSCORE</code>) give you leaderboards and a rate limiter in a handful of atomic ops — no locks, no races.` },
+        { id: "s2", type: "callout", label: `🔬 Scale <i>out</i> (Cluster/replicas) or use <b>pipelining</b> to amortize RTT, rather than expecting one instance to use many cores.` },
       ],
     },
     {
@@ -311,11 +414,16 @@ registerRoadmap({
       theme: "Databases · part 4 — and the one everyone misses: write skew.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 60,
-          label: `<b>Databases ④.</b> Read DDIA <b>Ch 7 "Weak Isolation Levels"</b> straight through (Read Committed → Snapshot Isolation → Preventing Lost Updates → Write Skew & Phantoms), cross-checked against PG's <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 table</a>. Cheat-sheet: <b>dirty read</b> (uncommitted) — stopped by Read Committed; <b>non-repeatable read</b> — stopped by Repeatable Read/SI; <b>phantom</b> (range gains rows) — Serializable; <b>lost update</b> — SI does NOT stop it (use <code>SELECT … FOR UPDATE</code> or atomic <code>UPDATE x=x+1</code>); <b>write skew</b> — only Serializable (SSI).` },
+          lead: `<b>Databases ④</b> — map each anomaly to the level that stops it.`,
+          refs: [
+            `Read DDIA <b>Ch 7 "Weak Isolation Levels"</b> straight through (Read Committed → Snapshot Isolation → Preventing Lost Updates → Write Skew & Phantoms).`,
+            `Cross-check PG's <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 table</a>. Cheat-sheet: dirty read → Read Committed; non-repeatable → Repeatable Read/SI; phantom → Serializable; lost update → SI does NOT stop it (use <code>FOR UPDATE</code>).`,
+          ],
+          model: `<b>Write skew</b> is the interview-grade one: two txns read an overlapping set, each updates a <i>different</i> row, together breaking an invariant (both on-call doctors go off-call). Snapshot isolation allows it; only Serializable (SSI) stops it. Relevant to any check-then-act in your market settlement.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 <b>Write skew</b> is the interview-grade one: two txns read an overlapping set, each updates a <i>different</i> row, together breaking an invariant (both on-call doctors go off-call). Snapshot isolation allows it; only true serializable stops it. Relevant to any "check-then-act" in your market settlement.` },
-        { id: "s2", type: "callout", label: `🧠 Postgres names are confusing: PG "Repeatable Read" is actually <b>Snapshot Isolation</b>, and PG never shows dirty reads even at Read Committed. Know the mapping.` },
+        { id: "s1", type: "callout", label: `🧠 Postgres names are confusing: PG "Repeatable Read" is actually <b>Snapshot Isolation</b>, and PG never shows dirty reads even at Read Committed.` },
+        { id: "s2", type: "hint", label: `💡 Cheapest correctness fix for lost updates: an atomic <code>UPDATE … SET x = x + 1</code> or <code>SELECT … FOR UPDATE</code>, not a read-then-write in app code.` },
       ],
       note: "Month 2 underway — data, HTTP, caching and blockchain now interleaving with DevOps.",
     },
@@ -326,11 +434,16 @@ registerRoadmap({
       theme: "DevOps · part 6 — averages lie; you live at the tail.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
-          label: `<b>DevOps ⑥.</b> Read Google SRE (free) <a href="https://sre.google/sre-book/monitoring-distributed-systems/" target="_blank" rel="noopener">Ch 6 "Monitoring Distributed Systems"</a> — the <b>Four Golden Signals</b> (Latency, Traffic, Errors, Saturation) — then Prometheus <a href="https://prometheus.io/docs/practices/histograms/" target="_blank" rel="noopener">"Histograms and summaries"</a>. Why <b>p99 not average</b>: the mean is dominated by the bulk; tail latency is what users and fan-out/queued requests actually feel. Histograms expose <code>_bucket{le=…}</code> so the server computes <code>histogram_quantile(0.99, …)</code> at query time and can aggregate across instances (summaries can't).` },
+          lead: `<b>DevOps ⑥</b> — what to measure, and why percentiles beat averages.`,
+          refs: [
+            `Read Google SRE (free) <a href="https://sre.google/sre-book/monitoring-distributed-systems/" target="_blank" rel="noopener">Ch 6 "Monitoring Distributed Systems"</a> — the <b>Four Golden Signals</b> (Latency, Traffic, Errors, Saturation).`,
+            `Read Prometheus <a href="https://prometheus.io/docs/practices/histograms/" target="_blank" rel="noopener">"Histograms and summaries"</a>: histograms expose <code>_bucket{le=…}</code> so the server computes <code>histogram_quantile(0.99, …)</code> and can aggregate across instances (summaries can't).`,
+          ],
+          model: `Why p99 not average: the mean is dominated by the bulk; tail latency is what users and fan-out/queued requests feel. One slow dependency in a fan-out makes the tail the effective latency.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ <b>Cardinality trap:</b> a Prometheus series = metric name + every label combo. Put a user ID / request ID / full URL in a label and you get a series explosion that OOMs the server. Labels must be bounded.` },
-        { id: "s2", type: "hint", label: `💡 Complementary lenses: <b>RED</b> (Rate, Errors, Duration) for request services; <b>USE</b> (Utilization, Saturation, Errors) for resources. Golden Signals ≈ RED + Saturation. We hit USE in the load-testing day.` },
+        { id: "s1", type: "callout", label: `⚠️ <b>Cardinality trap:</b> a Prometheus series = metric name + every label combo. Put a user/request ID or full URL in a label and you get a series explosion that OOMs the server. Labels must be bounded.` },
+        { id: "s2", type: "hint", label: `💡 Three lenses: <b>Golden Signals</b> (services) ≈ <b>RED</b> (Rate/Errors/Duration) + Saturation; <b>USE</b> (Utilization/Saturation/Errors) for resources (the load-testing day).` },
       ],
     },
     {
@@ -338,11 +451,16 @@ registerRoadmap({
       theme: "Blockchain · part 2 — what your Solidity actually compiles down to.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 60,
-          label: `<b>Blockchain ②.</b> Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_14.md" target="_blank" rel="noopener">Ch 14 "The EVM"</a> and explore <a href="https://www.evm.codes/" target="_blank" rel="noopener">evm.codes</a> (per-opcode gas + a live playground). Model: the EVM is a <b>stack machine</b> (1024-deep, 256-bit words). Three data locations — <b>storage</b> (persistent, expensive, in the state trie), <b>memory</b> (per-call, cheap, wiped), <b>calldata</b> (read-only input). Every opcode costs <b>gas</b>; <code>SSTORE</code> is the pricey one (cold vs warm, EIP-2929).` },
+          lead: `<b>Blockchain ②</b> — the machine your contracts run on.`,
+          refs: [
+            `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_14.md" target="_blank" rel="noopener">Ch 14 "The EVM"</a> and explore <a href="https://www.evm.codes/" target="_blank" rel="noopener">evm.codes</a> (per-opcode gas + live playground).`,
+            `The EVM is a <b>stack machine</b> (1024-deep, 256-bit words). Three data locations: <b>storage</b> (persistent, expensive, in the state trie), <b>memory</b> (per-call, cheap, wiped), <b>calldata</b> (read-only input).`,
+          ],
+          model: `Every opcode costs <b>gas</b>; <code>SSTORE</code> is the pricey one (cold vs warm, EIP-2929). The account model: <b>EOA</b> (key-controlled) vs <b>contract account</b> (code + storage) — every state change starts from an EOA-signed tx.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The account model: <b>EOA</b> (key-controlled) vs <b>contract account</b> (code + storage). Contracts can't act on their own — every state change starts from an EOA-signed transaction. See <a href="https://ethereum.org/en/developers/docs/accounts/" target="_blank" rel="noopener">ethereum.org accounts</a>.` },
-        { id: "s2", type: "tryout", label: `Tryout: paste a few opcodes into the <a href="https://www.evm.codes/playground" target="_blank" rel="noopener">evm.codes playground</a> and single-step — watch the stack push/pop and gas tick down. Best way to make "stack machine" click.` },
+        { id: "s1", type: "tryout", label: `Tryout: paste a few opcodes into the <a href="https://www.evm.codes/playground" target="_blank" rel="noopener">evm.codes playground</a> and single-step — watch the stack push/pop and gas tick down. Best way to make "stack machine" click.` },
+        { id: "s2", type: "hint", label: `💡 Gas is a metering + anti-DoS mechanism: you pre-pay a gas limit; unused gas is refunded, running out reverts state but still costs the gas burned. It's the EVM's answer to the halting problem.` },
       ],
     },
     {
@@ -350,11 +468,16 @@ registerRoadmap({
       theme: "Messaging · part 1 — delete-on-ack vs retain-and-offset.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 55,
-          label: `<b>Messaging ①.</b> Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a>. The distinction that unlocks everything: a <b>queue/broker</b> (RabbitMQ, SQS) deletes a message on ack, load-balances across competing consumers, weak ordering; a <b>log</b> (Kafka) is append-only and <b>retained</b>, each consumer tracks its own <b>offset</b>, so it's replayable and ordered within a partition.` },
+          lead: `<b>Messaging ①</b> — the distinction that unlocks all of streaming.`,
+          refs: [
+            `Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a>.`,
+            `<b>Queue/broker</b> (RabbitMQ, SQS): message deleted on ack, load-balanced across competing consumers, weak ordering. <b>Log</b> (Kafka): append-only, retained, each consumer tracks its own <b>offset</b> — replayable, ordered within a partition.`,
+          ],
+          model: `"RabbitMQ or Kafka?" → task/RPC work with per-message ack/priority/TTL → broker/queue; event streaming, replay, multiple independent consumers, high throughput → log/Kafka. The axis is delete-on-ack vs retain-with-offset.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 "Should I use RabbitMQ or Kafka?" → task/RPC work with per-message ack, priority, TTL → broker/queue. Event streaming, replay, multiple independent consumers, high throughput → log/Kafka. The axis is <i>delete-on-ack vs retain-with-offset</i>.` },
-        { id: "s2", type: "callout", label: `🔬 A log is the primitive behind replication, CDC, and stream processing — the whole point of Kreps' essay. Postgres's WAL (which you'll meet in the locking/WAL day) is literally the same idea inside one database.` },
+        { id: "s1", type: "callout", label: `🔬 A log is the primitive behind replication, CDC, and stream processing — the point of Kreps' essay. Postgres's WAL (next DB day) is literally the same idea inside one database.` },
+        { id: "s2", type: "hint", label: `💡 SQS Standard = at-least-once + best-effort order; SQS FIFO = ordered + dedup, lower throughput. "Exactly-once" almost always means at-least-once + idempotency (later this thread).` },
       ],
     },
 
@@ -364,11 +487,17 @@ registerRoadmap({
       theme: "Networking · part 7 — what nginx and your ALB really do.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
-          label: `<b>Networking ⑦.</b> Read Cloudflare on <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank" rel="noopener">reverse proxies</a> + <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" rel="noopener">CDNs</a>, and the L4-vs-L7 distinction. <b>L4 LB</b> "moves packets" (routes by IP/port, can't read URLs — NLB, IPVS, HAProxy TCP mode); <b>L7 LB</b> "reads requests" (route <code>/api</code> vs <code>/img</code>, terminate TLS, sticky sessions — nginx, Envoy, ALB). A <b>reverse proxy</b> does TLS termination, caching, compression, buffering, and hides the origin. A <b>CDN</b> is edge caches near users.` },
+          lead: `<b>Networking ⑦</b> — the boxes between the client and your app.`,
+          refs: [
+            `Read Cloudflare on <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank" rel="noopener">reverse proxies</a> + <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" rel="noopener">CDNs</a>.`,
+            `<b>L4 LB</b> "moves packets" (routes by IP/port, can't read URLs — NLB, IPVS, HAProxy TCP). <b>L7 LB</b> "reads requests" (route <code>/api</code> vs <code>/img</code>, terminate TLS, sticky sessions — nginx, Envoy, ALB).`,
+            `A <b>reverse proxy</b> does TLS termination, caching, compression, buffering, hides the origin; a <b>CDN</b> is edge caches near users.`,
+          ],
+          model: `"Terminate TLS at the edge" = the L7 proxy/LB decrypts and talks plain HTTP to backends, centralizing certs and offloading crypto. Contrast with TLS passthrough (backend terminates) and re-encryption.` },
       ],
       soft: [
-        { id: "s1", type: "tryout", label: `Tryout: write a 20-line nginx config with an <code>upstream {}</code> block and <code>proxy_pass</code> to two backends — you'll learn more about reverse proxies from that than any article.` },
-        { id: "s2", type: "hint", label: `💡 "Terminate TLS at the edge" = the L7 proxy/LB decrypts and talks plain HTTP to your backends, centralizing certs and offloading crypto. Contrast with TLS passthrough (backend terminates) and re-encryption.` },
+        { id: "s1", type: "tryout", label: `Tryout: write a 20-line nginx config with an <code>upstream {}</code> block and <code>proxy_pass</code> to two backends — you'll learn more from that than any article.` },
+        { id: "s2", type: "hint", label: `💡 Rule of thumb: L4 for raw throughput / non-HTTP; L7 when routing decisions need application data (path, headers, cookies).` },
       ],
     },
     {
@@ -376,11 +505,16 @@ registerRoadmap({
       theme: "Security · part 2 — and the alg:none footgun.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 60,
-          label: `<b>Security ②.</b> Read the OAuth <a href="https://www.rfc-editor.org/rfc/rfc6749" target="_blank" rel="noopener">RFC 6749</a> authorization-code flow + <a href="https://www.rfc-editor.org/rfc/rfc7636" target="_blank" rel="noopener">PKCE (RFC 7636)</a>, and PortSwigger's <a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">JWT attacks</a>. <b>Authorization Code + PKCE</b> is the modern default for <i>all</i> client types: the client sends <code>code_challenge=S256(code_verifier)</code> on the front channel and the raw verifier on the back channel, so a stolen code is useless. For JWT: pin the expected <code>alg</code> server-side; never trust the token's <code>alg</code> header (the <b>alg:none</b> and RS256→HS256 confusion attacks).` },
+          lead: `<b>Security ②</b> — the modern auth flow, and how tokens get forged.`,
+          refs: [
+            `Read the OAuth <a href="https://www.rfc-editor.org/rfc/rfc6749" target="_blank" rel="noopener">RFC 6749</a> authorization-code flow + <a href="https://www.rfc-editor.org/rfc/rfc7636" target="_blank" rel="noopener">PKCE (RFC 7636)</a>, and PortSwigger's <a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">JWT attacks</a>.`,
+            `<b>Authorization Code + PKCE</b> is the modern default for all client types: send <code>code_challenge=S256(code_verifier)</code> up front, the raw verifier on the back channel, so a stolen code is useless.`,
+          ],
+          model: `For JWT: pin the expected <code>alg</code> <b>server-side</b>; never trust the token's <code>alg</code> header. The <b>alg:none</b> attack drops the signature; the RS256→HS256 confusion attack signs with the public key as an HMAC secret. Treat accepted algorithms as an allowlist.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ <b>alg:none</b>: an attacker sets the header's algorithm to "none" and drops the signature; a naive verifier that reads <code>alg</code> from the token trusts unsigned data. Treat accepted algorithms as a server-side allowlist, and reject <code>none</code> / case variants.` },
-        { id: "s2", type: "hint", label: `💡 Access token vs ID token vs refresh token: OAuth 2.0 is <i>authorization</i> (access tokens for APIs); OIDC adds <i>authentication</i> (the ID token / who the user is). Don't use an ID token as an API access token.` },
+        { id: "s1", type: "callout", label: `⚠️ <b>alg:none</b>: an attacker sets the header algorithm to "none" and drops the signature; a naive verifier that reads <code>alg</code> from the token trusts unsigned data. Reject <code>none</code> and its case variants.` },
+        { id: "s2", type: "hint", label: `💡 Access token vs ID token: OAuth 2.0 is <i>authorization</i> (access tokens for APIs); OIDC adds <i>authentication</i> (the ID token = who the user is). Don't use an ID token as an API access token.` },
       ],
     },
     {
@@ -388,11 +522,16 @@ registerRoadmap({
       theme: "Databases · part 5 — log the change before you touch the page.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
-          label: `<b>Databases ⑤.</b> Read PG docs <a href="https://www.postgresql.org/docs/current/explicit-locking.html" target="_blank" rel="noopener">13.3 "Explicit Locking"</a> (row/table lock modes, the conflict matrix, <b>deadlock</b> detection via the waits-for graph + <code>deadlock_timeout</code>) and <a href="https://www.postgresql.org/docs/current/wal-intro.html" target="_blank" rel="noopener">Ch 30 "Write-Ahead Log"</a>. WAL principle: <b>append the change to the log (fsync'd) before modifying the data page</b>, so a crash can redo. WAL also doubles as the replication + point-in-time-recovery stream.` },
+          lead: `<b>Databases ⑤</b> — how the DB stays correct under contention and crashes.`,
+          refs: [
+            `Read PG docs <a href="https://www.postgresql.org/docs/current/explicit-locking.html" target="_blank" rel="noopener">13.3 "Explicit Locking"</a> (row/table modes, the conflict matrix, <b>deadlock</b> detection via the waits-for graph + <code>deadlock_timeout</code>).`,
+            `Read <a href="https://www.postgresql.org/docs/current/wal-intro.html" target="_blank" rel="noopener">Ch 30 "Write-Ahead Log"</a>: append the change to the log (fsync'd) <i>before</i> modifying the data page, so a crash can redo.`,
+          ],
+          model: `App-level deadlock prevention is mostly <b>consistent lock ordering</b> — if every txn locks in the same order, cycles can't form. WAL also doubles as the replication + point-in-time-recovery stream (same "log" idea as Kafka).` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 App-level deadlock prevention is mostly <b>consistent lock ordering</b>: if every transaction locks rows/tables in the same order, cycles can't form. Postgres kills one victim and raises a deadlock error — catch and retry.` },
-        { id: "s2", type: "callout", label: `🔬 <code>synchronous_commit</code>/<code>fsync</code> are the durability dial: <code>fsync=off</code> is fast and loses data on crash. This is the same page-cache/fsync tension from the OS layer — durability = "actually on disk," not "write() returned."` },
+        { id: "s1", type: "callout", label: `🔬 <code>synchronous_commit</code>/<code>fsync</code> are the durability dial: <code>fsync=off</code> is fast and loses data on crash — the same page-cache/fsync tension from the OS layer. Durability = "actually on disk," not "write() returned."` },
+        { id: "s2", type: "hint", label: `💡 Postgres kills one victim on deadlock and raises an error — so wrap contended transactions in a retry. Deadlocks are expected under load, not a bug to eliminate entirely.` },
       ],
     },
 
@@ -402,11 +541,17 @@ registerRoadmap({
       theme: "Blockchain · part 3 — stateless programs + separate data accounts.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
-          label: `<b>Blockchain ③.</b> Read Solana docs <a href="https://solana.com/docs/core/accounts" target="_blank" rel="noopener">Accounts</a> + <a href="https://solana.com/docs/core/programs" target="_blank" rel="noopener">Programs</a>. The mental flip from EVM: <b>programs are stateless</b> (executable accounts holding sBPF bytecode); all mutable state lives in <b>separate data accounts</b> that a transaction must pass in. Accounts pay <b>rent</b> (must be rent-exempt = hold ~2 years' rent for their size). Contrast explicitly with Ethereum's "contract = code + its own storage."` },
+          lead: `<b>Blockchain ③</b> — the mental flip from the EVM.`,
+          refs: [
+            `Read Solana docs <a href="https://solana.com/docs/core/accounts" target="_blank" rel="noopener">Accounts</a> + <a href="https://solana.com/docs/core/programs" target="_blank" rel="noopener">Programs</a>.`,
+            `<b>Programs are stateless</b> (executable accounts holding sBPF bytecode); all mutable state lives in <b>separate data accounts</b> a transaction must pass in. Accounts pay <b>rent</b> (must be rent-exempt).`,
+            `Side-by-side: <a href="https://solana.com/developers/evm-to-svm/accounts" target="_blank" rel="noopener">EVM→SVM: Accounts</a>.`,
+          ],
+          model: `Contrast with Ethereum's "contract = code + its own storage." Because state is external, Solana instructions must list every account they read/write up front — the constraint that later buys parallelism (Sealevel).` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 This is <i>why</i> Solana instructions must list every account they read/write up front — the runtime needs the access set before execution. That constraint is the price of parallelism (next Solana day: Sealevel).` },
-        { id: "s2", type: "callout", label: `🔬 Rent-exemption is a real footgun: an account below the minimum balance can be purged. When you allocate a PDA, fund it for its data size. See <a href="https://solana.com/developers/evm-to-svm/accounts" target="_blank" rel="noopener">EVM→SVM: Accounts</a> for the side-by-side.` },
+        { id: "s1", type: "callout", label: `⚠️ Rent-exemption is a real footgun: an account below the minimum balance can be purged. When you allocate a PDA, fund it for its data size.` },
+        { id: "s2", type: "hint", label: `💡 "Everything is an account" includes programs, token mints, and your data — a uniform model that makes the runtime simple but forces explicit account passing everywhere.` },
       ],
     },
     {
@@ -414,11 +559,17 @@ registerRoadmap({
       theme: "DevOps · part 7 — turn reliability into a number you can spend.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
-          label: `<b>DevOps ⑦.</b> Read Google SRE <a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Ch 4 "Service Level Objectives"</a> + the error-budget part of <a href="https://sre.google/sre-book/embracing-risk/" target="_blank" rel="noopener">Ch 3 "Embracing Risk"</a>, then OpenTelemetry <a href="https://opentelemetry.io/docs/concepts/signals/traces/" target="_blank" rel="noopener">Traces</a>. <b>SLI</b> = a measured level (e.g. % requests < 300 ms); <b>SLO</b> = the target (99.9% / 28 days); <b>error budget</b> = 1 − SLO (99.9% ⇒ ~43 min/month of allowed unreliability). Budget remaining → ship features; budget spent → freeze risky changes.` },
+          lead: `<b>DevOps ⑦</b> — reliability as an engineering budget, plus how traces stitch together.`,
+          refs: [
+            `Read Google SRE <a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Ch 4 "Service Level Objectives"</a> + the error-budget part of <a href="https://sre.google/sre-book/embracing-risk/" target="_blank" rel="noopener">Ch 3 "Embracing Risk"</a>.`,
+            `Read OpenTelemetry <a href="https://opentelemetry.io/docs/concepts/signals/traces/" target="_blank" rel="noopener">Traces</a>.`,
+            `<b>SLI</b> = measured level (e.g. % requests < 300 ms); <b>SLO</b> = target (99.9%/28d); <b>error budget</b> = 1 − SLO (99.9% ⇒ ~43 min/month).`,
+          ],
+          model: `Budget remaining → ship features; budget spent → freeze risky changes. Don't be <i>more</i> reliable than the SLO needs — excess reliability has real opportunity cost, and users can't tell. 100% is the wrong target.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Don't be <i>more</i> reliable than your SLO needs — excess reliability has real opportunity cost (and users can't tell). 100% is the wrong target; choose a few user-visible SLIs.` },
-        { id: "s2", type: "callout", label: `🔬 Tracing under the hood: a trace = a tree of spans; a <b>W3C <code>traceparent</code></b> header carries the trace/span IDs across service boundaries so downstream spans join the same trace. That header is the whole magic of distributed tracing.` },
+        { id: "s1", type: "callout", label: `🔬 Tracing under the hood: a trace = a tree of spans; a <b>W3C <code>traceparent</code></b> header carries the trace/span IDs across service boundaries so downstream spans join the same trace. That header is the whole magic.` },
+        { id: "s2", type: "hint", label: `💡 SLA vs SLO: an SLA is a <i>contract</i> with consequences; your internal SLO should be tighter, so you notice and fix before you breach the SLA.` },
       ],
     },
     {
@@ -426,11 +577,16 @@ registerRoadmap({
       theme: "Systems · part 3 — the pattern behind nginx, Node, tokio & Go's netpoller.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
-          label: `<b>Systems ③.</b> Read Dan Kegel's <a href="http://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered). The modern pattern: a few <b>event-loop</b> threads each call <code>epoll_wait()</code> for ready fds, then do <b>non-blocking</b> <code>accept</code>/<code>read</code>/<code>write</code>. That's nginx (worker per core), Node (loop + libuv pool), Netty, tokio, and Go's netpoller (hidden behind blocking-looking goroutines).` },
+          lead: `<b>Systems ③</b> — the I/O model that scales past thread-per-connection.`,
+          refs: [
+            `Read Dan Kegel's <a href="http://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered).`,
+            `The modern pattern: a few event-loop threads each call <code>epoll_wait()</code> for ready fds, then do <b>non-blocking</b> <code>accept</code>/<code>read</code>/<code>write</code>.`,
+          ],
+          model: `That's nginx (worker per core), Node (loop + libuv pool), Netty, tokio, and Go's netpoller (hidden behind blocking-looking goroutines). Four axes people muddle: blocking vs non-blocking vs sync vs async (kernel does the work, notifies on completion — io_uring).` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The four axes people muddle: <b>blocking</b> (park the thread) vs <b>non-blocking</b> (<code>EAGAIN</code>, retry) vs <b>sync</b> vs <b>async</b> (kernel does the work, notifies on completion — io_uring). Your async runtime = non-blocking syscalls + an event loop presenting an async API.` },
-        { id: "s2", type: "tryout", label: `Tryout: <code>strace -e epoll_wait,accept4,read -f</code> against a small server and watch the loop pull ready fds. The abstraction becomes concrete in 5 minutes.` },
+        { id: "s1", type: "tryout", label: `Tryout: <code>strace -e epoll_wait,accept4,read -f</code> against a small server and watch the loop pull ready fds. The abstraction becomes concrete in 5 minutes.` },
+        { id: "s2", type: "hint", label: `💡 Your async runtime = non-blocking syscalls + an event loop presenting an async API. That's why "async" and "threads" aren't opposites — async is <i>how</i> a few threads serve many connections.` },
       ],
     },
 
@@ -440,11 +596,17 @@ registerRoadmap({
       theme: "Blockchain · part 4 — base fee burned, tip to the proposer.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
-          label: `<b>Blockchain ④.</b> Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_6.md" target="_blank" rel="noopener">Ch 6 "Transactions"</a> and <a href="https://eips.ethereum.org/EIPS/eip-1559" target="_blank" rel="noopener">EIP-1559</a>. A tx carries nonce, gas fields, to/value/data, signature (RLP-encoded). <b>EIP-1559</b>: blocks target 50% fullness (elasticity 2); the <b>base fee</b> adjusts ≤12.5%/block and is <b>burned</b>; a <b>priority fee (tip)</b> goes to the proposer; a type-2 tx sets <code>max_fee_per_gas</code> + <code>max_priority_fee_per_gas</code> and is refunded the difference.` },
+          lead: `<b>Blockchain ④</b> — from signed bytes to state change, and how fees are set.`,
+          refs: [
+            `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_6.md" target="_blank" rel="noopener">Ch 6 "Transactions"</a> and <a href="https://eips.ethereum.org/EIPS/eip-1559" target="_blank" rel="noopener">EIP-1559</a>.`,
+            `A tx carries nonce, gas fields, to/value/data, signature (RLP-encoded).`,
+            `<b>EIP-1559</b>: blocks target 50% fullness (elasticity 2); the <b>base fee</b> adjusts ≤12.5%/block and is <b>burned</b>; a <b>tip</b> goes to the proposer.`,
+          ],
+          model: `Cite the invariants — <b>elasticity 2</b> (50% target) and <b>max ±12.5%/block</b> base-fee change — NOT "15M/30M gas" (historical mainnet values, not protocol constants). A type-2 tx sets <code>max_fee</code> + <code>max_priority_fee</code> and is refunded the difference.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The invariants to cite are <b>elasticity 2</b> (50% target) and <b>max ±12.5%/block</b> base-fee change — NOT "15M/30M gas," which were historical mainnet values, not protocol constants.` },
-        { id: "s2", type: "callout", label: `🔬 Calldata is priced per byte (cheap-ish) while <code>SSTORE</code> is expensive — which is exactly why rollups post compressed calldata/blobs to L1 instead of storage. Ties your gas intuition to why L2s are cheaper.` },
+        { id: "s1", type: "callout", label: `🔬 Calldata is priced per byte (cheap-ish) while <code>SSTORE</code> is expensive — exactly why rollups post compressed calldata/blobs to L1 instead of storage. Ties your gas intuition to why L2s are cheaper.` },
+        { id: "s2", type: "hint", label: `💡 The nonce is per-account and strictly sequential — it's what prevents replay and enforces ordering of your own txs. A stuck low-nonce tx blocks all higher ones ("nonce gap").` },
       ],
     },
     {
@@ -452,11 +614,17 @@ registerRoadmap({
       theme: "Messaging · part 2 — the unit of parallelism is the partition.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 55,
-          label: `<b>Messaging ②.</b> Read <i>Kafka: The Definitive Guide</i> (2nd ed, <a href="https://www.confluent.io/resources/kafka-the-definitive-guide-v2/" target="_blank" rel="noopener">free from Confluent</a>) Ch 1 + the internals/reliability chapters. Model: a <b>topic</b> splits into <b>partitions</b> (unit of parallelism + ordering); each record has a monotonic <b>offset</b> in its partition; a <b>consumer group</b> assigns each partition to exactly one member (so parallelism ≤ partition count). Partitions are replicated (leader + followers); the <b>ISR</b> = replicas caught up to the leader — with <code>acks=all</code> + <code>min.insync.replicas=2</code>, a write is durable once all ISR members have it.` },
+          lead: `<b>Messaging ②</b> — Kafka's core model and durability knobs.`,
+          refs: [
+            `Read <i>Kafka: The Definitive Guide</i> (2nd ed, <a href="https://www.confluent.io/resources/kafka-the-definitive-guide-v2/" target="_blank" rel="noopener">free from Confluent</a>) Ch 1 + the internals/reliability chapters.`,
+            `A <b>topic</b> splits into <b>partitions</b> (parallelism + ordering); each record has a monotonic <b>offset</b>; a <b>consumer group</b> assigns each partition to exactly one member (parallelism ≤ partition count).`,
+            `Durability: replicas (leader + followers); <b>ISR</b> = replicas caught up to the leader. <code>acks=all</code> + <code>min.insync.replicas=2</code> ⇒ durable once all ISR have it.`,
+          ],
+          model: `Ordering is guaranteed only <i>within a partition</i>. For per-entity order (all events for one user/market in order), key by that entity so they land in the same partition.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Ordering is only guaranteed <i>within a partition</i>. If you need per-entity order (e.g. all events for one user/market in order), key by that entity so they land in the same partition.` },
-        { id: "s2", type: "callout", label: `⚠️ More consumers than partitions = idle consumers (nothing to assign). Partition count is your parallelism ceiling and is painful to change later — size it deliberately.` },
+        { id: "s1", type: "callout", label: `⚠️ More consumers than partitions = idle consumers (nothing to assign). Partition count is your parallelism ceiling and is painful to change later — size it deliberately.` },
+        { id: "s2", type: "hint", label: `💡 "Kafka is a database you tail": consumers store their own offset, so two independent services read the same topic at their own pace and can replay from offset 0.` },
       ],
     },
     {
@@ -464,11 +632,17 @@ registerRoadmap({
       theme: "Review · a deliberate re-grounding in a hard model you already use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 45,
-          label: `<b>Review.</b> Re-ground the model that underpins your Solana/Anchor work: re-read <i>The Rust Book</i> <a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html" target="_blank" rel="noopener">Ch 4 "Understanding Ownership"</a> (move/borrow/lifetimes) and, without looking, explain out loud: why can't you have a mutable borrow alongside any other borrow? What does a lifetime annotation actually constrain? Then write three tiny snippets that <i>fail</i> to compile and predict the exact borrow-checker error before running.` },
+          lead: `<b>Review</b> — re-derive the model under your Solana/Anchor work.`,
+          refs: [
+            `Re-read <i>The Rust Book</i> <a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html" target="_blank" rel="noopener">Ch 4 "Understanding Ownership"</a> (move/borrow/lifetimes).`,
+            `Without looking, explain aloud: why can't a <code>&mut</code> coexist with any other borrow? What does a lifetime annotation actually constrain?`,
+            `Write three snippets that <i>fail</i> to compile and predict the exact borrow-checker error before running.`,
+          ],
+          model: `Ownership makes "who frees this and when" a <b>compile-time</b> fact; the borrow checker enforces "many readers XOR one writer" → no data race, no use-after-free. Everything else (lifetimes, <code>&mut</code>) serves that.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The one-line model: ownership makes "who frees this and when" a <i>compile-time</i> fact; the borrow checker enforces "many readers XOR one writer" so there's no data race and no use-after-free. Everything else (lifetimes, <code>&mut</code>) serves that.` },
-        { id: "s2", type: "callout", label: `🧭 Review tasks recur occasionally (Rust here; C++ threads, Go's scheduler, Python's GIL later) — short, forced re-derivations of hard concepts in languages you already ship.` },
+        { id: "s1", type: "callout", label: `🧭 Review tasks recur occasionally (Rust here; C++ threads, Go's scheduler, Python's GIL later) — short, forced re-derivations of hard concepts in languages you already ship.` },
+        { id: "s2", type: "hint", label: `💡 The "many readers XOR one writer" rule is the same invariant a RwLock enforces at runtime — Rust just checks it at compile time for references. Same idea, zero cost.` },
       ],
     },
 
@@ -478,11 +652,16 @@ registerRoadmap({
       theme: "Caching · part 2 — the hard part isn't caching, it's invalidating.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 50,
-          label: `<b>Caching ②.</b> Read AWS <a href="https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html" target="_blank" rel="noopener">caching patterns</a> (cache-aside vs write-through vs write-behind) and the Redis <a href="https://redis.io/docs/latest/develop/reference/eviction/" target="_blank" rel="noopener">eviction</a> + <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/" target="_blank" rel="noopener">persistence (RDB/AOF)</a> pages. <b>Cache-aside</b>: read cache → miss → read DB → populate with TTL. Handle the <b>stampede/thundering herd</b> (a hot key expires, thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>. Prefer <b>delete-on-write</b> over update to avoid caching a value a concurrent write races.` },
+          lead: `<b>Caching ②</b> — patterns, persistence, and surviving a hot-key expiry.`,
+          refs: [
+            `Read AWS <a href="https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html" target="_blank" rel="noopener">caching patterns</a> (cache-aside vs write-through vs write-behind) and the Redis <a href="https://redis.io/docs/latest/develop/reference/eviction/" target="_blank" rel="noopener">eviction</a> + <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/" target="_blank" rel="noopener">persistence (RDB/AOF)</a> pages.`,
+            `Handle the <b>stampede/thundering herd</b> (hot key expires → thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>.`,
+          ],
+          model: `Prefer <b>delete-on-write</b> over update to avoid caching a value a concurrent write races. Eviction: <code>allkeys-lru/lfu</code> for a pure cache, <code>volatile-*</code> when you mix cache + persistent keys (Redis uses <i>sampled</i>, not exact, LRU/LFU).` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Eviction menu: <code>allkeys-lru</code>/<code>lfu</code> for a pure cache, <code>volatile-*</code> when you mix cache + persistent keys. Redis uses <i>approximated</i> (sampled) LRU/LFU, not exact — and that's fine.` },
-        { id: "s2", type: "callout", label: `🔬 RDB (periodic fork+snapshot; can lose minutes) vs AOF (<code>appendfsync everysec</code> ≈ lose ≤1s). Run both for a good durability/restart trade-off. The fork uses copy-on-write — big instances spike memory during a save.` },
+        { id: "s1", type: "callout", label: `🔬 RDB (periodic fork+snapshot; can lose minutes) vs AOF (<code>appendfsync everysec</code> ≈ lose ≤1s). Run both. The fork uses copy-on-write — big instances spike memory during a save.` },
+        { id: "s2", type: "hint", label: `💡 "Only two hard things… cache invalidation" — design keys so invalidation is a single <code>DEL</code> or a version-bump, never a scan.` },
       ],
     },
     {
@@ -490,11 +669,17 @@ registerRoadmap({
       theme: "Blockchain · part 5 — why declaring accounts up front buys parallelism.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
-          label: `<b>Blockchain ⑤.</b> Read Solana docs <a href="https://solana.com/docs/core/pda" target="_blank" rel="noopener">PDAs</a> + <a href="https://solana.com/docs/core/cpi" target="_blank" rel="noopener">CPIs</a> + <a href="https://solana.com/docs/core/fees/compute-budget" target="_blank" rel="noopener">Compute Budget</a>, and the <a href="https://docs.anza.xyz/validator/runtime" target="_blank" rel="noopener">Sealevel runtime</a>. Because every instruction declares the accounts it reads/writes, the runtime can execute non-overlapping transactions <b>in parallel</b> (writes serialized per account, reads parallel). <b>PDAs</b> = deterministic off-curve program-owned addresses (no private key; signed via <code>invoke_signed</code>); <b>CPIs</b> = one program calling another. Compute units: 200K default/instruction, 1.4M max/tx; priority fee = <code>cu_price × cu_limit</code>.` },
+          lead: `<b>Blockchain ⑤</b> — the runtime, program addresses, and cross-program calls.`,
+          refs: [
+            `Read Solana docs <a href="https://solana.com/docs/core/pda" target="_blank" rel="noopener">PDAs</a> + <a href="https://solana.com/docs/core/cpi" target="_blank" rel="noopener">CPIs</a> + <a href="https://solana.com/docs/core/fees/compute-budget" target="_blank" rel="noopener">Compute Budget</a>, and the <a href="https://docs.anza.xyz/validator/runtime" target="_blank" rel="noopener">Sealevel runtime</a>.`,
+            `Because every instruction declares the accounts it reads/writes, the runtime executes non-overlapping txs <b>in parallel</b> (writes serialized per account, reads parallel).`,
+            `<b>PDAs</b> = deterministic off-curve program-owned addresses (signed via <code>invoke_signed</code>); <b>CPIs</b> = one program calling another; CU: 200K default/instr, 1.4M max/tx.`,
+          ],
+          model: `EVM↔SVM in one line: Ethereum executes txs <i>sequentially</i> (global state, implicit access); Solana executes them <i>in parallel</i> by forcing explicit account declarations. Everything odd about Solana dev flows from that trade.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The EVM↔SVM contrast in one line: Ethereum executes transactions <i>sequentially</i> (global state, implicit access); Solana executes them <i>in parallel</i> by forcing explicit account declarations. Everything odd about Solana dev flows from that trade.` },
-        { id: "s2", type: "callout", label: `⚠️ Currency note: Solana's classic consensus is PoH + Tower BFT, but a new design ("Alpenglow") is landing in 2026 — know Tower BFT as the deployed model, and that it's being superseded.` },
+        { id: "s1", type: "callout", label: `⚠️ Currency note: Solana's classic consensus is PoH + Tower BFT, but a new design ("Alpenglow") is landing in 2026 — know Tower BFT as the deployed model, and that it's being superseded.` },
+        { id: "s2", type: "hint", label: `💡 Priority fee = <code>compute_unit_price × compute_unit_limit</code>. Set a tight CU limit and a price to land in a congested block — the Solana analogue of an EIP-1559 tip.` },
       ],
     },
     {
@@ -502,11 +687,17 @@ registerRoadmap({
       theme: "DevOps · part 8 — coordinated omission and the USE method.",
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 55,
-          label: `<b>DevOps ⑧.</b> Watch Gil Tene, <a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU" target="_blank" rel="noopener">"How NOT to Measure Latency" (Strange Loop, ~43 min)</a> (coordinated omission ~33:50), and read Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>. <b>Coordinated omission</b>: a load tool that waits for a slow response before sending the next request silently deletes the worst samples — making the tail look great when it's awful. Fix: drive a <b>constant arrival rate</b> (open-loop: <code>vegeta</code>, <code>k6</code>) and report from full distributions (HdrHistogram), not averages. <b>USE</b>: for each resource check Utilization, Saturation, Errors.` },
+          lead: `<b>DevOps ⑧</b> — why most load tests lie, and how to measure honestly.`,
+          refs: [
+            `Watch Gil Tene, <a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU" target="_blank" rel="noopener">"How NOT to Measure Latency" (Strange Loop, ~43 min)</a> (coordinated omission ~33:50).`,
+            `Read Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>: for each resource check Utilization, Saturation, Errors.`,
+            `Tool axis: <code>ab</code>/<code>wrk</code> are closed-loop (throughput-driven, prone to CO); <code>vegeta</code>/<code>k6</code> can hold a fixed arrival rate (open-loop).`,
+          ],
+          model: `<b>Coordinated omission</b>: a load tool that waits for a slow response before sending the next request silently deletes the worst samples — making the tail look great when it's awful. Drive a <b>constant arrival rate</b> and report from full distributions (HdrHistogram), not averages.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Tool axis: <code>ab</code>/<code>wrk</code> are closed-loop (throughput-driven) and prone to coordinated omission; <code>vegeta</code>/<code>k6</code> can hold a fixed request rate — which is what you want to measure real latency under load.` },
-        { id: "s2", type: "tryout", label: `Tryout: run <code>k6</code> against a service with a p99 <code>threshold</code>; then add an artificial 200ms stall to 1% of responses and watch p99 (not the average) catch it.` },
+        { id: "s1", type: "tryout", label: `Tryout: run <code>k6</code> against a service with a p99 <code>threshold</code>; then add a 200ms stall to 1% of responses and watch p99 (not the average) catch it.` },
+        { id: "s2", type: "hint", label: `💡 Capacity is about headroom, not a single number: high utilization with <i>no</i> saturation can be fine; <i>any</i> saturation (a growing queue/run-queue) usually means a real problem.` },
       ],
     },
 
@@ -516,11 +707,16 @@ registerRoadmap({
       theme: "Blockchain · part 6 — agreement without a coordinator.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
-          label: `<b>Blockchain ⑥.</b> Read <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch12_mining.adoc" target="_blank" rel="noopener">Ch 12 "Mining and Consensus"</a> (PoW, difficulty/target, best chain = most cumulative work), then ethereum.org <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/" target="_blank" rel="noopener">Gasper</a> (Casper FFG finality + LMD-GHOST fork choice) and Vitalik's <a href="https://blog.ethereum.org/2016/05/09/on-settlement-finality" target="_blank" rel="noopener">"On Settlement Finality"</a>. Key idea: PoW finality is <b>probabilistic</b> (more confirmations = exponentially safer); PoS adds <b>economic finality</b> (revert costs slashed stake). Reorgs happen; "finality" is a spectrum, not a switch.` },
+          lead: `<b>Blockchain ⑥</b> — how a decentralized network agrees on one history.`,
+          refs: [
+            `Read <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch12_mining.adoc" target="_blank" rel="noopener">Ch 12 "Mining and Consensus"</a> (PoW, difficulty, best chain = most cumulative work).`,
+            `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/" target="_blank" rel="noopener">Gasper</a> (Casper FFG finality + LMD-GHOST fork choice) and Vitalik's <a href="https://blog.ethereum.org/2016/05/09/on-settlement-finality" target="_blank" rel="noopener">"On Settlement Finality"</a>.`,
+          ],
+          model: `PoW finality is <b>probabilistic</b> (more confirmations = exponentially safer); PoS adds <b>economic finality</b> (revert costs slashed stake). Reorgs happen — "finality" is a spectrum, not a switch.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 CAP-flavoured trade-off: a chain can't have instant finality, full availability, and permissionless decentralization all at once — different chains pick different points. That framing beats memorizing any single consensus algorithm.` },
-        { id: "s2", type: "callout", label: `🔬 Solana's take (from last week): PoH gives a verifiable clock so validators don't have to agree on time before ordering — a different answer to the same "who decides order" question.` },
+        { id: "s1", type: "hint", label: `💡 CAP-flavoured trade-off: a chain can't have instant finality, full availability, and permissionless decentralization at once — different chains pick different points. Beats memorizing any single algorithm.` },
+        { id: "s2", type: "callout", label: `🔬 Solana's PoH gives a verifiable clock so validators needn't agree on time before ordering — a different answer to the same "who decides order" question.` },
       ],
     },
     {
@@ -528,11 +724,17 @@ registerRoadmap({
       theme: "Security · part 3 — store secrets like they'll be stolen.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 45,
-          label: `<b>Security ③.</b> Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">Password Storage Cheat Sheet</a> + <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener">Session Management</a>. Use <b>Argon2id</b> (min m=19 MiB, t=2, p=1) for new systems; <b>bcrypt</b> (cost ≥10) is legacy-only and caps input at 72 bytes. Hash+salt, never encrypt, never home-roll. Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and <b>never store tokens in localStorage</b> (XSS reads it).` },
+          lead: `<b>Security ③</b> — credential storage and session design, done right.`,
+          refs: [
+            `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">Password Storage</a> + <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener">Session Management</a> cheat sheets.`,
+            `Use <b>Argon2id</b> (min m=19 MiB, t=2, p=1) for new systems; <b>bcrypt</b> (cost ≥10) is legacy-only and caps input at 72 bytes.`,
+            `Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and never store tokens in <code>localStorage</code> (XSS reads it).`,
+          ],
+          model: `Passwords are <b>hashed</b> (one-way, slow, salted) — not encrypted, never home-rolled. "Slow" is the point: it caps an attacker's guesses/sec. Fast hashes (SHA-256) are wrong for passwords.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Hashing (Argon2/bcrypt) ≠ encryption ≠ signing — passwords are <b>hashed</b> (one-way, slow, salted). "Slow" is the point: it caps an attacker's guesses per second. Fast hashes (SHA-256) are wrong for passwords.` },
-        { id: "s2", type: "callout", label: `🔗 Callback to the TLS day: the same PKI trust chain protects these credentials in transit; hashing protects them at rest. Both, always.` },
+        { id: "s1", type: "callout", label: `🔗 Callback to the TLS day: the same PKI trust chain protects these credentials in transit; hashing protects them at rest. Both, always.` },
+        { id: "s2", type: "hint", label: `💡 <code>SameSite=Lax/Strict</code> cookies are your cheapest CSRF defense; <code>HttpOnly</code> keeps JS (and XSS) from reading the session — which is exactly why JWTs in localStorage are worse, not better.` },
       ],
     },
     {
@@ -540,11 +742,17 @@ registerRoadmap({
       theme: "Security · part 4 — the two bug classes that drain DeFi, in your domain.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 60,
-          label: `<b>Security ④ (capstone).</b> Read the Solidity docs <a href="https://docs.soliditylang.org/en/latest/security-considerations.html" target="_blank" rel="noopener">Security Considerations</a> (checks-effects-interactions) and samczsun's <a href="https://samczsun.com/so-you-want-to-use-a-price-oracle/" target="_blank" rel="noopener">"So you want to use a price oracle"</a>. <b>Reentrancy</b>: any external call hands control to the callee <i>before</i> your state settles — do Checks → Effects → <b>Interactions last</b>, or use a <code>nonReentrant</code> mutex; beware read-only reentrancy (a view returns wrong data mid-write — the Curve case). <b>Oracle manipulation</b>: on-chain spot prices are attacker-controllable within a tx (flash loans) — use TWAPs / robust feeds. Directly relevant to your FPMM/LMSR market.` },
+          lead: `<b>Security ④ (capstone)</b> — the vulnerabilities most relevant to your FPMM/LMSR market.`,
+          refs: [
+            `Read the Solidity docs <a href="https://docs.soliditylang.org/en/latest/security-considerations.html" target="_blank" rel="noopener">Security Considerations</a> (checks-effects-interactions) and samczsun's <a href="https://samczsun.com/so-you-want-to-use-a-price-oracle/" target="_blank" rel="noopener">"So you want to use a price oracle"</a>.`,
+            `<b>Reentrancy</b>: any external call hands control to the callee <i>before</i> your state settles → do Checks → Effects → <b>Interactions last</b>, or use a <code>nonReentrant</code> mutex; beware read-only reentrancy (a view returns wrong data mid-write — the Curve case).`,
+            `<b>Oracle manipulation</b>: on-chain spot prices are attacker-controllable within a tx (flash loans) → use TWAPs / robust feeds.`,
+          ],
+          model: `Checks-Effects-Interactions in one line: validate, then write ALL state, then make external calls — so a re-entrant call always sees finalized state. OZ <code>ReentrancyGuard</code> is a storage flag that reverts on re-entry.` },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Checks-Effects-Interactions in one line: validate, then write ALL your state, then make external calls — so a re-entrant call always sees finalized state. OZ <code>ReentrancyGuard</code> is a storage flag (NOT_ENTERED→ENTERED) that reverts on re-entry.` },
-        { id: "s2", type: "callout", label: `🏁 Core complete. From here the extension goes <i>deeper under the hood</i> — Postgres vacuum/TOAST, Kafka exactly-once internals, ZK/rollups & MEV, Rust async internals, eBPF/perf — planned separately so nothing here gets re-dated.` },
+        { id: "s1", type: "callout", label: `🏁 Core complete. From here the extension goes <i>deeper under the hood</i> — Postgres vacuum/TOAST, Kafka exactly-once internals, ZK/rollups & MEV, Rust async internals, eBPF/perf — planned separately so nothing here gets re-dated.` },
+        { id: "s2", type: "hint", label: `💡 The through-line of the whole security thread: never trust input you didn't verify — an <code>alg</code> header, a spot price, or the timing of an external call are all "input". Verify, then act.` },
       ],
       note: "🎓 12-week core finished — the essentials a backend/blockchain engineer is expected to own.",
     },

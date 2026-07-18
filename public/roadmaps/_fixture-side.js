@@ -32,7 +32,11 @@ registerRoadmap({
     {
       id: "d02", date: "2026-07-15", week: "w1", title: "TCP",
       tasks: [
-        { id: "t1", obj: "net", cat: "read", est: 30, label: "Read about TCP." },
+        // structured form (lead / refs / model) — exercises taskLabelBlock rendering
+        { id: "t1", obj: "net", cat: "read", est: 30,
+          lead: "Read about <b>TCP</b>.",
+          refs: ["The 3-way handshake", "Flow & congestion control"],
+          model: "Reliability is a feature you pay for." },
         { id: "b1", obj: "net", cat: "challenge", est: 20, optional: true, label: "<b>Bonus:</b> packet capture." },
       ],
     },

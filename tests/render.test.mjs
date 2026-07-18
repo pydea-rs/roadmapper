@@ -61,6 +61,14 @@ t.ok(view.querySelector(".today-track-sep"), "Today digest has a Side track divi
 // must NOT appear among the main cards above it.
 const sideCardTitles = [...view.querySelectorAll(".today-card-title")].map(n => n.textContent);
 t.ok(sideCardTitles.includes("Side Test Fixture"), "the side roadmap renders its own Today card");
+
+t.group("structured task body (lead / refs / model) renders");
+// the side fixture's overdue d02.t1 uses the structured form
+t.ok(view.querySelector(".t-label.rich .t-lead"), "a structured task renders a lead line");
+t.ok(view.querySelectorAll(".t-label.rich .t-ref").length >= 2, "structured refs render as list items");
+t.ok(view.querySelector(".t-label.rich .t-model"), "structured task renders a takeaway/model line");
+// a plain-label task (rust/interp/fixture d01) still renders the flat .t-label
+t.ok(view.querySelector(".t-label"), "plain-label tasks still render a .t-label");
 const prevNav = view.querySelector(".effort-navbtn.prev");
 t.ok(!!prevNav, "day-stepper present");
 if (prevNav) { prevNav.onclick(); t.ok(view.querySelector(".effort"), "stepping to prev day re-renders without throwing"); }
