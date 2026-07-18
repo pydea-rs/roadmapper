@@ -62,6 +62,10 @@
     <nav id="sb-list" class="sb-list" aria-label="Roadmaps"></nav>
     <div class="sb-foot">
       <span id="sync-pill" class="sync-pill local"><i></i><span id="sync-pill-text">Local only</span></span>
+      <button id="tut-launch" class="sb-tut" aria-label="Companion tutorials" aria-haspopup="true"
+              aria-expanded="false" title="Companion tutorials">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.6"/><rect x="14" y="3" width="7" height="7" rx="1.6"/><rect x="3" y="14" width="7" height="7" rx="1.6"/><rect x="14" y="14" width="7" height="7" rx="1.6"/></svg>
+      </button>
     </div>
   </aside>
 

@@ -84,6 +84,7 @@ function session_boot(bool $create, int $lifetime): void {
     session_set_cookie_params([
         "lifetime" => $lifetime,
         "path"     => "/",
+        "secure"   => req_is_https(),   // don't leak the session cookie over plain HTTP
         "httponly" => true,
         "samesite" => "Lax",
     ]);
@@ -107,7 +108,8 @@ function db(): PDO {
         try {
             $pdo = new PDO("sqlite:" . DB_FILE);
         } catch (PDOException $e) {
-            fail(500, "cannot open journey.sqlite: " . $e->getMessage());
+            error_log("roadmaps: cannot open journey.sqlite: " . $e->getMessage());
+            fail(500, "database unavailable");
         }
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec("PRAGMA journal_mode = WAL");
@@ -155,6 +157,13 @@ function db(): PDO {
 }
 
 function now_iso(): string { return gmdate("c"); }
+
+/** True when the current request arrived over HTTPS (directly or via a proxy). */
+function req_is_https(): bool {
+    if (!empty($_SERVER["HTTPS"]) && strtolower((string)$_SERVER["HTTPS"]) !== "off") return true;
+    if (strtolower((string)($_SERVER["HTTP_X_FORWARDED_PROTO"] ?? "")) === "https") return true;
+    return ((int)($_SERVER["SERVER_PORT"] ?? 0)) === 443;
+}
 
 function read_body(): array {
     $raw = file_get_contents("php://input", false, null, 0, MAX_BODY_BYTES + 1);
@@ -340,6 +349,7 @@ switch ($action) {
             setcookie(session_name(), "", [
                 "expires"  => time() - 42000,
                 "path"     => $p["path"] ?: "/",
+                "secure"   => req_is_https(),
                 "httponly" => true,
                 "samesite" => "Lax",
             ]);
@@ -454,7 +464,8 @@ switch ($action) {
                               "keys" => count_state($pdo, $scope)]);
         } catch (Throwable $e) {
             try { $pdo->exec("ROLLBACK"); } catch (Throwable $_) {}
-            fail(500, "save failed: " . $e->getMessage());
+            error_log("roadmaps: save failed: " . $e->getMessage());
+            fail(500, "save failed");
         }
         break;
     }

@@ -49,13 +49,13 @@ function loadOpen(slug) {
 }
 function saveOpen(slug, set) { try { localStorage.setItem(openKey(slug), JSON.stringify([...set])); } catch {} }
 
-export function renderRoadmap(rm, mount) {
+export function renderRoadmap(rm, mount, { animate = true } = {}) {
   cur = { rm, mount };
   revealedDays = new Set();              // fresh entrance → cards may reveal again as you scroll
   let open = loadOpen(rm.slug);
   if (!open) { open = new Set(); const t = rm.days.find(d => d.date === todayStr());
     if (t) open.add(t.id); else { const up = rm.days.find(d => d.date >= todayStr()); if (up) open.add(up.id); } }
-  paint(rm, mount, open, true);          // full open → play the entrance cascade
+  paint(rm, mount, open, animate);       // full open → play the entrance cascade (unless a crossfade owns it)
 }
 
 function rerender() {

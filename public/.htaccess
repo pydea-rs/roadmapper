@@ -12,19 +12,25 @@ Options -Indexes
 DirectoryIndex index.php
 
 # --- Deny sensitive files by name (Apache 2.4; cPanel runs 2.4). -------------
+# Covers dot-files, known-sensitive extensions, and PHP session files (sess_*),
+# in case the private dir is ever placed inside the web root (fallback layout).
 <IfModule mod_authz_core.c>
-  # Any dot-file (.env, .git*, .htaccess, .htpasswd, ...) and known-sensitive
-  # extensions, should one ever end up here.
-  <FilesMatch "(^\.|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
+  <FilesMatch "(^\.|^sess_|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
     Require all denied
   </FilesMatch>
 </IfModule>
 # Fallback for the older 2.2 authz module.
 <IfModule !mod_authz_core.c>
-  <FilesMatch "(^\.|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
+  <FilesMatch "(^\.|^sess_|\.(env|sqlite|sqlite-wal|sqlite-shm|sqlite-journal|db|sql|md|log|bak|ini)$)">
     Order allow,deny
     Deny from all
   </FilesMatch>
+</IfModule>
+
+# --- Send a couple of safe hardening headers when mod_headers is present. -----
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "no-referrer"
 </IfModule>
 
 # --- Block the private app dir outright, if it ever gets uploaded in here. ---

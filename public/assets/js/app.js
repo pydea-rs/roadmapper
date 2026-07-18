@@ -12,7 +12,7 @@ import { renderRoadmap, renderToday, setRenderHooks, rerender } from "./render.j
 import { sidebarStats } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
-  initLock, loadSettings, initDrawer, initFab, renderSidebar,
+  initLock, loadSettings, initDrawer, initFab, initTutorials, renderSidebar,
   toast, confirmModal, setDrawerSync, refreshDrawer, closeDrawer,
 } from "./ui.js";
 import { $, debounce, downloadJSON, pickFile, readFileText, todayStr, daysBetween } from "./util.js";
@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", boot);
 async function boot() {
   loadSettings();
   initFab();
+  initTutorials();
   initDrawer(drawerHooks());
   setRenderHooks({ exportRoadmap: exportRoadmapIO, importRoadmap: importRoadmapIO });
 
@@ -82,6 +83,22 @@ async function startApp() {
 /* ================================================================== *
  *  Routing  (#/slug , #/slug/today , #/slug/weekId)
  * ================================================================== */
+/* Is a view-crossfade wanted right now? (motion on, OS doesn't say reduce, and
+ * the browser supports the View Transitions API). */
+function crossfadeOK() {
+  if (document.documentElement.getAttribute("data-motion") === "off") return false;
+  if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
+  return typeof document.startViewTransition === "function";
+}
+/* Swap the main view with a smooth crossfade when switching roadmap/section.
+ * `paint(animate)` does the actual render — inside a view transition the per-block
+ * entrance cascade is suppressed (the crossfade owns the motion); as a fallback
+ * (no API / motion off) the cascade plays instead so there's still an entrance. */
+function swapView(paint) {
+  if (crossfadeOK()) document.startViewTransition(() => paint(false));
+  else paint(true);
+}
+
 function route() {
   const roadmaps = getRoadmaps();
   const hash = location.hash.replace(/^#\/?/, "");
@@ -90,8 +107,7 @@ function route() {
   // Global cross-roadmap "Today" digest (#/today).
   if (slug === "today" && !sub) {
     activeSlug = null;
-    renderToday($("#view"));
-    updateSidebar();
+    swapView(() => { renderToday($("#view")); updateSidebar(); });
     closeMobileSidebar();
     return;
   }
@@ -104,11 +120,12 @@ function route() {
   }
   activeSlug = rm.slug;
   localStorage.setItem("roadmaps_last", rm.slug);
-  renderRoadmap(rm, $("#view"));
-  updateSidebar();
+  swapView(animate => {
+    renderRoadmap(rm, $("#view"), { animate });
+    updateSidebar();
+    if (sub) requestAnimationFrame(() => scrollToSub(rm, sub));
+  });
   closeMobileSidebar();
-
-  if (sub) requestAnimationFrame(() => scrollToSub(rm, sub));
 }
 function scrollToSub(rm, sub) {
   let targetDay = null;

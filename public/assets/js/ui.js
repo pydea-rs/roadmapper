@@ -248,7 +248,8 @@ const SETTINGS_KEY = "roadmaps_settings_v1";
 const ACCENTS = { violet: 265, indigo: 245, blue: 215, cyan: 190, teal: 172, green: 145,
   amber: 35, orange: 22, rose: 340 };
 let settings = { theme: "auto", accent: "violet", accentHue: 265, roadmapAccent: "on",
-  density: "cozy", motion: "on", sidebar: "expanded", milestoneView: "slideshow", dayReveal: "on" };
+  density: "cozy", motion: "on", sidebar: "expanded", milestoneView: "slideshow", dayReveal: "on",
+  tutorials: "payaina" };
 
 export function loadSettings() {
   try { Object.assign(settings, JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}")); } catch {}
@@ -333,6 +334,84 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
 const trackLabel = t => ({ ahead: "Ahead of pace", on: "On track", behind: "Behind pace" }[t] || "On track");
 
 /* ================================================================== *
+ *  Companion tutorials launcher (bottom-right of the sidebar)
+ *  A small button that pops up three sibling review sites. Which host
+ *  the links point to (payaina vs. GitHub Pages) is a setting; the popup
+ *  is rebuilt from the current setting each time it opens.
+ * ================================================================== */
+const TUTORIALS = [
+  { key: "backend", label: "Backend Frameworks", short: "Backendz", icon: "🗄️",
+    urls: { payaina: "https://b4am.payaina.top", github: "https://pa-ya.github.io/framework-review" } },
+  { key: "front", label: "Fronts & GUI", short: "Frontz", icon: "🎨",
+    urls: { payaina: "https://frog.payaina.top", github: "https://pa-ya.github.io/frontframes-gui/" } },
+  { key: "ai", label: "AI & Machine Learning", short: "AI & ML", icon: "🤖",
+    urls: { payaina: "https://ddai.payaina.top", github: "https://pa-ya.github.io/deep-dive-ai/" } },
+];
+
+export function initTutorials() {
+  const btn = $("#tut-launch");
+  if (!btn) return;
+  let pop = null;
+
+  const close = () => {
+    if (!pop) return;
+    pop.classList.remove("open");
+    btn.setAttribute("aria-expanded", "false");
+    const node = pop;
+    node.addEventListener("transitionend", () => node.remove(), { once: true });
+    // safety: remove even if no transition fires (motion off)
+    setTimeout(() => node.isConnected && node.remove(), 260);
+    pop = null;
+    document.removeEventListener("keydown", onKey, true);
+    document.removeEventListener("pointerdown", onOutside, true);
+    window.removeEventListener("resize", close);
+  };
+  const onKey = e => { if (e.key === "Escape") { e.preventDefault(); close(); btn.focus(); } };
+  const onOutside = e => { if (pop && !pop.contains(e.target) && !btn.contains(e.target)) close(); };
+
+  const open = () => {
+    const source = getSettings().tutorials === "github" ? "github" : "payaina";
+    pop = el("div.tut-pop", { role: "menu", "aria-label": "Companion tutorials" });
+    pop.append(el("div.tut-pop-head", { text: "Companion reviews" }));
+    for (const t of TUTORIALS) {
+      const a = el("a.tut-item", { href: t.urls[source], target: "_blank", rel: "noopener noreferrer",
+        role: "menuitem" });
+      a.append(el("span.tut-ico", { text: t.icon }));
+      const tx = el("span.tut-tx");
+      tx.append(el("span.tut-label", { text: t.label }));
+      tx.append(el("span.tut-short", { text: t.short }));
+      a.append(tx);
+      a.append(el("span.tut-ext", { html: extLinkIcon() }));
+      a.onclick = () => close();
+      pop.append(a);
+    }
+    document.body.append(pop);
+    position(pop);
+    btn.setAttribute("aria-expanded", "true");
+    requestAnimationFrame(() => pop && pop.classList.add("open"));
+    document.addEventListener("keydown", onKey, true);
+    document.addEventListener("pointerdown", onOutside, true);
+    window.addEventListener("resize", close);
+  };
+
+  // Anchor the popup's bottom-right just above the button's top-right, so it
+  // reads as belonging to that corner of the sidebar. Fixed-positioned (over the
+  // sidebar) so the sidebar's overflow:hidden can't clip it when collapsed.
+  const position = node => {
+    const r = btn.getBoundingClientRect();
+    node.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+    node.style.bottom = (window.innerHeight - r.top + 8) + "px";
+  };
+
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+    if (pop) close(); else open();
+  });
+}
+
+const extLinkIcon = () => `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>`;
+
+/* ================================================================== *
  *  Settings drawer  (theme controls now; import/export wired in Phase 6)
  * ================================================================== */
 let drawerHooks = {};
@@ -371,6 +450,9 @@ function buildDrawerBody() {
   appear.append(settingRow("Milestones", "How the milestones section is shown",
     segmented(["slideshow", "cards"], settings.milestoneView === "cards" ? "cards" : "slideshow",
       v => { setSetting("milestoneView", v); drawerHooks.repaint && drawerHooks.repaint(); })));
+  appear.append(settingRow("Tutorial links", "Which host the sidebar companion links point to",
+    segmented(["payaina", "github"], settings.tutorials === "github" ? "github" : "payaina",
+      v => setSetting("tutorials", v))));
   body.append(appear);
 
   body.append(el("hr.hr"));
