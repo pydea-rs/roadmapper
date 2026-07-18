@@ -6,5 +6,6 @@ import "./interp-go.js";      // Roadmap 2 — Interpreters & Go (priority MEDIU
 
 // Side track (kind:"side") — separate progress/effort, its own sidebar section.
 import "./bedrock.js";        // Bedrock — backend/blockchain foundations & internals
+import "./raylib.js";         // Big Bang — raylib (C++), graphics/sim math & a Big Bang simulation
 
 // import "./_fixture.js";    // engine test fixture (kept for regression testing)

@@ -10,17 +10,18 @@ const t = suite("content");
 await loadRoadmap("rust-fastapi.js");
 await loadRoadmap("interp-go.js");
 await loadRoadmap("bedrock.js");            // the side-track roadmap
+await loadRoadmap("raylib.js");             // the second side-track roadmap ("Big Bang")
 const roadmaps = registry.getRoadmaps();
 
 t.group("registry loads cleanly");
-t.ok(roadmaps.length >= 3, `all real roadmaps registered (${roadmaps.length})`);
+t.ok(roadmaps.length >= 4, `all real roadmaps registered (${roadmaps.length})`);
 t.deep(registry.registryErrors(), [], "no registry errors");
 t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 
 t.group("side track wiring");
 const bedrock = registry.getRoadmap("bedrock");
 t.eq(bedrock.kind, "side", "bedrock is registered on the side track");
-t.deep(registry.getSideRoadmaps().map(r => r.slug), ["bedrock"], "getSideRoadmaps() sees bedrock only");
+t.deep(registry.getSideRoadmaps().map(r => r.slug), ["bedrock", "raylib"], "getSideRoadmaps() sees both side tracks (bedrock, raylib)");
 t.ok(registry.getMainRoadmaps().every(r => r.kind !== "side"), "main roadmaps exclude the side track");
 // every task's objective is one of the domain threads (no orphan objective)
 t.ok(bedrock.days.every(d => d.tasks.every(x => bedrock.objById.has(x.obj))),
