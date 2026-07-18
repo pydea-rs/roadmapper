@@ -36,7 +36,11 @@ registerRoadmap({
         { id: "t1", obj: "net", cat: "read", est: 30,
           lead: "Read about <b>TCP</b>.",
           refs: ["The 3-way handshake", "Flow & congestion control"],
-          model: "Reliability is a feature you pay for." },
+          model: "Reliability is a feature you pay for.",
+          cards: [
+            { q: "What are the three segments of the TCP handshake?", a: "SYN → SYN-ACK → ACK." },
+            { q: "TCP flow control vs congestion control?", a: "Flow = don't overrun the <i>receiver</i> (receive window); congestion = don't overrun the <i>network</i> (AIMD)." },
+          ] },
         { id: "b1", obj: "net", cat: "challenge", est: 20, optional: true, label: "<b>Bonus:</b> packet capture." },
       ],
     },

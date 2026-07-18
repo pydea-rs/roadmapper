@@ -76,6 +76,23 @@ const firstBar = view.querySelector(".ec-col");
 if (firstBar) { firstBar.onclick(); t.ok(view.querySelector(".today-view"), "clicking a chart bar re-renders without throwing"); }
 render.renderToday(view);                     // reset selection to today
 
+t.group("recall cards unlock only when the task is done");
+const sideRm = reg.getRoadmap("fixture-side");
+render.renderRoadmap(sideRm, view);
+t.ok(!view.querySelector(".t-recall"), "a task with cards shows NO recall block while undone");
+store.setTask("fixture-side", "d02.t1", true);   // complete the structured task
+render.renderRoadmap(sideRm, view);
+t.ok(view.querySelector(".t-recall"), "completing the task unlocks its recall block");
+t.eq(view.querySelectorAll(".t-recall .flashcard").length, 2, "both authored cards render as flashcards");
+const fc = view.querySelector(".flashcard");
+t.ok(fc && !fc.classList.contains("revealed"), "a flashcard starts hidden (question only)");
+if (fc) { fc.onclick(); t.ok(fc.classList.contains("revealed"), "tapping a flashcard reveals the answer"); }
+render.renderToday(view);
+t.ok(view.querySelector(".recall-panel"), "Today surfaces a 'Recall from earlier' panel once a side card is unlocked");
+t.ok(view.querySelector(".recall-panel .flashcard"), "the recall panel shows flashcards drawn from completed side work");
+store.setTask("fixture-side", "d02.t1", false);  // restore fixture state for later suites
+render.renderToday(view);
+
 t.group("tick a task straight from Today");
 const cb = view.querySelector(".today-card .task .checkbox");
 if (cb) {

@@ -170,7 +170,48 @@ function drawToday(mount) {
     }
   }
 
+  // Spaced recall — a few cards drawn from side-track material you've ALREADY
+  // completed, so earlier reading resurfaces while you work today's new topic.
+  const recall = recallReview(today);
+  if (recall) view.append(recall);
+
   mount.append(view);
+}
+
+/* Collect recall cards from completed side-track tasks and surface a rotating
+ * handful (deterministic by date, so it's stable within a day but varies across
+ * days — no RNG needed). Returns null when nothing is unlocked yet. */
+function recallReview(today, limit = 4) {
+  const pool = [];
+  for (const rm of getSideRoadmaps())
+    for (const d of rm.days) for (const t of d.tasks) {
+      if (!t.cards || !t.cards.length) continue;
+      if (!store.isDone(rm.slug, t.id)) continue;
+      for (const c of t.cards) pool.push({ rm, day: d, card: c });
+    }
+  if (!pool.length) return null;
+
+  // rotate the start index by a tiny hash of the date → a different slice daily
+  let h = 0; for (let i = 0; i < today.length; i++) h = (h * 31 + today.charCodeAt(i)) >>> 0;
+  const start = pool.length ? h % pool.length : 0;
+  const pick = [];
+  for (let i = 0; i < Math.min(limit, pool.length); i++) pick.push(pool[(start + i) % pool.length]);
+
+  const panel = el("div.recall-panel");
+  const head = el("div.recall-head");
+  head.append(el("span.recall-ico", { text: "🎴" }));
+  head.append(el("span.recall-title", { text: "Recall from earlier" }));
+  head.append(el("span.recall-count", { text: `${pool.length} unlocked` }));
+  panel.append(head);
+  panel.append(el("div.recall-sub", { text: "Answer before you flip — retrieval is what makes it stick." }));
+  const deck = el("div.recall-deck");
+  for (const { day, card } of pick) {
+    const fc = flashCard(card);
+    fc.append(el("span.fc-src", { text: day.title }));
+    deck.append(fc);
+  }
+  panel.append(deck);
+  return panel;
 }
 
 /* Gather the due-today / overdue cards for a set of roadmaps (one track). */
@@ -239,6 +280,8 @@ function todayRow(rm, task, mount, curDay, overdue) {
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
   if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(curDay.date)}` }));
   bodyEl.append(meta);
+  const recall = taskRecall(rm, task);
+  if (recall) bodyEl.append(recall);
   row.append(bodyEl);
   return row;
 }
@@ -990,6 +1033,8 @@ function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
     meta.append(el("span.t-moved", { text: `↩ from ${od ? relDay(od.date) : task.day}` }));
   }
   bodyEl.append(meta);
+  const recall = taskRecall(rm, task);
+  if (recall) bodyEl.append(recall);
   row.append(bodyEl);
 
   const mv = el("button.t-move", { title: "Move task", "aria-label": "Move task", html: moveIcon() });
@@ -1027,6 +1072,8 @@ function bonusRow(rm, task) {
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
   if (task.fallback) meta.append(el("span.t-est", { text: `· or short: ${task.fallback.label.replace(/<[^>]+>/g,"")}` }));
   bodyEl.append(meta);
+  const recall = taskRecall(rm, task);
+  if (recall) bodyEl.append(recall);
   row.append(bodyEl);
   return row;
 }
@@ -1135,6 +1182,44 @@ function taskLabelBlock(task) {
   if (task.model) wrap.append(el("div.t-model", { html: task.model }));
   return wrap;
 }
+/* ---- Recall cards -----------------------------------------------------
+ * A task can carry `cards` (short Q/A prompts distilled from its material).
+ * They stay hidden until the task is DONE, then surface as a foldable deck so
+ * revisiting a completed day is active recall, not re-reading. One card = a
+ * button that flips question → answer on click (keyboard-accessible). */
+function flashCard(card) {
+  const fc = el("button.flashcard", { type: "button", "aria-expanded": "false",
+    "aria-label": "Reveal answer" });
+  fc.append(el("span.fc-q", { html: card.q }));
+  const a = el("span.fc-a", { html: card.a });
+  const hint = el("span.fc-hint", { text: "tap to reveal" });
+  fc.append(a); fc.append(hint);
+  fc.onclick = () => {
+    const open = fc.classList.toggle("revealed");
+    fc.setAttribute("aria-expanded", open ? "true" : "false");
+    fc.setAttribute("aria-label", open ? "Hide answer" : "Reveal answer");
+  };
+  return fc;
+}
+/* The per-task recall block: null unless the task is done and has cards. */
+function taskRecall(rm, task) {
+  if (!task.cards || !task.cards.length) return null;
+  if (!store.isDone(rm.slug, task.id)) return null;
+  const wrap = el("div.t-recall");
+  const head = el("button.t-recall-head", { type: "button", "aria-expanded": "false" });
+  head.append(el("span.trh-ico", { text: "🎴" }));
+  head.append(el("span.trh-label", { html: `Recall <b>${task.cards.length}</b>` }));
+  head.append(el("span.trh-caret", { html: caretIcon() }));
+  const deck = el("div.t-recall-deck");
+  for (const c of task.cards) deck.append(flashCard(c));
+  head.onclick = () => {
+    const open = wrap.classList.toggle("open");
+    head.setAttribute("aria-expanded", open ? "true" : "false");
+  };
+  wrap.append(head, deck);
+  return wrap;
+}
+
 function catChip(cat, rm) {
   const colorVar = `var(--cat-${cat}, var(--cat-alt))`;
   return el("span.chip", { text: cat, style: `--chip:${colorVar}` });

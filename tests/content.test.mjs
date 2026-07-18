@@ -22,9 +22,24 @@ const bedrock = registry.getRoadmap("bedrock");
 t.eq(bedrock.kind, "side", "bedrock is registered on the side track");
 t.deep(registry.getSideRoadmaps().map(r => r.slug), ["bedrock"], "getSideRoadmaps() sees bedrock only");
 t.ok(registry.getMainRoadmaps().every(r => r.kind !== "side"), "main roadmaps exclude the side track");
-// every task's objective is one of the 9 domain threads (no orphan objective)
+// every task's objective is one of the domain threads (no orphan objective)
 t.ok(bedrock.days.every(d => d.tasks.every(x => bedrock.objById.has(x.obj))),
   "every bedrock task maps to a domain objective");
+
+// core + extension: the extension continues the same roadmap (weeks 13–25) and
+// adds the Distributed-systems thread; nothing here should re-date the core.
+t.ok(bedrock.days.length >= 77, "bedrock has the core + extension days (>= 77)");
+t.ok(bedrock.objById.has("dist"), "the extension adds a Distributed-systems objective");
+t.ok(bedrock.weeksById.has("w25"), "the extension reaches week 25");
+t.ok(bedrock.days.some(d => d.date >= "2026-10-12"), "extension days are dated after the core");
+// recall cards: authored on tasks, and every card is a well-formed {q, a}
+const withCards = bedrock.days.flatMap(d => d.tasks).filter(x => x.cards && x.cards.length);
+t.ok(withCards.length >= 77, "every bedrock task carries recall cards");
+t.ok(withCards.every(x => x.cards.every(c => c.q && c.a)),
+  "every recall card has both a question and an answer");
+// milestone task references still resolve (incl. extension milestones)
+t.ok(bedrock.milestones.every(m => (m.rule.require || []).every(id => bedrock.tasksById.has(id))),
+  "every milestone (core + extension) references a real task");
 
 for (const rm of roadmaps) {
   t.group(`${rm.slug} — structure`);

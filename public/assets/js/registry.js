@@ -74,6 +74,13 @@ function normalize(def) {
         lead: t.lead || null,
         refs: Array.isArray(t.refs) ? t.refs.map(String).filter(Boolean) : null,
         model: t.model || null,
+        // Recall cards: short question/answer prompts distilled from this task's
+        // own material. They stay HIDDEN until the task is ticked done, turning a
+        // completed task into a spaced-recall deck (reinforced on the Today view).
+        cards: Array.isArray(t.cards)
+          ? t.cards.map(c => ({ q: String(c && c.q || ""), a: String(c && c.a || "") }))
+                   .filter(c => c.q && c.a)
+          : null,
         label: t.label || t.lead || "", optional: !!t.optional,
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,

@@ -273,6 +273,51 @@
 /* a completed structured task strikes only its lead, not the whole block */
 .task.done .t-label.rich { text-decoration: none; }
 .task.done .t-label.rich .t-lead { text-decoration: line-through; text-decoration-color: var(--text-3); }
+
+/* ---- Recall cards: unlocked only when a task is done. A foldable deck under
+   the task; each card flips question → answer on tap. -------------------- */
+.t-recall { margin-top: 8px; }
+.t-recall-head { display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  background: color-mix(in srgb, var(--accent) 9%, transparent); color: var(--text-2);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: var(--r-pill); padding: 3px 10px; font-size: var(--t-xs); font-weight: 650; }
+.t-recall-head:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); color: var(--text); }
+.t-recall-head b { color: var(--accent-ink, var(--accent)); }
+.trh-caret { display: inline-flex; transition: transform .18s ease; }
+.t-recall.open .trh-caret { transform: rotate(90deg); }
+.t-recall-deck { display: none; flex-direction: column; gap: 6px; margin-top: 7px; }
+.t-recall.open .t-recall-deck { display: flex; }
+
+/* one flashcard — a button showing the prompt; the answer reveals on click */
+.flashcard { display: block; width: 100%; text-align: left; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--r1);
+  padding: 9px var(--s3); font: inherit; color: var(--text); position: relative;
+  transition: border-color .15s ease, background .15s ease; }
+.flashcard:hover { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.flashcard.revealed { background: color-mix(in srgb, var(--accent) 5%, var(--surface-2));
+  border-color: color-mix(in srgb, var(--accent) 30%, var(--border)); }
+.fc-q { display: block; font-size: var(--t-sm); font-weight: 650; line-height: 1.4; color: var(--text); }
+.fc-a { display: none; margin-top: 6px; padding-top: 6px; font-size: var(--t-sm); line-height: 1.45;
+  color: var(--text-2); border-top: 1px dashed var(--border-2); }
+.flashcard.revealed .fc-a { display: block; }
+.fc-a code, .fc-q code { background: var(--surface-3); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+.fc-hint { display: block; margin-top: 5px; font-size: var(--t-xs); color: var(--text-3); letter-spacing: .02em; }
+.flashcard.revealed .fc-hint { display: none; }
+.fc-src { display: block; margin-top: 7px; font-size: var(--t-xs); color: var(--text-3);
+  font-style: italic; opacity: .85; }
+
+/* ---- Today · "Recall from earlier" — spaced review of unlocked cards ---- */
+.recall-panel { margin-top: var(--s4); padding: var(--s4); border-radius: var(--r2);
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 2px solid color-mix(in srgb, var(--accent) 45%, var(--border-2)); }
+.recall-head { display: flex; align-items: center; gap: 8px; }
+.recall-ico { font-size: 16px; }
+.recall-title { font-size: var(--t-sm); font-weight: 750; color: var(--text); }
+.recall-count { margin-left: auto; font-size: var(--t-xs); font-weight: 650; color: var(--text-3);
+  background: var(--surface-3); padding: 2px 9px; border-radius: var(--r-pill); }
+.recall-sub { margin-top: 4px; font-size: var(--t-xs); color: var(--text-3); }
+.recall-deck { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px; margin-top: var(--s3); }
 .t-meta { display: flex; align-items: center; gap: var(--s2); margin-top: 6px; flex-wrap: wrap; }
 .chip { font-size: var(--t-xs); font-weight: 700; padding: 2px 8px; border-radius: var(--r-pill);
   text-transform: capitalize; letter-spacing: .01em;
