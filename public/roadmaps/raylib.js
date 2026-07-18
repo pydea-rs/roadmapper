@@ -204,7 +204,7 @@ registerRoadmap({
         { id: "t1", obj: EX, cat: "watch", est: 55,
           lead: `<b>Examples ①</b> — meet the two resources you'll lean on all journey.`,
           refs: [
-            `Watch Programming With Nick <a href="https://www.youtube.com/watch?v=1TB3Zfp8m3g" target="_blank" rel="noopener">"Get Started in raylib in 20 minutes"</a> (+ his Raylib-6 / VS Code setup video) to lock in a clean C++ workflow.`,
+            `Watch Programming With Nick's <a href="https://www.youtube.com/watch?v=wVYKG_ch4yM&list=PLwR6ZGPvjVOSRywn9VCQ3yrRVruxzzuo9" target="_blank" rel="noopener">raylib tutorials playlist</a> — "Get Started in raylib in 20 minutes" + a VS Code / Raylib-6 setup video — to lock in a clean C++ workflow.`,
             `Browse <a href="https://www.raylib.com/examples.html" target="_blank" rel="noopener">raylib.com/examples.html</a>; run <code>core_basic_window</code>, <code>shapes_basic_shapes</code>, and <b><code>shapes_simple_particles</code></b>.`,
           ],
           model: `The examples gallery is your API dictionary — every feature has a runnable ~40-line example. Stuck? Find the example, read its <code>.c</code>, adapt. <code>shapes_simple_particles</code> is literally the seed of your capstone.`,
@@ -529,7 +529,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 Commit this as v0. From here you only ADD: more particles, real forces, better integration, then the look.` },
       ],
-      note: "The Udemy course is essentially done as the daily driver — the simulation is now the spine of the journey.",
+      note: "The Udemy course is winding down to its final GUI/audio section — the simulation is now the spine of the journey.",
     },
     {
       id: "d25", date: "2026-10-07", week: "w13", title: "Particle systems III: textures & additive blending ✨",
@@ -574,7 +574,7 @@ registerRoadmap({
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
           lead: `<b>raylib course ⑪</b> — §7 Music & GUI (first half).`,
           refs: [
-            `Udemy §7 (first half): immediate-mode GUI — buttons, sliders, hover states. Compare with Nick's <a href="https://www.youtube.com/@NickKoumaris/videos" target="_blank" rel="noopener">"Raylib Buttons (OOP)"</a>.`,
+            `Udemy §7 (first half): immediate-mode GUI — buttons, sliders, hover states. Compare with the "Raylib Buttons Tutorial (OOP)" video in Nick's <a href="https://www.youtube.com/watch?v=wVYKG_ch4yM&list=PLwR6ZGPvjVOSRywn9VCQ3yrRVruxzzuo9" target="_blank" rel="noopener">raylib playlist</a>.`,
             `Plan a control panel for the sim: pause, time-scale, particle count, gravity strength.`,
           ],
           model: `raylib GUI is <b>immediate-mode</b>: each frame you draw a button AND test if it was clicked in the same call. Perfect for a sim panel — a slider that writes straight into your simulation parameters.`,
@@ -620,7 +620,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `📈 Nature of Code is now past halfway and the Udemy course is nearly done. Milestone: the physics core is real and running.` },
+        { id: "s1", type: "callout", label: `📈 Nature of Code's physics core (vectors → forces → particle systems, Intro–Ch.4) is done and the Udemy course is nearly complete. Milestone: the physics engine is real and running.` },
       ],
     },
     {
@@ -646,9 +646,9 @@ registerRoadmap({
       theme: "Nature of Code · thread part 12 — a one-line change that keeps orbits bound.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
-          lead: `<b>Nature of Code ⑫</b> — Ch.5 (5.14 Integration Methods; skim Verlet).`,
+          lead: `<b>Nature of Code ⑫</b> — Physics Libraries: §5.14 Integration Methods (skim Verlet).`,
           refs: [
-            `Read NoC <a href="https://natureofcode.com/physics-libraries/" target="_blank" rel="noopener">Ch.5</a> 5.14 (Euler vs Verlet); skim 5.15. Ignore the Box2D-specific API.`,
+            `Read NoC <b>"Physics Libraries"</b> — §5.14 (Euler vs Verlet); skim 5.15. Ignore the Box2D-specific API. (Ch.5 in your v1 PDF; the <a href="https://natureofcode.com/physics-libraries/" target="_blank" rel="noopener">online 2nd edition</a> renumbers this chapter as 6.)`,
             `Switch the sim to <b>Verlet/leapfrog</b> for stable orbits (Mocz uses leapfrog).`,
           ],
           model: `Explicit Euler (<code>vel += a·dt; pos += vel·dt</code>) silently injects energy — orbits spiral out. Verlet/leapfrog integrates symmetrically and conserves energy far better, so bound structures stay bound. One-line change, huge stability win.`,
@@ -738,9 +738,9 @@ registerRoadmap({
       theme: "Nature of Code · thread part 13 — the last physics chapter that matters here.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
-          lead: `<b>Nature of Code ⑬</b> — Ch.6 (6.14–6.15): efficiency.`,
+          lead: `<b>Nature of Code ⑬</b> — Autonomous Agents: §6.14–6.15 (efficiency).`,
           refs: [
-            `Read NoC <a href="https://natureofcode.com/autonomous-agents/" target="_blank" rel="noopener">Ch.6</a> 6.14 (algorithmic efficiency) + 6.15 (optimization tricks).`,
+            `Read NoC <b>"Autonomous Agents"</b> — §6.14 (algorithmic efficiency) + §6.15 (optimization tricks). (Ch.6 in your v1 PDF; the <a href="https://natureofcode.com/autonomous-agents/" target="_blank" rel="noopener">online 2nd edition</a> renumbers this chapter as 5.)`,
             `Sketch a spatial grid / quadtree so each particle only checks nearby ones.`,
           ],
           model: `All-pairs is O(n²): 10k particles = 100M pair checks per step. A spatial grid or quadtree limits each particle to nearby neighbours, dropping cost toward O(n log n) — the difference between 1k and 100k particles.`,
@@ -867,7 +867,7 @@ registerRoadmap({
           lead: `<b>Shaders ①</b> — what runs on the GPU, and how raylib feeds it.`,
           refs: [
             `Read <a href="https://thebookofshaders.com/" target="_blank" rel="noopener">The Book of Shaders</a> Ch.1–2 (fragment shader, GLSL, Hello World, uniforms, <code>gl_FragCoord</code>).`,
-            `In raylib: <code>LoadShader(0, "glow.fs")</code>, <code>GetShaderLocation</code>, <code>SetShaderValue</code> for time/resolution; wrap in <code>BeginShaderMode/EndShaderMode</code>. See the <a href="https://deepwiki.com/raysan5/raylib/6.4-shader-examples" target="_blank" rel="noopener">DeepWiki shader notes</a> + <a href="https://sepi.prose.sh/2022-09-11-how-to-properly-use-shaders-in-raylib" target="_blank" rel="noopener">sepi's guide</a>.`,
+            `In raylib: <code>LoadShader(0, "glow.fs")</code> (passing <code>0</code>/NULL for the vertex shader uses raylib's default), <code>GetShaderLocation</code>, <code>SetShaderValue</code> for time/resolution; wrap in <code>BeginShaderMode/EndShaderMode</code>. See the <a href="https://deepwiki.com/raysan5/raylib/6.4-shader-examples" target="_blank" rel="noopener">DeepWiki shader notes</a>.`,
           ],
           model: `A fragment shader runs once <b>per pixel, in parallel, on the GPU</b> — you write a pixel's colour as a function of its coordinate + uniforms (time, resolution, your params). raylib bridges CPU→GPU via <code>SetShaderValue</code> on a uniform location.`,
           cards: [
@@ -904,11 +904,11 @@ registerRoadmap({
           lead: `<b>Shaders ③</b> — draw a soft glow on the GPU.`,
           refs: [
             `Read BoS Ch.3.3 (circles, distance fields, their properties).`,
-            `Write a fragment shader: <code>glow = smoothstep(radius, 0.0, length(uv - center)); color * glow;</code> — replacing stacked translucent circles.`,
+            `Write a fragment shader: <code>glow = 1.0 - smoothstep(0.0, radius, length(uv - center)); color * glow;</code> — replacing stacked translucent circles. (Keep <code>edge0 &lt; edge1</code> in smoothstep — the reversed form is undefined in GLSL.)`,
           ],
           model: `A soft particle is a <b>distance field</b>: brightness = a smoothstep falloff of the distance from the pixel to the particle center. One shader draws a perfect glowing dot at any size — sharper, cheaper, and prettier than layering circles.`,
           cards: [
-            { q: `How do you draw a soft glowing dot in a fragment shader?`, a: `<code>brightness = smoothstep(r, 0, distance-to-center)</code>; multiply the colour by it.` },
+            { q: `How do you draw a soft glowing dot in a fragment shader?`, a: `<code>brightness = 1.0 - smoothstep(0.0, r, distance-to-center)</code>; multiply the colour by it (bright center → dark edge).` },
             { q: `Why is a distance-field glow better than stacked circles?`, a: `One GPU pass, scales to any size without banding, and is cheaper at high particle counts.` },
           ] },
       ],
@@ -1027,12 +1027,12 @@ registerRoadmap({
           lead: `<b>Nature of Code ⑮</b> — close it out; know the scale-up path.`,
           refs: [
             `Close out any remaining relevant NoC sections.`,
-            `Read the GPU N-body approach: <a href="https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda" target="_blank" rel="noopener">GPU Gems 3 Ch.31</a> (all-pairs on the GPU) + raylib's <a href="https://github.com/raysan5/raylib/blob/master/examples/others/rlgl_compute_shader.c" target="_blank" rel="noopener">rlgl compute-shader example</a>.`,
+            `Read the GPU N-body approach: <a href="https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda" target="_blank" rel="noopener">GPU Gems 3 Ch.31</a> (all-pairs on the GPU) + raylib's <a href="https://github.com/raysan5/raylib/blob/master/examples/shaders/shaders_rlgl_compute.c" target="_blank" rel="noopener">compute-shader example</a> (<code>shaders_rlgl_compute</code>).`,
           ],
           model: `The CPU (Barnes–Hut) path handles ~tens of thousands; to go massive, move force computation onto the GPU (compute/fragment shader), where all-pairs O(n²) is embarrassingly parallel. Know the option; implement only if you want the scale.`,
           cards: [
             { q: `When do you move N-body forces onto the GPU?`, a: `When CPU Barnes–Hut caps out (~tens of thousands) and you want 100k+ — GPU all-pairs is massively parallel.` },
-            { q: `What raylib feature enables GPU force computation?`, a: `Compute shaders via rlgl (see <code>rlgl_compute_shader</code>) — or encode positions in a texture and compute forces in a fragment shader.` },
+            { q: `What raylib feature enables GPU force computation?`, a: `Compute shaders via rlgl (see <code>shaders_rlgl_compute</code>) — or encode positions in a texture and compute forces in a fragment shader.` },
           ] },
       ],
     },
@@ -1083,7 +1083,7 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d01.t1", "d03.t1", "d04.t1", "d06.t1", "d09.t1"] } },
     { id: "w9.m1", week: "w9", title: "🎮 Half the raylib basics — Collision & Tilemaps done",
       rule: { type: "tasks", require: ["d10.t1", "d12.t1", "d13.t1", "d14.t1", "d17.t1"] } },
-    { id: "w15.m1", week: "w15", title: "Nature of Code past halfway + Udemy course complete",
+    { id: "w15.m1", week: "w15", title: "Nature of Code physics core done (Intro–Ch.4) + Udemy course complete",
       rule: { type: "tasks", require: ["d21.t1", "d22.t1", "d25.t1", "d29.t1", "d30.t1"] } },
     { id: "w16.m1", week: "w16", title: "🌌 The simulation lives — a 2D gravitational Big Bang",
       rule: { type: "tasks", require: ["d24.t1", "d26.t1", "d32.t1", "d34.t1"] } },
