@@ -29,6 +29,39 @@ let dayRevealIO = null;                // live scroll-reveal observer; disconnec
 let effortDate = null;                 // selected date in the Today effort panel (null → today)
 let msResizeHandler = null;            // the milestone slideshow's live resize listener (one at a time)
 
+/* ------------------------------------------------------------------ *
+ *  Resting-hover flourish on day cards
+ *  When the pointer sits still on a day card for ~0.8s — or a finger is
+ *  held on it — the card does a gentle "bubble" breathe (.settled, styled
+ *  in roadmap.css). ANY movement re-arms the timer (stale = no movement);
+ *  moving off, leaving the window, or releasing a press clears it. Bound
+ *  once via delegation on document so it survives card re-renders, and
+ *  gated on motionOK so it stays silent when motion is turned off.
+ * ------------------------------------------------------------------ */
+let restCard = null, restTimer = null;
+function restClear() {
+  if (restTimer) { clearTimeout(restTimer); restTimer = null; }
+  if (restCard) { restCard.classList.remove("settled"); restCard = null; }
+}
+function restArm(card) {
+  if (!motionOK()) return;
+  if (card !== restCard) { if (restCard) restCard.classList.remove("settled"); restCard = card; }
+  else card.classList.remove("settled");         // same card but the pointer moved → un-settle, re-time
+  if (restTimer) clearTimeout(restTimer);
+  restTimer = setTimeout(() => { if (restCard) restCard.classList.add("settled"); }, 800);
+}
+export function initDayRest() {
+  const cardUnder = e => (e.target && e.target.closest) ? e.target.closest(".day") : null;
+  document.addEventListener("pointermove", e => {
+    const card = cardUnder(e);
+    if (card) restArm(card); else if (restCard) restClear();
+  }, { passive: true });
+  // touch-hold (and mouse press-and-hold): a still finger fires no pointermove, so arm on down
+  document.addEventListener("pointerdown", e => { const c = cardUnder(e); if (c) restArm(c); }, { passive: true });
+  for (const ev of ["pointerup", "pointercancel"]) document.addEventListener(ev, restClear, { passive: true });
+  document.documentElement.addEventListener("mouseleave", restClear);   // pointer left the window
+}
+
 /* Is animation allowed right now? (respects the in-app + OS motion prefs) */
 function motionOK() {
   if (document.documentElement.getAttribute("data-motion") === "off") return false;

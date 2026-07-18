@@ -275,9 +275,16 @@ export { ACCENTS };
 /* ================================================================== *
  *  Sidebar
  * ================================================================== */
+// The roadmap whose quick-jumps were shown on the previous render. We animate the
+// sub-list open only when this changes (i.e. the user switched roadmaps) — never on
+// progress re-renders or in-roadmap week jumps, which would re-trigger it annoyingly.
+let lastExpandedSlug = null;
+
 export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expandedSlug }) {
   const list = $("#sb-list");
   list.innerHTML = "";
+  const expanded = expandedSlug || active;
+  const switched = expanded !== lastExpandedSlug;
 
   // Global cross-roadmap "Today" digest.
   const onToday = location.hash.replace(/^#\/?/, "") === "today";
@@ -306,12 +313,15 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
     item.onclick = () => onNavigate(rm.slug);
     list.append(item);
 
-    // quick-jumps under the active/expanded roadmap
-    if (rm.slug === (expandedSlug || active) && rm.weeks && rm.weeks.length) {
-      const sub = el("div.sb-sub");
-      sub.append(el("a", { href: `#/${rm.slug}/today`, text: "→ Today" }));
+    // quick-jumps under the active/expanded roadmap. When the user just switched
+    // roadmaps, play a staggered open animation (see .sb-sub.enter in shell.css);
+    // on plain re-renders it appears instantly so nothing flickers.
+    if (rm.slug === expanded && rm.weeks && rm.weeks.length) {
+      const sub = el("div.sb-sub" + (switched ? ".enter" : ""));
+      const links = [el("a", { href: `#/${rm.slug}/today`, text: "→ Today" })];
       for (const w of rm.weeks.slice(0, 8))
-        sub.append(el("a", { href: `#/${rm.slug}/${w.id}`, text: w.title || w.id }));
+        links.push(el("a", { href: `#/${rm.slug}/${w.id}`, text: w.title || w.id }));
+      links.forEach((a, i) => { if (switched) a.style.setProperty("--sd", i * 18 + "ms"); sub.append(a); });
       list.append(sub);
     }
   };
@@ -330,6 +340,7 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
     list.append(el("div.sb-section-label.side", { text: "Side track" }));
     sides.forEach(renderItem);
   }
+  lastExpandedSlug = expanded;
 }
 const trackLabel = t => ({ ahead: "Ahead of pace", on: "On track", behind: "Behind pace" }[t] || "On track");
 

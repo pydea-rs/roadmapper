@@ -183,6 +183,19 @@
   transition: opacity .4s var(--ease-out), transform .62s cubic-bezier(.2, 1.13, .32, 1); }
 .day.rv-init.rv-show { opacity: 1; transform: none; }
 .day:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
+/* Resting-hover flourish: JS adds .settled when the pointer sits still on a card
+   for ~0.8s (or a finger is held on it) — the card lifts and does a gentle
+   "bubble" breathe in place, removed the instant the pointer moves or leaves.
+   Transform + soft shadow only (compositor-only), so the motion gates zero it. */
+@keyframes daySettle {
+  0%   { transform: scale(1) rotate(0); }
+  28%  { transform: scale(1.014) rotate(-.22deg); }
+  55%  { transform: scale(1.011) rotate(.22deg); }
+  80%  { transform: scale(1.014) rotate(-.12deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.day.settled { animation: daySettle 2.4s ease-in-out infinite; will-change: transform;
+  box-shadow: 0 8px 22px -8px color-mix(in srgb, var(--accent) 24%, transparent), var(--shadow); }
 .day.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), var(--shadow); }
 .day.complete { border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
 .day.past { opacity: .82; }

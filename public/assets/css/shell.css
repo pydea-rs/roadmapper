@@ -101,8 +101,27 @@
 /* jump list under an expanded sidebar item */
 .sb-sub { display: flex; flex-direction: column; gap: 1px; padding: 2px 0 var(--s2) 42px;
   overflow: hidden; }
-.sb-sub a { font-size: var(--t-sm); color: var(--text-3); padding: 4px var(--s2); border-radius: 6px; }
-.sb-sub a:hover { color: var(--text); background: var(--surface-3); }
+.sb-sub a { font-size: var(--t-sm); color: var(--text-3); padding: 4px var(--s2); border-radius: 6px;
+  transition: color var(--dur-fast), background var(--dur-fast), transform var(--dur-fast); }
+.sb-sub a:hover { color: var(--text); background: var(--surface-3); transform: translateX(2px); }
+
+/* Roadmap switch: the quick-jump list eases in and its links slide up one after
+   another. Applied by renderSidebar only when the expanded roadmap changes (class
+   .enter), so it never replays on progress re-renders or in-roadmap jumps.
+   Transform + opacity only (compositor-only, no per-frame layout) — the height is
+   reserved instantly and fades in over it, which is what keeps it buttery instead
+   of the janky max-height tween. Both motion gates zero animation-duration, so
+   reduced-motion is honored for free. */
+@keyframes sbSubOpen {
+  from { opacity: 0; transform: translateY(-5px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes sbSubLink {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+.sb-sub.enter { animation: sbSubOpen .24s var(--ease-out) both; will-change: opacity, transform; }
+.sb-sub.enter a { animation: sbSubLink .26s var(--ease-out) both; animation-delay: var(--sd, 0ms); }
 
 /* collapsed rail: hide text, center icons */
 #app[data-sidebar="collapsed"] .sb-title,
