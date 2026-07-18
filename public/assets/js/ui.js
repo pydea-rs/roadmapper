@@ -278,13 +278,16 @@ export { ACCENTS };
 // The roadmap whose quick-jumps were shown on the previous render. We animate the
 // sub-list open only when this changes (i.e. the user switched roadmaps) — never on
 // progress re-renders or in-roadmap week jumps, which would re-trigger it annoyingly.
-let lastExpandedSlug = null;
+// `undefined` = never rendered yet; the boot render must NOT animate (and boot does
+// two renders, so animating there would just flicker). `null` is a real value — the
+// global Today view has no expanded roadmap — so it can't double as the sentinel.
+let lastExpandedSlug;
 
 export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expandedSlug }) {
   const list = $("#sb-list");
   list.innerHTML = "";
   const expanded = expandedSlug || active;
-  const switched = expanded !== lastExpandedSlug;
+  const switched = lastExpandedSlug !== undefined && expanded !== lastExpandedSlug;
 
   // Global cross-roadmap "Today" digest.
   const onToday = location.hash.replace(/^#\/?/, "") === "today";
