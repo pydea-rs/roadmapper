@@ -27,6 +27,7 @@ let celebrateDay = null;               // dayId whose actual just hit 100% (fire
 let revealedDays = new Set();          // day ids already slid into view (this roadmap session)
 let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
 let effortDate = null;                 // selected date in the Today effort panel (null → today)
+let msResizeHandler = null;            // the milestone slideshow's live resize listener (one at a time)
 
 /* Is animation allowed right now? (respects the in-app + OS motion prefs) */
 function motionOK() {
@@ -525,11 +526,15 @@ function paint(rm, mount, open, animateIn = false) {
   }
 }
 
-/* All non-optional tasks whose CURRENT day is `hostId` are done. */
+/* All PRIMARY, non-optional tasks whose CURRENT day is `hostId` are done. Skips
+ * secondary-tier tasks so this matches the day ring / stats (which roll up primary
+ * only) — otherwise the celebration and the "100%" ring could disagree. */
 function isDayComplete(rm, hostId) {
   let any = false;
   for (const d of rm.days) for (const t of d.tasks) {
     if (t.optional) continue;
+    const obj = rm.objById.get(t.obj);
+    if (obj && obj.tier === "secondary") continue;
     if (currentDay(rm, rm.slug, t) !== hostId) continue;
     any = true;
     if (!store.isDone(rm.slug, t.id)) return false;
@@ -802,9 +807,14 @@ function msSlideshow(rm, S) {
   // don't let a real drag also fire link/hover intents
   vp.addEventListener("click", e => { if (Math.abs(moved) > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
 
-  // position once laid out, and keep centred on resize (self-cleans after repaint)
+  // position once laid out, and keep centred on resize. A repaint builds a fresh
+  // slideshow, so drop the previous paint's resize listener now (don't wait for a
+  // resize to fire) — otherwise tick-heavy sessions leak one listener per repaint.
   requestAnimationFrame(update);
-  const onResize = () => { if (!track.isConnected) { window.removeEventListener("resize", onResize); return; } update(); };
+  if (msResizeHandler) window.removeEventListener("resize", msResizeHandler);
+  const onResize = () => { if (!track.isConnected) { window.removeEventListener("resize", onResize);
+    if (msResizeHandler === onResize) msResizeHandler = null; return; } update(); };
+  msResizeHandler = onResize;
   window.addEventListener("resize", onResize);
 
   return box;

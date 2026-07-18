@@ -102,10 +102,17 @@ async function doFlush() {
   const batches = [...queues.entries()].map(([slug, m]) => [slug, [...m.values()]]);
   queues.clear();
   try {
-    for (const [slug, changes] of batches) {
+    for (let i = 0; i < batches.length; i++) {
+      const [slug, changes] = batches[i];
       const { data, res } = await api("save", { method: "POST", body: { roadmap: slug, changes } });
-      if (res.status === 401) { setStatus("offline"); requeue(slug, changes); return; }
-      if (!data.ok) { setStatus("error"); requeue(slug, changes); return; }
+      if (res.status === 401 || !data.ok) {
+        setStatus(res.status === 401 ? "offline" : "error");
+        // Requeue the failed slug AND every slug we haven't tried yet — they were
+        // pulled out of `queues` by clear(), so returning without re-adding them
+        // would silently drop those pending changes (data loss on reload).
+        for (let j = i; j < batches.length; j++) requeue(batches[j][0], batches[j][1]);
+        return;
+      }
     }
     available = true;
     setStatus("online");

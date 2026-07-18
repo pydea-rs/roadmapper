@@ -84,6 +84,7 @@ function normalize(def) {
         label: t.label || t.lead || "", optional: !!t.optional,
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,
+        phase: t.phase || null,       // carried so phase-scoped milestones can resolve
         order: i,
       };
       day.tasks.push(task); tasksById.set(fid, task);

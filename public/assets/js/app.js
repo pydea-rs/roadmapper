@@ -19,6 +19,7 @@ import { $, debounce, downloadJSON, pickFile, readFileText, todayStr, daysBetwee
 
 let activeSlug = null;
 let lock = null;
+let routeWired = false;                 // hashchange listener registered once (survives re-unlock)
 
 document.addEventListener("DOMContentLoaded", boot);
 
@@ -75,7 +76,9 @@ async function startApp() {
     `<div class="center-note"><div class="big">🗺️</div>No roadmaps registered yet.<br>Add one in <code>roadmaps/</code>.</div>`;
     return; }
 
-  window.addEventListener("hashchange", route);
+  // Register the router once — startApp() runs again after every lock→unlock, so
+  // re-adding it each time would fire route() N times per navigation.
+  if (!routeWired) { window.addEventListener("hashchange", route); routeWired = true; }
   route();
   updateSidebar();
 }
