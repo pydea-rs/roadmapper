@@ -55,6 +55,21 @@ export async function logout() {
   try { await api("logout", { method: "POST", body: {} }); } catch {}
 }
 
+/* ---------- discovery search ----------
+ * Best-effort "watch/read next" lookup through the backend proxy. Never throws:
+ * on any failure it resolves { ok:false } so the caller can stay silent (auto
+ * mode) or show a gentle failure state (manual). `fetched:false` from the server
+ * means outbound was blocked — the caller then offers a results-page deep link. */
+export async function search(q, type = "video") {
+  try {
+    const query = `&q=${encodeURIComponent(q)}&type=${encodeURIComponent(type)}`;
+    const { res, data } = await api("search", { query });
+    if (!res.ok || !data.ok) return { ok: false };
+    return { ok: true, type: data.type || type, fetched: !!data.fetched,
+      results: Array.isArray(data.results) ? data.results : [] };
+  } catch { return { ok: false }; }
+}
+
 /* ---------- load ---------- */
 export async function loadAndReconcile() {
   try {

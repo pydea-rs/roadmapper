@@ -10,6 +10,7 @@ import { computeAll, currentDay, taskProgress, taskComplete } from "./stats.js";
 import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal, openModal } from "./ui.js";
+import { finderPanel } from "./finder.js";
 import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
@@ -27,6 +28,7 @@ let celebrateDay = null;               // dayId whose actual just hit 100% (fire
 let revealedDays = new Set();          // day ids already slid into view (this roadmap session)
 let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
 let effortDate = null;                 // selected date in the Today effort panel (null → today)
+let finderAutoOnce = false;            // true only right after a fresh Today open → one silent auto-search
 let msResizeHandler = null;            // the milestone slideshow's live resize listener (one at a time)
 
 // Which parent tasks are expanded to show their sub-tasks. Keyed by slug+id so the
@@ -171,6 +173,7 @@ function revealCard(card) {
  * ================================================================== */
 export function renderToday(mount) {
   effortDate = todayStr();                 // opening the tab always starts on today
+  finderAutoOnce = true;                   // a fresh open earns one silent auto-search
   drawToday(mount);
 }
 
@@ -192,6 +195,17 @@ function drawToday(mount) {
 
   // effort panel — your development over time (date-selectable, cross-roadmap)
   view.append(effortPanel(mount));
+
+  // "Watch / read next": a serendipity card derived from today's task concepts.
+  // On desktop CSS floats it into a right rail; on mobile it sits here, up top.
+  const fgroups = finderGroups(today);
+  if (fgroups.length) {
+    view.classList.add("has-finder");
+    // autoRun only on a fresh open (renderToday); a tick-triggered redraw reuses
+    // the already-found card instead of firing another search.
+    view.append(finderPanel({ groups: fgroups, autoRun: finderAutoOnce }));
+    finderAutoOnce = false;
+  }
 
   // Main track digest, then the Side track digest under its own divider. The two
   // groups never share a summary line, so side progress stays visually separate —
@@ -261,6 +275,26 @@ function recallReview(today, limit = 4) {
   }
   panel.append(deck);
   return panel;
+}
+
+/* Gather, per roadmap, the tasks that are due today or overdue — the concept
+ * pool the "Watch / read next" finder draws its query from. Optional/bonus work
+ * is excluded (same as the digest). Returns [{ rm, tasks:[…] }] for non-empty
+ * roadmaps only, across every track. */
+function finderGroups(today) {
+  const groups = [];
+  for (const rm of getRoadmaps()) {
+    const tasks = [];
+    for (const d of rm.days) for (const t of d.tasks) {
+      if (t.optional) continue;
+      const cur = rm.daysById.get(currentDay(rm, rm.slug, t));
+      if (!cur) continue;
+      const isDone = t.subs ? taskComplete(rm.slug, t) : store.isDone(rm.slug, t.id);
+      if (cur.date === today || (cur.date < today && !isDone)) tasks.push(t);
+    }
+    if (tasks.length) groups.push({ rm, tasks });
+  }
+  return groups;
 }
 
 /* Gather the due-today / overdue cards for a set of roadmaps (one track). */

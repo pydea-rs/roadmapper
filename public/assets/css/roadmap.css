@@ -563,6 +563,64 @@
   color: var(--text-3); font-weight: 700; margin: var(--s2) 0 4px; }
 .today-sub.od { color: var(--warn); }
 
+/* ---- Today · "Watch / read next" finder ---------------------------- */
+.finder-panel { display: flex; flex-direction: column; gap: 6px; padding: var(--s4);
+  border-radius: var(--r2); background: var(--surface); border: 1px solid var(--border);
+  border-top: 2px solid color-mix(in srgb, var(--accent) 45%, var(--border-2)); }
+.finder-head { display: flex; align-items: center; gap: 8px; }
+.finder-ico { font-size: 16px; }
+.finder-title { font-size: var(--t-sm); font-weight: 750; color: var(--text); }
+.finder-go { margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--surface-2); color: var(--text-3); cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s; }
+.finder-go:hover { color: var(--accent); border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.finder-panel.loading .finder-go { animation: finder-spin .9s linear infinite; }
+.finder-sub { font-size: var(--t-xs); color: var(--text-3); margin: 0; }
+.finder-slot { margin-top: 4px; }
+.finder-note { display: flex; align-items: center; gap: 8px; font-size: var(--t-xs); color: var(--text-3);
+  padding: var(--s3); border: 1px dashed var(--border); border-radius: var(--r1); }
+.finder-note.fail { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 40%, var(--border)); }
+.finder-spin { display: inline-block; width: 13px; height: 13px; border-radius: 50%;
+  border: 2px solid var(--border); border-top-color: var(--accent); animation: finder-spin .7s linear infinite; }
+@keyframes finder-spin { to { transform: rotate(360deg); } }
+
+.finder-result { display: flex; gap: var(--s3); text-decoration: none; color: inherit; overflow: hidden;
+  border: 1px solid var(--border); border-radius: var(--r1); background: var(--surface-2);
+  transition: border-color .15s, transform .15s; }
+.finder-result:hover { border-color: var(--accent); transform: translateY(-1px); }
+.fr-thumb { position: relative; flex: 0 0 120px; aspect-ratio: 16 / 9; background: #000;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.fr-img { width: 100%; height: 100%; object-fit: cover; }
+.fr-thumb.noimg { background: linear-gradient(135deg,
+  color-mix(in srgb, var(--accent) 32%, var(--surface-3)), var(--surface-3)); }
+.fr-badge { position: absolute; display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 999px; background: rgba(0, 0, 0, .55); color: #fff; }
+.finder-result.article .fr-badge { position: static; background: transparent; color: var(--text-2); }
+.fr-body { display: flex; flex-direction: column; gap: 2px; padding: var(--s2) var(--s3);
+  min-width: 0; justify-content: center; }
+.fr-kicker { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 700; color: var(--text-3); }
+.fr-title { font-size: var(--t-sm); font-weight: 650; color: var(--text); line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.fr-topic { font-size: var(--t-xs); color: var(--text-3); }
+
+/* Desktop: float the finder into a sticky right rail beside the digest. */
+@media (min-width: 1080px) {
+  .today-view.has-finder { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+    gap: var(--s4); align-items: start; }
+  .today-view.has-finder > * { grid-column: 1; min-width: 0; }
+  .today-view.has-finder > .today-hero { grid-column: 1 / -1; }
+  .today-view.has-finder > .finder-panel { grid-column: 2; grid-row: 2 / span 999;
+    align-self: start; position: sticky; top: var(--s4); }
+  .today-view.has-finder > .finder-panel .finder-result { flex-direction: column; }
+  .today-view.has-finder > .finder-panel .fr-thumb { flex-basis: auto; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .finder-panel.loading .finder-go, .finder-spin { animation: none; }
+}
+
 /* ---- Today · effort panel ------------------------------------------ */
 .effort { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
   padding: var(--s3) var(--s4) var(--s4); display: flex; flex-direction: column; gap: var(--s3); }

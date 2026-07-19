@@ -19,6 +19,7 @@ global.window = dom.window;
 global.document = dom.window.document;
 global.localStorage = dom.window.localStorage;
 global.CSS = dom.window.CSS;
+global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slideshow geom() reads gap
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
@@ -37,6 +38,7 @@ await import(new URL("interp-go.js", rmBase).href);
 await import(new URL("_fixture-side.js", rmBase).href);   // a SIDE-track roadmap
 const store = await import(new URL("store.js", base).href);  // registers the write-through sink path
 const render = await import(new URL("render.js", base).href);
+const finder = await import(new URL("finder.js", base).href);
 
 const view = document.getElementById("view");
 
@@ -162,6 +164,46 @@ dragInfo.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true, cance
 t.ok(document.getElementById("modal-root").querySelector(".ms-tasklist"),
   "the info button opens its modal on the first click even right after a drag");
 document.getElementById("modal-root").innerHTML = "";
+
+t.group("Today 'Watch / read next' finder");
+render.renderToday(view);
+t.ok(view.querySelector(".today-view.has-finder"), "Today gains the finder rail when work is due/overdue");
+const fpanel = view.querySelector(".finder-panel");
+t.ok(fpanel && fpanel.querySelector(".finder-go"), "the finder panel renders with a shuffle button");
+
+// deriveQuery is pure keyword extraction — no network, no LLM, no AI.
+const oneTask = [rl.tasksById.get("d01.t1")];
+const dq = finder.deriveQuery(rl, oneTask, { rng: () => 0.0 });
+t.ok(typeof dq.q === "string" && dq.q.length > 0, "deriveQuery builds a non-empty query from task text");
+t.ok(dq.q.split(" ").length <= 6, "the query is capped to a handful of terms");
+t.ok(/raylib/i.test(dq.q), "the query is anchored in the roadmap's own tech (raylib)");
+t.eq(dq.type, "video", "rng < 0.7 picks a video");
+t.eq(finder.deriveQuery(rl, oneTask, { rng: () => 0.9 }).type, "article", "rng >= 0.7 picks an article");
+
+// resultCard renders a safe, clickable card (title via textContent, never HTML).
+const card = finder.resultCard(
+  { title: "Intro to raylib", url: "https://www.youtube.com/watch?v=abc",
+    thumb: "https://i.ytimg.com/vi/abc/hqdefault.jpg", source: "YouTube" },
+  { topic: "Raylib", type: "video" });
+t.ok(card.matches("a.finder-result.video"), "a video result is an anchor card");
+t.eq(card.getAttribute("target"), "_blank", "the card opens in a new tab");
+t.eq(card.querySelector(".fr-img").getAttribute("src"), "https://i.ytimg.com/vi/abc/hqdefault.jpg",
+  "the video thumbnail is shown");
+t.ok(/Intro to raylib/.test(card.querySelector(".fr-title").textContent), "the video title renders");
+
+// Clicking the shuffle button runs a real search through a mocked backend.
+const realFetch = global.fetch;
+global.fetch = async () => ({ ok: true, headers: { get: () => "application/json" },
+  json: async () => ({ ok: true, type: "video", fetched: true, results: [
+    { title: "Found video", url: "https://www.youtube.com/watch?v=zzz",
+      thumb: "https://i.ytimg.com/vi/zzz/hqdefault.jpg", source: "YouTube" }] }) });
+fpanel.querySelector(".finder-go").click();
+await new Promise(r => setTimeout(r, 5));
+t.ok(fpanel.querySelector(".finder-slot .finder-result"), "a manual shuffle surfaces a result card");
+t.ok(/Found video/.test(fpanel.querySelector(".fr-title")?.textContent || ""),
+  "the surfaced card shows the fetched title");
+global.fetch = realFetch;
+render.renderToday(view);
 
 t.group("Today digest: a completed parent drops off the outstanding list");
 // "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A

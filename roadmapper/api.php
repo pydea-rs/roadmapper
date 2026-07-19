@@ -23,6 +23,10 @@
  *                                       stashFirst?, reason? }
  *                                     Upserts changed rows, deletes rows whose value is null
  *                                     (return-to-default), guards empty overwrites, stashes.
+ *   GET  ?action=search&q=&type=   -> { ok, type, q, fetched, results:[{title,url,thumb,source}] }
+ *                                     Best-effort discovery proxy (YouTube / DuckDuckGo). Auth
+ *                                     required, fixed hosts, no client URL. fetched:false => the
+ *                                     client falls back to a results-page link. Touches no DB.
  *
  * The DB stores ONLY deviations from default: absence of a row = "not done / on
  * origin / unset". A newly authored roadmap needs zero rows (DESIGN.md §7).
@@ -482,8 +486,130 @@ switch ($action) {
         break;
     }
 
+    case "search": {
+        // Discovery proxy: fetch a few candidate videos/articles for a query so
+        // the client can surface a "watch/read next" card. The browser cannot do
+        // this itself (CORS + no API key). Locked down: auth required, GET only,
+        // fixed upstream hosts, short timeout, query URL-encoded — the client
+        // NEVER supplies a URL, only a text query and a type. On any outbound
+        // failure this returns fetched:false with an empty list, and the client
+        // falls back to a deep-link-to-results card, so it degrades gracefully.
+        if ($method !== "GET") fail(405, "search is GET-only");
+        require_auth($SESSION_LIFETIME);
+        $q = isset($_GET["q"]) ? (string)$_GET["q"] : "";
+        $q = preg_replace('/[\x00-\x1f\x7f]+/u', " ", $q);   // strip control chars
+        $q = trim(preg_replace('/\s+/u', " ", $q));
+        $q = function_exists("mb_substr") ? mb_substr($q, 0, 160) : substr($q, 0, 160);
+        if ($q === "") fail(400, "empty query");
+        $type = (($_GET["type"] ?? "") === "article") ? "article" : "video";
+        $results = ($type === "article") ? search_articles($q) : search_youtube($q);
+        echo json_encode([
+            "ok"      => true,
+            "type"    => $type,
+            "q"       => $q,
+            "fetched" => count($results) > 0,   // false => client shows its deep-link fallback
+            "results" => array_slice($results, 0, 6),
+        ], JSON_UNESCAPED_SLASHES);
+        break;
+    }
+
     default:
-        fail(400, "unknown action; use status, login, logout, load, save, or stash");
+        fail(400, "unknown action; use status, login, logout, load, save, search, or stash");
+}
+
+/* ---------- discovery search (server-side proxy) ---------------------------
+ * Small, best-effort scrapers with no third-party dependency and no API key.
+ * They are intentionally forgiving: the query is derived from task text, so a
+ * rough match is fine (the user asked for "interesting", not "perfect"). Any
+ * failure returns [] and the client renders its own results-page link instead.
+ */
+
+/** GET a URL over HTTPS only, with a short timeout. Returns body or null. */
+function http_fetch(string $url, int $timeout = 8): ?string {
+    if (!function_exists("curl_init")) return null;
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER  => true,
+        CURLOPT_TIMEOUT         => $timeout,
+        CURLOPT_CONNECTTIMEOUT  => 5,
+        CURLOPT_FOLLOWLOCATION  => true,
+        CURLOPT_MAXREDIRS       => 3,
+        CURLOPT_USERAGENT       => "Mozilla/5.0 (compatible; RoadmapsBot/1.0)",
+        CURLOPT_HTTPHEADER      => ["Accept-Language: en-US,en;q=0.9"],
+    ]);
+    // Pin to HTTP(S) so neither the URL nor a redirect can reach file://, gopher://, etc.
+    if (defined("CURLPROTO_HTTP") && defined("CURLPROTO_HTTPS")) {
+        $web = CURLPROTO_HTTP | CURLPROTO_HTTPS;
+        curl_setopt($ch, CURLOPT_PROTOCOLS, $web);
+        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $web);
+    }
+    $body = curl_exec($ch);
+    $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    if (!is_string($body) || $code < 200 || $code >= 400) return null;
+    return $body;
+}
+
+/** Parse YouTube's results page for a handful of {title,url,thumb} videos. */
+function search_youtube(string $q): array {
+    $html = http_fetch("https://www.youtube.com/results?search_query="
+        . urlencode($q) . "&sp=EgIQAQ%253D%253D");   // sp=... filters to type:Video
+    return $html === null ? [] : parse_youtube($html);
+}
+
+function parse_youtube(string $html): array {
+    // Bound the regex to the ytInitialData blob so PCRE never scans megabytes.
+    $at = strpos($html, "ytInitialData");
+    if ($at !== false) $html = substr($html, $at, 2000000);
+    $out = []; $seen = [];
+    // Each result is a videoRenderer carrying a videoId and a title runs[0].text.
+    if (preg_match_all('/"videoRenderer":\{"videoId":"([\w-]{11})".*?"title":\{"runs":\[\{"text":"((?:\\\\.|[^"\\\\])*)"/s',
+            $html, $mm, PREG_SET_ORDER)) {
+        foreach ($mm as $r) {
+            $id = $r[1];
+            if (isset($seen[$id])) continue;
+            $seen[$id] = true;
+            $title = json_decode('"' . $r[2] . '"');
+            if (!is_string($title) || $title === "") $title = "YouTube video";
+            $out[] = [
+                "title"  => $title,
+                "url"    => "https://www.youtube.com/watch?v=" . $id,
+                "thumb"  => "https://i.ytimg.com/vi/" . $id . "/hqdefault.jpg",
+                "source" => "YouTube",
+            ];
+            if (count($out) >= 6) break;
+        }
+    }
+    return $out;
+}
+
+/** Parse DuckDuckGo's HTML endpoint for a handful of {title,url} articles. */
+function search_articles(string $q): array {
+    $html = http_fetch("https://html.duckduckgo.com/html/?q=" . urlencode($q));
+    return $html === null ? [] : parse_articles($html);
+}
+
+function parse_articles(string $html): array {
+    $out = [];
+    if (preg_match_all('/<a[^>]+class="[^"]*result__a[^"]*"[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>/s',
+            $html, $mm, PREG_SET_ORDER)) {
+        foreach ($mm as $r) {
+            $href = html_entity_decode($r[1], ENT_QUOTES);
+            // DDG wraps external links as //duckduckgo.com/l/?uddg=<encoded>&...
+            if (preg_match('/[?&]uddg=([^&]+)/', $href, $u)) $href = urldecode($u[1]);
+            if (strncmp($href, "http", 4) !== 0) continue;
+            $title = trim(html_entity_decode(strip_tags($r[2]), ENT_QUOTES));
+            if ($title === "") continue;
+            $out[] = [
+                "title"  => $title,
+                "url"    => $href,
+                "thumb"  => null,   // articles have no reliable thumbnail; client draws one
+                "source" => parse_url($href, PHP_URL_HOST) ?: "web",
+            ];
+            if (count($out) >= 6) break;
+        }
+    }
+    return $out;
 }
 
 /** Normalize a full-journey payload into a clean "slug\x01item" => {kind,value} map. */
