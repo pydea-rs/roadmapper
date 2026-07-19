@@ -38,11 +38,13 @@ export function reconcile(rm) {
   }
 
   // 2. prune orphans: rows whose referent task/soft no longer exists in content.
-  const tasks = rm.tasksById, softs = rm.softById;
+  // Task-kind rows may key off a LEAF (a sub-task tick / done_at stamp) or a PARENT
+  // (a move / flag), so a row survives if either map still holds its id.
+  const tasks = rm.tasksById, softs = rm.softById, leaves = rm.leavesById || new Map();
   for (const item of Object.keys(store.rawState()[slug] || {})) {
     const ref = referentOf(item);
     if (!ref) continue;                                 // notes/settings/unknown → keep
-    const exists = ref.kind === "soft" ? softs.has(ref.id) : tasks.has(ref.id);
+    const exists = ref.kind === "soft" ? softs.has(ref.id) : (tasks.has(ref.id) || leaves.has(ref.id));
     if (!exists) {
       const cell = store.getCell(slug, item);
       store.setCell(slug, item, cell ? cell.kind : "task", null);   // delete + queue null

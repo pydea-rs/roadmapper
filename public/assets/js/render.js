@@ -6,7 +6,7 @@
 // cards and scroll position are preserved, so it stays smooth and correct.
 
 import * as store from "./store.js";
-import { computeAll, currentDay } from "./stats.js";
+import { computeAll, currentDay, taskProgress, taskComplete } from "./stats.js";
 import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal } from "./ui.js";
@@ -28,6 +28,17 @@ let revealedDays = new Set();          // day ids already slid into view (this r
 let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
 let effortDate = null;                 // selected date in the Today effort panel (null → today)
 let msResizeHandler = null;            // the milestone slideshow's live resize listener (one at a time)
+
+// Which parent tasks are expanded to show their sub-tasks. Keyed by slug+id so the
+// same task open in the timeline and the Today digest share one state; it survives
+// tick rerenders (which rebuild the DOM) but resets on a full reload.
+const expandedTasks = new Set();
+const taskKey = (slug, id) => `${slug}\x00${id}`;
+
+/** Tick (or clear) every leaf of a parent task at once. */
+function setAllSubs(slug, task, done) {
+  for (const leaf of (task.subs || [task])) store.setTask(slug, leaf.id, done);
+}
 
 /* ------------------------------------------------------------------ *
  *  Resting-hover flourish on day cards
@@ -219,9 +230,13 @@ function recallReview(today, limit = 4) {
   const pool = [];
   for (const rm of getSideRoadmaps())
     for (const d of rm.days) for (const t of d.tasks) {
-      if (!t.cards || !t.cards.length) continue;
-      if (!store.isDone(rm.slug, t.id)) continue;
-      for (const c of t.cards) pool.push({ rm, day: d, card: c });
+      // parent cards unlock when the whole task is complete; a leaf's own cards
+      // unlock when that leaf is ticked — so partial progress surfaces its parts.
+      if (t.cards && t.cards.length && (t.subs ? taskComplete(rm.slug, t) : store.isDone(rm.slug, t.id)))
+        for (const c of t.cards) pool.push({ rm, day: d, card: c });
+      if (t.subs) for (const s of t.subs)
+        if (s.cards && s.cards.length && store.isDone(rm.slug, s.id))
+          for (const c of s.cards) pool.push({ rm, day: d, card: c });
     }
   if (!pool.length) return null;
 
@@ -258,7 +273,8 @@ function collectDue(roadmaps, today, mount) {
       if (t.optional) continue;
       const cur = rm.daysById.get(currentDay(rm, rm.slug, t));
       if (!cur) continue;
-      const isDone = store.isDone(rm.slug, t.id);
+      // a parent is "done" only when every sub-task is (it has no state of its own)
+      const isDone = t.subs ? taskComplete(rm.slug, t) : store.isDone(rm.slug, t.id);
       if (cur.date === today) { todayList.push({ t, cur }); due++; if (isDone) doneToday++; }
       else if (cur.date < today && !isDone) { overdueList.push({ t, cur }); overdueN++; }
     }
@@ -301,6 +317,11 @@ function todayCard(rm, todayList, overdueList, mount) {
 }
 
 function todayRow(rm, task, mount, curDay, overdue) {
+  return task.subs ? todayParentRow(rm, task, mount, curDay, overdue)
+                   : todayLeafRow(rm, task, mount, curDay, overdue);
+}
+
+function todayLeafRow(rm, task, mount, curDay, overdue) {
   const done = store.isDone(rm.slug, task.id);
   const row = el("div.task" + (done ? ".done" : ""), { dataset: { task: task.id } });
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
@@ -317,6 +338,78 @@ function todayRow(rm, task, mount, curDay, overdue) {
   const recall = taskRecall(rm, task);
   if (recall) bodyEl.append(recall);
   row.append(bodyEl);
+  return row;
+}
+
+function todayParentRow(rm, task, mount, curDay, overdue) {
+  const slug = rm.slug;
+  const prog = taskProgress(slug, task);
+  const key = taskKey(slug, task.id);
+  const openNow = expandedTasks.has(key);
+  const row = el("div.task.parent" + (prog.complete ? ".done" : prog.partial ? ".partial" : "") +
+    (openNow ? ".open" : ""), { dataset: { task: task.id } });
+
+  const cb = el("button.checkbox", { role: "checkbox",
+    "aria-checked": prog.complete ? "true" : prog.partial ? "mixed" : "false",
+    "aria-label": prog.complete ? "Clear all sub-tasks" : "Complete all sub-tasks", html: checkIcon() });
+  cb.onclick = e => { e && e.stopPropagation(); setAllSubs(slug, task, !prog.complete); drawToday(mount); };
+  row.append(cb);
+
+  const bodyEl = el("div.t-body");
+  const head = el("div.t-parent-head", { role: "button", tabindex: "0",
+    "aria-expanded": openNow ? "true" : "false" });
+  head.append(leadBlock(task));
+  const sp = el("div.t-subprogress");
+  const bar = el("div.t-subbar"); bar.append(el("i", { style: `width:${prog.pct}%` }));
+  sp.append(bar);
+  sp.append(el("span.t-subcount", { text: `${prog.done}/${prog.total}` }));
+  sp.append(el("span.t-subcaret", { html: caretIcon() }));
+  head.append(sp);
+  bodyEl.append(head);
+
+  const meta = el("div.t-meta");
+  meta.append(catChip(task.cat, rm));
+  if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
+  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(curDay.date)}` }));
+  bodyEl.append(meta);
+
+  const expand = el("div.t-expand");
+  const subsBox = el("div.t-subs");
+  for (const sub of task.subs) {
+    const sdone = store.isDone(slug, sub.id);
+    const srow = el("div.subtask" + (sdone ? ".done" : ""), { dataset: { task: sub.id } });
+    const scb = el("button.checkbox", { role: "checkbox", "aria-checked": sdone ? "true" : "false",
+      "aria-label": "Toggle sub-task", html: checkIcon() });
+    scb.onclick = e => { e && e.stopPropagation(); store.setTask(slug, sub.id, !store.isDone(slug, sub.id)); drawToday(mount); };
+    srow.append(scb);
+    const sbody = el("div.t-body");
+    sbody.append(el("div.t-label", { html: sub.label || sub.lead || "" }));
+    if (sub.note) sbody.append(el("div.t-subnote", { html: sub.note }));
+    const smeta = el("div.t-meta");
+    if (sub.cat && sub.cat !== task.cat) smeta.append(catChip(sub.cat, rm));
+    if (sub.est) smeta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(sub.est)}` }));
+    sbody.append(smeta);
+    const srecall = taskRecall(rm, sub);
+    if (srecall) sbody.append(srecall);
+    srow.append(sbody);
+    subsBox.append(srow);
+  }
+  expand.append(subsBox);
+  if (task.model) expand.append(el("div.t-model", { html: task.model }));
+  bodyEl.append(expand);
+
+  const recall = taskRecall(rm, task);
+  if (recall) bodyEl.append(recall);
+  row.append(bodyEl);
+
+  const toggle = () => {
+    const o = !row.classList.contains("open");
+    row.classList.toggle("open", o);
+    head.setAttribute("aria-expanded", o ? "true" : "false");
+    if (o) expandedTasks.add(key); else expandedTasks.delete(key);
+  };
+  head.addEventListener("click", toggle);
+  head.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   return row;
 }
 
@@ -569,8 +662,10 @@ function isDayComplete(rm, hostId) {
     const obj = rm.objById.get(t.obj);
     if (obj && obj.tier === "secondary") continue;
     if (currentDay(rm, rm.slug, t) !== hostId) continue;
-    any = true;
-    if (!store.isDone(rm.slug, t.id)) return false;
+    for (const leaf of (t.subs || [t])) {
+      any = true;
+      if (!store.isDone(rm.slug, leaf.id)) return false;
+    }
   }
   return any;
 }
@@ -1045,7 +1140,28 @@ function renderTaskList(container, rm, S, tasks, isMovedIn = false, hostId = nul
   }
 }
 
+/* A task row. Parents (tasks with sub-tasks) get a tri-state checkbox and an
+ * expandable sub-list; plain single-work tasks render as before. */
 function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
+  return task.subs ? parentTaskRow(rm, task, isMovedIn, hostId)
+                   : leafTaskRow(rm, task, isMovedIn, hostId);
+}
+
+/* Shared: the "→ moved to / ↩ from" chip appended to a task's meta line. */
+function movedChip(rm, slug, task, isMovedIn) {
+  const movedTo = store.getMove(slug, task.id);
+  if (movedTo && movedTo !== task.day && !isMovedIn) {
+    const dd = rm.daysById.get(movedTo);
+    return el("span.t-moved", { text: `→ moved to ${dd ? relDay(dd.date) : movedTo}` });
+  }
+  if (isMovedIn) {
+    const od = rm.daysById.get(task.day);
+    return el("span.t-moved", { text: `↩ from ${od ? relDay(od.date) : task.day}` });
+  }
+  return null;
+}
+
+function leafTaskRow(rm, task, isMovedIn, hostId) {
   const slug = rm.slug;
   const done = store.isDone(slug, task.id);
   const row = el("div.task" + (done ? ".done" : ""), { dataset: { task: task.id } });
@@ -1066,26 +1182,126 @@ function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
-  const movedTo = store.getMove(slug, task.id);
-  if (movedTo && movedTo !== task.day && !isMovedIn) {
-    const dd = rm.daysById.get(movedTo);
-    meta.append(el("span.t-moved", { text: `→ moved to ${dd ? relDay(dd.date) : movedTo}` }));
-  }
-  if (isMovedIn) {
-    const od = rm.daysById.get(task.day);
-    meta.append(el("span.t-moved", { text: `↩ from ${od ? relDay(od.date) : task.day}` }));
-  }
+  const chip = movedChip(rm, slug, task, isMovedIn);
+  if (chip) meta.append(chip);
   bodyEl.append(meta);
   const recall = taskRecall(rm, task);
   if (recall) bodyEl.append(recall);
   row.append(bodyEl);
 
+  row.append(moveHandle(rm, slug, task, row));
+  return row;
+}
+
+/* A parent task: tri-state checkbox (ticks/clears all sub-tasks), a collapsed
+ * summary with a progress bar, and an expandable list of its sub-tasks + takeaway. */
+function parentTaskRow(rm, task, isMovedIn, hostId) {
+  const slug = rm.slug;
+  const prog = taskProgress(slug, task);
+  const key = taskKey(slug, task.id);
+  const openNow = expandedTasks.has(key);
+  const row = el("div.task.parent" + (prog.complete ? ".done" : prog.partial ? ".partial" : "") +
+    (openNow ? ".open" : ""), { dataset: { task: task.id } });
+
+  const cb = el("button.checkbox", { role: "checkbox",
+    "aria-checked": prog.complete ? "true" : prog.partial ? "mixed" : "false",
+    "aria-label": prog.complete ? "Clear all sub-tasks" : "Complete all sub-tasks", html: checkIcon() });
+  cb.onclick = e => {
+    e && e.stopPropagation();
+    lastToggled = task.id;
+    const willDo = !prog.complete;                 // complete → clear all; else → do all
+    setAllSubs(slug, task, willDo);
+    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    rerender();
+  };
+  row.append(cb);
+
+  const bodyEl = el("div.t-body");
+  const head = el("div.t-parent-head", { role: "button", tabindex: "0",
+    "aria-expanded": openNow ? "true" : "false" });
+  head.append(leadBlock(task));
+  const sp = el("div.t-subprogress");
+  const bar = el("div.t-subbar"); bar.append(el("i", { style: `width:${prog.pct}%` }));
+  sp.append(bar);
+  sp.append(el("span.t-subcount", { text: `${prog.done}/${prog.total}` }));
+  sp.append(el("span.t-subcaret", { html: caretIcon() }));
+  head.append(sp);
+  bodyEl.append(head);
+
+  const meta = el("div.t-meta");
+  meta.append(catChip(task.cat, rm));
+  if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
+  const chip = movedChip(rm, slug, task, isMovedIn);
+  if (chip) meta.append(chip);
+  bodyEl.append(meta);
+
+  const expand = el("div.t-expand");
+  const subsBox = el("div.t-subs");
+  for (const sub of task.subs) subsBox.append(subRow(rm, task, sub, hostId));
+  expand.append(subsBox);
+  if (task.model) expand.append(el("div.t-model", { html: task.model }));
+  bodyEl.append(expand);
+
+  const recall = taskRecall(rm, task);
+  if (recall) bodyEl.append(recall);
+  row.append(bodyEl);
+
+  const toggle = () => {
+    const o = !row.classList.contains("open");
+    row.classList.toggle("open", o);
+    head.setAttribute("aria-expanded", o ? "true" : "false");
+    if (o) expandedTasks.add(key); else expandedTasks.delete(key);
+  };
+  head.addEventListener("click", toggle);
+  head.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
+
+  row.append(moveHandle(rm, slug, task, row));
+  return row;
+}
+
+/* One sub-task row (a leaf): its own checkbox, label, optional note, minutes, and
+ * — once done — any recall cards distilled from that specific part. */
+function subRow(rm, parent, sub, hostId) {
+  const slug = rm.slug;
+  const done = store.isDone(slug, sub.id);
+  const row = el("div.subtask" + (done ? ".done" : ""), { dataset: { task: sub.id } });
+  const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
+    "aria-label": "Toggle sub-task", html: checkIcon() });
+  cb.onclick = e => {
+    e && e.stopPropagation();
+    lastToggled = sub.id;
+    const willDo = !store.isDone(slug, sub.id);
+    store.setTask(slug, sub.id, willDo);
+    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    rerender();
+  };
+  row.append(cb);
+  const bodyEl = el("div.t-body");
+  bodyEl.append(el("div.t-label", { html: sub.label || sub.lead || "" }));
+  if (sub.note) bodyEl.append(el("div.t-subnote", { html: sub.note }));
+  const meta = el("div.t-meta");
+  if (sub.cat && sub.cat !== parent.cat) meta.append(catChip(sub.cat, rm));
+  if (sub.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(sub.est)}` }));
+  bodyEl.append(meta);
+  const recall = taskRecall(rm, sub);
+  if (recall) bodyEl.append(recall);
+  row.append(bodyEl);
+  return row;
+}
+
+/* The drag/move handle (parent-level move). */
+function moveHandle(rm, slug, task, row) {
   const mv = el("button.t-move", { title: "Move task", "aria-label": "Move task", html: moveIcon() });
   mv.onclick = e => { e.stopPropagation(); openMovePicker(rm, slug, task, rerender); };
   makeDraggable(mv, row, task);
-  row.append(mv);
+  return mv;
+}
 
-  return row;
+/* Just the lead line (rich) of a task — used as a parent's collapsed summary; its
+ * refs live in the sub-tasks and its takeaway (model) shows when expanded. */
+function leadBlock(task) {
+  if (task.lead) return el("div.t-label.rich", {}, el("div.t-lead", { html: task.lead }));
+  return el("div.t-label", { html: task.label || "" });
 }
 
 function bonusTrack(rm, S, bonus) {
@@ -1244,10 +1460,13 @@ function flashCard(card) {
   };
   return fc;
 }
-/* The per-task recall block: null unless the task is done and has cards. */
+/* The per-task recall block: null unless the task is done and has cards. A parent
+ * task unlocks when ALL its sub-tasks are done (it has no state of its own); a leaf
+ * (sub-task or plain task) unlocks on its own tick. */
 function taskRecall(rm, task) {
   if (!task.cards || !task.cards.length) return null;
-  if (!store.isDone(rm.slug, task.id)) return null;
+  const unlocked = task.subs ? taskComplete(rm.slug, task) : store.isDone(rm.slug, task.id);
+  if (!unlocked) return null;
   const wrap = el("div.t-recall");
   const head = el("button.t-recall-head", { type: "button", "aria-expanded": "false" });
   head.append(el("span.trh-ico", { text: "🎴" }));

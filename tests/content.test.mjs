@@ -122,6 +122,21 @@ for (const rm of roadmaps) {
     const stamp = reconcile.referentOf("done_at:" + id);
     return bare && bare.id === id && move && move.id === id && stamp && stamp.id === id;
   }), "referentOf round-trips bare / move / done_at ids for every task");
+
+  // sub-tasks (leaves): namespaced under their parent, unique, resolvable, and
+  // — since done-state lives on leaves — their tick/done_at rows must round-trip
+  // through referentOf so reconcile never prunes a live sub-task.
+  const subIds = rm.days.flatMap(d => d.tasks.flatMap(x => x.subs ? x.subs.map(s => s.id) : []));
+  t.eq(new Set(subIds).size, subIds.length, "sub-task ids are unique across the roadmap");
+  t.ok(rm.days.every(d => d.tasks.every(x => !x.subs || x.subs.every(s => s.id.startsWith(x.id + ".")))),
+    "sub-task ids are namespaced under their parent");
+  t.ok(subIds.every(id => rm.leavesById.has(id)), "every sub-task resolves in leavesById");
+  t.ok(rm.days.every(d => d.tasks.every(x => !x.subs || x.est === x.subs.reduce((s, l) => s + l.est, 0))),
+    "each parent task's est equals the sum of its sub-tasks (single source of truth)");
+  t.ok(subIds.every(id => {
+    const bare = reconcile.referentOf(id), stamp = reconcile.referentOf("done_at:" + id);
+    return bare && bare.id === id && stamp && stamp.id === id;
+  }), "referentOf round-trips sub-task tick / done_at ids");
 }
 
 t.group("client store SEP matches server KEY_SEP (\\x01)");

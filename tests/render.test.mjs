@@ -93,6 +93,35 @@ t.ok(view.querySelector(".recall-panel .flashcard"), "the recall panel shows fla
 store.setTask("fixture-side", "d02.t1", false);  // restore fixture state for later suites
 render.renderToday(view);
 
+t.group("parent tasks: expand, tri-state checkbox, progress, recall");
+await import(new URL("raylib.js", rmBase).href);       // its tasks are broken into sub-tasks
+const rl = reg.getRoadmap("raylib");
+render.renderRoadmap(rl, view);
+const parentRow = view.querySelector(".task.parent");
+t.ok(parentRow, "a task with sub-tasks renders as a .parent row");
+const pid = parentRow && parentRow.dataset.task;
+t.ok(parentRow && parentRow.querySelector(".t-subprogress .t-subcount"), "parent shows a done/total progress count");
+// expand the summary → sub-task rows appear
+parentRow.querySelector(".t-parent-head").click();
+const reParent = () => view.querySelector(`.task.parent[data-task="${pid}"]`);
+const subs = reParent().querySelectorAll(".t-subs .subtask");
+t.ok(subs.length >= 2, "expanding the summary reveals the sub-task rows");
+const n = subs.length;
+// tick ONE sub-task → the parent goes partial and the count updates
+subs[0].querySelector(".checkbox").onclick();
+t.ok(reParent().classList.contains("partial"), "ticking one sub-task marks the parent partial (not done)");
+t.eq(reParent().querySelector(".t-subcount").textContent, `1/${n}`, "the progress count reads 1 of N");
+// the parent's tri-state checkbox completes every remaining sub-task
+reParent().querySelector(".checkbox").onclick();
+t.ok(reParent().classList.contains("done"), "the parent checkbox completes all sub-tasks");
+t.ok(reParent().querySelector(".t-recall"), "a fully-complete parent unlocks its recall deck");
+// clicking the full parent checkbox again clears every sub-task
+reParent().querySelector(".checkbox").onclick();
+t.ok(!reParent().classList.contains("done") && !reParent().classList.contains("partial"),
+  "clicking a complete parent checkbox clears all sub-tasks");
+store.resetRoadmap("raylib");                          // leave no state behind
+render.renderToday(view);                              // next group expects the Today view
+
 t.group("tick a task straight from Today");
 const cb = view.querySelector(".today-card .task .checkbox");
 if (cb) {

@@ -35,6 +35,19 @@ t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2
 t.ok(allTasks.every(x => !x.cards || x.cards.every(c => c.q && c.a)),
   "every recall card has both a question and an answer");
 
+t.group("sub-tasks — every task is broken into individually-tickable parts");
+const required = allTasks.filter(x => !x.optional);
+t.ok(required.every(x => x.subs && x.subs.length >= 2),
+  "every required task splits into >= 2 sub-tasks (no more all-at-once tasks)");
+t.ok(allTasks.every(x => !x.subs || x.est === x.subs.reduce((s, l) => s + l.est, 0)),
+  "parent est is the sum of its sub-tasks, so per-day load is unchanged");
+t.ok(allTasks.every(x => !x.subs || x.subs.every(l => Number.isFinite(l.est) && l.est > 0)),
+  "every sub-task carries a positive minute estimate");
+t.ok(allTasks.every(x => !x.subs || x.subs.every(l => l.label || l.lead)),
+  "every sub-task has a label");
+t.ok(allTasks.every(x => !x.subs || x.subs.every(l => l.obj === x.obj && l.optional === x.optional)),
+  "sub-tasks inherit their parent's objective and optional flag");
+
 t.group("thread SEQUENCING — the owner's ordering");
 // course (Udemy) drives early and TAPERS once section 6 ("Projects") is reached;
 // its last task is the audio/GUI capstone — nothing after late October.

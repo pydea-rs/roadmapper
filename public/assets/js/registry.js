@@ -51,8 +51,17 @@ function normalize(def) {
   const objById = new Map(objectives.map(o => [o.id, o]));
 
   const daysById = new Map();
-  const tasksById = new Map();          // full id → task
+  const tasksById = new Map();          // full id → PARENT task (whether it has subs or not)
   const softById = new Map();
+  // LEAVES are the atomic unit of progress/effort. A task with a `sub:[]` list
+  // contributes one leaf per sub-task; a task WITHOUT one is its own single leaf.
+  // Done-state, done_at stamps, est and every count roll up from leaves, never
+  // from parents (a parent's state is DERIVED — all/some/none of its subs done).
+  const leavesById = new Map();         // full leaf id → leaf (sub OR self-leaf task)
+  const leaves = [];
+  const cardsOf = c => Array.isArray(c)
+    ? c.map(x => ({ q: String(x && x.q || ""), a: String(x && x.a || "") })).filter(x => x.q && x.a)
+    : null;
   const days = (def.days || []).map(d => {
     const day = {
       id: d.id, date: d.date,
@@ -75,18 +84,44 @@ function normalize(def) {
         refs: Array.isArray(t.refs) ? t.refs.map(String).filter(Boolean) : null,
         model: t.model || null,
         // Recall cards: short question/answer prompts distilled from this task's
-        // own material. They stay HIDDEN until the task is ticked done, turning a
+        // own material. They stay HIDDEN until the task is fully done, turning a
         // completed task into a spaced-recall deck (reinforced on the Today view).
-        cards: Array.isArray(t.cards)
-          ? t.cards.map(c => ({ q: String(c && c.q || ""), a: String(c && c.a || "") }))
-                   .filter(c => c.q && c.a)
-          : null,
+        cards: cardsOf(t.cards),
         label: t.label || t.lead || "", optional: !!t.optional,
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,
         phase: t.phase || null,       // carried so phase-scoped milestones can resolve
         order: i,
+        subs: null,                   // filled below when the task is broken into sub-tasks
       };
+      // Sub-tasks: the parent's work split into individually-tickable parts. Each
+      // sub is a LEAF (own id `d03.t2.s1`, own est/label/cat, optional own note &
+      // cards); it inherits the parent's objective and optional flag. The parent's
+      // est is DERIVED as the sum of its subs so per-day load stays truthful.
+      const rawSubs = Array.isArray(t.sub) ? t.sub.filter(Boolean) : null;
+      if (rawSubs && rawSubs.length) {
+        task.subs = rawSubs.map((s, k) => {
+          const sid = `${fid}.${s.id}`;
+          const sub = {
+            id: sid, localId: s.id, parent: fid, isSub: true,
+            day: day.id, week: day.week, month: day.month, date: day.date,
+            obj: t.obj, cat: s.cat || task.cat,
+            est: Number.isFinite(s.est) ? s.est : 0,
+            lead: s.lead || null,
+            refs: Array.isArray(s.refs) ? s.refs.map(String).filter(Boolean) : null,
+            note: s.note || null, model: s.model || null,
+            cards: cardsOf(s.cards),
+            label: s.label || s.lead || "", optional: !!t.optional,
+            order: k,
+          };
+          leavesById.set(sid, sub); leaves.push(sub);
+          return sub;
+        });
+        task.est = task.subs.reduce((sum, s) => sum + s.est, 0);
+      } else {
+        // No explicit breakdown → the task is its own single leaf (unchanged shape).
+        leavesById.set(fid, task); leaves.push(task);
+      }
       day.tasks.push(task); tasksById.set(fid, task);
     });
     (d.soft || []).forEach(s => {
@@ -137,6 +172,7 @@ function normalize(def) {
     cadence: def.cadence || null, aliases: def.aliases || {},
     objectives, objById,
     days, daysById, tasksById, softById,
+    leaves, leavesById,
     weeks, weeksById,
     months: [...monthSet.entries()].map(([k, label]) => ({ key: k, label })),
     milestones,
@@ -170,6 +206,13 @@ export function validateAll() {
         tasksSeen.add(t.id);
         if (!t.obj) P(`task "${t.id}" has no objective`);
         else if (!rm.objById.has(t.obj)) P(`task "${t.id}" references unknown objective "${t.obj}"`);
+        // sub-tasks (leaves) must be namespaced under their parent and unique
+        if (t.subs) for (const s of t.subs) {
+          if (tasksSeen.has(s.id)) P(`duplicate sub-task id "${s.id}"`);
+          tasksSeen.add(s.id);
+          if (!s.id.startsWith(t.id + ".")) P(`sub-task "${s.id}" is not namespaced under its parent "${t.id}"`);
+          if (!s.label && !s.lead) P(`sub-task "${s.id}" has no label`);
+        }
       }
       for (const s of d.soft) {
         if (softSeen.has(s.id)) P(`duplicate soft id "${s.id}"`);

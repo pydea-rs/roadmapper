@@ -30,14 +30,17 @@ function blankDay() {
 export function activityByDate(kind) {
   const map = new Map();
   for (const rm of getRoadmaps(kind)) {
-    for (const day of rm.days) for (const t of day.tasks) {
-      if (!store.isDone(rm.slug, t.id)) continue;
-      const date = localDate(store.doneAt(rm.slug, t.id));
+    // Effort is logged per LEAF (a task's sub-tasks, or the task itself when it has
+    // none): each completed, timestamped leaf is one unit of work placed on the day
+    // it was actually ticked. optional is inherited from the parent onto its leaves.
+    for (const leaf of rm.leaves) {
+      if (!store.isDone(rm.slug, leaf.id)) continue;
+      const date = localDate(store.doneAt(rm.slug, leaf.id));
       if (!date) continue;                      // done but not timestamped → can't place it
       let e = map.get(date); if (!e) { e = blankDay(); map.set(date, e); }
-      const est = t.est || 0;
+      const est = leaf.est || 0;
       e.tasks++; e.mins += est; e.roadmaps.add(rm.slug);
-      if (t.optional) { e.bonusTasks++; e.bonusMins += est; }
+      if (leaf.optional) { e.bonusTasks++; e.bonusMins += est; }
       else { e.reqTasks++; e.reqMins += est; }
     }
   }
@@ -92,11 +95,11 @@ export function series(endStr, n, map = activityByDate()) {
 export function tasksDoneOn(dateStr, kind) {
   const out = [];
   for (const rm of getRoadmaps(kind)) {
-    for (const day of rm.days) for (const t of day.tasks) {
-      if (!store.isDone(rm.slug, t.id)) continue;
-      const at = store.doneAt(rm.slug, t.id);
+    for (const leaf of rm.leaves) {
+      if (!store.isDone(rm.slug, leaf.id)) continue;
+      const at = store.doneAt(rm.slug, leaf.id);
       if (localDate(at) !== dateStr) continue;
-      out.push({ rm, task: t, at });
+      out.push({ rm, task: leaf, at });
     }
   }
   out.sort((a, b) => (a.at || "") < (b.at || "") ? -1 : 1);

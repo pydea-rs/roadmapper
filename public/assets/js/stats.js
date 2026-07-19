@@ -20,6 +20,21 @@ export function currentDay(rm, slug, task) {
   return task.day;                    // origin (also handles pruned/removed targets)
 }
 
+/** The leaves of a task: its sub-tasks if any, else the task itself (single leaf). */
+export const leavesOf = task => task.subs || [task];
+
+/** A parent task's derived completion, rolled up from its leaves (the single
+ *  source of truth). `complete` = every leaf done; `partial` = some but not all. */
+export function taskProgress(slug, task) {
+  const ls = leavesOf(task);
+  let done = 0;
+  for (const l of ls) if (store.isDone(slug, l.id)) done++;
+  const total = ls.length;
+  return { done, total, complete: total > 0 && done === total,
+    partial: done > 0 && done < total, pct: pct(done, total) };
+}
+export const taskComplete = (slug, task) => taskProgress(slug, task).complete;
+
 function blank() { return { done: 0, total: 0, estDone: 0, estTotal: 0 }; }
 function withPct(b) { return { ...b, pct: pct(b.done, b.total), pct1: pct1(b.done, b.total) }; }
 
@@ -43,54 +58,61 @@ export function computeAll(rm) {
 
   for (const day of rm.days) {
     for (const task of day.tasks) {
-      const done = store.isDone(slug, task.id);
       const obj = rm.objById.get(task.obj) || { tier: "primary", weight: 1 };
-      const cur = currentDay(rm, slug, task);
+      const cur = currentDay(rm, slug, task);       // move state is parent-level
       const curDay = rm.daysById.get(cur) || day;
       const oa = objOf(task.obj);
 
-      if (task.optional) {
-        // bonus / optional: tracked entirely on its OWN meter — both count and time.
-        // It counts "past 100%", never in the required denominator, and — crucially —
-        // undone bonus work does NOT inflate the required Remaining / finish ETA.
-        // Completed bonus time is reported as bonusInvested, kept out of `invested`.
-        bonusTotal++; oa.bonus.total++; oa.bonus.estTot += task.est;
-        if (done) { bonusDone++; oa.bonus.done++; bonusEstDone += task.est; oa.bonus.estDone += task.est; }
-        else bonusEstRemaining += task.est;
-        continue;
-      }
+      // Every count / minute rolls up from LEAVES (a task's sub-tasks, or the task
+      // itself when it has none). Objective, current-day, optional and tier are
+      // parent-level; done-state and est are per-leaf.
+      for (const leaf of (task.subs || [task])) {
+        const done = store.isDone(slug, leaf.id);
+        const est = leaf.est || 0;
 
-      // required task
-      catDist[task.cat] = (catDist[task.cat] || 0) + 1;
+        if (task.optional) {
+          // bonus / optional: tracked entirely on its OWN meter — both count and time.
+          // It counts "past 100%", never in the required denominator, and — crucially —
+          // undone bonus work does NOT inflate the required Remaining / finish ETA.
+          // Completed bonus time is reported as bonusInvested, kept out of `invested`.
+          bonusTotal++; oa.bonus.total++; oa.bonus.estTot += est;
+          if (done) { bonusDone++; oa.bonus.done++; bonusEstDone += est; oa.bonus.estDone += est; }
+          else bonusEstRemaining += est;
+          continue;
+        }
 
-      if (obj.tier === "secondary") {
-        // secondary required tasks live on the secondary meter, never in primary rollups
-        oa.req.oTot++; if (done) oa.req.oDone++;
+        // required leaf
+        catDist[leaf.cat] = (catDist[leaf.cat] || 0) + 1;
+
+        if (obj.tier === "secondary") {
+          // secondary required work lives on the secondary meter, never in primary rollups
+          oa.req.oTot++; if (done) oa.req.oDone++;
+          oa.req.aTot++; if (done) oa.req.aDone++;
+          oa.req.estTot += est; if (done) { oa.req.estDone += est; investedMins += est; }
+          else remainingSecMins += est;
+          continue;
+        }
+
+        // primary required leaf — drives the headline numbers
+        overallReqTotal++; if (done) overallReqDone++;
+        if (done) investedMins += est; else remainingReqMins += est;
+
+        // actual (current)
+        const A = get(dayA, cur); A.total++; A.estTotal += est;
+        if (done) { A.done++; A.estDone += est; }
+        const wA = get(weekA, curDay.week); wA.total++; wA.estTotal += est; if (done) { wA.done++; wA.estDone += est; }
+        const mA = get(monthA, curDay.month); mA.total++; if (done) mA.done++;
+
+        // original (origin)
+        const O = get(dayO, day.id); O.total++; O.estTotal += est;
+        if (done) { O.done++; O.estDone += est; }
+        const wO = get(weekO, day.week); wO.total++; if (done) wO.done++;
+        const mO = get(monthO, day.month); mO.total++; if (done) mO.done++;
+
         oa.req.aTot++; if (done) oa.req.aDone++;
-        oa.req.estTot += task.est; if (done) { oa.req.estDone += task.est; investedMins += task.est; }
-        else remainingSecMins += task.est;
-        continue;
+        oa.req.oTot++; if (done) oa.req.oDone++;
+        oa.req.estTot += est; if (done) oa.req.estDone += est;
       }
-
-      // primary required task — drives the headline numbers
-      overallReqTotal++; if (done) overallReqDone++;
-      if (done) investedMins += task.est; else remainingReqMins += task.est;
-
-      // actual (current)
-      const A = get(dayA, cur); A.total++; A.estTotal += task.est;
-      if (done) { A.done++; A.estDone += task.est; }
-      const wA = get(weekA, curDay.week); wA.total++; wA.estTotal += task.est; if (done) { wA.done++; wA.estDone += task.est; }
-      const mA = get(monthA, curDay.month); mA.total++; if (done) mA.done++;
-
-      // original (origin)
-      const O = get(dayO, day.id); O.total++; O.estTotal += task.est;
-      if (done) { O.done++; O.estDone += task.est; }
-      const wO = get(weekO, day.week); wO.total++; if (done) wO.done++;
-      const mO = get(monthO, day.month); mO.total++; if (done) mO.done++;
-
-      oa.req.aTot++; if (done) oa.req.aDone++;
-      oa.req.oTot++; if (done) oa.req.oDone++;
-      oa.req.estTot += task.est; if (done) oa.req.estDone += task.est;
     }
   }
 
@@ -168,24 +190,28 @@ function sumOrig(dayO) {
 function evalMilestone(rm, slug, m, weeks) {
   const r = m.rule || {};
   let met = false, progress = 0, target = 0;
+  // A referenced task counts toward a milestone only when it is FULLY complete
+  // (every sub-task done) — parents have no state of their own.
+  const taskById = id => rm.tasksById.get(id);
+  const idDone = id => { const t = taskById(id); return !!t && taskComplete(slug, t); };
   if (r.type === "tasks") {
     const req = r.require || [];
-    const done = req.filter(id => store.isDone(slug, id)).length;
+    const done = req.filter(idDone).length;
     met = done === req.length && req.length > 0; progress = done; target = req.length;
   } else if (r.type === "weekPct") {
     const w = weeks[m.week]; const p = w ? w.original.pct : 0;   // by ORIGINAL so moves don't cheese it
     met = p >= (r.min || 80); progress = p; target = r.min || 80;
   } else if (r.type === "count") {
-    const from = r.from || []; const done = from.filter(id => store.isDone(slug, id)).length;
+    const from = r.from || []; const done = from.filter(idDone).length;
     met = done >= (r.min || 1); progress = done; target = r.min || 1;
   } else if (r.type === "category") {
     const wdays = rm.days.filter(d => d.week === m.week);
     const tasks = wdays.flatMap(d => d.tasks).filter(t => t.cat === r.cat && !t.optional);
-    const done = tasks.filter(t => store.isDone(slug, t.id)).length;
+    const done = tasks.filter(t => taskComplete(slug, t)).length;
     met = tasks.length > 0 && done === tasks.length; progress = done; target = tasks.length;
   } else if (r.type === "phase") {
     const tasks = rm.days.flatMap(d => d.tasks).filter(t => !t.optional && (t.phase === r.phase));
-    const done = tasks.filter(t => store.isDone(slug, t.id)).length;
+    const done = tasks.filter(t => taskComplete(slug, t)).length;
     met = tasks.length > 0 && done === tasks.length; progress = done; target = tasks.length;
   }
 
