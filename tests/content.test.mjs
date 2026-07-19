@@ -133,6 +133,11 @@ for (const rm of roadmaps) {
   t.ok(subIds.every(id => rm.leavesById.has(id)), "every sub-task resolves in leavesById");
   t.ok(rm.days.every(d => d.tasks.every(x => !x.subs || x.est === x.subs.reduce((s, l) => s + l.est, 0))),
     "each parent task's est equals the sum of its sub-tasks (single source of truth)");
+  t.ok(rm.days.every(d => d.tasks.every(x => !x.subs || x.subs.every(s =>
+      Number.isFinite(s.est) && s.est > 0 && s.label && s.obj === x.obj && s.optional === x.optional))),
+    "every sub-task has a positive est + label and inherits its parent's objective/optional flag");
+  t.ok(rm.days.every(d => d.tasks.every(x => !(x.optional && x.subs))),
+    "no optional task carries sub-tasks (the bonus track can't expand them)");
   t.ok(subIds.every(id => {
     const bare = reconcile.referentOf(id), stamp = reconcile.referentOf("done_at:" + id);
     return bare && bare.id === id && stamp && stamp.id === id;
@@ -144,5 +149,17 @@ const storeSrc = readFileSync(new URL("../public/assets/js/store.js", import.met
 const apiSrc = readFileSync(new URL("../roadmapper/api.php", import.meta.url), "utf8");
 t.ok(/const SEP\s*=\s*"\\x01"/.test(storeSrc), "store.js SEP = \\x01");
 t.ok(/KEY_SEP\s*=\s*"\\x01"/.test(apiSrc), "api.php KEY_SEP = \\x01");
+
+t.group("parent-state checkbox CSS is scoped to the row's OWN box (no sub-task leak)");
+// Regression guard: the partial/done checkbox styling MUST use `> .checkbox`.
+// A plain descendant selector leaks the tri-state dash / fill onto the sub-task
+// checkboxes nested inside a parent (the bug where ticking one sub dashed them all).
+const cssSrc = readFileSync(new URL("../public/assets/css/roadmap.css", import.meta.url), "utf8");
+t.ok(/\.task\.parent\.partial\s*>\s*\.checkbox/.test(cssSrc),
+  "the partial-parent checkbox rule is scoped with `> .checkbox`");
+t.ok(!/\.task\.parent\.partial\s+\.checkbox(?![-\w])/.test(cssSrc),
+  "no unscoped `.task.parent.partial .checkbox` descendant selector remains");
+t.ok(/\.task\.done\s*>\s*\.checkbox/.test(cssSrc),
+  "the done checkbox fill/animation is scoped with `> .checkbox`");
 
 t.done();

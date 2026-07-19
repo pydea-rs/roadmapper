@@ -207,11 +207,16 @@ export function validateAll() {
         if (!t.obj) P(`task "${t.id}" has no objective`);
         else if (!rm.objById.has(t.obj)) P(`task "${t.id}" references unknown objective "${t.obj}"`);
         // sub-tasks (leaves) must be namespaced under their parent and unique
-        if (t.subs) for (const s of t.subs) {
-          if (tasksSeen.has(s.id)) P(`duplicate sub-task id "${s.id}"`);
-          tasksSeen.add(s.id);
-          if (!s.id.startsWith(t.id + ".")) P(`sub-task "${s.id}" is not namespaced under its parent "${t.id}"`);
-          if (!s.label && !s.lead) P(`sub-task "${s.id}" has no label`);
+        if (t.subs) {
+          // the bonus track renders optional tasks flat (no sub expansion), so an
+          // optional task with sub-tasks could never be completed from the UI.
+          if (t.optional) P(`optional task "${t.id}" must not have sub-tasks (the bonus track does not render them)`);
+          for (const s of t.subs) {
+            if (tasksSeen.has(s.id)) P(`duplicate sub-task id "${s.id}"`);
+            tasksSeen.add(s.id);
+            if (!s.id.startsWith(t.id + ".")) P(`sub-task "${s.id}" is not namespaced under its parent "${t.id}"`);
+            if (!s.label && !s.lead) P(`sub-task "${s.id}" has no label`);
+          }
         }
       }
       for (const s of d.soft) {

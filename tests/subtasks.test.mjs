@@ -79,4 +79,58 @@ t.ok(reconcile.referentOf("d01.t1.s1").id === "d01.t1.s1" &&
   "referentOf round-trips a leaf's bare + done_at ids");
 clear(s1);
 
+t.group("moving a parent relocates ALL its leaves together (move is parent-level)");
+// raylib d01.t1 has 3 leaves and d01 holds only that task; d03.t1 has 2 leaves.
+const before = stats.computeAll(rm);
+store.setMove(slug, "d01.t1", "d03");
+const after = stats.computeAll(rm);
+t.eq(after.days["d03"].actual.total - before.days["d03"].actual.total, 3,
+  "the moved parent's 3 leaves all land on the destination day (actual)");
+t.eq(before.days["d01"].actual.total - after.days["d01"].actual.total, 3,
+  "and all leave the origin day (actual)");
+t.eq(after.days["d01"].original.total, before.days["d01"].original.total,
+  "ORIGINAL still counts the leaves on their origin day (a move doesn't rewrite history)");
+store.setMove(slug, "d01.t1", null);   // restore
+
+t.group("subless tasks stay their own single leaf (the unchanged path)");
+// register a throwaway roadmap with a plain task and an empty sub-list
+registry.registerRoadmap({ slug: "edge-solo", title: "x", objectives: [{ id: "o" }],
+  weeks: [{ id: "w1", start: "2026-01-01" }],
+  days: [{ id: "d01", date: "2026-01-01", week: "w1", tasks: [
+    { id: "t1", obj: "o", est: 10, label: "plain task" },
+    { id: "t2", obj: "o", est: 10, label: "empty sub-list", sub: [] },
+  ] }] });
+const eg = registry.getRoadmap("edge-solo");
+const plain = eg.tasksById.get("d01.t1"), emptied = eg.tasksById.get("d01.t2");
+t.ok(!plain.subs, "a plain task has no subs");
+t.ok(!emptied.subs, "a task with an empty sub:[] is treated as subless (not an error)");
+t.ok(eg.leavesById.has("d01.t1") && eg.leavesById.has("d01.t2"), "each subless task is its own leaf");
+t.deep(registry.validateAll().filter(p => p.includes("edge-solo")), [], "subless / empty-sub tasks raise no validation error");
+let sp = stats.taskProgress("edge-solo", plain);
+t.deep([sp.done, sp.total, sp.complete], [0, 1, false], "subless taskProgress starts 0/1, not complete");
+store.setTask("edge-solo", "d01.t1", true);
+sp = stats.taskProgress("edge-solo", plain);
+t.ok(sp.complete && sp.done === 1, "ticking a subless task completes it via its own state");
+store.setTask("edge-solo", "d01.t1", false);
+
+t.group("bad paths — the registry rejects malformed sub-tasks");
+// an OPTIONAL task must not carry subs (the bonus track can't expand them)
+registry.registerRoadmap({ slug: "bad-optsub", title: "x", objectives: [{ id: "o" }],
+  weeks: [{ id: "w1", start: "2026-01-01" }],
+  days: [{ id: "d01", date: "2026-01-01", week: "w1", tasks: [
+    { id: "t1", obj: "o", est: 10, optional: true, label: "bonus",
+      sub: [{ id: "s1", est: 5, label: "a" }, { id: "s2", est: 5, label: "b" }] },
+  ] }] });
+t.ok(registry.validateAll().some(p => p.includes("bad-optsub") && /must not have sub-tasks/.test(p)),
+  "an optional task carrying sub-tasks is flagged by validateAll");
+// duplicate sub-task ids are caught
+registry.registerRoadmap({ slug: "bad-dupsub", title: "x", objectives: [{ id: "o" }],
+  weeks: [{ id: "w1", start: "2026-01-01" }],
+  days: [{ id: "d01", date: "2026-01-01", week: "w1", tasks: [
+    { id: "t1", obj: "o", est: 10, label: "p",
+      sub: [{ id: "s1", est: 5, label: "a" }, { id: "s1", est: 5, label: "dup" }] },
+  ] }] });
+t.ok(registry.validateAll().some(p => p.includes("bad-dupsub") && /duplicate sub-task/.test(p)),
+  "duplicate sub-task ids are flagged by validateAll");
+
 t.done();

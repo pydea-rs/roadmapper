@@ -257,11 +257,13 @@
 .checkbox:hover { border-color: var(--accent); }
 .checkbox svg { width: 13px; height: 13px; stroke-dasharray: 20; stroke-dashoffset: 20;
   transition: stroke-dashoffset var(--dur) var(--ease); }
-.task.done .checkbox { background: var(--accent); border-color: var(--accent); }
-.task.done .checkbox svg { stroke-dashoffset: 0; }
+/* `> .checkbox` = the row's OWN box only; a plain descendant selector would also
+   restyle the sub-task checkboxes nested inside a done parent. */
+.task.done > .checkbox { background: var(--accent); border-color: var(--accent); }
+.task.done > .checkbox svg { stroke-dashoffset: 0; }
 .checkbox.pop { animation: cbpop .42s var(--ease-spring); }
 @keyframes cbpop { 0% { transform: scale(1); } 45% { transform: scale(1.32); } 100% { transform: scale(1); } }
-.task.done .checkbox { animation: cbfill .3s var(--ease); }
+.task.done > .checkbox { animation: cbfill .3s var(--ease); }
 @keyframes cbfill { from { box-shadow: 0 0 0 6px var(--accent-soft); } to { box-shadow: 0 0 0 0 transparent; } }
 
 .t-body { flex: 1; min-width: 0; }
@@ -404,11 +406,13 @@
 
 /* tri-state parent checkbox: PARTIAL draws a centered dash (— not a check) and a
    soft accent fill; the full/done state reuses the standard checked look. */
-.task.parent.partial .checkbox { position: relative; border-color: var(--accent);
+/* NB: these target the parent's OWN checkbox only (`> .checkbox`) — a descendant
+   selector would leak the partial dash onto every nested sub-task checkbox. */
+.task.parent.partial > .checkbox { position: relative; border-color: var(--accent);
   background: color-mix(in srgb, var(--accent) 22%, transparent); }
-.task.parent.partial .checkbox::after { content: ""; position: absolute; inset: 0; margin: auto;
+.task.parent.partial > .checkbox::after { content: ""; position: absolute; inset: 0; margin: auto;
   width: 10px; height: 2.5px; border-radius: 2px; background: var(--accent-ink, var(--accent)); }
-.task.parent.partial .checkbox svg { stroke-dashoffset: 20; }   /* keep the check hidden while partial */
+.task.parent.partial > .checkbox svg { stroke-dashoffset: 20; }   /* keep the check hidden while partial */
 /* a partially-done parent is active work — don't dim it like a finished row */
 .task.parent.partial { opacity: 1; }
 

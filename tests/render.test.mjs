@@ -119,6 +119,24 @@ t.ok(reParent().querySelector(".t-recall"), "a fully-complete parent unlocks its
 reParent().querySelector(".checkbox").onclick();
 t.ok(!reParent().classList.contains("done") && !reParent().classList.contains("partial"),
   "clicking a complete parent checkbox clears all sub-tasks");
+
+t.group("Today digest: a completed parent drops off the outstanding list");
+// "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A
+// parent holds no done-state of its own — completing every sub must make the
+// digest treat it as done (guards the collectDue parent-completeness fix). Scope
+// to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
+// "d01.t1" in the cross-roadmap digest.
+const railCard = () => view.querySelector('.today-card a[href="#/raylib/today"]')?.closest(".today-card");
+render.renderToday(view);
+t.ok(railCard() && railCard().querySelector('[data-task="d01.t1"]'),
+  "an incomplete overdue parent shows up in Today");
+const od = rl.tasksById.get("d01.t1");
+od.subs.forEach(s => store.setTask("raylib", s.id, true));   // complete every sub
+render.renderToday(view);
+t.ok(railCard() && !railCard().querySelector('[data-task="d01.t1"]'),
+  "once all its subs are done, the overdue parent leaves the raylib outstanding list");
+od.subs.forEach(s => store.setTask("raylib", s.id, false));
+
 store.resetRoadmap("raylib");                          // leave no state behind
 render.renderToday(view);                              // next group expects the Today view
 

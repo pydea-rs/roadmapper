@@ -408,7 +408,7 @@ function todayParentRow(rm, task, mount, curDay, overdue) {
     head.setAttribute("aria-expanded", o ? "true" : "false");
     if (o) expandedTasks.add(key); else expandedTasks.delete(key);
   };
-  head.addEventListener("click", toggle);
+  head.addEventListener("click", e => { if (e.target.closest && e.target.closest("a")) return; toggle(); });
   head.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
   return row;
 }
@@ -1252,7 +1252,7 @@ function parentTaskRow(rm, task, isMovedIn, hostId) {
     head.setAttribute("aria-expanded", o ? "true" : "false");
     if (o) expandedTasks.add(key); else expandedTasks.delete(key);
   };
-  head.addEventListener("click", toggle);
+  head.addEventListener("click", e => { if (e.target.closest && e.target.closest("a")) return; toggle(); });
   head.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } });
 
   row.append(moveHandle(rm, slug, task, row));
