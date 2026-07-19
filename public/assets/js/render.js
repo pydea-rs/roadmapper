@@ -912,7 +912,12 @@ function msSlideshow(rm, S) {
   // pointer drag (mouse + touch), with a snap on release
   let down = false, startX = 0, baseTx = 0, moved = 0, step0 = 0;
   vp.addEventListener("pointerdown", e => {
-    down = true; moved = 0; startX = e.clientX;
+    moved = 0;                                   // every fresh press starts un-dragged
+    // a press on a card's "what's needed" button is a click, not a drag: don't start
+    // a drag or capture the pointer, so the click reaches the button. (Resetting
+    // `moved` above still runs, so the capture-phase click gate below won't swallow it.)
+    if (e.target.closest && e.target.closest(".ms-info")) return;
+    down = true; startX = e.clientX;
     const { step, center } = geom(); step0 = step;
     baseTx = center - idx * step;
     track.style.transition = "none";
@@ -965,7 +970,8 @@ function msCard(rm, m, large) {
   // "what's needed" affordance — opens a checklist of the tasks this milestone gates
   const info = el("button.ms-info", { "aria-label": "What's needed for this milestone",
     title: "What's needed", html: listIcon() });
-  info.addEventListener("pointerdown", e => e.stopPropagation());   // don't start a slideshow drag
+  // NB: no pointerdown-stopPropagation here — the slideshow viewport must still see the
+  // press so it resets its drag distance, otherwise its click gate swallows this click.
   info.addEventListener("click", e => { e.stopPropagation(); openMilestoneDetail(rm, m); });
   card.append(info);
   return card;

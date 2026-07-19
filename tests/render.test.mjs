@@ -143,6 +143,26 @@ modalRoot.querySelector(".modal-foot .btn").click();
 modalRoot.innerHTML = "";
 reqTask.subs.forEach(s => store.setTask("raylib", s.id, false));
 
+t.group("milestone button survives a slideshow drag (stale drag-distance gate)");
+// Regression: the slideshow's capture-phase click gate swallows clicks while its
+// drag distance is > 6px, and that distance is only reset by a viewport pointerdown.
+// A press on the info button must reset it too — else every click after a drag is
+// eaten (the "click many times before it acts" bug).
+render.renderRoadmap(rl, view);
+const vp = view.querySelector(".ms-show-vp");
+t.ok(vp, "slideshow viewport present (default mode)");
+const dragCard = view.querySelector(".ms");
+const dragInfo = dragCard.querySelector(".ms-info");
+const pev = (type, x, tgt) => tgt.dispatchEvent(new dom.window.MouseEvent(type, { clientX: x, bubbles: true, cancelable: true }));
+// 1) drag the slideshow a real distance, leaving the gate "armed"
+pev("pointerdown", 100, vp); pev("pointermove", 170, vp); pev("pointerup", 170, vp);
+// 2) now a genuine click on a card's button (press resets distance, then click)
+pev("pointerdown", 170, dragInfo);
+dragInfo.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true, cancelable: true }));
+t.ok(document.getElementById("modal-root").querySelector(".ms-tasklist"),
+  "the info button opens its modal on the first click even right after a drag");
+document.getElementById("modal-root").innerHTML = "";
+
 t.group("Today digest: a completed parent drops off the outstanding list");
 // "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
