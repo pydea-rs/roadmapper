@@ -121,9 +121,26 @@ function stateNote(slot, cls, html) {
   slot.replaceChildren(el("div.finder-note." + cls, { html }));
 }
 
-// The most recent pick, kept module-level so a Today re-render (e.g. after a
-// tick) re-shows the same card WITHOUT a new search. Shape: { r, topic, type }.
-let lastShown = null;
+// Module-level state so a search that started before a Today re-render still
+// resolves into the panel the user is actually looking at:
+//   lastShown — the most recent pick, re-shown on a re-render WITHOUT a new
+//               search (e.g. after ticking a task). Shape: { r, topic, type }.
+//   liveSlot / livePanel — the newest-mounted panel's slot + root. An in-flight
+//               run() writes here, so if Today re-rendered mid-search the result
+//               lands in the current panel, never the old detached one.
+//   running — module-level: at most one search in flight across panels.
+let lastShown = null, liveSlot = null, livePanel = null, running = false;
+
+function showPick(pick) {
+  lastShown = pick;
+  if (!liveSlot) return;
+  liveSlot.replaceChildren(resultCard(pick.r, pick));
+  if (livePanel) livePanel.classList.add("has-result");
+}
+function restorePick() {                       // back to the last good pick (or empty) after a failed search
+  if (lastShown) showPick(lastShown);
+  else if (liveSlot) { liveSlot.replaceChildren(); if (livePanel) livePanel.classList.remove("has-result"); }
+}
 
 /* ---------- panel + orchestration ---------- */
 
@@ -146,25 +163,16 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
 
   const slot = el("div.finder-slot");
   panel.append(slot);
+  // This freshly-built panel becomes the live search target.
+  liveSlot = slot; livePanel = panel;
 
-  const show = pick => {   // pick = { r, topic, type }
-    lastShown = pick;
-    slot.replaceChildren(resultCard(pick.r, pick));
-    panel.classList.add("has-result");
-  };
-  const restore = () => {  // back to the last good pick (or empty) after a failed search
-    if (lastShown) show(lastShown);
-    else { slot.replaceChildren(); panel.classList.remove("has-result"); }
-  };
-
-  let running = false;
   async function run({ manual }) {
     if (running || !groups.length) return;
     running = true;
-    // Both auto (on open) and manual (shuffle) now show a progress state while
+    // Both auto (on open) and manual (shuffle) show a progress state while
     // querying, so opening Today gives feedback that it's finding something.
-    panel.classList.add("loading");
-    stateNote(slot, "loading", `<span class="finder-spin"></span> Finding something good…`);
+    livePanel.classList.add("loading");
+    stateNote(liveSlot, "loading", `<span class="finder-spin"></span> Finding something good…`);
     try {
       const g = groups[Math.floor(Math.random() * groups.length)];
       const { q, type, topic } = deriveQuery(g.rm, g.tasks);
@@ -176,15 +184,15 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
           pick = { r: { title: q, url: searchUrl(q, type), thumb: null,
             source: type === "article" ? "DuckDuckGo" : "YouTube" }, topic, type, isSearch: true };
       }
-      if (pick) show(pick);
-      else if (manual) stateNote(slot, "fail", `Couldn't find anything this time — give it another tap.`);
-      else restore();                                                    // auto stays silent on failure
+      if (pick) showPick(pick);
+      else if (manual) stateNote(liveSlot, "fail", `Couldn't find anything this time — give it another tap.`);
+      else restorePick();                                                // auto stays silent on failure
     } catch {
-      if (manual) stateNote(slot, "fail", `Couldn't reach the finder — give it another tap.`);
-      else restore();
+      if (manual) stateNote(liveSlot, "fail", `Couldn't reach the finder — give it another tap.`);
+      else restorePick();
     } finally {
       running = false;
-      panel.classList.remove("loading");
+      if (livePanel) livePanel.classList.remove("loading");
     }
   }
 
@@ -193,6 +201,6 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
   // re-render does not). It shows the progress state while searching; a tick
   // re-render instead just re-shows the last pick with no network.
   if (autoRun && sync.isServer()) run({ manual: false });
-  else if (lastShown) show(lastShown);
+  else if (lastShown) showPick(lastShown);
   return panel;
 }

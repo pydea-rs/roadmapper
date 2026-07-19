@@ -233,7 +233,12 @@ const ilSeen = firstIl.querySelector(".il-seen");
 t.ok(!store.isSeen("raylib", ilId), "a fresh interlude is not yet marked seen");
 ilSeen.onclick();
 t.ok(store.isSeen("raylib", ilId) && firstIl.classList.contains("seen"), "ticking it persists + reflects 'seen'");
-ilSeen.onclick();
+// an ALREADY-seen interlude must render seen from the start (initial-render path)
+render.renderRoadmap(rl, view);
+const reIl = view.querySelector(`.interlude[data-interlude="${ilId}"]`);
+t.ok(reIl.classList.contains("seen"), "a persisted-seen interlude renders with .seen on reload");
+t.ok(reIl.querySelector(".il-seen.on"), "its tick renders in the 'on' state on reload");
+reIl.querySelector(".il-seen").onclick();
 t.ok(!store.isSeen("raylib", ilId), "ticking again clears 'seen'");
 store.resetRoadmap("raylib");
 

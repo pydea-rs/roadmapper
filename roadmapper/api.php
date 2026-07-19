@@ -488,12 +488,12 @@ switch ($action) {
 
     case "search": {
         // Discovery proxy: fetch a few candidate videos/articles for a query so
-        // the client can surface a "watch/read next" card. The browser cannot do
+        // the client can surface a "watch/read next" card. The browser can't do
         // this itself (CORS + no API key). Locked down: auth required, GET only,
-        // fixed upstream hosts, short timeout, query URL-encoded — the client
-        // NEVER supplies a URL, only a text query and a type. On any outbound
-        // failure this returns fetched:false with an empty list, and the client
-        // falls back to a deep-link-to-results card, so it degrades gracefully.
+        // fixed upstream hosts, query URL-encoded — the client NEVER supplies a
+        // URL, only a text query and a type. On any outbound failure this returns
+        // fetched:false with an empty list, and the client falls back to a
+        // deep-link-to-results card, so it degrades gracefully.
         if ($method !== "GET") fail(405, "search is GET-only");
         require_auth($SESSION_LIFETIME);
         $q = isset($_GET["q"]) ? (string)$_GET["q"] : "";

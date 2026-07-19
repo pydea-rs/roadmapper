@@ -200,12 +200,13 @@ function drawToday(mount) {
   // "Watch / read next": a serendipity card derived from today's task concepts.
   // On desktop CSS floats it into a right rail; on mobile it sits here, up top.
   const fgroups = finderGroups(today);
+  const finderAuto = finderAutoOnce;   // consume the one-shot regardless of whether
+  finderAutoOnce = false;              // a finder renders this pass (can't stay armed)
   if (fgroups.length) {
     view.classList.add("has-finder");
     // autoRun only on a fresh open (renderToday); a tick-triggered redraw reuses
     // the already-found card instead of firing another search.
-    view.append(finderPanel({ groups: fgroups, autoRun: finderAutoOnce }));
-    finderAutoOnce = false;
+    view.append(finderPanel({ groups: fgroups, autoRun: finderAuto }));
   }
 
   // Main track digest, then the Side track digest under its own divider. The two
@@ -1194,7 +1195,7 @@ function interludeCard(rm, il) {
   if (il.note) body.append(el("p.il-note", { text: il.note }));
   card.append(body);
 
-  const cb = el("button.il-seen" + (seen ? " on" : ""), { role: "checkbox",
+  const cb = el("button.il-seen" + (seen ? ".on" : ""), { role: "checkbox",
     "aria-checked": seen ? "true" : "false", "aria-label": "Mark as seen", html: checkIcon() });
   cb.onclick = e => {
     if (e) e.stopPropagation();

@@ -80,8 +80,36 @@ async function startApp() {
   // Register the router once — startApp() runs again after every lock→unlock, so
   // re-adding it each time would fire route() N times per navigation.
   if (!routeWired) { window.addEventListener("hashchange", route); routeWired = true; }
+  setupGoTop();
   route();
   updateSidebar();
+}
+
+/* Floating "scroll to top" button, shown once #main is scrolled past the fold.
+ * Wired once (survives lock→unlock). #main is the scroll container, not window.
+ * Sits bottom-right; CSS stacks it above the settings FAB on mobile. */
+let goTopWired = false;
+function setupGoTop() {
+  if (goTopWired) return;
+  const main = document.getElementById("main");
+  const host = document.body;
+  if (!main || !host) return;
+  goTopWired = true;
+  const btn = document.createElement("button");
+  btn.id = "gotop";
+  btn.type = "button";
+  btn.setAttribute("aria-label", "Scroll to top");
+  btn.title = "Go to top";
+  btn.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>`;
+  host.appendChild(btn);
+  const refresh = () => btn.classList.toggle("show", main.scrollTop > 240);
+  main.addEventListener("scroll", refresh, { passive: true });
+  btn.addEventListener("click", () => {
+    const noMotion = document.documentElement.getAttribute("data-motion") === "off"
+      || (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    main.scrollTo({ top: 0, behavior: noMotion ? "auto" : "smooth" });
+  });
+  refresh();
 }
 
 /* ================================================================== *

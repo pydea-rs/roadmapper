@@ -253,6 +253,26 @@
 @media (max-width: 860px) { #fab { right: var(--s4); top: auto; bottom: calc(var(--s5) + env(safe-area-inset-bottom)); transform: none; }
   #fab:hover { transform: scale(1.07) rotate(30deg); } }
 
+/* Scroll-to-top button — bottom-right, revealed once the view is scrolled down.
+ * On desktop the settings #fab sits mid-right, so bottom-right is clear; on
+ * mobile the #fab moves to bottom-right, so we stack this above it. */
+#gotop {
+  position: fixed; right: var(--s5); bottom: calc(var(--s5) + env(safe-area-inset-bottom));
+  width: 44px; height: 44px; border-radius: 50%; z-index: 39;
+  background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  color: var(--text-2); display: grid; place-items: center; cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity var(--dur-fast), transform var(--dur-fast), color var(--dur-fast),
+    background var(--dur-fast), border-color var(--dur-fast);
+}
+#gotop.show { opacity: 1; visibility: visible; transform: none; }
+#gotop:hover { color: var(--accent); border-color: var(--accent); background: var(--surface-2); }
+#gotop:active { transform: scale(.94); }
+@media (max-width: 860px) {
+  #gotop { right: var(--s4); bottom: calc(var(--s5) + 52px + var(--s3) + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { #gotop { transition: opacity var(--dur-fast); } }
+
 /* ------------------------------------------------------------------ *
  *  Lock screen
  * ------------------------------------------------------------------ */
