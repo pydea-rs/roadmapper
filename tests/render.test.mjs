@@ -120,6 +120,29 @@ reParent().querySelector(".checkbox").onclick();
 t.ok(!reParent().classList.contains("done") && !reParent().classList.contains("partial"),
   "clicking a complete parent checkbox clears all sub-tasks");
 
+t.group("milestone 'what's needed' modal lists the gating tasks with live state");
+render.renderRoadmap(rl, view);
+const modalRoot = document.getElementById("modal-root");
+const msInfo = view.querySelector(".ms .ms-info");
+t.ok(msInfo, "every milestone card carries a 'what's needed' button");
+msInfo.click();
+t.ok(modalRoot.querySelector(".modal .ms-tasklist"), "clicking it opens a modal with a task checklist");
+const firstMs = rl.milestones[0];                              // w5.m1 — a type:"tasks" rule
+const rows = modalRoot.querySelectorAll(".ms-tasklist .ms-tk");
+t.eq(rows.length, firstMs.rule.require.length, "the checklist lists exactly the milestone's required tasks");
+t.ok([...rows].every(r => r.classList.contains("todo")), "with nothing done, every task row reads 'todo'");
+modalRoot.querySelector(".modal-foot .btn").click();           // Close
+modalRoot.innerHTML = "";                                      // drop the closing layer (its 200ms removal won't fire in-test)
+// complete one required parent's sub-tasks → its row flips to done on reopen
+const reqTask = rl.tasksById.get(firstMs.rule.require[0]);
+reqTask.subs.forEach(s => store.setTask("raylib", s.id, true));
+view.querySelector(".ms .ms-info").click();
+t.eq(modalRoot.querySelectorAll(".ms-tasklist .ms-tk.done").length, 1,
+  "completing a required parent's sub-tasks marks its row done in the modal");
+modalRoot.querySelector(".modal-foot .btn").click();
+modalRoot.innerHTML = "";
+reqTask.subs.forEach(s => store.setTask("raylib", s.id, false));
+
 t.group("Today digest: a completed parent drops off the outstanding list");
 // "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the

@@ -9,7 +9,7 @@ import * as store from "./store.js";
 import { computeAll, currentDay, taskProgress, taskComplete } from "./stats.js";
 import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
-import { checkIcon, toast, getSettings, setSetting, inputModal } from "./ui.js";
+import { checkIcon, toast, getSettings, setSetting, inputModal, openModal } from "./ui.js";
 import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
@@ -962,6 +962,12 @@ function msCard(rm, m, large) {
     bar.append(el("i", { style: `width:${Math.round((m.ratio || 0) * 100)}%` }));
     card.append(bar);
   }
+  // "what's needed" affordance — opens a checklist of the tasks this milestone gates
+  const info = el("button.ms-info", { "aria-label": "What's needed for this milestone",
+    title: "What's needed", html: listIcon() });
+  info.addEventListener("pointerdown", e => e.stopPropagation());   // don't start a slideshow drag
+  info.addEventListener("click", e => { e.stopPropagation(); openMilestoneDetail(rm, m); });
+  card.append(info);
   return card;
 }
 function statusText(m) {
@@ -969,6 +975,98 @@ function statusText(m) {
   if (m.status === "missed") return `Missed (${m.progress}/${m.target})`;
   return `${m.progress}/${m.target}`;
 }
+
+/* Resolve a milestone's rule into the concrete task list it gates, plus a plain
+ * sentence telling the user what "done" means. Universal across roadmaps: reads
+ * the SAME rule shapes the engine evaluates in evalMilestone(). */
+function milestoneRule(rm, m) {
+  const def = rm.milestones.find(x => x.id === m.id) || {};
+  const rule = def.rule || {};
+  const byId = ids => (ids || []).map(id => rm.tasksById.get(id)).filter(Boolean);
+  let tasks = [], note = "", partialCounts = true;
+  if (rule.type === "tasks") {
+    tasks = byId(rule.require);
+    note = "Complete every task below to reach this milestone.";
+  } else if (rule.type === "count") {
+    tasks = byId(rule.from);
+    note = `Complete any ${rule.min || 1} of these ${tasks.length} tasks.`;
+  } else if (rule.type === "category") {
+    tasks = rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks)
+      .filter(t => t.cat === rule.cat && !t.optional);
+    note = `Complete every “${rule.cat}” task in this week.`;
+  } else if (rule.type === "phase") {
+    tasks = rm.days.flatMap(d => d.tasks).filter(t => !t.optional && t.phase === rule.phase);
+    note = `Complete every task in the “${rule.phase}” phase.`;
+  } else if (rule.type === "weekPct") {
+    tasks = rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks).filter(t => !t.optional);
+    note = `Reach ${rule.min || 80}% of this week's planned work — the tasks below drive that percentage.`;
+    partialCounts = false;   // no discrete "required set"; it's a threshold
+  } else {
+    note = "This milestone is tracked automatically.";
+  }
+  return { rule, tasks, note, partialCounts };
+}
+
+/* The short display title of a task: rich tasks lead with their summary line,
+ * plain tasks use their label. Both are trusted authored HTML. */
+const milestoneTaskLabel = task => task.lead || task.label || task.id;
+
+/* Open the "what's needed" modal for a milestone: a checklist of its gating
+ * tasks, each showing live completion state, with a partially-done parent
+ * expanded into its remaining sub-tasks so the exact next step is visible. */
+function openMilestoneDetail(rm, m) {
+  const { tasks, note } = milestoneRule(rm, m);
+  const body = el("div.ms-detail");
+
+  const sum = el("div.ms-detail-sum." + m.status);
+  sum.append(el("span.ms-detail-count", { text: `${m.progress}/${m.target}` }));
+  const wk = rm.weeksById.get(m.week);
+  sum.append(el("span.ms-detail-week", { text: (wk && wk.title) || m.week || "" }));
+  body.append(sum);
+  body.append(el("p.ms-detail-note", { text: note }));
+
+  if (!tasks.length) {
+    body.append(el("p.ms-detail-empty", { text: "No specific tasks are attached to this checkpoint." }));
+  } else {
+    const list = el("ul.ms-tasklist");
+    for (const task of tasks) {
+      const prog = taskProgress(rm.slug, task);
+      const state = prog.complete ? "done" : prog.partial ? "partial" : "todo";
+      const li = el("li.ms-tk." + state);
+      const mark = el("span.ms-tk-mark", prog.complete ? { html: checkIcon() }
+        : prog.partial ? { text: `${prog.done}/${prog.total}` } : {});
+      li.append(mark);
+      const main = el("div.ms-tk-main");
+      const day = rm.daysById.get(task.day);
+      if (day) main.append(el("div.ms-tk-day", { text: `${fmtDateHuman(day.date)} · ${day.title}` }));
+      main.append(el("div.ms-tk-title", { html: milestoneTaskLabel(task) }));
+      // for an unfinished parent, spell out its sub-tasks (done ones struck through)
+      if (task.subs && !prog.complete) {
+        const subs = el("ul.ms-tk-subs");
+        for (const s of task.subs) {
+          const sdone = store.isDone(rm.slug, s.id);
+          const sli = el("li." + (sdone ? "done" : "todo"));
+          sli.append(el("span.ms-sub-mark", sdone ? { html: checkIcon() } : {}));
+          sli.append(el("span.ms-sub-label", { html: s.label || s.lead || "" }));
+          subs.append(sli);
+        }
+        main.append(subs);
+      }
+      li.append(main);
+      list.append(li);
+    }
+    body.append(list);
+  }
+
+  openModal({
+    title: m.title,
+    subtitle: m.met ? "Milestone complete 🎉" : "What's left to reach this milestone",
+    icon: m.met ? "🏆" : "🎯",
+    body,
+    actions: [{ label: "Close", variant: "primary" }],
+  });
+}
+const listIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4.5 6h.01M4.5 12h.01M4.5 18h.01"/></svg>`;
 const slideIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="6" width="10" height="12" rx="1.5"/><path d="M4 9v6M20 9v6"/></svg>`;
 const gridIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="7" height="14" rx="1.5"/><rect x="14" y="5" width="7" height="14" rx="1.5"/></svg>`;
 

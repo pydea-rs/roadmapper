@@ -104,6 +104,48 @@
 .ms.met .ms-status { color: var(--ok); } .ms.met .ms-status::before { background: var(--ok); }
 .ms.risk .ms-status { color: var(--warn); } .ms.risk .ms-status::before { background: var(--warn); }
 .ms.missed .ms-status { color: var(--bad); } .ms.missed .ms-status::before { background: var(--bad); }
+.ms .ms-week, .ms .ms-title { padding-right: 30px; }   /* clear the "what's needed" button */
+
+/* "what's needed" button (top-right of every milestone card) */
+.ms-info { position: absolute; top: 8px; right: 8px; z-index: 1;
+  display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px;
+  border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-3);
+  cursor: pointer; transition: color var(--dur-fast), border-color var(--dur-fast), background var(--dur-fast); }
+.ms-info:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-soft); }
+.ms.lg .ms-info { top: 12px; right: 12px; }
+
+/* milestone detail modal — the "what's left" checklist */
+.ms-detail { display: flex; flex-direction: column; gap: var(--s3); }
+.ms-detail-sum { display: flex; align-items: baseline; gap: var(--s2); }
+.ms-detail-count { font-size: var(--t-lg); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text-3); }
+.ms-detail-sum.met .ms-detail-count { color: var(--ok); }
+.ms-detail-sum.risk .ms-detail-count { color: var(--warn); }
+.ms-detail-sum.missed .ms-detail-count { color: var(--bad); }
+.ms-detail-week { font-size: var(--t-xs); color: var(--text-3); text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
+.ms-detail-note { margin: 0; font-size: var(--t-sm); color: var(--text-2); }
+.ms-detail-empty { margin: 0; font-size: var(--t-sm); color: var(--text-3); font-style: italic; }
+.ms-tasklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.ms-tk { display: flex; gap: var(--s3); padding: var(--s2) var(--s3); border: 1px solid var(--border);
+  border-radius: var(--r1); background: var(--surface); }
+.ms-tk.done { opacity: .6; }
+.ms-tk.done .ms-tk-title { text-decoration: line-through; }
+.ms-tk.partial { border-color: color-mix(in srgb, var(--accent) 40%, var(--border)); }
+.ms-tk-mark { flex: none; display: inline-flex; align-items: center; justify-content: center;
+  min-width: 22px; height: 22px; border-radius: 999px; font-size: var(--t-xs); font-weight: 800;
+  font-variant-numeric: tabular-nums; }
+.ms-tk.done .ms-tk-mark { color: #fff; background: var(--ok); }
+.ms-tk.done .ms-tk-mark svg { width: 13px; height: 13px; }
+.ms-tk.partial .ms-tk-mark { color: var(--accent); border: 1px solid var(--accent); background: var(--accent-soft); padding: 0 6px; }
+.ms-tk.todo .ms-tk-mark { border: 2px solid var(--border); }
+.ms-tk-main { min-width: 0; }
+.ms-tk-day { font-size: var(--t-xs); color: var(--text-3); }
+.ms-tk-title { font-size: var(--t-sm); font-weight: 600; }
+.ms-tk-subs { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.ms-tk-subs li { display: flex; gap: 6px; align-items: baseline; font-size: var(--t-xs); color: var(--text-2); }
+.ms-tk-subs li.done { color: var(--text-3); text-decoration: line-through; }
+.ms-sub-mark { flex: none; width: 14px; display: inline-flex; align-items: center; color: var(--ok); }
+.ms-sub-mark svg { width: 11px; height: 11px; }
+.ms-tk-subs li.todo .ms-sub-mark::before { content: "○"; color: var(--text-3); }
 
 /* section head + view toggle (slideshow / cards) */
 .ms-sec-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s3); }
