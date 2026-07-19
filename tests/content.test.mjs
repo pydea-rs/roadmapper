@@ -5,6 +5,7 @@
 import { readFileSync } from "node:fs";
 import { suite } from "./_harness.mjs";
 import { registry, util, reconcile, loadRoadmap } from "./_load.mjs";
+import { getInterludes, interludeUrl } from "../public/assets/js/interludes.js";
 
 const t = suite("content");
 await loadRoadmap("rust-fastapi.js");
@@ -17,6 +18,26 @@ t.group("registry loads cleanly");
 t.ok(roadmaps.length >= 4, `all real roadmaps registered (${roadmaps.length})`);
 t.deep(registry.registryErrors(), [], "no registry errors");
 t.deep(registry.validateAll(), [], "validateAll() reports no problems");
+
+t.group("between-days interludes are well-formed and anchored to real days");
+let interludeTotal = 0;
+for (const rm of roadmaps) {
+  const list = getInterludes(rm.slug);
+  const ids = new Set();
+  for (const il of list) {
+    interludeTotal++;
+    t.ok(!ids.has(il.id), `${rm.slug}/${il.id}: interlude id is unique within the roadmap`);
+    ids.add(il.id);
+    t.ok(rm.daysById.has(il.afterDay), `${rm.slug}/${il.id}: afterDay "${il.afterDay}" is a real day`);
+    t.ok(il.kind === "video" || il.kind === "article", `${rm.slug}/${il.id}: kind is video|article`);
+    t.ok(typeof il.title === "string" && il.title.length > 0, `${rm.slug}/${il.id}: has a title`);
+    t.ok(typeof il.query === "string" && il.query.trim().length > 0, `${rm.slug}/${il.id}: has a search query`);
+    t.ok(/^https:\/\//.test(interludeUrl(il)), `${rm.slug}/${il.id}: builds an https results link`);
+  }
+}
+t.ok(interludeTotal >= 15, `all four roadmaps carry a spread of interludes (${interludeTotal})`);
+// fixtures / any other roadmap without curated interludes must simply yield none
+t.deep(getInterludes("does-not-exist"), [], "an unknown slug yields no interludes");
 
 t.group("side track wiring");
 const bedrock = registry.getRoadmap("bedrock");

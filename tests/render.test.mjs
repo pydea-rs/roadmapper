@@ -214,6 +214,29 @@ t.ok(/Found video/.test(reFinder.querySelector(".fr-title")?.textContent || ""),
 global.fetch = realFetch;
 render.renderToday(view);
 
+t.group("timeline interludes: curated resource cards between days, with a seen tick");
+const ilds = await import(new URL("interludes.js", base).href);
+render.renderRoadmap(rl, view);
+const ilCards = view.querySelectorAll(".interlude");
+t.eq(ilCards.length, ilds.getInterludes("raylib").length, "every curated raylib interlude renders as a card");
+const firstIl = ilCards[0];
+t.ok(firstIl.querySelector(".il-media") && firstIl.querySelector(".il-title") && firstIl.querySelector(".il-note"),
+  "an interlude card has a media thumb, a title and a why-now note");
+t.ok(firstIl.querySelector('.il-title[target="_blank"]'), "the title opens in a new tab");
+// the card sits AFTER its afterDay in the DOM (a between-days card)
+const afterId = ilds.getInterludes("raylib").find(i => i.id === firstIl.dataset.interlude).afterDay;
+const dayNode = view.querySelector(`.day[data-day="${afterId}"]`);
+t.ok(dayNode && (dayNode.compareDocumentPosition(firstIl) & 0x04),
+  "the interlude renders after the day it builds on");
+const ilId = firstIl.dataset.interlude;
+const ilSeen = firstIl.querySelector(".il-seen");
+t.ok(!store.isSeen("raylib", ilId), "a fresh interlude is not yet marked seen");
+ilSeen.onclick();
+t.ok(store.isSeen("raylib", ilId) && firstIl.classList.contains("seen"), "ticking it persists + reflects 'seen'");
+ilSeen.onclick();
+t.ok(!store.isSeen("raylib", ilId), "ticking again clears 'seen'");
+store.resetRoadmap("raylib");
+
 t.group("Today digest: a completed parent drops off the outstanding list");
 // "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the

@@ -152,14 +152,19 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
     slot.replaceChildren(resultCard(pick.r, pick));
     panel.classList.add("has-result");
   };
-  // Re-show the last pick immediately on a re-render (no network).
-  if (lastShown) show(lastShown);
+  const restore = () => {  // back to the last good pick (or empty) after a failed search
+    if (lastShown) show(lastShown);
+    else { slot.replaceChildren(); panel.classList.remove("has-result"); }
+  };
 
   let running = false;
   async function run({ manual }) {
     if (running || !groups.length) return;
     running = true;
-    if (manual) { panel.classList.add("loading"); stateNote(slot, "loading", `<span class="finder-spin"></span> Finding something good…`); }
+    // Both auto (on open) and manual (shuffle) now show a progress state while
+    // querying, so opening Today gives feedback that it's finding something.
+    panel.classList.add("loading");
+    stateNote(slot, "loading", `<span class="finder-spin"></span> Finding something good…`);
     try {
       const g = groups[Math.floor(Math.random() * groups.length)];
       const { q, type, topic } = deriveQuery(g.rm, g.tasks);
@@ -173,9 +178,10 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
       }
       if (pick) show(pick);
       else if (manual) stateNote(slot, "fail", `Couldn't find anything this time — give it another tap.`);
-      // auto mode stays silent on failure, exactly as asked.
+      else restore();                                                    // auto stays silent on failure
     } catch {
       if (manual) stateNote(slot, "fail", `Couldn't reach the finder — give it another tap.`);
+      else restore();
     } finally {
       running = false;
       panel.classList.remove("loading");
@@ -184,8 +190,9 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
 
   btn.addEventListener("click", () => run({ manual: true }));
   // Auto-fire once per fresh Today open (renderToday sets autoRun; a tick-driven
-  // re-render does not), silent, no retry. The last pick is re-shown above first,
-  // so opening never flashes empty while this resolves.
+  // re-render does not). It shows the progress state while searching; a tick
+  // re-render instead just re-shows the last pick with no network.
   if (autoRun && sync.isServer()) run({ manual: false });
+  else if (lastShown) show(lastShown);
   return panel;
 }

@@ -11,6 +11,7 @@ import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal, openModal } from "./ui.js";
 import { finderPanel } from "./finder.js";
+import { interludesAfter, interludeUrl } from "./interludes.js";
 import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
@@ -1161,8 +1162,50 @@ function weekGroup(rm, S, weekId, days, open) {
     head.append(chip);
   }
   wg.append(head);
-  for (const d of days) wg.append(dayCard(rm, S, d, open));
+  for (const d of days) {
+    wg.append(dayCard(rm, S, d, open));
+    // "Commercials between phases": a curated video/article card sits after the
+    // day whose concept it builds on. State-independent — just a seen tick.
+    for (const il of interludesAfter(rm.slug, d.id)) wg.append(interludeCard(rm, il));
+  }
   return wg;
+}
+
+const ilPlayIcon = () => `<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
+const ilDocIcon = () => `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>`;
+
+/* A between-days resource card: generated thumbnail (no network), curated title
+ * + "why now" note, a live-results link, and a persisted "seen" tick. */
+function interludeCard(rm, il) {
+  const kind = il.kind === "article" ? "article" : "video";
+  const url = interludeUrl(il);
+  const seen = store.isSeen(rm.slug, il.id);
+  const card = el("div.interlude" + (seen ? ".seen" : "") + (kind === "article" ? ".article" : ".video"),
+    { dataset: { interlude: il.id } });
+
+  const media = el("a.il-media", { href: url, target: "_blank", rel: "noopener noreferrer",
+    "aria-label": il.title, tabindex: "-1" });
+  media.append(el("span.il-glyph", { html: kind === "article" ? ilDocIcon() : ilPlayIcon() }));
+  card.append(media);
+
+  const body = el("div.il-body");
+  body.append(el("span.il-kicker", { text: `${kind === "article" ? "Read" : "Watch"} · ${il.source || (kind === "article" ? "the web" : "YouTube")}` }));
+  body.append(el("a.il-title", { href: url, target: "_blank", rel: "noopener noreferrer", text: il.title }));
+  if (il.note) body.append(el("p.il-note", { text: il.note }));
+  card.append(body);
+
+  const cb = el("button.il-seen" + (seen ? " on" : ""), { role: "checkbox",
+    "aria-checked": seen ? "true" : "false", "aria-label": "Mark as seen", html: checkIcon() });
+  cb.onclick = e => {
+    if (e) e.stopPropagation();
+    const now = !store.isSeen(rm.slug, il.id);
+    store.setSeen(rm.slug, il.id, now);
+    card.classList.toggle("seen", now);
+    cb.classList.toggle("on", now);
+    cb.setAttribute("aria-checked", now ? "true" : "false");
+  };
+  card.append(cb);
+  return card;
 }
 
 function dayCard(rm, S, day, open) {

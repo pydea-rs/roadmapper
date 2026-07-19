@@ -111,7 +111,7 @@ function route() {
   // Global cross-roadmap "Today" digest (#/today).
   if (slug === "today" && !sub) {
     activeSlug = null;
-    swapView(() => { renderToday($("#view")); updateSidebar(); });
+    swapView(() => { renderToday($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
   }
@@ -127,9 +127,26 @@ function route() {
   swapView(animate => {
     renderRoadmap(rm, $("#view"), { animate });
     updateSidebar();
+    // A fresh section switch must not inherit the previous view's scroll (paint()
+    // preserves scrollTop for in-place tick updates). Reset, then land on the
+    // day the user is actually on.
+    scrollMainTop();
     if (sub) requestAnimationFrame(() => scrollToSub(rm, sub));
+    else requestAnimationFrame(() => scrollToCurrentDay(rm));
   });
   closeMobileSidebar();
+}
+function scrollMainTop() { const m = document.getElementById("main"); if (m) m.scrollTop = 0; }
+/* Land on the day the user is currently on: today's day, else the nearest
+ * upcoming day, else (roadmap already finished) its last day. Falls back to the
+ * top when the card isn't found. */
+function scrollToCurrentDay(rm) {
+  const today = todayStr();
+  const target = rm.days.find(d => d.date === today)
+    || rm.days.find(d => d.date >= today)
+    || rm.days[rm.days.length - 1];
+  const node = target && $(`.day[data-day="${cssEsc(target.id)}"]`);
+  if (node) { node.classList.add("open"); node.scrollIntoView({ block: "start" }); }
 }
 function scrollToSub(rm, sub) {
   let targetDay = null;

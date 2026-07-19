@@ -15,6 +15,7 @@ t.deep(referentOf("done_at:d03.t2"), { kind: "task", id: "d03.t2" }, "done_at st
 t.deep(referentOf("flag:missed:d03.t2"), { kind: "task", id: "d03.t2" }, "flag → its task (flag name stripped)");
 t.deep(referentOf("d03.t2"), { kind: "task", id: "d03.t2" }, "bare tick → its task");
 t.eq(referentOf("view:settings"), null, "unknown/settings keys are kept (null)");
+t.eq(referentOf("seen:il3"), null, "interlude 'seen' ticks are kept (null referent — no content to prune against)");
 
 // build a small registered roadmap to reconcile against
 registry.registerRoadmap({
@@ -46,6 +47,7 @@ store.setCell(S, "d99.tX", "task", "true");             // no such task → prun
 store.setCell(S, "done_at:d99.tX", "meta", "2026-07-13T12:00:00Z");  // orphan stamp → prune
 store.setCell(S, "soft:d01.sZ", "soft", "true");        // no such soft → prune
 store.setNote(S, "d01", "keep my note");                // note → never pruned
+store.setSeen(S, "il9", true);                          // interlude seen → never pruned
 const r2 = reconcile.reconcile(rm);
 t.ok(r2.pruned >= 3, `pruned the orphan rows (got ${r2.pruned})`);
 t.eq(store.isDone(S, "d01.t2"), true, "live tick kept");
@@ -53,6 +55,7 @@ t.eq(store.isDone(S, "d99.tX"), false, "orphan tick pruned");
 t.eq(store.getCell(S, "done_at:d99.tX"), null, "orphan done_at pruned");
 t.eq(store.getCell(S, "soft:d01.sZ"), null, "orphan soft pruned");
 t.eq(store.getNote(S, "d01"), "keep my note", "user note survives reconciliation");
+t.eq(store.isSeen(S, "il9"), true, "an interlude 'seen' tick survives reconciliation (never pruned)");
 
 t.group("reconcile is idempotent — a second pass changes nothing");
 const r3 = reconcile.reconcile(rm);

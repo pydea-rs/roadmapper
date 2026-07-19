@@ -75,6 +75,16 @@ export function setSoft(slug, softId, done) {
   setCell(slug, `soft:${softId}`, "soft", done ? "true" : null);
 }
 
+/* interlude "seen" ticks — a supplementary between-days resource card the user
+ * has viewed. Keyed under a `seen:` prefix so reconcile treats it as unknown
+ * (no task/soft referent exists in content) and never prunes it. */
+export const isSeen = (slug, id) => {
+  const c = getCell(slug, `seen:${id}`); return !!c && c.value === "true";
+};
+export function setSeen(slug, id, on) {
+  setCell(slug, `seen:${id}`, "seen", on ? "true" : null);
+}
+
 /* flags: missed / starred */
 export const hasFlag = (slug, taskId, flag) => {
   const c = getCell(slug, `flag:${flag}:${taskId}`); return !!c && c.value === "true";
