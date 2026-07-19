@@ -93,10 +93,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
           lead: `<b>Networking ①</b> — learn the layering model <i>honestly</i>.`,
-          refs: [
-            `Read Cloudflare <a href="https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/" target="_blank" rel="noopener">"What is the OSI Model?"</a> for the diagram — then apply the corrections below.`,
-            `The internet runs the <b>TCP/IP</b> model (Link → Internet → Transport → Application); OSI layers 5–6 (session/presentation) have <i>no</i> real counterpart.`,
-            `"L7 load balancer / L4 firewall / L3 switch" is just shorthand for <b>which header a device inspects</b> (L3=IP, L4=port, L7=HTTP).`,
+          sub: [
+            { id: "s1", est: 20, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/" target="_blank" rel="noopener">"What is the OSI Model?"</a> for the diagram — then apply the corrections below.` },
+            { id: "s2", est: 13, label: `The internet runs the <b>TCP/IP</b> model (Link → Internet → Transport → Application); OSI layers 5–6 (session/presentation) have <i>no</i> real counterpart.` },
+            { id: "s3", est: 12, label: `"L7 load balancer / L4 firewall / L3 switch" is just shorthand for <b>which header a device inspects</b> (L3=IP, L4=port, L7=HTTP).` },
           ],
           model: `The load-bearing idea is <b>encapsulation</b>: a packet is <code>[Ethernet [IP [TCP [HTTP]]]]</code> — going down the stack adds headers, up strips them. Not "recite 7 layers".`,
           cards: [
@@ -136,9 +136,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
           lead: `<b>Systems ①</b> — the three units of execution, and the one distinction that matters.`,
-          refs: [
-            `Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Ch 4 "The Abstraction: The Process"</a> + <b>Ch 26 "Concurrency: Threads"</b>.`,
-            `Map it to your stack: Go goroutines (M:N green threads), Rust <code>async</code>/tokio & Python <code>asyncio</code> (stackless coroutines on an event loop), Node (single loop + libuv pool).`,
+          sub: [
+            { id: "s1", est: 28, label: `Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/" target="_blank" rel="noopener">Ch 4 "The Abstraction: The Process"</a> + <b>Ch 26 "Concurrency: Threads"</b>.` },
+            { id: "s2", est: 22, label: `Map it to your stack: Go goroutines (M:N green threads), Rust <code>async</code>/tokio & Python <code>asyncio</code> (stackless coroutines on an event loop), Node (single loop + libuv pool).`,
+              note: `Locate each on the one axis: who schedules it (kernel vs runtime) and what's shared (address space).` },
           ],
           model: `<b>Process</b> = own address space + fds (expensive switch). <b>OS thread</b> = shares the address space, kernel-scheduled preemptively. <b>Coroutine</b> = user-space scheduled, no syscall to switch → millions of them, cooperative. The distinction is <i>who schedules it</i> and <i>what's shared</i>.`,
           cards: [
@@ -159,10 +160,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
           lead: `<b>Networking ②</b> — subnet math you can do in your head.`,
-          refs: [
-            `Read Cloudflare <a href="https://www.cloudflare.com/learning/network-layer/what-is-a-subnet/" target="_blank" rel="noopener">"What is a subnet?"</a>, then do the binary yourself.`,
-            `<code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask <code>/24</code>=<code>255.255.255.0</code>.`,
-            `Memorize the RFC 1918 private ranges: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code> — they're in every VPC/Docker/k8s.`,
+          sub: [
+            { id: "s1", est: 18, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/network-layer/what-is-a-subnet/" target="_blank" rel="noopener">"What is a subnet?"</a>, then do the binary yourself.` },
+            { id: "s2", est: 15, label: `<code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask <code>/24</code>=<code>255.255.255.0</code>.` },
+            { id: "s3", est: 12, label: `Memorize the RFC 1918 private ranges: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code> — they're in every VPC/Docker/k8s.` },
           ],
           model: `"Same subnet?" → AND both IPs with the mask; equal ⇒ they talk directly at L2, else traffic goes to the <b>default gateway</b>. That's how your machine decides gateway-vs-direct for every packet.`,
           cards: [
@@ -181,9 +182,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
           lead: `<b>DevOps ②</b> — what a container image really is, and how to build a tiny one.`,
-          refs: [
-            `Read the <a href="https://github.com/opencontainers/image-spec/blob/main/spec.md" target="_blank" rel="noopener">OCI Image Spec</a> conceptually: an image = a JSON <b>manifest</b> + <b>config</b> + ordered <b>layer</b> blobs, all <b>content-addressed by SHA-256</b> (identical layers stored/pulled once).`,
-            `Read Docker <a href="https://docs.docker.com/build/building/multi-stage/" target="_blank" rel="noopener">Multi-stage builds</a> + <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener">best practices</a>: order steps by change-frequency (deps before source) for cache hits; <code>COPY --from</code> to ship only the built binary.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read the <a href="https://github.com/opencontainers/image-spec/blob/main/spec.md" target="_blank" rel="noopener">OCI Image Spec</a> conceptually: an image = a JSON <b>manifest</b> + <b>config</b> + ordered <b>layer</b> blobs, all <b>content-addressed by SHA-256</b> (identical layers stored/pulled once).` },
+            { id: "s2", est: 23, label: `Read Docker <a href="https://docs.docker.com/build/building/multi-stage/" target="_blank" rel="noopener">Multi-stage builds</a> + <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener">best practices</a>: order steps by change-frequency (deps before source) for cache hits; <code>COPY --from</code> to ship only the built binary.` },
           ],
           model: `Layers stack via <b>OverlayFS</b> (read-only image lowerdir + writable upperdir; a write triggers <b>copy-up</b>). For your Go/Rust binaries, a multi-stage build into <a href="https://github.com/GoogleContainerTools/distroless" target="_blank" rel="noopener">distroless</a>/<code>scratch</code> = a few-MB image with almost no attack surface.`,
           cards: [
@@ -202,10 +203,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ①</b> — the mental model of a B-tree index.`,
-          refs: [
-            `Read <i>Use The Index, Luke!</i> (free): <a href="https://use-the-index-luke.com/sql/anatomy" target="_blank" rel="noopener">Anatomy of an SQL Index</a> → <a href="https://use-the-index-luke.com/sql/anatomy/the-tree" target="_blank" rel="noopener">The B-Tree</a> → <a href="https://use-the-index-luke.com/sql/anatomy/slow-indexes" target="_blank" rel="noopener">Slow Indexes</a>.`,
-            `Leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N), so billions of rows are 3–5 levels deep.`,
-            `Hurts on low-cardinality columns, when a function wraps the column (<code>WHERE lower(email)=…</code> needs an expression index), and every index is <b>write amplification</b>.`,
+          sub: [
+            { id: "s1", est: 22, label: `Read <i>Use The Index, Luke!</i> (free): <a href="https://use-the-index-luke.com/sql/anatomy" target="_blank" rel="noopener">Anatomy of an SQL Index</a> → <a href="https://use-the-index-luke.com/sql/anatomy/the-tree" target="_blank" rel="noopener">The B-Tree</a> → <a href="https://use-the-index-luke.com/sql/anatomy/slow-indexes" target="_blank" rel="noopener">Slow Indexes</a>.` },
+            { id: "s2", est: 15, label: `Leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N), so billions of rows are 3–5 levels deep.` },
+            { id: "s3", est: 13, label: `Hurts on low-cardinality columns, when a function wraps the column (<code>WHERE lower(email)=…</code> needs an expression index), and every index is <b>write amplification</b>.` },
           ],
           model: `<b>Leftmost-prefix rule:</b> <code>INDEX(a,b,c)</code> serves <code>a</code>, <code>a,b</code>, <code>a,b,c</code> — but NOT <code>b</code> alone. Put equality columns first, then the range/sort column. The #1 composite-index mistake.`,
           cards: [
@@ -226,10 +227,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
           lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you.`,
-          refs: [
-            `Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>.`,
-            `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.`,
-            `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).`,
+          sub: [
+            { id: "s1", est: 22, label: `Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>.` },
+            { id: "s2", est: 16, label: `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.` },
+            { id: "s3", est: 12, label: `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).` },
           ],
           model: `Two different HOL blockings: TCP's byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams). The latter is what QUIC/HTTP-3 fixes — and what interviewers usually mean.`,
           cards: [
@@ -248,9 +249,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
           lead: `<b>DevOps ③</b> — the one mental model that makes all of Kubernetes click.`,
-          refs: [
-            `Read k8s <a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener">"Controllers"</a>: a thermostat loop — observe current → compare to <code>.spec</code> → act → repeat, forever (<b>level-triggered</b>, not edge-triggered).`,
-            `Skim the core objects: <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank" rel="noopener">Pod</a>, <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deployment</a>→ReplicaSet→Pod, <a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Service</a> (stable VIP + label selector), <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>, ConfigMap/Secret.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read k8s <a href="https://kubernetes.io/docs/concepts/architecture/controller/" target="_blank" rel="noopener">"Controllers"</a>: a thermostat loop — observe current → compare to <code>.spec</code> → act → repeat, forever (<b>level-triggered</b>, not edge-triggered).` },
+            { id: "s2", est: 25, label: `Skim the core objects: <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank" rel="noopener">Pod</a>, <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">Deployment</a>→ReplicaSet→Pod, <a href="https://kubernetes.io/docs/concepts/services-networking/service/" target="_blank" rel="noopener">Service</a> (stable VIP + label selector), <a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">Ingress</a>, ConfigMap/Secret.` },
           ],
           model: `Controllers act only through the <b>API server</b> (+ etcd = single source of truth), never nodes directly. Desired state is never "done" — a node dies, Pods get rescheduled. Reconciliation is the through-line for GitOps and Terraform too.`,
           cards: [
@@ -269,11 +270,11 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 60,
           lead: `<b>Systems ②</b> — locality and cache lines, then the two OS memory tricks every DB relies on.`,
-          refs: [
-            `Read CS:APP <b>Ch 6 "The Memory Hierarchy"</b> (registers → L1/L2/L3 → DRAM → disk; locality, cache lines, hit/miss).`,
-            `Free alternative: Ulrich Drepper, <a href="https://lwn.net/Articles/250967/" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the CPU-cache parts (≈ Parts 2–3).`,
-            `<b>Virtual memory</b> (skim): OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf" target="_blank" rel="noopener">Ch 19 "Paging: Faster Translations (TLBs)"</a> — each process gets its own address space via page tables; the <b>TLB</b> caches translations so a hit makes it nearly free.`,
-            `<b>The page cache</b> (know it exists): the OS keeps recently-used file pages in RAM. A <code>write()</code> only marks pages dirty and returns — durability needs <code>fsync</code> (LWN <a href="https://lwn.net/Articles/752063/" target="_blank" rel="noopener">"PostgreSQL's fsync() surprise"</a>). The <i>internals</i> come back in the extension.`,
+          sub: [
+            { id: "s1", est: 18, label: `Read CS:APP <b>Ch 6 "The Memory Hierarchy"</b> (registers → L1/L2/L3 → DRAM → disk; locality, cache lines, hit/miss).` },
+            { id: "s2", est: 15, label: `Free alternative: Ulrich Drepper, <a href="https://lwn.net/Articles/250967/" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the CPU-cache parts (≈ Parts 2–3).` },
+            { id: "s3", est: 15, label: `<b>Virtual memory</b> (skim): OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf" target="_blank" rel="noopener">Ch 19 "Paging: Faster Translations (TLBs)"</a> — each process gets its own address space via page tables; the <b>TLB</b> caches translations so a hit makes it nearly free.` },
+            { id: "s4", est: 12, label: `<b>The page cache</b> (know it exists): the OS keeps recently-used file pages in RAM. A <code>write()</code> only marks pages dirty and returns — durability needs <code>fsync</code> (LWN <a href="https://lwn.net/Articles/752063/" target="_blank" rel="noopener">"PostgreSQL's fsync() surprise"</a>). The <i>internals</i> come back in the extension.` },
           ],
           model: `A cache line is ~64 bytes; row-major traversal is fast because it uses whole lines, pointer-chasing thrashes cache. Orders of magnitude: L1 ~1ns, main memory ~100ns, SSD ~16µs, network within a DC ~0.5ms. And two levels up: the OS pages memory (TLB-cached) and caches file data in RAM — so "durable" means <code>fsync</code>'d, not "write() returned".`,
           cards: [
@@ -294,10 +295,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
           lead: `<b>Databases ②</b> — read a plan and diagnose a slow query.`,
-          refs: [
-            `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">14.1 "Using EXPLAIN"</a> and UTIL's <a href="https://use-the-index-luke.com/sql/explain-plan/postgresql" target="_blank" rel="noopener">Postgres execution plans</a>.`,
-            `Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>.`,
-            `Always use <code>EXPLAIN (ANALYZE, BUFFERS)</code>: a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> / raise <code>default_statistics_target</code>).`,
+          sub: [
+            { id: "s1", est: 22, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">14.1 "Using EXPLAIN"</a> and UTIL's <a href="https://use-the-index-luke.com/sql/explain-plan/postgresql" target="_blank" rel="noopener">Postgres execution plans</a>.` },
+            { id: "s2", est: 17, label: `Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>.` },
+            { id: "s3", est: 16, label: `Always use <code>EXPLAIN (ANALYZE, BUFFERS)</code>: a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> / raise <code>default_statistics_target</code>).` },
           ],
           model: `The planner is <b>cost-based</b>, not rule-based: it will (correctly) ignore your index when a predicate matches a large fraction of rows, because a sequential scan is cheaper. An unused index isn't always a bug.`,
           cards: [
@@ -319,10 +320,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 40,
           lead: `<b>Networking ④</b> — trace a name to an address, hop by hop.`,
-          refs: [
-            `Read Cloudflare <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">"What is DNS?"</a> + <a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">DNS server types</a>.`,
-            `The path: stub resolver → <b>recursive resolver</b> → root (13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA, with caching (TTL) at every hop.`,
-            `Run <code>dig +trace google.com</code> to watch the root→TLD→authoritative delegation live.`,
+          sub: [
+            { id: "s1", est: 16, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">"What is DNS?"</a> + <a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">DNS server types</a>.` },
+            { id: "s2", est: 14, label: `The path: stub resolver → <b>recursive resolver</b> → root (13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA, with caching (TTL) at every hop.` },
+            { id: "s3", cat: "lab", est: 10, label: `Run <code>dig +trace google.com</code> to watch the root→TLD→authoritative delegation live.` },
           ],
           model: `DNS is why "it works on my machine" can be a caching lie: resolvers, the OS, and your app each cache records for the TTL, so a stale A record survives long after you change it.`,
           cards: [
@@ -341,10 +342,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
           lead: `<b>DevOps ④</b> — how Pods get placed, kept healthy, and scaled.`,
-          refs: [
-            `Read the k8s <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/" target="_blank" rel="noopener">scheduler</a> (filter→score→bind) and <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" target="_blank" rel="noopener">liveness/readiness/startup probes</a>.`,
-            `Read <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank" rel="noopener">requests/limits</a> and <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">HPA</a>.`,
-            `<b>requests</b> = scheduling guarantee; <b>limits</b> = runtime cap (CPU throttled, memory over-limit → OOMKill).`,
+          sub: [
+            { id: "s1", est: 22, label: `Read the k8s <a href="https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/" target="_blank" rel="noopener">scheduler</a> (filter→score→bind) and <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/" target="_blank" rel="noopener">liveness/readiness/startup probes</a>.` },
+            { id: "s2", est: 19, label: `Read <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/" target="_blank" rel="noopener">requests/limits</a> and <a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">HPA</a>.` },
+            { id: "s3", est: 14, label: `<b>requests</b> = scheduling guarantee; <b>limits</b> = runtime cap (CPU throttled, memory over-limit → OOMKill).` },
           ],
           model: `<b>liveness</b> restarts an unhealthy Pod; <b>readiness</b> removes it from the Service until ready; <b>startup</b> protects slow boots. A failing <i>dependency</i> should flip readiness, not liveness — or you restart-loop a healthy Pod.`,
           cards: [
@@ -363,9 +364,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 50,
           lead: `<b>Security ①</b> — the risk landscape, and the authn/authz split.`,
-          refs: [
-            `Skim the <a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">OWASP Top 10 (2025 — the current edition)</a>: #1 Broken Access Control, then Security Misconfiguration, Software Supply-Chain Failures, Cryptographic Failures, Injection…`,
-            `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener">Authentication Cheat Sheet</a>.`,
+          sub: [
+            { id: "s1", est: 28, label: `Skim the <a href="https://owasp.org/Top10/2025/" target="_blank" rel="noopener">OWASP Top 10 (2025 — the current edition)</a>: #1 Broken Access Control, then Security Misconfiguration, Software Supply-Chain Failures, Cryptographic Failures, Injection…` },
+            { id: "s2", est: 22, label: `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html" target="_blank" rel="noopener">Authentication Cheat Sheet</a>.` },
           ],
           model: `<b>Authentication</b> = who you are; <b>authorization</b> = what you may do. "Broken Access Control" being #1 means most auth bugs are missing <i>authorization</i> checks — forgetting that <i>this</i> user owns <i>this</i> record (IDOR). Every endpoint needs an ownership check, not just a login gate.`,
           cards: [
@@ -387,9 +388,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
           lead: `<b>Networking ⑤</b> — what actually happens when the padlock appears.`,
-          refs: [
-            `Read Cloudflare <a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" rel="noopener">"What happens in a TLS handshake?"</a> (TLS 1.3 is <b>1-RTT</b>, with 0-RTT resumption).`,
-            `For the byte level, skim <a href="https://tls13.xargs.org/" target="_blank" rel="noopener">The Illustrated TLS 1.3 Connection</a> (every byte annotated).`,
+          sub: [
+            { id: "s1", est: 25, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" rel="noopener">"What happens in a TLS handshake?"</a> (TLS 1.3 is <b>1-RTT</b>, with 0-RTT resumption).` },
+            { id: "s2", est: 20, label: `For the byte level, skim <a href="https://tls13.xargs.org/" target="_blank" rel="noopener">The Illustrated TLS 1.3 Connection</a> (every byte annotated).` },
           ],
           model: `Asymmetric keys are used only to <b>agree a symmetric session key</b>; bulk traffic is symmetric (fast). A cert chain (leaf → intermediate → root CA) proves you're talking to the real server. "Cert expired/unknown authority" is usually a missing intermediate, not a broken key.`,
           cards: [
@@ -408,10 +409,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
           lead: `<b>Databases ③</b> — multi-version concurrency control, and why tables bloat.`,
-          refs: [
-            `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener">Ch 13.1 Concurrency Control (MVCC)</a> + <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 Transaction Isolation</a>.`,
-            `Each row version carries <code>xmin</code>/<code>xmax</code>; each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa.`,
-            `Deeper tuple-level detail: Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.`,
+          sub: [
+            { id: "s1", est: 24, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener">Ch 13.1 Concurrency Control (MVCC)</a> + <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 Transaction Isolation</a>.` },
+            { id: "s2", est: 18, label: `Each row version carries <code>xmin</code>/<code>xmax</code>; each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa.` },
+            { id: "s3", est: 13, label: `Deeper tuple-level detail: Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.` },
           ],
           model: `An <code>UPDATE</code> is really <i>insert a new row version + mark the old dead</i> — so heavy-update tables bloat and need <b>VACUUM</b>/autovacuum. That single fact explains "my table is 5× its data size."`,
           cards: [
@@ -430,9 +431,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
           lead: `<b>DevOps ⑤</b> — how changes reach production safely.`,
-          refs: [
-            `Read Martin Fowler <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a> + <a href="https://martinfowler.com/bliki/CanaryRelease.html" target="_blank" rel="noopener">CanaryRelease</a> (rolling = k8s default).`,
-            `Read the <a href="https://opengitops.dev/" target="_blank" rel="noopener">4 GitOps principles</a> and <a href="https://12factor.net/" target="_blank" rel="noopener">The Twelve-Factor App</a> (esp. III config in env, VI stateless, IX disposability, XI logs to stdout).`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Martin Fowler <a href="https://martinfowler.com/bliki/BlueGreenDeployment.html" target="_blank" rel="noopener">BlueGreenDeployment</a> + <a href="https://martinfowler.com/bliki/CanaryRelease.html" target="_blank" rel="noopener">CanaryRelease</a> (rolling = k8s default).` },
+            { id: "s2", est: 23, label: `Read the <a href="https://opengitops.dev/" target="_blank" rel="noopener">4 GitOps principles</a> and <a href="https://12factor.net/" target="_blank" rel="noopener">The Twelve-Factor App</a> (esp. III config in env, VI stateless, IX disposability, XI logs to stdout).` },
           ],
           model: `Rolling = incremental replace; blue-green = two environments, flip traffic, instant rollback; canary = small %, watch metrics, ramp. <b>GitOps is the reconciliation loop again</b>: Git holds desired state, an agent (Argo/Flux) converges the cluster to it.`,
           cards: [
@@ -453,9 +454,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ①</b> — the primitives every chain is built from.`,
-          refs: [
-            `Read <i>Mastering Ethereum</i> (2nd ed, free) <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_4.md" target="_blank" rel="noopener">Ch 4 "Cryptography"</a> and <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch11_blockchain.adoc" target="_blank" rel="noopener">Ch 11</a> (Merkle-tree section).`,
-            `The two curves you use: Ethereum/Bitcoin = <b>ECDSA/secp256k1</b> + <b>keccak256</b>; Solana = <b>ed25519 (EdDSA)</b> (<a href="https://datatracker.ietf.org/doc/html/rfc8032" target="_blank" rel="noopener">RFC 8032</a>).`,
+          sub: [
+            { id: "s1", est: 32, label: `Read <i>Mastering Ethereum</i> (2nd ed, free) <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_4.md" target="_blank" rel="noopener">Ch 4 "Cryptography"</a> and <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch11_blockchain.adoc" target="_blank" rel="noopener">Ch 11</a> (Merkle-tree section).` },
+            { id: "s2", est: 23, label: `The two curves you use: Ethereum/Bitcoin = <b>ECDSA/secp256k1</b> + <b>keccak256</b>; Solana = <b>ed25519 (EdDSA)</b> (<a href="https://datatracker.ietf.org/doc/html/rfc8032" target="_blank" rel="noopener">RFC 8032</a>).` },
           ],
           model: `<b>Hashing</b> = one-way integrity (SHA-256/keccak256); <b>encryption</b> = reversible secrecy; <b>signing</b> = authenticity + non-repudiation. A <b>Merkle tree</b> hashes pairs up to one root, so you can prove one leaf is included with ~log(N) hashes.`,
           cards: [
@@ -474,9 +475,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
           lead: `<b>Networking ⑥</b> — why HTTP kept getting rewritten.`,
-          refs: [
-            `Read HPBN <a href="https://hpbn.co/http1x/" target="_blank" rel="noopener">HTTP/1.X</a> + <a href="https://hpbn.co/http2/" target="_blank" rel="noopener">HTTP/2</a> (persistent connections, why pipelining failed, H2 multiplexing/framing/HPACK).`,
-            `For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, connection migration.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read HPBN <a href="https://hpbn.co/http1x/" target="_blank" rel="noopener">HTTP/1.X</a> + <a href="https://hpbn.co/http2/" target="_blank" rel="noopener">HTTP/2</a> (persistent connections, why pipelining failed, H2 multiplexing/framing/HPACK).` },
+            { id: "s2", est: 23, label: `For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, connection migration.` },
           ],
           model: `H2 fixed HTTP-level HOL blocking (multiplexing) but sits on TCP, so one lost packet still stalls all streams at the transport layer. H3 moves multiplexing into QUIC/UDP so a loss stalls only <i>its</i> stream. That's the whole H2→H3 story.`,
           cards: [
@@ -495,10 +496,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 50,
           lead: `<b>Caching ①</b> — how one thread does millions of ops/sec.`,
-          refs: [
-            `Read the Redis <a href="https://redis.io/docs/latest/develop/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.`,
-            `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.`,
-            `Structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log; HLL → cardinality.`,
+          sub: [
+            { id: "s1", est: 20, label: `Read the Redis <a href="https://redis.io/docs/latest/develop/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.` },
+            { id: "s2", est: 16, label: `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.` },
+            { id: "s3", est: 14, label: `Structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log; HLL → cardinality.` },
           ],
           model: `Redis is memory/network-bound, not CPU-bound. Because it's one loop, a single O(N) command (<code>KEYS *</code>, a huge <code>SMEMBERS</code>/<code>SORT</code>) blocks <i>every</i> client — use <code>SCAN</code>, keep values small, never <code>KEYS</code> in prod.`,
           cards: [
@@ -517,9 +518,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 60,
           lead: `<b>Databases ④</b> — map each anomaly to the level that stops it.`,
-          refs: [
-            `Read DDIA <b>Ch 7 "Weak Isolation Levels"</b> straight through (Read Committed → Snapshot Isolation → Preventing Lost Updates → Write Skew & Phantoms).`,
-            `Cross-check PG's <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 table</a>. Cheat-sheet: dirty read → Read Committed; non-repeatable → Repeatable Read/SI; phantom → Serializable; lost update → SI does NOT stop it (use <code>FOR UPDATE</code>).`,
+          sub: [
+            { id: "s1", est: 32, label: `Read DDIA <b>Ch 7 "Weak Isolation Levels"</b> straight through (Read Committed → Snapshot Isolation → Preventing Lost Updates → Write Skew & Phantoms).` },
+            { id: "s2", est: 28, label: `Cross-check PG's <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 table</a>. Cheat-sheet: dirty read → Read Committed; non-repeatable → Repeatable Read/SI; phantom → Serializable; lost update → SI does NOT stop it (use <code>FOR UPDATE</code>).` },
           ],
           model: `<b>Write skew</b> is the interview-grade one: two txns read an overlapping set, each updates a <i>different</i> row, together breaking an invariant (both on-call doctors go off-call). Snapshot isolation allows it; only Serializable (SSI) stops it. Relevant to any check-then-act in your market settlement.`,
           cards: [
@@ -541,9 +542,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 55,
           lead: `<b>DevOps ⑥</b> — what to measure, and why percentiles beat averages.`,
-          refs: [
-            `Read Google SRE (free) <a href="https://sre.google/sre-book/monitoring-distributed-systems/" target="_blank" rel="noopener">Ch 6 "Monitoring Distributed Systems"</a> — the <b>Four Golden Signals</b> (Latency, Traffic, Errors, Saturation).`,
-            `Read Prometheus <a href="https://prometheus.io/docs/practices/histograms/" target="_blank" rel="noopener">"Histograms and summaries"</a>: histograms expose <code>_bucket{le=…}</code> so the server computes <code>histogram_quantile(0.99, …)</code> and can aggregate across instances (summaries can't).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read Google SRE (free) <a href="https://sre.google/sre-book/monitoring-distributed-systems/" target="_blank" rel="noopener">Ch 6 "Monitoring Distributed Systems"</a> — the <b>Four Golden Signals</b> (Latency, Traffic, Errors, Saturation).` },
+            { id: "s2", est: 25, label: `Read Prometheus <a href="https://prometheus.io/docs/practices/histograms/" target="_blank" rel="noopener">"Histograms and summaries"</a>: histograms expose <code>_bucket{le=…}</code> so the server computes <code>histogram_quantile(0.99, …)</code> and can aggregate across instances (summaries can't).` },
           ],
           model: `Why p99 not average: the mean is dominated by the bulk; tail latency is what users and fan-out/queued requests feel. One slow dependency in a fan-out makes the tail the effective latency.`,
           cards: [
@@ -563,9 +564,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 60,
           lead: `<b>Blockchain ②</b> — the machine your contracts run on.`,
-          refs: [
-            `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_14.md" target="_blank" rel="noopener">Ch 14 "The EVM"</a> and explore <a href="https://www.evm.codes/" target="_blank" rel="noopener">evm.codes</a> (per-opcode gas + live playground).`,
-            `The EVM is a <b>stack machine</b> (1024-deep, 256-bit words). Three data locations: <b>storage</b> (persistent, expensive, in the state trie), <b>memory</b> (per-call, cheap, wiped), <b>calldata</b> (read-only input).`,
+          sub: [
+            { id: "s1", est: 32, label: `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_14.md" target="_blank" rel="noopener">Ch 14 "The EVM"</a> and explore <a href="https://www.evm.codes/" target="_blank" rel="noopener">evm.codes</a> (per-opcode gas + live playground).` },
+            { id: "s2", est: 28, label: `The EVM is a <b>stack machine</b> (1024-deep, 256-bit words). Three data locations: <b>storage</b> (persistent, expensive, in the state trie), <b>memory</b> (per-call, cheap, wiped), <b>calldata</b> (read-only input).` },
           ],
           model: `Every opcode costs <b>gas</b>; <code>SSTORE</code> is the pricey one (cold vs warm, EIP-2929). The account model: <b>EOA</b> (key-controlled) vs <b>contract account</b> (code + storage) — every state change starts from an EOA-signed tx.`,
           cards: [
@@ -584,9 +585,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 55,
           lead: `<b>Messaging ①</b> — the distinction that unlocks all of streaming.`,
-          refs: [
-            `Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://web.archive.org/web/20260609223006/https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a> (archived — LinkedIn removed the original).`,
-            `<b>Queue/broker</b> (RabbitMQ, SQS): message deleted on ack, load-balanced across competing consumers, weak ordering. <b>Log</b> (Kafka): append-only, retained, each consumer tracks its own <b>offset</b> — replayable, ordered within a partition.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read DDIA <b>Ch 11</b> "Messaging Systems" → "Partitioned Logs", plus Jay Kreps' <a href="https://web.archive.org/web/20260609223006/https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying" target="_blank" rel="noopener">"The Log"</a> (archived — LinkedIn removed the original).` },
+            { id: "s2", est: 25, label: `<b>Queue/broker</b> (RabbitMQ, SQS): message deleted on ack, load-balanced across competing consumers, weak ordering. <b>Log</b> (Kafka): append-only, retained, each consumer tracks its own <b>offset</b> — replayable, ordered within a partition.` },
           ],
           model: `"RabbitMQ or Kafka?" → task/RPC work with per-message ack/priority/TTL → broker/queue; event streaming, replay, multiple independent consumers, high throughput → log/Kafka. The axis is delete-on-ack vs retain-with-offset.`,
           cards: [
@@ -607,10 +608,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 45,
           lead: `<b>Networking ⑦</b> — the boxes between the client and your app.`,
-          refs: [
-            `Read Cloudflare on <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank" rel="noopener">reverse proxies</a> + <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" rel="noopener">CDNs</a>.`,
-            `<b>L4 LB</b> "moves packets" (routes by IP/port, can't read URLs — NLB, IPVS, HAProxy TCP). <b>L7 LB</b> "reads requests" (route <code>/api</code> vs <code>/img</code>, terminate TLS, sticky sessions — nginx, Envoy, ALB).`,
-            `A <b>reverse proxy</b> does TLS termination, caching, compression, buffering, hides the origin; a <b>CDN</b> is edge caches near users.`,
+          sub: [
+            { id: "s1", est: 16, label: `Read Cloudflare on <a href="https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/" target="_blank" rel="noopener">reverse proxies</a> + <a href="https://www.cloudflare.com/learning/cdn/what-is-a-cdn/" target="_blank" rel="noopener">CDNs</a>.` },
+            { id: "s2", est: 16, label: `<b>L4 LB</b> "moves packets" (routes by IP/port, can't read URLs — NLB, IPVS, HAProxy TCP). <b>L7 LB</b> "reads requests" (route <code>/api</code> vs <code>/img</code>, terminate TLS, sticky sessions — nginx, Envoy, ALB).` },
+            { id: "s3", est: 13, label: `A <b>reverse proxy</b> does TLS termination, caching, compression, buffering, hides the origin; a <b>CDN</b> is edge caches near users.` },
           ],
           model: `"Terminate TLS at the edge" = the L7 proxy/LB decrypts and talks plain HTTP to backends, centralizing certs and offloading crypto. Contrast with TLS passthrough (backend terminates) and re-encryption.`,
           cards: [
@@ -629,9 +630,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 60,
           lead: `<b>Security ②</b> — the modern auth flow, and how tokens get forged.`,
-          refs: [
-            `Read the OAuth <a href="https://www.rfc-editor.org/rfc/rfc6749" target="_blank" rel="noopener">RFC 6749</a> authorization-code flow + <a href="https://www.rfc-editor.org/rfc/rfc7636" target="_blank" rel="noopener">PKCE (RFC 7636)</a>, and PortSwigger's <a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">JWT attacks</a>.`,
-            `<b>Authorization Code + PKCE</b> is the modern default for all client types: send <code>code_challenge=S256(code_verifier)</code> up front, the raw verifier on the back channel, so a stolen code is useless.`,
+          sub: [
+            { id: "s1", est: 32, label: `Read the OAuth <a href="https://www.rfc-editor.org/rfc/rfc6749" target="_blank" rel="noopener">RFC 6749</a> authorization-code flow + <a href="https://www.rfc-editor.org/rfc/rfc7636" target="_blank" rel="noopener">PKCE (RFC 7636)</a>, and PortSwigger's <a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">JWT attacks</a>.` },
+            { id: "s2", est: 28, label: `<b>Authorization Code + PKCE</b> is the modern default for all client types: send <code>code_challenge=S256(code_verifier)</code> up front, the raw verifier on the back channel, so a stolen code is useless.` },
           ],
           model: `For JWT: pin the expected <code>alg</code> <b>server-side</b>; never trust the token's <code>alg</code> header. The <b>alg:none</b> attack drops the signature; the RS256→HS256 confusion attack signs with the public key as an HMAC secret. Treat accepted algorithms as an allowlist.`,
           cards: [
@@ -650,9 +651,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
           lead: `<b>Databases ⑤</b> — how the DB stays correct under contention and crashes.`,
-          refs: [
-            `Read PG docs <a href="https://www.postgresql.org/docs/current/explicit-locking.html" target="_blank" rel="noopener">13.3 "Explicit Locking"</a> (row/table modes, the conflict matrix, <b>deadlock</b> detection via the waits-for graph + <code>deadlock_timeout</code>).`,
-            `Read <a href="https://www.postgresql.org/docs/current/wal-intro.html" target="_blank" rel="noopener">Ch 30 "Write-Ahead Log"</a>: append the change to the log (fsync'd) <i>before</i> modifying the data page, so a crash can redo.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read PG docs <a href="https://www.postgresql.org/docs/current/explicit-locking.html" target="_blank" rel="noopener">13.3 "Explicit Locking"</a> (row/table modes, the conflict matrix, <b>deadlock</b> detection via the waits-for graph + <code>deadlock_timeout</code>).` },
+            { id: "s2", est: 25, label: `Read <a href="https://www.postgresql.org/docs/current/wal-intro.html" target="_blank" rel="noopener">Ch 30 "Write-Ahead Log"</a>: append the change to the log (fsync'd) <i>before</i> modifying the data page, so a crash can redo.` },
           ],
           model: `App-level deadlock prevention is mostly <b>consistent lock ordering</b> — if every txn locks in the same order, cycles can't form. WAL also doubles as the replication + point-in-time-recovery stream (same "log" idea as Kafka).`,
           cards: [
@@ -673,10 +674,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ③</b> — the mental flip from the EVM.`,
-          refs: [
-            `Read Solana docs <a href="https://solana.com/docs/core/accounts" target="_blank" rel="noopener">Accounts</a> + <a href="https://solana.com/docs/core/programs" target="_blank" rel="noopener">Programs</a>.`,
-            `<b>Programs are stateless</b> (executable accounts holding sBPF bytecode); all mutable state lives in <b>separate data accounts</b> a transaction must pass in. Accounts pay <b>rent</b> (must be rent-exempt).`,
-            `Side-by-side: <a href="https://solana.com/developers/evm-to-svm/accounts" target="_blank" rel="noopener">EVM→SVM: Accounts</a>.`,
+          sub: [
+            { id: "s1", est: 20, label: `Read Solana docs <a href="https://solana.com/docs/core/accounts" target="_blank" rel="noopener">Accounts</a> + <a href="https://solana.com/docs/core/programs" target="_blank" rel="noopener">Programs</a>.` },
+            { id: "s2", est: 20, label: `<b>Programs are stateless</b> (executable accounts holding sBPF bytecode); all mutable state lives in <b>separate data accounts</b> a transaction must pass in. Accounts pay <b>rent</b> (must be rent-exempt).` },
+            { id: "s3", est: 15, label: `Side-by-side: <a href="https://solana.com/developers/evm-to-svm/accounts" target="_blank" rel="noopener">EVM→SVM: Accounts</a>.` },
           ],
           model: `Contrast with Ethereum's "contract = code + its own storage." Because state is external, Solana instructions must list every account they read/write up front — the constraint that later buys parallelism (Sealevel).`,
           cards: [
@@ -695,10 +696,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
           lead: `<b>DevOps ⑦</b> — reliability as an engineering budget, plus how traces stitch together.`,
-          refs: [
-            `Read Google SRE <a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Ch 4 "Service Level Objectives"</a> + the error-budget part of <a href="https://sre.google/sre-book/embracing-risk/" target="_blank" rel="noopener">Ch 3 "Embracing Risk"</a>.`,
-            `Read OpenTelemetry <a href="https://opentelemetry.io/docs/concepts/signals/traces/" target="_blank" rel="noopener">Traces</a>.`,
-            `<b>SLI</b> = measured level (e.g. % requests < 300 ms); <b>SLO</b> = target (99.9%/28d); <b>error budget</b> = 1 − SLO (99.9% ⇒ ~43 min/month).`,
+          sub: [
+            { id: "s1", est: 22, label: `Read Google SRE <a href="https://sre.google/sre-book/service-level-objectives/" target="_blank" rel="noopener">Ch 4 "Service Level Objectives"</a> + the error-budget part of <a href="https://sre.google/sre-book/embracing-risk/" target="_blank" rel="noopener">Ch 3 "Embracing Risk"</a>.` },
+            { id: "s2", est: 14, label: `Read OpenTelemetry <a href="https://opentelemetry.io/docs/concepts/signals/traces/" target="_blank" rel="noopener">Traces</a>.` },
+            { id: "s3", est: 14, label: `<b>SLI</b> = measured level (e.g. % requests < 300 ms); <b>SLO</b> = target (99.9%/28d); <b>error budget</b> = 1 − SLO (99.9% ⇒ ~43 min/month).` },
           ],
           model: `Budget remaining → ship features; budget spent → freeze risky changes. Don't be <i>more</i> reliable than the SLO needs — excess reliability has real opportunity cost, and users can't tell. 100% is the wrong target.`,
           cards: [
@@ -717,9 +718,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
           lead: `<b>Systems ③</b> — the I/O model that scales past thread-per-connection.`,
-          refs: [
-            `Read Dan Kegel's <a href="http://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered).`,
-            `The modern pattern: a few event-loop threads each call <code>epoll_wait()</code> for ready fds, then do <b>non-blocking</b> <code>accept</code>/<code>read</code>/<code>write</code>.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Dan Kegel's <a href="http://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered).` },
+            { id: "s2", est: 23, label: `The modern pattern: a few event-loop threads each call <code>epoll_wait()</code> for ready fds, then do <b>non-blocking</b> <code>accept</code>/<code>read</code>/<code>write</code>.` },
           ],
           model: `That's nginx (worker per core), Node (loop + libuv pool), Netty, tokio, and Go's netpoller (hidden behind blocking-looking goroutines). Four axes people muddle: blocking vs non-blocking vs sync vs async (kernel does the work, notifies on completion — io_uring).`,
           cards: [
@@ -740,10 +741,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ④</b> — from signed bytes to state change, and how fees are set.`,
-          refs: [
-            `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_6.md" target="_blank" rel="noopener">Ch 6 "Transactions"</a> and <a href="https://eips.ethereum.org/EIPS/eip-1559" target="_blank" rel="noopener">EIP-1559</a>.`,
-            `A tx carries nonce, gas fields, to/value/data, signature (RLP-encoded).`,
-            `<b>EIP-1559</b>: blocks target 50% fullness (elasticity 2); the <b>base fee</b> adjusts ≤12.5%/block and is <b>burned</b>; a <b>tip</b> goes to the proposer.`,
+          sub: [
+            { id: "s1", est: 24, label: `Read <i>Mastering Ethereum</i> <a href="https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_6.md" target="_blank" rel="noopener">Ch 6 "Transactions"</a> and <a href="https://eips.ethereum.org/EIPS/eip-1559" target="_blank" rel="noopener">EIP-1559</a>.` },
+            { id: "s2", est: 15, label: `A tx carries nonce, gas fields, to/value/data, signature (RLP-encoded).` },
+            { id: "s3", est: 16, label: `<b>EIP-1559</b>: blocks target 50% fullness (elasticity 2); the <b>base fee</b> adjusts ≤12.5%/block and is <b>burned</b>; a <b>tip</b> goes to the proposer.` },
           ],
           model: `Cite the invariants — <b>elasticity 2</b> (50% target) and <b>max ±12.5%/block</b> base-fee change — NOT "15M/30M gas" (historical mainnet values, not protocol constants). A type-2 tx sets <code>max_fee</code> + <code>max_priority_fee</code> and is refunded the difference.`,
           cards: [
@@ -762,10 +763,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 55,
           lead: `<b>Messaging ②</b> — Kafka's core model and durability knobs.`,
-          refs: [
-            `Read <i>Kafka: The Definitive Guide</i> (2nd ed, <a href="https://www.confluent.io/resources/kafka-the-definitive-guide-v2/" target="_blank" rel="noopener">free from Confluent</a>) Ch 1 + the internals/reliability chapters.`,
-            `A <b>topic</b> splits into <b>partitions</b> (parallelism + ordering); each record has a monotonic <b>offset</b>; a <b>consumer group</b> assigns each partition to exactly one member (parallelism ≤ partition count).`,
-            `Durability: replicas (leader + followers); <b>ISR</b> = replicas caught up to the leader. <code>acks=all</code> + <code>min.insync.replicas=2</code> ⇒ durable once all ISR have it.`,
+          sub: [
+            { id: "s1", est: 20, label: `Read <i>Kafka: The Definitive Guide</i> (2nd ed, <a href="https://www.confluent.io/resources/kafka-the-definitive-guide-v2/" target="_blank" rel="noopener">free from Confluent</a>) Ch 1 + the internals/reliability chapters.` },
+            { id: "s2", est: 18, label: `A <b>topic</b> splits into <b>partitions</b> (parallelism + ordering); each record has a monotonic <b>offset</b>; a <b>consumer group</b> assigns each partition to exactly one member (parallelism ≤ partition count).` },
+            { id: "s3", est: 17, label: `Durability: replicas (leader + followers); <b>ISR</b> = replicas caught up to the leader. <code>acks=all</code> + <code>min.insync.replicas=2</code> ⇒ durable once all ISR have it.` },
           ],
           model: `Ordering is guaranteed only <i>within a partition</i>. For per-entity order (all events for one user/market in order), key by that entity so they land in the same partition.`,
           cards: [
@@ -784,10 +785,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 45,
           lead: `<b>Review</b> — re-derive the model under your Solana/Anchor work.`,
-          refs: [
-            `Re-read <i>The Rust Book</i> <a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html" target="_blank" rel="noopener">Ch 4 "Understanding Ownership"</a> (move/borrow/lifetimes).`,
-            `Without looking, explain aloud: why can't a <code>&mut</code> coexist with any other borrow? What does a lifetime annotation actually constrain?`,
-            `Write three snippets that <i>fail</i> to compile and predict the exact borrow-checker error before running.`,
+          sub: [
+            { id: "s1", est: 19, label: `Re-read <i>The Rust Book</i> <a href="https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html" target="_blank" rel="noopener">Ch 4 "Understanding Ownership"</a> (move/borrow/lifetimes).` },
+            { id: "s2", cat: "exercise", est: 13, label: `Without looking, explain aloud: why can't a <code>&mut</code> coexist with any other borrow? What does a lifetime annotation actually constrain?` },
+            { id: "s3", cat: "exercise", est: 13, label: `Write three snippets that <i>fail</i> to compile and predict the exact borrow-checker error before running.` },
           ],
           model: `Ownership makes "who frees this and when" a <b>compile-time</b> fact; the borrow checker enforces "many readers XOR one writer" → no data race, no use-after-free. Everything else (lifetimes, <code>&mut</code>) serves that.`,
           cards: [
@@ -808,9 +809,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 50,
           lead: `<b>Caching ②</b> — patterns, persistence, and surviving a hot-key expiry.`,
-          refs: [
-            `Read AWS <a href="https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html" target="_blank" rel="noopener">caching patterns</a> (cache-aside vs write-through vs write-behind) and the Redis <a href="https://redis.io/docs/latest/develop/reference/eviction/" target="_blank" rel="noopener">eviction</a> + <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/" target="_blank" rel="noopener">persistence (RDB/AOF)</a> pages.`,
-            `Handle the <b>stampede/thundering herd</b> (hot key expires → thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read AWS <a href="https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html" target="_blank" rel="noopener">caching patterns</a> (cache-aside vs write-through vs write-behind) and the Redis <a href="https://redis.io/docs/latest/develop/reference/eviction/" target="_blank" rel="noopener">eviction</a> + <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/" target="_blank" rel="noopener">persistence (RDB/AOF)</a> pages.` },
+            { id: "s2", est: 23, label: `Handle the <b>stampede/thundering herd</b> (hot key expires → thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>.` },
           ],
           model: `Prefer <b>delete-on-write</b> over update to avoid caching a value a concurrent write races. Eviction: <code>allkeys-lru/lfu</code> for a pure cache, <code>volatile-*</code> when you mix cache + persistent keys (Redis uses <i>sampled</i>, not exact, LRU/LFU).`,
           cards: [
@@ -829,10 +830,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑤</b> — the runtime, program addresses, and cross-program calls.`,
-          refs: [
-            `Read Solana docs <a href="https://solana.com/docs/core/pda" target="_blank" rel="noopener">PDAs</a> + <a href="https://solana.com/docs/core/cpi" target="_blank" rel="noopener">CPIs</a> + <a href="https://solana.com/docs/core/fees/compute-budget" target="_blank" rel="noopener">Compute Budget</a>, and the <a href="https://docs.anza.xyz/validator/runtime" target="_blank" rel="noopener">Sealevel runtime</a>.`,
-            `Because every instruction declares the accounts it reads/writes, the runtime executes non-overlapping txs <b>in parallel</b> (writes serialized per account, reads parallel).`,
-            `<b>PDAs</b> = deterministic off-curve program-owned addresses (signed via <code>invoke_signed</code>); <b>CPIs</b> = one program calling another; CU: 200K default/instr, 1.4M max/tx.`,
+          sub: [
+            { id: "s1", est: 22, label: `Read Solana docs <a href="https://solana.com/docs/core/pda" target="_blank" rel="noopener">PDAs</a> + <a href="https://solana.com/docs/core/cpi" target="_blank" rel="noopener">CPIs</a> + <a href="https://solana.com/docs/core/fees/compute-budget" target="_blank" rel="noopener">Compute Budget</a>, and the <a href="https://docs.anza.xyz/validator/runtime" target="_blank" rel="noopener">Sealevel runtime</a>.` },
+            { id: "s2", est: 18, label: `Because every instruction declares the accounts it reads/writes, the runtime executes non-overlapping txs <b>in parallel</b> (writes serialized per account, reads parallel).` },
+            { id: "s3", est: 15, label: `<b>PDAs</b> = deterministic off-curve program-owned addresses (signed via <code>invoke_signed</code>); <b>CPIs</b> = one program calling another; CU: 200K default/instr, 1.4M max/tx.` },
           ],
           model: `EVM↔SVM in one line: Ethereum executes txs <i>sequentially</i> (global state, implicit access); Solana executes them <i>in parallel</i> by forcing explicit account declarations. Everything odd about Solana dev flows from that trade.`,
           cards: [
@@ -851,10 +852,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 55,
           lead: `<b>DevOps ⑧</b> — why most load tests lie, and how to measure honestly.`,
-          refs: [
-            `Watch Gil Tene, <a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU" target="_blank" rel="noopener">"How NOT to Measure Latency" (Strange Loop, ~43 min)</a> (coordinated omission ~33:50).`,
-            `Read Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>: for each resource check Utilization, Saturation, Errors.`,
-            `Tool axis: <code>ab</code>/<code>wrk</code> are closed-loop (throughput-driven, prone to CO); <code>vegeta</code>/<code>k6</code> can hold a fixed arrival rate (open-loop).`,
+          sub: [
+            { id: "s1", cat: "watch", est: 20, label: `Watch Gil Tene, <a href="https://www.youtube.com/watch?v=lJ8ydIuPFeU" target="_blank" rel="noopener">"How NOT to Measure Latency" (Strange Loop, ~43 min)</a> (coordinated omission ~33:50).` },
+            { id: "s2", est: 18, label: `Read Brendan Gregg's <a href="https://www.brendangregg.com/usemethod.html" target="_blank" rel="noopener">USE Method</a>: for each resource check Utilization, Saturation, Errors.` },
+            { id: "s3", est: 17, label: `Tool axis: <code>ab</code>/<code>wrk</code> are closed-loop (throughput-driven, prone to CO); <code>vegeta</code>/<code>k6</code> can hold a fixed arrival rate (open-loop).` },
           ],
           model: `<b>Coordinated omission</b>: a load tool that waits for a slow response before sending the next request silently deletes the worst samples — making the tail look great when it's awful. Drive a <b>constant arrival rate</b> and report from full distributions (HdrHistogram), not averages.`,
           cards: [
@@ -875,9 +876,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑥</b> — how a decentralized network agrees on one history.`,
-          refs: [
-            `Read <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch12_mining.adoc" target="_blank" rel="noopener">Ch 12 "Mining and Consensus"</a> (PoW, difficulty, best chain = most cumulative work).`,
-            `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/" target="_blank" rel="noopener">Gasper</a> (Casper FFG finality + LMD-GHOST fork choice) and Vitalik's <a href="https://blog.ethereum.org/2016/05/09/on-settlement-finality" target="_blank" rel="noopener">"On Settlement Finality"</a>.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read <i>Mastering Bitcoin</i> (3rd ed) <a href="https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch12_mining.adoc" target="_blank" rel="noopener">Ch 12 "Mining and Consensus"</a> (PoW, difficulty, best chain = most cumulative work).` },
+            { id: "s2", est: 25, label: `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/" target="_blank" rel="noopener">Gasper</a> (Casper FFG finality + LMD-GHOST fork choice) and Vitalik's <a href="https://blog.ethereum.org/2016/05/09/on-settlement-finality" target="_blank" rel="noopener">"On Settlement Finality"</a>.` },
           ],
           model: `PoW finality is <b>probabilistic</b> (more confirmations = exponentially safer); PoS adds <b>economic finality</b> (revert costs slashed stake). Reorgs happen — "finality" is a spectrum, not a switch.`,
           cards: [
@@ -896,10 +897,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 45,
           lead: `<b>Security ③</b> — credential storage and session design, done right.`,
-          refs: [
-            `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">Password Storage</a> + <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener">Session Management</a> cheat sheets.`,
-            `Use <b>Argon2id</b> (min m=19 MiB, t=2, p=1) for new systems; <b>bcrypt</b> (cost ≥10) is legacy-only and caps input at 72 bytes.`,
-            `Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and never store tokens in <code>localStorage</code> (XSS reads it).`,
+          sub: [
+            { id: "s1", est: 17, label: `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">Password Storage</a> + <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener">Session Management</a> cheat sheets.` },
+            { id: "s2", est: 15, label: `Use <b>Argon2id</b> (min m=19 MiB, t=2, p=1) for new systems; <b>bcrypt</b> (cost ≥10) is legacy-only and caps input at 72 bytes.` },
+            { id: "s3", est: 13, label: `Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and never store tokens in <code>localStorage</code> (XSS reads it).` },
           ],
           model: `Passwords are <b>hashed</b> (one-way, slow, salted) — not encrypted, never home-rolled. "Slow" is the point: it caps an attacker's guesses/sec. Fast hashes (SHA-256) are wrong for passwords.`,
           cards: [
@@ -918,10 +919,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 60,
           lead: `<b>Security ④ (capstone)</b> — the vulnerabilities most relevant to your FPMM/LMSR market.`,
-          refs: [
-            `Read the Solidity docs <a href="https://docs.soliditylang.org/en/latest/security-considerations.html" target="_blank" rel="noopener">Security Considerations</a> (checks-effects-interactions) and samczsun's <a href="https://samczsun.com/so-you-want-to-use-a-price-oracle/" target="_blank" rel="noopener">"So you want to use a price oracle"</a>.`,
-            `<b>Reentrancy</b>: any external call hands control to the callee <i>before</i> your state settles → do Checks → Effects → <b>Interactions last</b>, or use a <code>nonReentrant</code> mutex; beware read-only reentrancy (a view returns wrong data mid-write — the Curve case).`,
-            `<b>Oracle manipulation</b>: on-chain spot prices are attacker-controllable within a tx (flash loans) → use TWAPs / robust feeds.`,
+          sub: [
+            { id: "s1", est: 22, label: `Read the Solidity docs <a href="https://docs.soliditylang.org/en/latest/security-considerations.html" target="_blank" rel="noopener">Security Considerations</a> (checks-effects-interactions) and samczsun's <a href="https://samczsun.com/so-you-want-to-use-a-price-oracle/" target="_blank" rel="noopener">"So you want to use a price oracle"</a>.` },
+            { id: "s2", est: 20, label: `<b>Reentrancy</b>: any external call hands control to the callee <i>before</i> your state settles → do Checks → Effects → <b>Interactions last</b>, or use a <code>nonReentrant</code> mutex; beware read-only reentrancy (a view returns wrong data mid-write — the Curve case).` },
+            { id: "s3", est: 18, label: `<b>Oracle manipulation</b>: on-chain spot prices are attacker-controllable within a tx (flash loans) → use TWAPs / robust feeds.` },
           ],
           model: `Checks-Effects-Interactions in one line: validate, then write ALL state, then make external calls — so a re-entrant call always sees finalized state. OZ <code>ReentrancyGuard</code> is a storage flag that reverts on re-entry.`,
           cards: [
@@ -953,9 +954,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 55,
           lead: `<b>Distributed systems ①</b> — how a cluster agrees on one log despite crashes.`,
-          refs: [
-            `Read the Raft paper (Extended Version) <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener">"In Search of an Understandable Consensus Algorithm"</a> (Ongaro & Ousterhout) — §5 leader election + log replication.`,
-            `Watch it happen: <a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">The Secret Lives of Data</a> animates election + replication step by step.`,
+          sub: [
+            { id: "s1", est: 33, label: `Read the Raft paper (Extended Version) <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener">"In Search of an Understandable Consensus Algorithm"</a> (Ongaro & Ousterhout) — §5 leader election + log replication.` },
+            { id: "s2", cat: "watch", est: 22, label: `Watch it happen: <a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">The Secret Lives of Data</a> animates election + replication step by step.` },
           ],
           model: `A single elected <b>leader</b> forces all entries to flow leader→followers, so there are never conflicting logs to reconcile. Raft tolerates <b>crash</b> (fail-stop) faults only and needs <b>2f+1</b> nodes to survive f failures.`,
           cards: [
@@ -975,9 +976,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ⑥</b> — the machinery that cleans up MVCC's dead tuples (callback to d15).`,
-          refs: [
-            `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/routine-vacuuming.html" target="_blank" rel="noopener">"Routine Vacuuming"</a> (dead tuples, the autovacuum daemon, transaction-ID wraparound).`,
-            `Deeper: Egor Rogov, <a href="https://postgrespro.com/blog/pgsql/5967918" target="_blank" rel="noopener">"MVCC in PostgreSQL — 6. Vacuum"</a>.`,
+          sub: [
+            { id: "s1", est: 28, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/routine-vacuuming.html" target="_blank" rel="noopener">"Routine Vacuuming"</a> (dead tuples, the autovacuum daemon, transaction-ID wraparound).` },
+            { id: "s2", est: 22, label: `Deeper: Egor Rogov, <a href="https://postgrespro.com/blog/pgsql/5967918" target="_blank" rel="noopener">"MVCC in PostgreSQL — 6. Vacuum"</a>.` },
           ],
           model: `A dead tuple is removable only once it's older than the <b>xmin horizon</b> — the oldest xmin any live snapshot could still see. One long-running/idle-in-transaction txn, an abandoned replication slot, or an orphaned prepared txn pins that horizon back and blocks VACUUM from cleaning <i>any</i> newer dead tuples.`,
           cards: [
@@ -996,9 +997,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 55,
           lead: `<b>Systems ④</b> — how each process gets its own private address space, and why it's fast.`,
-          refs: [
-            `Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf" target="_blank" rel="noopener">Ch 18 "Paging: Introduction"</a> then <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf" target="_blank" rel="noopener">Ch 19 "Paging: Faster Translations (TLBs)"</a>.`,
-            `The abstraction: <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf" target="_blank" rel="noopener">Ch 13 "The Abstraction: Address Spaces"</a>.`,
+          sub: [
+            { id: "s1", est: 33, label: `Read OSTEP (free) <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf" target="_blank" rel="noopener">Ch 18 "Paging: Introduction"</a> then <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf" target="_blank" rel="noopener">Ch 19 "Paging: Faster Translations (TLBs)"</a>.` },
+            { id: "s2", est: 22, label: `The abstraction: <a href="https://pages.cs.wisc.edu/~remzi/OSTEP/vm-intro.pdf" target="_blank" rel="noopener">Ch 13 "The Abstraction: Address Spaces"</a>.` },
           ],
           model: `Paging turns every virtual reference into an extra memory lookup — the <b>page-table walk</b>. The <b>TLB</b> is a small MMU cache of recent virtual-page→physical-frame translations, so a hit makes translation nearly free and only a miss pays the walk. TLB hit rate, not the table shape, governs paging performance.`,
           cards: [
@@ -1019,9 +1020,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑦</b> — how L2s inherit L1 security, and the core trade-off.`,
-          refs: [
-            `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/scaling/" target="_blank" rel="noopener">Scaling</a> (rollups) — optimistic (fraud proofs) vs ZK (validity proofs).`,
-            `Check real maturity on <a href="https://l2beat.com/scaling/summary" target="_blank" rel="noopener">L2BEAT</a> (Stage 0–2) — many "optimistic" rollups still run permissioned fraud proofs / council overrides.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/scaling/" target="_blank" rel="noopener">Scaling</a> (rollups) — optimistic (fraud proofs) vs ZK (validity proofs).` },
+            { id: "s2", est: 25, label: `Check real maturity on <a href="https://l2beat.com/scaling/summary" target="_blank" rel="noopener">L2BEAT</a> (Stage 0–2) — many "optimistic" rollups still run permissioned fraud proofs / council overrides.` },
           ],
           model: `The trade is <i>when</i> you pay for trust. <b>Optimistic</b> assumes validity, allows a <b>fraud proof</b> in a challenge window (~7-day withdrawals, needs one honest watcher). <b>ZK</b> submits a <b>validity proof</b> every batch — finality in minutes, no honest-watcher assumption, heavier proving.`,
           cards: [
@@ -1040,9 +1041,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
           lead: `<b>Networking ⑧</b> — how ~100k networks find each other, and how one IP lives in many places.`,
-          refs: [
-            `Read Cloudflare <a href="https://www.cloudflare.com/learning/security/glossary/what-is-bgp/" target="_blank" rel="noopener">"What is BGP?"</a> (normative source: <a href="https://www.rfc-editor.org/info/rfc4271" target="_blank" rel="noopener">RFC 4271</a>).`,
-            `Then <a href="https://www.cloudflare.com/learning/cdn/glossary/anycast-network/" target="_blank" rel="noopener">"What is Anycast?"</a> — anycast is just BGP announcing one prefix from many sites.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/security/glossary/what-is-bgp/" target="_blank" rel="noopener">"What is BGP?"</a> (normative source: <a href="https://www.rfc-editor.org/info/rfc4271" target="_blank" rel="noopener">RFC 4271</a>).` },
+            { id: "s2", est: 23, label: `Then <a href="https://www.cloudflare.com/learning/cdn/glossary/anycast-network/" target="_blank" rel="noopener">"What is Anycast?"</a> — anycast is just BGP announcing one prefix from many sites.` },
           ],
           model: `BGP is a <b>path-vector</b> protocol: each Autonomous System advertises prefixes with the full <b>AS-path</b>, and routers pick largely by <i>policy</i> (business relationships), not physical distance. A route's legitimacy is <b>asserted, not proven</b> — hence hijacks, mitigated by RPKI/ROV.`,
           cards: [
@@ -1061,9 +1062,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 55,
           lead: `<b>Messaging ③</b> — what actually makes Kafka exactly-once, and its limits.`,
-          refs: [
-            `Read Confluent <a href="https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/" target="_blank" rel="noopener">"Exactly-Once Semantics… Here's How Kafka Does It"</a> (spec: <a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-98+-+Exactly+Once+Delivery+and+Transactional+Messaging" target="_blank" rel="noopener">KIP-98</a>).`,
-            `Note the scope: idempotence dedupes <i>within one partition + producer session</i>; cross-partition atomicity needs the transactions API + consumers at <code>isolation.level=read_committed</code>.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read Confluent <a href="https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/" target="_blank" rel="noopener">"Exactly-Once Semantics… Here's How Kafka Does It"</a> (spec: <a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-98+-+Exactly+Once+Delivery+and+Transactional+Messaging" target="_blank" rel="noopener">KIP-98</a>).` },
+            { id: "s2", est: 25, label: `Note the scope: idempotence dedupes <i>within one partition + producer session</i>; cross-partition atomicity needs the transactions API + consumers at <code>isolation.level=read_committed</code>.` },
           ],
           model: `The <b>idempotent producer</b> stamps each batch with a producer ID + monotonic per-partition sequence; the broker rejects a batch whose sequence isn't exactly +1 — killing retry duplicates. <b>Transactions</b> (<code>transactional.id</code>) add multi-partition atomic read-process-write.`,
           cards: [
@@ -1084,9 +1085,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 55,
           lead: `<b>Distributed systems ②</b> — the classic Paxos, and what changes when nodes are malicious.`,
-          refs: [
-            `Skim Lamport, <a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" target="_blank" rel="noopener">"Paxos Made Simple"</a> (prepare/promise → accept, majority quorums), then the Raft paper's "What's wrong with Paxos?".`,
-            `For Byzantine faults: Castro & Liskov, <a href="http://pmg.csail.mit.edu/papers/osdi99.pdf" target="_blank" rel="noopener">"Practical Byzantine Fault Tolerance"</a> (OSDI '99).`,
+          sub: [
+            { id: "s1", est: 30, label: `Skim Lamport, <a href="https://lamport.azurewebsites.net/pubs/paxos-simple.pdf" target="_blank" rel="noopener">"Paxos Made Simple"</a> (prepare/promise → accept, majority quorums), then the Raft paper's "What's wrong with Paxos?".` },
+            { id: "s2", est: 25, label: `For Byzantine faults: Castro & Liskov, <a href="http://pmg.csail.mit.edu/papers/osdi99.pdf" target="_blank" rel="noopener">"Practical Byzantine Fault Tolerance"</a> (OSDI '99).` },
           ],
           model: `Paxos decides <i>what</i> is safe but gives no operational leader/log — the gap Raft fills. <b>PBFT</b> tolerates <b>Byzantine</b> (lying) faults with <b>3f+1</b> replicas and a 3-phase exchange (pre-prepare → prepare → commit) — the ancestor of blockchain BFT.`,
           cards: [
@@ -1105,9 +1106,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ⑦</b> — where oversized values go, and how to keep updates cheap.`,
-          refs: [
-            `Read PG docs <a href="https://www.postgresql.org/docs/current/storage-toast.html" target="_blank" rel="noopener">"TOAST"</a> and <a href="https://www.postgresql.org/docs/current/storage-hot.html" target="_blank" rel="noopener">"Heap-Only Tuples (HOT)"</a>.`,
-            `Companion: Egor Rogov, <a href="https://postgrespro.com/blog/pgsql/5967910" target="_blank" rel="noopener">"MVCC — 5. In-page vacuum and HOT updates"</a>.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read PG docs <a href="https://www.postgresql.org/docs/current/storage-toast.html" target="_blank" rel="noopener">"TOAST"</a> and <a href="https://www.postgresql.org/docs/current/storage-hot.html" target="_blank" rel="noopener">"Heap-Only Tuples (HOT)"</a>.` },
+            { id: "s2", est: 23, label: `Companion: Egor Rogov, <a href="https://postgrespro.com/blog/pgsql/5967910" target="_blank" rel="noopener">"MVCC — 5. In-page vacuum and HOT updates"</a>.` },
           ],
           model: `Pages are 8 KB and tuples can't span pages, so values over ~2 KB are compressed/stored out-of-line in a <b>TOAST</b> table. A <b>HOT</b> update (no indexed column changed + free space on the same page) skips new index entries — a lower <code>fillfactor</code> reserves that space, avoiding index write-amplification and bloat.`,
           cards: [
@@ -1126,9 +1127,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
           lead: `<b>DevOps ⑨</b> — how zero-trust replaces shared secrets with attested identities.`,
-          refs: [
-            `Read <a href="https://spiffe.io/docs/latest/spiffe-about/overview/" target="_blank" rel="noopener">SPIFFE overview</a> + <a href="https://spiffe.io/docs/latest/deploying/svids/" target="_blank" rel="noopener">SVIDs</a> — a workload identity (<code>spiffe://…</code>) in a short-lived, auto-rotated cert.`,
-            `Context: <a href="https://www.redhat.com/en/topics/security/spiffe-and-spire" target="_blank" rel="noopener">SPIFFE/SPIRE intro</a>; a mesh (Istio/Envoy, Cilium) issues these to sidecars for automatic mTLS.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read <a href="https://spiffe.io/docs/latest/spiffe-about/overview/" target="_blank" rel="noopener">SPIFFE overview</a> + <a href="https://spiffe.io/docs/latest/deploying/svids/" target="_blank" rel="noopener">SVIDs</a> — a workload identity (<code>spiffe://…</code>) in a short-lived, auto-rotated cert.` },
+            { id: "s2", est: 23, label: `Context: <a href="https://www.redhat.com/en/topics/security/spiffe-and-spire" target="_blank" rel="noopener">SPIFFE/SPIRE intro</a>; a mesh (Istio/Envoy, Cilium) issues these to sidecars for automatic mTLS.` },
           ],
           model: `Zero-trust identity replaces long-lived API keys with <b>short-lived, auto-rotated, attested</b> SVIDs. An X.509-SVID carries the SPIFFE ID in its SAN and plugs straight into <b>mTLS</b>, so service-to-service auth proves <i>what a workload is</i> (verified at runtime), not where it sits.`,
           cards: [
@@ -1149,9 +1150,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 50,
           lead: `<b>Blockchain ⑧</b> — the cheap, temporary data lane that made rollups affordable.`,
-          refs: [
-            `Read <a href="https://eips.ethereum.org/EIPS/eip-4844" target="_blank" rel="noopener">EIP-4844</a> + the explainer <a href="https://www.eip4844.com/" target="_blank" rel="noopener">eip4844.com</a> — blob-carrying txs with a separate blob-gas market.`,
-            `Concept: ethereum.org <a href="https://ethereum.org/en/developers/docs/data-availability/" target="_blank" rel="noopener">Data availability</a>.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read <a href="https://eips.ethereum.org/EIPS/eip-4844" target="_blank" rel="noopener">EIP-4844</a> + the explainer <a href="https://www.eip4844.com/" target="_blank" rel="noopener">eip4844.com</a> — blob-carrying txs with a separate blob-gas market.` },
+            { id: "s2", est: 20, label: `Concept: ethereum.org <a href="https://ethereum.org/en/developers/docs/data-availability/" target="_blank" rel="noopener">Data availability</a>.` },
           ],
           model: `Blobs (~128 KB) attach to a tx, are priced in a <b>separate blob-gas market</b>, and are pruned after ~18 days — L2s only need data available long enough to reconstruct/challenge, not forever. This decouples L2 data-posting cost from L1 execution congestion.`,
           cards: [
@@ -1170,9 +1171,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 45,
           lead: `<b>Review</b> — how Go runs millions of goroutines on a handful of threads.`,
-          refs: [
-            `Re-read the shipped behaviour: <a href="https://go.dev/doc/go1.14" target="_blank" rel="noopener">Go 1.14 release notes</a> (async preemption) + the <a href="https://github.com/golang/proposal/blob/master/design/24543-non-cooperative-preemption.md" target="_blank" rel="noopener">preemption proposal</a> for the why.`,
-            `Without looking, explain aloud: what are G, M and P? What happens to other goroutines when one makes a blocking syscall?`,
+          sub: [
+            { id: "s1", est: 25, label: `Re-read the shipped behaviour: <a href="https://go.dev/doc/go1.14" target="_blank" rel="noopener">Go 1.14 release notes</a> (async preemption) + the <a href="https://github.com/golang/proposal/blob/master/design/24543-non-cooperative-preemption.md" target="_blank" rel="noopener">preemption proposal</a> for the why.` },
+            { id: "s2", cat: "exercise", est: 20, label: `Without looking, explain aloud: what are G, M and P? What happens to other goroutines when one makes a blocking syscall?` },
           ],
           model: `<b>G</b> = goroutine, <b>M</b> = OS thread, <b>P</b> = logical processor (scheduling context, GOMAXPROCS of them). Since Go 1.14, goroutines are <b>asynchronously preemptible</b> (via SIGURG) — a tight loop with no function calls can still be preempted, so it no longer stalls the scheduler or GC.`,
           cards: [
@@ -1191,9 +1192,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 50,
           lead: `<b>Caching ③</b> — how Redis shards keys, and the general technique behind it.`,
-          refs: [
-            `Read the Redis <a href="https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/" target="_blank" rel="noopener">Cluster spec</a> — hash slots, gossip, MOVED vs ASK.`,
-            `The underlying idea: <a href="https://en.wikipedia.org/wiki/Consistent_hashing" target="_blank" rel="noopener">consistent hashing</a> (Karger et al., 1997) — resizing remaps only ~1/N of keys, not all of them.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read the Redis <a href="https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/" target="_blank" rel="noopener">Cluster spec</a> — hash slots, gossip, MOVED vs ASK.` },
+            { id: "s2", est: 23, label: `The underlying idea: <a href="https://en.wikipedia.org/wiki/Consistent_hashing" target="_blank" rel="noopener">consistent hashing</a> (Karger et al., 1997) — resizing remaps only ~1/N of keys, not all of them.` },
           ],
           model: `A key's slot is <code>CRC16(key) mod 16384</code>; slots are spread across masters and clients are steered by <b>MOVED</b> (slot moved permanently) vs <b>ASK</b> (one-shot, mid-migration). Consistent hashing is why adding a node reshuffles ~1/N of keys, not everything (<code>mod N</code> would remap almost all).`,
           cards: [
@@ -1214,9 +1215,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 50,
           lead: `<b>Distributed systems ③</b> — the theorem, minus the 'pick 2 of 3' myth.`,
-          refs: [
-            `Read Gilbert & Lynch, <a href="https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf" target="_blank" rel="noopener">"Perspectives on the CAP Theorem"</a> (2012) — CAP as a safety-vs-liveness trade, with the proof sketch.`,
-            `Then Abadi, <a href="http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" target="_blank" rel="noopener">"Consistency Tradeoffs… (PACELC)"</a> — the everyday latency dimension CAP omits.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Gilbert & Lynch, <a href="https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf" target="_blank" rel="noopener">"Perspectives on the CAP Theorem"</a> (2012) — CAP as a safety-vs-liveness trade, with the proof sketch.` },
+            { id: "s2", est: 23, label: `Then Abadi, <a href="http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" target="_blank" rel="noopener">"Consistency Tradeoffs… (PACELC)"</a> — the everyday latency dimension CAP omits.` },
           ],
           model: `CAP constrains behaviour <i>only during a partition</i>, and partition tolerance isn't optional on a real network — so the honest statement is C-vs-A <b>when partitioned</b>. <b>PACELC</b>: if <b>P</b>artition → <b>A</b> or <b>C</b>; <b>E</b>lse (normal ops) → <b>L</b>atency or <b>C</b>onsistency.`,
           cards: [
@@ -1235,9 +1236,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ⑧</b> — the three physical joins, and the cost model behind EXPLAIN (callback d10).`,
-          refs: [
-            `Read PG docs <a href="https://www.postgresql.org/docs/current/planner-optimizer.html" target="_blank" rel="noopener">"Planner/Optimizer"</a> — the three joins and cost-based join-order search.`,
-            `Re-run <code>EXPLAIN (ANALYZE, BUFFERS)</code> on a 2–3 table join and name the join node it chose.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read PG docs <a href="https://www.postgresql.org/docs/current/planner-optimizer.html" target="_blank" rel="noopener">"Planner/Optimizer"</a> — the three joins and cost-based join-order search.` },
+            { id: "s2", cat: "lab", est: 23, label: `Re-run <code>EXPLAIN (ANALYZE, BUFFERS)</code> on a 2–3 table join and name the join node it chose.` },
           ],
           model: `<b>Nested loop</b>: scan the right side once per left row (great with an index on the right, tiny left). <b>Hash join</b>: build a hash table on one side, probe with the other (big unsorted equijoins). <b>Merge join</b>: sort both on the key, scan in lockstep (or reuse an ordered index). The cost-based planner prices every pair and picks the cheapest.`,
           cards: [
@@ -1256,9 +1257,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
           lead: `<b>Systems ⑤</b> — where files live in RAM, and the fsync trap that ate data (callback d09/d26).`,
-          refs: [
-            `Read LWN, <a href="https://lwn.net/Articles/752063/" target="_blank" rel="noopener">"PostgreSQL's fsync() surprise"</a> — dirty pages, writeback, and how an fsync error can be reported once and lost.`,
-            `Reference: <a href="https://man7.org/linux/man-pages/man2/fsync.2.html" target="_blank" rel="noopener">fsync(2)</a> (and <code>fdatasync</code>, which skips non-essential metadata).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read LWN, <a href="https://lwn.net/Articles/752063/" target="_blank" rel="noopener">"PostgreSQL's fsync() surprise"</a> — dirty pages, writeback, and how an fsync error can be reported once and lost.` },
+            { id: "s2", est: 20, label: `Reference: <a href="https://man7.org/linux/man-pages/man2/fsync.2.html" target="_blank" rel="noopener">fsync(2)</a> (and <code>fdatasync</code>, which skips non-essential metadata).` },
           ],
           model: `<code>write()</code> and <code>mmap</code> stores mark page-cache pages <b>dirty</b> and return; data is durable only after <code>fsync</code>/<code>fdatasync</code> flushes dirty pages <i>and</i> the disk's write cache. The "fsyncgate" twist: on async writeback failure the kernel may drop the pages and report <code>EIO</code> to <i>whoever fsyncs next</i>, once — so a program that missed it thinks data is safe.`,
           cards: [
@@ -1279,9 +1280,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑨</b> — the hidden auction beneath every block.`,
-          refs: [
-            `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/mev/" target="_blank" rel="noopener">MEV</a> + Flashbots <a href="https://docs.flashbots.net/flashbots-mev-boost/introduction" target="_blank" rel="noopener">MEV-Boost</a> (builders bid, proposers sign the best, a relay mediates).`,
-            `The protocol direction: enshrined PBS (ePBS, EIP-7732).`,
+          sub: [
+            { id: "s1", est: 35, label: `Read ethereum.org <a href="https://ethereum.org/en/developers/docs/mev/" target="_blank" rel="noopener">MEV</a> + Flashbots <a href="https://docs.flashbots.net/flashbots-mev-boost/introduction" target="_blank" rel="noopener">MEV-Boost</a> (builders bid, proposers sign the best, a relay mediates).` },
+            { id: "s2", est: 20, label: `The protocol direction: enshrined PBS (ePBS, EIP-7732).` },
           ],
           model: `Block production splits into a <b>builder</b> (orders txs, extracts MEV, bids) and a <b>proposer</b> (validator, signs the highest bid), with a trusted <b>relay</b> between them today. MEV = value from ordering/including/excluding txs (arbitrage, liquidations, sandwiches).`,
           cards: [
@@ -1300,9 +1301,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 50,
           lead: `<b>Messaging ④</b> — how partitions get reassigned, and per-key retention.`,
-          refs: [
-            `Read Confluent <a href="https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/" target="_blank" rel="noopener">"From Eager to Smarter… Rebalances"</a> (eager vs cooperative; <a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-429:+Kafka+Consumer+Incremental+Rebalance+Protocol" target="_blank" rel="noopener">KIP-429</a>).`,
-            `Then <a href="https://kafka.apache.org/43/design/design/#log-compaction" target="_blank" rel="noopener">Log Compaction</a> — keep the latest value per key forever; a null value is a tombstone.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Confluent <a href="https://www.confluent.io/blog/cooperative-rebalancing-in-kafka-streams-consumer-ksqldb/" target="_blank" rel="noopener">"From Eager to Smarter… Rebalances"</a> (eager vs cooperative; <a href="https://cwiki.apache.org/confluence/display/KAFKA/KIP-429:+Kafka+Consumer+Incremental+Rebalance+Protocol" target="_blank" rel="noopener">KIP-429</a>).` },
+            { id: "s2", est: 23, label: `Then <a href="https://kafka.apache.org/43/design/design/#log-compaction" target="_blank" rel="noopener">Log Compaction</a> — keep the latest value per key forever; a null value is a tombstone.` },
           ],
           model: `<b>Eager</b> rebalancing makes every consumer surrender <i>all</i> partitions on any group change (whole group stops). <b>Cooperative</b> revokes only the partitions actually moving, so others keep processing. <b>Log compaction</b> gives per-key retention — a replayable changelog; a null-value record is a <b>tombstone</b> that deletes the key.`,
           cards: [
@@ -1321,9 +1322,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 55,
           lead: `<b>Security ⑤</b> — how upgradeable contracts work, and how they silently corrupt state.`,
-          refs: [
-            `Read OpenZeppelin <a href="https://docs.openzeppelin.com/upgrades-plugins/proxies" target="_blank" rel="noopener">"Proxy Upgrade Pattern"</a> + <a href="https://eips.ethereum.org/EIPS/eip-1967" target="_blank" rel="noopener">ERC-1967</a> (standard storage slots).`,
-            `Note the two live patterns: <b>Transparent</b> (upgrade logic in the proxy) vs <b>UUPS</b> (upgrade logic in the implementation).`,
+          sub: [
+            { id: "s1", est: 32, label: `Read OpenZeppelin <a href="https://docs.openzeppelin.com/upgrades-plugins/proxies" target="_blank" rel="noopener">"Proxy Upgrade Pattern"</a> + <a href="https://eips.ethereum.org/EIPS/eip-1967" target="_blank" rel="noopener">ERC-1967</a> (standard storage slots).` },
+            { id: "s2", est: 23, label: `Note the two live patterns: <b>Transparent</b> (upgrade logic in the proxy) vs <b>UUPS</b> (upgrade logic in the implementation).` },
           ],
           model: `A proxy <code>delegatecall</code>s into an implementation, so logic runs against the <b>proxy's</b> storage. Under delegatecall, storage is keyed by <b>slot number, not variable name</b> — so proxy and logic must agree on layout (or use ERC-1967's keccak-derived slots), and reordering/inserting variables across upgrades is a classic footgun.`,
           cards: [
@@ -1344,9 +1345,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 50,
           lead: `<b>Distributed systems ④</b> — causality without synchronized time.`,
-          refs: [
-            `Read Lamport, <a href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf" target="_blank" rel="noopener">"Time, Clocks, and the Ordering of Events"</a> (1978) — happened-before + the clock rule.`,
-            `Then vector clocks (Fidge/Mattern) via <a href="https://crdt.tech/" target="_blank" rel="noopener">crdt.tech</a>'s references — they detect concurrency, which Lamport clocks can't.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Lamport, <a href="https://lamport.azurewebsites.net/pubs/time-clocks.pdf" target="_blank" rel="noopener">"Time, Clocks, and the Ordering of Events"</a> (1978) — happened-before + the clock rule.` },
+            { id: "s2", est: 23, label: `Then vector clocks (Fidge/Mattern) via <a href="https://crdt.tech/" target="_blank" rel="noopener">crdt.tech</a>'s references — they detect concurrency, which Lamport clocks can't.` },
           ],
           model: `Lamport's rule (increment per event; on receive set <code>max(local, sender)+1</code>) gives a total order consistent with causality — but only one way: a→b ⇒ C(a)&lt;C(b), <b>not</b> the converse. <b>Vector clocks</b> close that gap: they detect whether two events are causally ordered or <b>concurrent</b>.`,
           cards: [
@@ -1365,9 +1366,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ⑨</b> — splitting one big table, in-DB and across machines.`,
-          refs: [
-            `Read PG docs <a href="https://www.postgresql.org/docs/current/ddl-partitioning.html" target="_blank" rel="noopener">"Table Partitioning"</a> (declarative range/list/hash; partition pruning).`,
-            `Scale-out trade-offs: DDIA Ch 6 "Partitioning" (routing, rebalancing, hot shards).`,
+          sub: [
+            { id: "s1", est: 27, label: `Read PG docs <a href="https://www.postgresql.org/docs/current/ddl-partitioning.html" target="_blank" rel="noopener">"Table Partitioning"</a> (declarative range/list/hash; partition pruning).` },
+            { id: "s2", est: 23, label: `Scale-out trade-offs: DDIA Ch 6 "Partitioning" (routing, rebalancing, hot shards).` },
           ],
           model: `The real win is <b>partition pruning</b> — the planner skips partitions that can't match, but <i>only</i> when the query filters on the partition key. Partition on a rarely-filtered column and you get the maintenance cost with none of the benefit. Sharding is the same idea across machines, adding routing + rebalancing.`,
           cards: [
@@ -1386,9 +1387,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 50,
           lead: `<b>Networking ⑨</b> — the transport under HTTP/3, in its own right (callback d18).`,
-          refs: [
-            `Read <a href="https://www.rfc-editor.org/info/rfc9000" target="_blank" rel="noopener">RFC 9000</a> (QUIC transport: connection IDs, streams, migration) and skim <a href="https://www.rfc-editor.org/info/rfc9002" target="_blank" rel="noopener">RFC 9002</a> (loss detection & congestion control).`,
-            `Keep the layer split straight: 9000 transport, 9001 TLS, 9002 loss/CC, <b>HTTP/3 = RFC 9114</b>.`,
+          sub: [
+            { id: "s1", est: 32, label: `Read <a href="https://www.rfc-editor.org/info/rfc9000" target="_blank" rel="noopener">RFC 9000</a> (QUIC transport: connection IDs, streams, migration) and skim <a href="https://www.rfc-editor.org/info/rfc9002" target="_blank" rel="noopener">RFC 9002</a> (loss detection & congestion control).` },
+            { id: "s2", est: 18, label: `Keep the layer split straight: 9000 transport, 9001 TLS, 9002 loss/CC, <b>HTTP/3 = RFC 9114</b>.` },
           ],
           model: `Three pillars: (1) <b>connection IDs</b> identify a connection <i>inside</i> packets — so a Wi-Fi→cellular IP change survives without re-handshaking (migration). (2) independent <b>streams</b> — a lost packet stalls only its stream, not all (TCP's flaw). (3) <b>per-packet-number-space</b> loss recovery — monotonic, never-reused packet numbers remove TCP's retransmission ambiguity.`,
           cards: [
@@ -1409,9 +1410,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑩</b> — batching, gas sponsorship and session keys for wallets.`,
-          refs: [
-            `Read <a href="https://eips.ethereum.org/EIPS/eip-4337" target="_blank" rel="noopener">ERC-4337</a> (UserOperations, bundlers, EntryPoint, paymasters) and <a href="https://eips.ethereum.org/EIPS/eip-7702" target="_blank" rel="noopener">EIP-7702</a> (an EOA delegates to contract code).`,
-            `Docs: <a href="https://docs.erc4337.io/" target="_blank" rel="noopener">erc4337.io</a>.`,
+          sub: [
+            { id: "s1", est: 38, label: `Read <a href="https://eips.ethereum.org/EIPS/eip-4337" target="_blank" rel="noopener">ERC-4337</a> (UserOperations, bundlers, EntryPoint, paymasters) and <a href="https://eips.ethereum.org/EIPS/eip-7702" target="_blank" rel="noopener">EIP-7702</a> (an EOA delegates to contract code).` },
+            { id: "s2", est: 17, label: `Docs: <a href="https://docs.erc4337.io/" target="_blank" rel="noopener">erc4337.io</a>.` },
           ],
           model: `<b>4337</b> delivers AA <i>without</i> protocol changes: an alt-mempool of <code>UserOperation</code>s, off-chain <b>bundlers</b>, a singleton <b>EntryPoint</b>, optional <b>paymasters</b> (gas sponsorship). <b>7702</b> is a protocol-level tx type letting an existing EOA temporarily run contract code — keeping its address while gaining batching/sponsorship/session keys.`,
           cards: [
@@ -1430,9 +1431,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 45,
           lead: `<b>Review</b> — why CPython threads don't parallelize CPU work — and how that's changing.`,
-          refs: [
-            `Read the official <a href="https://docs.python.org/3/howto/free-threading-python.html" target="_blank" rel="noopener">Python free-threading howto</a> + <a href="https://peps.python.org/pep-0779/" target="_blank" rel="noopener">PEP 779</a>.`,
-            `Without looking, explain: why do CPU-bound Python threads not speed up, but I/O-bound ones do?`,
+          sub: [
+            { id: "s1", est: 25, label: `Read the official <a href="https://docs.python.org/3/howto/free-threading-python.html" target="_blank" rel="noopener">Python free-threading howto</a> + <a href="https://peps.python.org/pep-0779/" target="_blank" rel="noopener">PEP 779</a>.` },
+            { id: "s2", cat: "exercise", est: 20, label: `Without looking, explain: why do CPU-bound Python threads not speed up, but I/O-bound ones do?` },
           ],
           model: `The <b>GIL</b> serializes the CPython interpreter (and refcounts) so only one thread runs bytecode at a time — great for C-extension safety, fatal for CPU-bound threading (use multiprocessing). I/O-bound threads still win because the GIL is released during blocking I/O.`,
           cards: [
@@ -1451,9 +1452,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 50,
           lead: `<b>DevOps ⑩</b> — the OWASP #3 (supply-chain) defenses, concretely.`,
-          refs: [
-            `Read <a href="https://slsa.dev/spec/" target="_blank" rel="noopener">SLSA</a> (build/source provenance levels) + <a href="https://docs.sigstore.dev/about/overview/" target="_blank" rel="noopener">Sigstore</a> (keyless signing: Cosign + Fulcio + Rekor).`,
-            `SBOM formats: <a href="https://cyclonedx.org/" target="_blank" rel="noopener">CycloneDX</a> / <a href="https://spdx.dev/" target="_blank" rel="noopener">SPDX</a>.`,
+          sub: [
+            { id: "s1", est: 33, label: `Read <a href="https://slsa.dev/spec/" target="_blank" rel="noopener">SLSA</a> (build/source provenance levels) + <a href="https://docs.sigstore.dev/about/overview/" target="_blank" rel="noopener">Sigstore</a> (keyless signing: Cosign + Fulcio + Rekor).` },
+            { id: "s2", est: 17, label: `SBOM formats: <a href="https://cyclonedx.org/" target="_blank" rel="noopener">CycloneDX</a> / <a href="https://spdx.dev/" target="_blank" rel="noopener">SPDX</a>.` },
           ],
           model: `They compose: an <b>SBOM</b> says <i>what's in</i> an artifact, <b>SLSA provenance</b> attests <i>how it was built</i> (and at what level), and <b>Sigstore/Cosign</b> signs those attestations — verified by <i>identity</i> (Fulcio's short-lived OIDC certs + Rekor transparency log), not long-lived keys.`,
           cards: [
@@ -1474,9 +1475,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 50,
           lead: `<b>Distributed systems ⑤</b> — how (and whether) to commit across nodes.`,
-          refs: [
-            `Read the free MIT 6.824 notes on <a href="https://timilearning.com/posts/mit-6.824/lecture-12-distributed-transactions/" target="_blank" rel="noopener">distributed transactions</a> (2PC: PREPARE → vote → COMMIT/ABORT, and blocking).`,
-            `Then the Saga original: Garcia-Molina & Salem, <a href="http://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf" target="_blank" rel="noopener">"Sagas"</a> (1987), + <a href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener">microservices.io Saga</a>.`,
+          sub: [
+            { id: "s1", est: 25, label: `Read the free MIT 6.824 notes on <a href="https://timilearning.com/posts/mit-6.824/lecture-12-distributed-transactions/" target="_blank" rel="noopener">distributed transactions</a> (2PC: PREPARE → vote → COMMIT/ABORT, and blocking).` },
+            { id: "s2", est: 25, label: `Then the Saga original: Garcia-Molina & Salem, <a href="http://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf" target="_blank" rel="noopener">"Sagas"</a> (1987), + <a href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener">microservices.io Saga</a>.` },
           ],
           model: `<b>2PC</b> gives atomic commit but is <b>blocking</b> — a prepared participant can't decide alone, so a coordinator crash at the wrong moment holds locks until recovery. <b>Saga</b> splits a long transaction into local steps each with a <b>compensating</b> action — trading ACID isolation for availability ("all committed or all compensated"; intermediate states are visible).`,
           cards: [
@@ -1537,9 +1538,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 55,
           lead: `<b>Blockchain ⑪</b> — the cryptography under ZK-rollups, at the intuition level.`,
-          refs: [
-            `Read Vitalik, <a href="https://vitalik.eth.limo/general/2017/02/01/zk_snarks.html" target="_blank" rel="noopener">"zk-SNARKs: Under the Hood"</a> for the pipeline (computation → circuit → QAP → pairing check).`,
-            `Compare families: <a href="https://www.cyfrin.io/blog/a-full-comparison-what-are-zk-snarks-and-zk-starks" target="_blank" rel="noopener">SNARKs vs STARKs</a>.`,
+          sub: [
+            { id: "s1", est: 32, label: `Read Vitalik, <a href="https://vitalik.eth.limo/general/2017/02/01/zk_snarks.html" target="_blank" rel="noopener">"zk-SNARKs: Under the Hood"</a> for the pipeline (computation → circuit → QAP → pairing check).` },
+            { id: "s2", est: 23, label: `Compare families: <a href="https://www.cyfrin.io/blog/a-full-comparison-what-are-zk-snarks-and-zk-starks" target="_blank" rel="noopener">SNARKs vs STARKs</a>.` },
           ],
           model: `<b>SNARKs</b>: tiny proofs (hundreds of bytes), cheap constant-time verification — but need a per-circuit <b>trusted setup</b> and rest on elliptic-curve/pairing assumptions (not quantum-safe). <b>STARKs</b>: <b>no trusted setup</b>, post-quantum (hash-based) — but much larger proofs. Both let a verifier check a computation without redoing it.`,
           cards: [
@@ -1620,9 +1621,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 50,
           lead: `<b>Databases ⑪</b> — the two families under Postgres, RocksDB, Cassandra & friends.`,
-          refs: [
-            `Read DDIA Ch 3 "Storage and Retrieval" (SSTables & LSM-Trees / B-Trees / comparison).`,
-            `Free supplement: the <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide" target="_blank" rel="noopener">RocksDB Tuning Guide</a> (defines write/read/space amplification).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read DDIA Ch 3 "Storage and Retrieval" (SSTables & LSM-Trees / B-Trees / comparison).` },
+            { id: "s2", est: 20, label: `Free supplement: the <a href="https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide" target="_blank" rel="noopener">RocksDB Tuning Guide</a> (defines write/read/space amplification).` },
           ],
           model: `<b>B-tree</b> (Postgres/MySQL): update pages in place — predictable reads, but write-amplifies via in-place writes + WAL. <b>LSM-tree</b> (RocksDB/Cassandra): buffer writes in memory, flush/compact sequential SSTables — high write throughput, but pays read + space amplification (compaction, checking multiple levels). Pick by read-heavy vs write-heavy.`,
           cards: [
@@ -1683,9 +1684,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 45,
           lead: `<b>Review</b> — what <code>memory_order</code> actually constrains (contrast d32's Rust).`,
-          refs: [
-            `Read cppreference <a href="https://en.cppreference.com/w/cpp/atomic/memory_order" target="_blank" rel="noopener">std::memory_order</a> (the 6 orderings) + Preshing, <a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">"Acquire and Release Semantics"</a>.`,
-            `Without looking, explain: why does a release-store paired with an acquire-load safely publish data between threads?`,
+          sub: [
+            { id: "s1", est: 25, label: `Read cppreference <a href="https://en.cppreference.com/w/cpp/atomic/memory_order" target="_blank" rel="noopener">std::memory_order</a> (the 6 orderings) + Preshing, <a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">"Acquire and Release Semantics"</a>.` },
+            { id: "s2", cat: "exercise", est: 20, label: `Without looking, explain: why does a release-store paired with an acquire-load safely publish data between threads?` },
           ],
           model: `<b>Release</b> (store) pairs with <b>acquire</b> (load) to establish <b>happens-before</b>: everything the writer did before the release becomes visible to a reader after the acquire. <b>seq_cst</b> adds one global total order; <b>relaxed</b> is atomicity only, no ordering. Lock-free is hard precisely because without these paired fences, threads observe writes in different orders.`,
           cards: [
@@ -1766,9 +1767,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 50,
           lead: `<b>Review (capstone)</b> — what your <code>.await</code> compiles into (builds on d32's ownership).`,
-          refs: [
-            `Read the std docs <a href="https://doc.rust-lang.org/std/future/trait.Future.html" target="_blank" rel="noopener">Future</a> (<code>poll(self: Pin&lt;&mut Self&gt;, cx)</code>) and <a href="https://doc.rust-lang.org/std/pin/index.html" target="_blank" rel="noopener">Pin</a>; the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">async book</a> for narrative (note: mid-rewrite).`,
-            `Without looking, explain: why does <code>Future::poll</code> take <code>Pin&lt;&mut Self&gt;</code>?`,
+          sub: [
+            { id: "s1", est: 30, label: `Read the std docs <a href="https://doc.rust-lang.org/std/future/trait.Future.html" target="_blank" rel="noopener">Future</a> (<code>poll(self: Pin&lt;&mut Self&gt;, cx)</code>) and <a href="https://doc.rust-lang.org/std/pin/index.html" target="_blank" rel="noopener">Pin</a>; the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">async book</a> for narrative (note: mid-rewrite).` },
+            { id: "s2", cat: "exercise", est: 20, label: `Without looking, explain: why does <code>Future::poll</code> take <code>Pin&lt;&mut Self&gt;</code>?` },
           ],
           model: `An <code>async fn</code> desugars into a compiler-generated <b>state machine</b> (one variant per await point) whose variants can hold references into its own locals → <b>self-referential</b>. <b>Pin</b> guarantees the future won't move once polled (keeping those references valid) — which is exactly why <code>poll</code> takes <code>Pin&lt;&mut Self&gt;</code>. The <b>Waker</b> in the <code>Context</code> lets a pending future ask the executor to re-poll.`,
           cards: [
@@ -1800,10 +1801,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 50,
           lead: `<b>Internals ①</b> — why "append is O(1)" is honest, and the analysis that proves it.`,
-          refs: [
-            `Read the Rust <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#method.push" target="_blank" rel="noopener">Vec::push</a> docs: append "takes <b>amortized O(1)</b> time. If the length would exceed capacity, O(capacity) to copy to a larger allocation — offset by the capacity O(1) insertions it allows."`,
-            `The trick: a dynamic array (Vec / ArrayList / Go slice / Python list) <b>doubles</b> capacity when full and copies everything (an O(n) event). Because doublings are exponentially spaced, total copy work over n appends is ≤ 2n → O(1) each on average.`,
-            `The growth factor is a real design choice: read folly's <a href="https://github.com/facebook/folly/blob/main/folly/docs/FBVector.md" target="_blank" rel="noopener">FBVector</a> on why <b>1.5×</b> beats 2× — with 2× a new block always exceeds the sum of all freed ones, so the allocator can never reuse them.`,
+          sub: [
+            { id: "s1", est: 18, label: `Read the Rust <a href="https://doc.rust-lang.org/std/vec/struct.Vec.html#method.push" target="_blank" rel="noopener">Vec::push</a> docs: append "takes <b>amortized O(1)</b> time. If the length would exceed capacity, O(capacity) to copy to a larger allocation — offset by the capacity O(1) insertions it allows."` },
+            { id: "s2", est: 17, label: `The trick: a dynamic array (Vec / ArrayList / Go slice / Python list) <b>doubles</b> capacity when full and copies everything (an O(n) event). Because doublings are exponentially spaced, total copy work over n appends is ≤ 2n → O(1) each on average.` },
+            { id: "s3", est: 15, label: `The growth factor is a real design choice: read folly's <a href="https://github.com/facebook/folly/blob/main/folly/docs/FBVector.md" target="_blank" rel="noopener">FBVector</a> on why <b>1.5×</b> beats 2× — with 2× a new block always exceeds the sum of all freed ones, so the allocator can never reuse them.` },
           ],
           model: `<b>Amortized</b> ≠ "average-case hope": it's a worst-case bound spread over a sequence. n appends cost ≤ 2n total work no matter when resizes hit → O(1) each — but any <i>single</i> append can still stall O(n) at a doubling (a real p99 spike when a 1 GB slice reallocates). Growth factor k trades speed vs memory reuse: k < φ≈1.618 lets freed blocks be recycled (Python ≈1.125×, folly 1.5×); k = 2 never can.`,
           cards: [
@@ -1824,10 +1825,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 55,
           lead: `<b>Systems ⑦</b> — why two threads touching <i>different</i> variables can still cripple each other.`,
-          refs: [
-            `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d09).`,
-            `Then Martin Thompson, <a href="https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html" target="_blank" rel="noopener">"False Sharing"</a> — a benchmark + the padding fix.`,
-            `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.`,
+          sub: [
+            { id: "s1", est: 20, label: `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d09).` },
+            { id: "s2", est: 18, label: `Then Martin Thompson, <a href="https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html" target="_blank" rel="noopener">"False Sharing"</a> — a benchmark + the padding fix.` },
+            { id: "s3", est: 17, label: `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.` },
           ],
           model: `<b>False sharing</b>: two cores repeatedly write different variables that happen to share one cache line — no logical dependency, but each write invalidates the other's copy, so the line <b>ping-pongs</b> across the interconnect and throughput collapses. Fix by <i>layout</i>: pad/align to separate lines (<code>alignas(64)</code>, C++17 <code>hardware_destructive_interference_size</code>, per-thread structs). <b>NUMA</b>: remote memory is ~1.5–2× slower, and Linux places a page on the node that <b>first writes</b> it (first-touch) — not where you malloc'd it.`,
           cards: [
@@ -1847,10 +1848,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 55,
           lead: `<b>Internals ②</b> — the structure you reach for daily, and why its O(1) has fine print.`,
-          refs: [
-            `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d78).`,
-            `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).`,
-            `Modern layout: read Abseil's <a href="https://abseil.io/about/design/swisstables" target="_blank" rel="noopener">Swiss Tables</a> — open addressing + a parallel array of 1-byte control words, SIMD-scanned a group at a time (Go's built-in map adopted this in <a href="https://go.dev/blog/swisstable" target="_blank" rel="noopener">Go 1.24</a>).`,
+          sub: [
+            { id: "s1", est: 20, label: `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d78).` },
+            { id: "s2", est: 18, label: `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).` },
+            { id: "s3", est: 17, label: `Modern layout: read Abseil's <a href="https://abseil.io/about/design/swisstables" target="_blank" rel="noopener">Swiss Tables</a> — open addressing + a parallel array of 1-byte control words, SIMD-scanned a group at a time (Go's built-in map adopted this in <a href="https://go.dev/blog/swisstable" target="_blank" rel="noopener">Go 1.24</a>).` },
           ],
           model: `"O(1)" is <b>expected / amortized</b>, not worst-case: adversarial or unlucky keys can pile into one bucket → O(n). That's exploitable — <b>hash-flooding DoS</b> feeds colliding keys to force O(n²); the fix is a keyed PRF hash, <b>SipHash</b>, seeded per-process so collisions are unpredictable (Python, Rust, Ruby default to it). Swiss/flat maps store entries inline (no per-node alloc) for cache locality; a SIMD compare on control bytes checks ~16 slots at once.`,
           cards: [
@@ -1872,10 +1873,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 50,
           lead: `<b>Review</b> — why "just an object" is secretly a typed shape, and how V8 collects it.`,
-          refs: [
-            `Read Mathias Bynens, <a href="https://mathiasbynens.be/notes/shapes-ics" target="_blank" rel="noopener">"Shapes and Inline Caches"</a> + V8's <a href="https://v8.dev/docs/hidden-classes" target="_blank" rel="noopener">hidden classes</a> doc.`,
-            `Then V8's <a href="https://v8.dev/blog/trash-talk" target="_blank" rel="noopener">"Trash Talk"</a> on the <b>Orinoco</b> GC (generational: a Scavenger young-gen + concurrent mark-sweep-compact old-gen).`,
-            `Without looking, explain aloud: why does assigning object properties in a <i>different order</i> make code slower?`,
+          sub: [
+            { id: "s1", est: 20, label: `Read Mathias Bynens, <a href="https://mathiasbynens.be/notes/shapes-ics" target="_blank" rel="noopener">"Shapes and Inline Caches"</a> + V8's <a href="https://v8.dev/docs/hidden-classes" target="_blank" rel="noopener">hidden classes</a> doc.` },
+            { id: "s2", est: 16, label: `Then V8's <a href="https://v8.dev/blog/trash-talk" target="_blank" rel="noopener">"Trash Talk"</a> on the <b>Orinoco</b> GC (generational: a Scavenger young-gen + concurrent mark-sweep-compact old-gen).` },
+            { id: "s3", cat: "exercise", est: 14, label: `Without looking, explain aloud: why does assigning object properties in a <i>different order</i> make code slower?` },
           ],
           model: `Every object has a <b>hidden class</b> (V8 calls it a <b>Map</b>, unrelated to the <code>Map</code> builtin) mapping property→offset; objects given the same properties <i>in the same order</i> share one. <b>Inline caches</b> memoize Map→offset at each access site: monomorphic (1 shape — fast, inlinable) → polymorphic → megamorphic (falls back to a dictionary lookup). GC is generational: the <b>Scavenger</b> copies survivors in a semispace young gen (minor GC), promoting to an old gen collected by concurrent mark-sweep-compact. <code>delete</code> or out-of-order init drops an object to slow dictionary mode.`,
           cards: [
@@ -1895,10 +1896,10 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 55,
           lead: `<b>Internals ③</b> — the collectors under every managed runtime (contrast d81's V8, d49's Go).`,
-          refs: [
-            `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).`,
-            `Read the <a href="https://go.dev/doc/gc-guide" target="_blank" rel="noopener">Go GC guide</a> + Rick Hudson's <a href="https://go.dev/blog/ismmkeynote" target="_blank" rel="noopener">"Getting to Go"</a> for a real low-latency concurrent design.`,
-            `The <b>generational hypothesis</b> ("most objects die young") + a <b>write barrier</b>/remembered set let you collect a small young gen often and the old gen rarely.`,
+          sub: [
+            { id: "s1", est: 20, label: `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).` },
+            { id: "s2", est: 18, label: `Read the <a href="https://go.dev/doc/gc-guide" target="_blank" rel="noopener">Go GC guide</a> + Rick Hudson's <a href="https://go.dev/blog/ismmkeynote" target="_blank" rel="noopener">"Getting to Go"</a> for a real low-latency concurrent design.` },
+            { id: "s3", est: 17, label: `The <b>generational hypothesis</b> ("most objects die young") + a <b>write barrier</b>/remembered set let you collect a small young gen often and the old gen rarely.` },
           ],
           model: `<b>Tri-color marking</b>: white (unreached) / grey (reached, children unscanned) / black (done); the invariant is "no black→white pointer without a grey between", and a <b>write barrier</b> on pointer writes preserves it while the mutator runs concurrently. Reclamation styles: mark-<b>sweep</b> (fast, fragments), mark-<b>compact</b> (defrags, costlier), <b>copying</b> (bump-allocate, wastes half the heap). Modern concurrent GCs (Go, ZGC, Shenandoah) hold pauses sub-millisecond.`,
           cards: [
@@ -1918,9 +1919,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
           lead: `<b>Systems ⑧</b> — the allocator sitting between your code and the kernel's pages.`,
-          refs: [
-            `Read Doug Lea's <a href="https://gee.cs.oswego.edu/dl/html/malloc.html" target="_blank" rel="noopener">"A Memory Allocator"</a> (dlmalloc — the design behind glibc) + Google's <a href="https://google.github.io/tcmalloc/design.html" target="_blank" rel="noopener">tcmalloc design</a>.`,
-            `Small requests grow the heap via <b>brk</b>/sbrk; large ones (glibc ≥ 128 KB) go straight to <b>mmap</b> (and are unmapped on free). Otherwise <code>free</code> returns blocks to internal <b>bins</b>, not the OS.`,
+          sub: [
+            { id: "s1", est: 27, label: `Read Doug Lea's <a href="https://gee.cs.oswego.edu/dl/html/malloc.html" target="_blank" rel="noopener">"A Memory Allocator"</a> (dlmalloc — the design behind glibc) + Google's <a href="https://google.github.io/tcmalloc/design.html" target="_blank" rel="noopener">tcmalloc design</a>.` },
+            { id: "s2", est: 23, label: `Small requests grow the heap via <b>brk</b>/sbrk; large ones (glibc ≥ 128 KB) go straight to <b>mmap</b> (and are unmapped on free). Otherwise <code>free</code> returns blocks to internal <b>bins</b>, not the OS.` },
           ],
           model: `Allocators bin free blocks by <b>size class</b> so alloc/free is an O(1) list pop/push with no search — the cost is <b>internal fragmentation</b> (a 12-byte request rounds up to a 16-byte class). <b>Boundary tags</b> let adjacent free chunks <b>coalesce</b>, fighting <b>external fragmentation</b> (free memory scattered too finely to satisfy a big request). Per-thread caches (glibc tcache, tcmalloc per-CPU) make the common path lock-free; multiple <b>arenas</b> avoid one global lock.`,
           cards: [
@@ -1942,9 +1943,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 45,
           lead: `<b>Internals ④</b> — the number format that surprises everyone, made unsurprising.`,
-          refs: [
-            `Read <a href="https://floating-point-gui.de/" target="_blank" rel="noopener">floating-point-gui.de</a> for intuition, then skim Goldberg's canonical <a href="https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html" target="_blank" rel="noopener">"What Every Computer Scientist Should Know About Floating-Point Arithmetic"</a>.`,
-            `See it: every language prints <code>0.1 + 0.2 = 0.30000000000000004</code> (<a href="https://0.30000000000000004.com/" target="_blank" rel="noopener">0.30000000000000004.com</a>).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read <a href="https://floating-point-gui.de/" target="_blank" rel="noopener">floating-point-gui.de</a> for intuition, then skim Goldberg's canonical <a href="https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html" target="_blank" rel="noopener">"What Every Computer Scientist Should Know About Floating-Point Arithmetic"</a>.` },
+            { id: "s2", est: 15, label: `See it: every language prints <code>0.1 + 0.2 = 0.30000000000000004</code> (<a href="https://0.30000000000000004.com/" target="_blank" rel="noopener">0.30000000000000004.com</a>).` },
           ],
           model: `A <code>double</code> is 64 bits: 1 sign + 11 exponent (bias 1023) + 52 fraction, with an implicit leading 1 → 53 bits ≈ 15–17 significant decimals. 0.1 and 0.2 have <b>no finite binary expansion</b> (like 1/3 in decimal), so each is stored as the nearest double and their sum rounds to a value ≠ the nearest double to 0.3. Default rounding is <b>round-to-nearest, ties-to-even</b>. Specials: ±Inf, NaN (and <b>NaN ≠ NaN</b>), signed zeros. <b>Money uses integer minor units or a decimal type</b>, never binary floats.`,
           cards: [
@@ -1964,9 +1965,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 50,
           lead: `<b>Review</b> — how HotSpot turns bytecode into specialized native code at runtime (contrast d49's Go, d61's Python).`,
-          refs: [
-            `Read the <a href="https://docs.oracle.com/en/java/javase/21/vm/" target="_blank" rel="noopener">Java Virtual Machine Guide</a> (HotSpot compilation) + OpenJDK's <a href="https://wiki.openjdk.org/display/HotSpot/" target="_blank" rel="noopener">HotSpot wiki</a> (tiered compilation, deopt).`,
-            `Without looking, explain aloud: why is a Java microbenchmark meaningless until it's "warmed up"?`,
+          sub: [
+            { id: "s1", est: 30, label: `Read the <a href="https://docs.oracle.com/en/java/javase/21/vm/" target="_blank" rel="noopener">Java Virtual Machine Guide</a> (HotSpot compilation) + OpenJDK's <a href="https://wiki.openjdk.org/display/HotSpot/" target="_blank" rel="noopener">HotSpot wiki</a> (tiered compilation, deopt).` },
+            { id: "s2", cat: "exercise", est: 20, label: `Without looking, explain aloud: why is a Java microbenchmark meaningless until it's "warmed up"?` },
           ],
           model: `HotSpot runs bytecode in an <b>interpreter</b>, then JIT-compiles <i>hot</i> methods with two compilers — <b>C1</b> (fast, light) and <b>C2</b> (slow, aggressive). <b>Tiered compilation</b> (levels 0–4) interprets + profiles, compiles at C1 with profiling, then recompiles the hottest at C2 using that profile (inlining, devirtualization, escape analysis). <b>On-stack replacement</b> swaps a long-running loop to compiled code mid-execution. <b>Deoptimization</b>: when a speculative assumption breaks (a call site thought monomorphic sees a new type), it bails back to the interpreter — why perf can briefly regress.`,
           cards: [
@@ -1986,9 +1987,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 50,
           lead: `<b>Internals ⑤</b> — why string handling breaks on emoji, and the model that fixes it.`,
-          refs: [
-            `Read Joel Spolsky's <a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="noopener">"The Absolute Minimum… about Unicode"</a>, then the <a href="https://utf8everywhere.org/" target="_blank" rel="noopener">UTF-8 Everywhere</a> manifesto.`,
-            `Keep four layers distinct: <b>code point</b> (U+…) → <b>code unit</b> (8/16/32-bit per encoding) → <b>byte</b> → <b>grapheme cluster</b> (one user-perceived character).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read Joel Spolsky's <a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="noopener">"The Absolute Minimum… about Unicode"</a>, then the <a href="https://utf8everywhere.org/" target="_blank" rel="noopener">UTF-8 Everywhere</a> manifesto.` },
+            { id: "s2", est: 20, label: `Keep four layers distinct: <b>code point</b> (U+…) → <b>code unit</b> (8/16/32-bit per encoding) → <b>byte</b> → <b>grapheme cluster</b> (one user-perceived character).` },
           ],
           model: `<b>Unicode</b> is the character set; <b>UTF-8/16/32</b> are encodings of it. UTF-8 is variable 1–4 bytes, ASCII-compatible and <b>self-synchronizing</b>. UTF-16 (JS/Java/C# in memory) is <i>also</i> variable — non-BMP chars need a <b>surrogate pair</b>, so JS <code>"😀".length === 2</code>. "One character" is a <b>grapheme cluster</b> that can be many code points (é = e + combining accent; a family emoji is ~7 ZWJ-joined code points, one glyph). Compare after <b>normalizing</b> (NFC for storage).`,
           cards: [
@@ -2010,9 +2011,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 50,
           lead: `<b>Systems ⑨</b> — why a sorted array runs faster, and why speculation broke CPU security.`,
-          refs: [
-            `Read the famous <a href="https://stackoverflow.com/questions/11227809/" target="_blank" rel="noopener">"Why is processing a sorted array faster?"</a> answer, then Dan Luu's <a href="https://danluu.com/branch-prediction/" target="_blank" rel="noopener">branch-prediction</a> walkthrough.`,
-            `For the security fallout, skim <a href="https://spectreattack.com/" target="_blank" rel="noopener">Spectre</a> + <a href="https://meltdownattack.com/" target="_blank" rel="noopener">Meltdown</a> (2018).`,
+          sub: [
+            { id: "s1", est: 30, label: `Read the famous <a href="https://stackoverflow.com/questions/11227809/" target="_blank" rel="noopener">"Why is processing a sorted array faster?"</a> answer, then Dan Luu's <a href="https://danluu.com/branch-prediction/" target="_blank" rel="noopener">branch-prediction</a> walkthrough.` },
+            { id: "s2", est: 20, label: `For the security fallout, skim <a href="https://spectreattack.com/" target="_blank" rel="noopener">Spectre</a> + <a href="https://meltdownattack.com/" target="_blank" rel="noopener">Meltdown</a> (2018).` },
           ],
           model: `A deep pipelined out-of-order CPU must <b>predict</b> each branch and execute <b>speculatively</b> down the guess; a misprediction flushes the pipeline (~10–20 cycles). A <b>sorted</b> array makes <code>if (x >= 128)</code> a long predictable run (~100% accuracy); unsorted is ~50/50 → constant flushes. Rollback restores <b>architectural</b> state but <i>not</i> microarchitectural state — the cache keeps the residue, and <b>Spectre</b> reads a secret out of it via cache timing. <b>Meltdown</b> ≠ Spectre: it transiently reads kernel memory across the user/kernel boundary (fixed by page-table isolation).`,
           cards: [
@@ -2032,9 +2033,9 @@ registerRoadmap({
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 50,
           lead: `<b>Internals ⑥ (capstone)</b> — the sketches that answer set/count questions in kilobytes.`,
-          refs: [
-            `Read the <a href="https://en.wikipedia.org/wiki/Bloom_filter" target="_blank" rel="noopener">Bloom filter</a> overview (the math + use cases), then play with the <a href="https://llimllib.github.io/bloomfilter-tutorial/" target="_blank" rel="noopener">interactive visual tutorial</a>.`,
-            `Place its siblings: <b>HyperLogLog</b> (cardinality — d19's Redis <code>PFCOUNT</code>) and <b>Count-Min Sketch</b> (frequency). All hash-based, sublinear-space, one-sided error.`,
+          sub: [
+            { id: "s1", est: 30, label: `Read the <a href="https://en.wikipedia.org/wiki/Bloom_filter" target="_blank" rel="noopener">Bloom filter</a> overview (the math + use cases), then play with the <a href="https://llimllib.github.io/bloomfilter-tutorial/" target="_blank" rel="noopener">interactive visual tutorial</a>.` },
+            { id: "s2", est: 20, label: `Place its siblings: <b>HyperLogLog</b> (cardinality — d19's Redis <code>PFCOUNT</code>) and <b>Count-Min Sketch</b> (frequency). All hash-based, sublinear-space, one-sided error.` },
           ],
           model: `A <b>Bloom filter</b> is an m-bit array + k hashes: insert sets k bits; query checks them — any 0 ⇒ <b>definitely absent</b>, all 1 ⇒ <i>possibly</i> present. So it has <b>no false negatives</b>, only tunable false positives (~9.6 bits/element for 1%), at O(k) per op independent of item size. You can't delete from a plain one (shared bits) — use a counting variant. The classic use: skip a disk read in an <b>LSM-tree</b> (d70) when the filter says a key isn't in an SSTable.`,
           cards: [

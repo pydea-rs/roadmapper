@@ -47,9 +47,18 @@ registerRoadmap({
       theme: "Back into Rust at Ch15 — smart pointers on the heap.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — <b>Ch15.1–15.2</b>: <code>Box&lt;T&gt;</code> on the heap & recursive cons-list; the <b>Deref</b> trait (pp 335–346).` },
+          label: `Rust — <b>Ch15.1–15.2</b>: <code>Box&lt;T&gt;</code> on the heap & recursive cons-list; the <b>Deref</b> trait (pp 335–346).`,
+          sub: [
+            { id: "s1", est: 18, label: `Ch15.1 — <code>Box&lt;T&gt;</code> on the heap & the recursive cons-list.` },
+            { id: "s2", est: 17, label: `Ch15.2 — the <b>Deref</b> trait (pp 335–346).` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 40, group: "g1",
-          label: `Build the <code>MyBox&lt;T&gt;</code> example and prove <b>deref coercion</b> yourself; run every listing.` },
+          label: `Build the <code>MyBox&lt;T&gt;</code> example and prove <b>deref coercion</b> yourself; run every listing.`,
+          sub: [
+            { id: "s1", est: 15, label: `Build the <code>MyBox&lt;T&gt;</code> example.` },
+            { id: "s2", est: 15, label: `Prove <b>deref coercion</b> yourself.` },
+            { id: "s3", est: 10, label: `Run every listing.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Deref coercion is what lets <code>&String</code> pass where <code>&str</code> is wanted — the compiler chains <code>Deref</code> calls at compile time, zero cost.` },
@@ -61,9 +70,19 @@ registerRoadmap({
       theme: "Interior mutability and reference cycles — the tricky half of Ch15.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 40, group: "g1",
-          label: `Rust — <b>Ch15.3–15.6</b>: <b>Drop</b>, <code>Rc&lt;T&gt;</code>, <code>RefCell&lt;T&gt;</code> & interior mutability, reference cycles & <code>Weak&lt;T&gt;</code> (pp 347–369).` },
+          label: `Rust — <b>Ch15.3–15.6</b>: <b>Drop</b>, <code>Rc&lt;T&gt;</code>, <code>RefCell&lt;T&gt;</code> & interior mutability, reference cycles & <code>Weak&lt;T&gt;</code> (pp 347–369).`,
+          sub: [
+            { id: "s1", est: 10, label: `Ch15.3 — <b>Drop</b>.` },
+            { id: "s2", est: 10, label: `Ch15.4 — <code>Rc&lt;T&gt;</code>.` },
+            { id: "s3", est: 10, label: `Ch15.5 — <code>RefCell&lt;T&gt;</code> & interior mutability.` },
+            { id: "s4", est: 10, label: `Ch15.6 — reference cycles & <code>Weak&lt;T&gt;</code> (pp 347–369).` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 35, group: "g1",
-          label: `Work the mock-messenger (<code>RefCell</code>) and the leaf/branch tree (<code>Rc</code>+<code>Weak</code>) listings.` },
+          label: `Work the mock-messenger (<code>RefCell</code>) and the leaf/branch tree (<code>Rc</code>+<code>Weak</code>) listings.`,
+          sub: [
+            { id: "s1", est: 18, label: `Work the mock-messenger (<code>RefCell</code>) listing.` },
+            { id: "s2", est: 17, label: `Work the leaf/branch tree (<code>Rc</code>+<code>Weak</code>) listing.` },
+          ] },
         { id: "t3", obj: R, cat: "challenge", est: 45, optional: true,
           label: `<b>Tryout project:</b> build a tiny <code>Rc&lt;RefCell&lt;Node&gt;&gt;</code> graph, <b>force a leak</b>, then fix it with <code>Weak</code> and confirm with strong/weak counts.`,
           fallback: { est: 20, label: `Just build the cycle and print <code>Rc::strong_count</code> before/after dropping.` } },
@@ -78,9 +97,17 @@ registerRoadmap({
       theme: "Switch objective — SQLAlchemy models, CRUD, sessions.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30, group: "g1",
-          label: `FastAPI — <b>Ch4 Working with Databases</b>: SQLAlchemy setup, models, CRUD, sessions & transactions (pp 52–67).` },
+          label: `FastAPI — <b>Ch4 Working with Databases</b>: SQLAlchemy setup, models, CRUD, sessions & transactions (pp 52–67).`,
+          sub: [
+            { id: "s1", est: 15, label: `<b>Ch4</b> — SQLAlchemy setup & models.` },
+            { id: "s2", est: 15, label: `CRUD, sessions & transactions (pp 52–67).` },
+          ] },
         { id: "t2", obj: F, cat: "api", est: 45, group: "g1",
-          label: `Build a small CRUD API from the chapter; wire a session dependency with <code>Depends</code>.` },
+          label: `Build a small CRUD API from the chapter; wire a session dependency with <code>Depends</code>.`,
+          sub: [
+            { id: "s1", est: 25, label: `Build a small CRUD API from the chapter.` },
+            { id: "s2", est: 20, label: `Wire a session dependency with <code>Depends</code>.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 The official FastAPI SQL tutorial now uses <b>SQLModel</b> (Pydantic+SQLAlchemy). The book is raw SQLAlchemy — fine to learn, but know the modern default. <a href="https://fastapi.tiangolo.com/tutorial/sql-databases/" target="_blank" rel="noopener">docs</a>` },
@@ -92,9 +119,19 @@ registerRoadmap({
       theme: "Threads, channels, Mutex/Arc — Ch16 (book is snippet-y, so we build).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch16</b>: threads (<code>spawn</code>/<code>join</code>/<code>move</code>), channels, <code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>, <code>Send</code>/<code>Sync</code> (pp 371–394).` },
+          label: `Rust — <b>Ch16</b>: threads (<code>spawn</code>/<code>join</code>/<code>move</code>), channels, <code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>, <code>Send</code>/<code>Sync</code> (pp 371–394).`,
+          sub: [
+            { id: "s1", est: 8, label: `Threads (<code>spawn</code>/<code>join</code>/<code>move</code>).` },
+            { id: "s2", est: 7, label: `Channels.` },
+            { id: "s3", est: 8, label: `<code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>.` },
+            { id: "s4", est: 7, label: `<code>Send</code>/<code>Sync</code> (pp 371–394).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel, accumulating results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch20's thread pool.)` },
+          label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel, accumulating results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch20's thread pool.)`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel.` },
+            { id: "s2", est: 25, label: `Accumulate results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch20's thread pool.)` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 See also — the Book uses OS threads only. Async Rust (<a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">async book</a>, <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">tokio</a>) is the big topic it skips; note it for "after the book".` },
@@ -108,7 +145,11 @@ registerRoadmap({
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
           label: `FastAPI — <b>Ch5.1</b> project structure / clean code (pp 68–75).` },
         { id: "t2", obj: F, cat: "api", est: 45, group: "g1",
-          label: `<b>Supplement — Bigger Applications:</b> refactor the CRUD app into <code>routers/</code> with <code>APIRouter</code> (prefix, tags, per-router deps). <a href="https://fastapi.tiangolo.com/tutorial/bigger-applications/" target="_blank" rel="noopener">docs</a>` },
+          label: `<b>Supplement — Bigger Applications:</b> refactor the CRUD app into <code>routers/</code> with <code>APIRouter</code> (prefix, tags, per-router deps). <a href="https://fastapi.tiangolo.com/tutorial/bigger-applications/" target="_blank" rel="noopener">docs</a>`,
+          sub: [
+            { id: "s1", est: 25, label: `<b>Supplement — Bigger Applications:</b> refactor the CRUD app into <code>routers/</code> with <code>APIRouter</code>.` },
+            { id: "s2", est: 20, label: `Set prefix, tags & per-router deps. <a href="https://fastapi.tiangolo.com/tutorial/bigger-applications/" target="_blank" rel="noopener">docs</a>` },
+          ] },
         { id: "t3", obj: F, cat: "api", est: 25, optional: true,
           label: `<b>Bonus:</b> add <code>response_model</code> to every route; use the "never return the password field" split-model pattern. <a href="https://fastapi.tiangolo.com/tutorial/response-model/" target="_blank" rel="noopener">docs</a>` },
       ],
@@ -124,9 +165,19 @@ registerRoadmap({
       theme: "Trait objects & the State pattern — Ch17 (example-rich).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — <b>Ch17</b>: OO characteristics, <b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI, and the full <b>State pattern</b> blog example (pp 395–418).` },
+          label: `Rust — <b>Ch17</b>: OO characteristics, <b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI, and the full <b>State pattern</b> blog example (pp 395–418).`,
+          sub: [
+            { id: "s1", est: 10, label: `OO characteristics.` },
+            { id: "s2", est: 12, label: `<b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI.` },
+            { id: "s3", est: 13, label: `the full <b>State pattern</b> blog example (pp 395–418).` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 50, group: "g1",
-          label: `Implement the whole <code>Post</code> State-pattern example; then <b>harden it</b> — add a <code>Rejected</code> state and a word-count guard on publish.` },
+          label: `Implement the whole <code>Post</code> State-pattern example; then <b>harden it</b> — add a <code>Rejected</code> state and a word-count guard on publish.`,
+          sub: [
+            { id: "s1", est: 25, label: `Implement the whole <code>Post</code> State-pattern example.` },
+            { id: "s2", est: 13, label: `<b>Harden it</b> — add a <code>Rejected</code> state.` },
+            { id: "s3", est: 12, label: `Add a word-count guard on publish.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Rust's "OOP" is trait objects + enums, not inheritance. The State pattern here trades compile-time checks for runtime flexibility — compare it mentally to the <code>enum</code> version.` },
@@ -139,7 +190,12 @@ registerRoadmap({
         { id: "t1", obj: F, cat: "read", est: 20, group: "g1",
           label: `FastAPI — <b>Ch5.2 Security</b> (pp 76–84) — read, but treat as an intro only.` },
         { id: "t2", obj: F, cat: "api", est: 60, group: "g1",
-          label: `<b>Supplement — OAuth2 + JWT:</b> implement password flow, hashing, and Bearer/JWT from the official tutorial. <a href="https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/" target="_blank" rel="noopener">docs</a>` },
+          label: `<b>Supplement — OAuth2 + JWT:</b> implement password flow, hashing, and Bearer/JWT from the official tutorial. <a href="https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/" target="_blank" rel="noopener">docs</a>`,
+          sub: [
+            { id: "s1", est: 20, label: `<b>Supplement — OAuth2 + JWT:</b> implement the password flow.` },
+            { id: "s2", est: 20, label: `Implement hashing.` },
+            { id: "s3", est: 20, label: `Implement Bearer/JWT from the official tutorial. <a href="https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/" target="_blank" rel="noopener">docs</a>` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 Current docs use <b>pwdlib (Argon2)</b> and <b>PyJWT</b> — older tutorials (and this book) show <code>passlib</code>/<code>python-jose</code>. Use the new stack.` },
@@ -151,9 +207,18 @@ registerRoadmap({
       theme: "Ch18 is reference-y — so we build one thing that uses it all.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch18</b>: all pattern places, refutability, and the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>) (pp 419–442).` },
+          label: `Rust — <b>Ch18</b>: all pattern places, refutability, and the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>) (pp 419–442).`,
+          sub: [
+            { id: "s1", est: 10, label: `all pattern places.` },
+            { id: "s2", est: 10, label: `refutability.` },
+            { id: "s3", est: 10, label: `the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>) (pp 419–442).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 50, group: "g1",
-          label: `<b>Tryout:</b> a tiny command parser — <code>match</code> on an enum of commands using destructuring, ranges, match guards, and <code>@</code> bindings in one cohesive example.` },
+          label: `<b>Tryout:</b> a tiny command parser — <code>match</code> on an enum of commands using destructuring, ranges, match guards, and <code>@</code> bindings in one cohesive example.`,
+          sub: [
+            { id: "s1", est: 25, label: `<b>Tryout:</b> a tiny command parser — <code>match</code> on an enum of commands.` },
+            { id: "s2", est: 25, label: `Use destructuring, ranges, match guards, and <code>@</code> bindings in one cohesive example.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Match guards let you add arbitrary boolean conditions to an arm, but they defeat exhaustiveness checking — the compiler can't prove the guard covers the case, so you still need a catch-all.` },
@@ -164,9 +229,18 @@ registerRoadmap({
       theme: "Depends done properly — DI, sub-dependencies, yield teardown.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30, group: "g1",
-          label: `<b>Supplement — Dependencies:</b> <code>Depends</code>, sub-dependencies, and <code>yield</code> for setup/teardown. <a href="https://fastapi.tiangolo.com/tutorial/dependencies/" target="_blank" rel="noopener">docs</a>` },
+          label: `<b>Supplement — Dependencies:</b> <code>Depends</code>, sub-dependencies, and <code>yield</code> for setup/teardown. <a href="https://fastapi.tiangolo.com/tutorial/dependencies/" target="_blank" rel="noopener">docs</a>`,
+          sub: [
+            { id: "s1", est: 10, label: `<b>Supplement — Dependencies:</b> <code>Depends</code>.` },
+            { id: "s2", est: 10, label: `Sub-dependencies.` },
+            { id: "s3", est: 10, label: `<code>yield</code> for setup/teardown. <a href="https://fastapi.tiangolo.com/tutorial/dependencies/" target="_blank" rel="noopener">docs</a>` },
+          ] },
         { id: "t2", obj: F, cat: "api", est: 40, group: "g1",
-          label: `Refactor DB-session and current-user into reusable <code>Depends</code>; add a role-check sub-dependency.` },
+          label: `Refactor DB-session and current-user into reusable <code>Depends</code>; add a role-check sub-dependency.`,
+          sub: [
+            { id: "s1", est: 20, label: `Refactor DB-session and current-user into reusable <code>Depends</code>.` },
+            { id: "s2", est: 20, label: `Add a role-check sub-dependency.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 A <code>yield</code> dependency is FastAPI's answer to context managers — code before <code>yield</code> runs on entry, code after runs on exit even if the route raised.` },
@@ -178,9 +252,17 @@ registerRoadmap({
       theme: "Unsafe & advanced lifetimes — Ch19 part 1.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
-          label: `Rust — <b>Ch19.1–19.2</b>: <b>Unsafe Rust</b> (raw pointers, unsafe fns, statics) and <b>advanced lifetimes</b> (pp 443–459).` },
+          label: `Rust — <b>Ch19.1–19.2</b>: <b>Unsafe Rust</b> (raw pointers, unsafe fns, statics) and <b>advanced lifetimes</b> (pp 443–459).`,
+          sub: [
+            { id: "s1", est: 25, label: `<b>Unsafe Rust</b> (raw pointers, unsafe fns, statics).` },
+            { id: "s2", est: 20, label: `<b>advanced lifetimes</b> (pp 443–459).` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 30, group: "g1",
-          label: `Write a small <code>unsafe</code> block that dereferences a raw pointer and a <code>split_at_mut</code>-style function; document <i>why</i> each unsafe use is sound.` },
+          label: `Write a small <code>unsafe</code> block that dereferences a raw pointer and a <code>split_at_mut</code>-style function; document <i>why</i> each unsafe use is sound.`,
+          sub: [
+            { id: "s1", est: 20, label: `Write a small <code>unsafe</code> block that dereferences a raw pointer and a <code>split_at_mut</code>-style function.` },
+            { id: "s2", est: 10, label: `Document <i>why</i> each unsafe use is sound.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 See also — <a href="https://doc.rust-lang.org/nomicon/" target="_blank" rel="noopener">The Rustonomicon</a> is the deep dive on everything <code>unsafe</code>; bookmark for after the book.` },
@@ -193,9 +275,18 @@ registerRoadmap({
       theme: "Advanced traits/types/closures — the Book's most reference-like pages.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
-          label: `Rust — <b>Ch19.3–19.5</b>: advanced traits (associated types, operator overloading, supertraits, newtype), advanced types (<code>!</code>, DSTs, <code>Sized</code>), function pointers & returning closures (pp 460–478).` },
+          label: `Rust — <b>Ch19.3–19.5</b>: advanced traits (associated types, operator overloading, supertraits, newtype), advanced types (<code>!</code>, DSTs, <code>Sized</code>), function pointers & returning closures (pp 460–478).`,
+          sub: [
+            { id: "s1", est: 15, label: `advanced traits (associated types, operator overloading, supertraits, newtype).` },
+            { id: "s2", est: 15, label: `advanced types (<code>!</code>, DSTs, <code>Sized</code>).` },
+            { id: "s3", est: 15, label: `function pointers & returning closures (pp 460–478).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type, plus a supertrait for <code>Display</code>. Ties four Ch19 topics together.` },
+          label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type, plus a supertrait for <code>Display</code>. Ties four Ch19 topics together.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type.` },
+            { id: "s2", est: 25, label: `Add a supertrait for <code>Display</code>. Ties four Ch19 topics together.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 The newtype pattern (<code>struct Wrapper(Vec&lt;String&gt;)</code>) is how you implement a foreign trait on a foreign type — the orphan rule's escape hatch.` },
@@ -207,9 +298,17 @@ registerRoadmap({
       theme: "TestClient + background tasks — the book barely covers testing.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
-          label: `<b>Supplement — Testing:</b> <code>TestClient</code> patterns. <a href="https://fastapi.tiangolo.com/tutorial/testing/" target="_blank" rel="noopener">docs</a> · <b>Background Tasks.</b> <a href="https://fastapi.tiangolo.com/tutorial/background-tasks/" target="_blank" rel="noopener">docs</a>` },
+          label: `<b>Supplement — Testing:</b> <code>TestClient</code> patterns. <a href="https://fastapi.tiangolo.com/tutorial/testing/" target="_blank" rel="noopener">docs</a> · <b>Background Tasks.</b> <a href="https://fastapi.tiangolo.com/tutorial/background-tasks/" target="_blank" rel="noopener">docs</a>`,
+          sub: [
+            { id: "s1", est: 13, label: `<b>Supplement — Testing:</b> <code>TestClient</code> patterns. <a href="https://fastapi.tiangolo.com/tutorial/testing/" target="_blank" rel="noopener">docs</a>` },
+            { id: "s2", est: 12, label: `<b>Background Tasks.</b> <a href="https://fastapi.tiangolo.com/tutorial/background-tasks/" target="_blank" rel="noopener">docs</a>` },
+          ] },
         { id: "t2", obj: F, cat: "code", est: 45, group: "g1",
-          label: `Add a <code>pytest</code> suite covering each router (happy + auth-failure paths); add one <code>BackgroundTasks</code> endpoint (e.g. "send email" stub).` },
+          label: `Add a <code>pytest</code> suite covering each router (happy + auth-failure paths); add one <code>BackgroundTasks</code> endpoint (e.g. "send email" stub).`,
+          sub: [
+            { id: "s1", est: 25, label: `Add a <code>pytest</code> suite covering each router (happy + auth-failure paths).` },
+            { id: "s2", est: 20, label: `Add one <code>BackgroundTasks</code> endpoint (e.g. "send email" stub).` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 <code>TestClient</code> wraps httpx/Starlette and runs the app in-process — no server, no ports. Override dependencies with <code>app.dependency_overrides</code> to swap the DB for a test one.` },
@@ -220,9 +319,18 @@ registerRoadmap({
       theme: "Ch20 begins. It IS the tryout — one continuous project.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
-          label: `Rust — <b>Ch20.1</b>: listen on TCP, read the request, anatomy of an HTTP request, write a response, return real HTML, validate & route (pp 480–489).` },
+          label: `Rust — <b>Ch20.1</b>: listen on TCP, read the request, anatomy of an HTTP request, write a response, return real HTML, validate & route (pp 480–489).`,
+          sub: [
+            { id: "s1", est: 7, label: `listen on TCP, read the request.` },
+            { id: "s2", est: 7, label: `anatomy of an HTTP request, write a response.` },
+            { id: "s3", est: 6, label: `return real HTML, validate & route (pp 480–489).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 60, group: "g1",
-          label: `<b>Build:</b> the single-threaded web server end to end — serve <code>hello.html</code> and a 404 page, selectively by request line.` },
+          label: `<b>Build:</b> the single-threaded web server end to end — serve <code>hello.html</code> and a 404 page, selectively by request line.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Build:</b> the single-threaded web server end to end — serve <code>hello.html</code>.` },
+            { id: "s2", est: 30, label: `Serve a 404 page, selectively by request line.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 This is raw <code>std::net::TcpListener</code> — no framework. Seeing HTTP as bytes on a socket makes every web framework afterward feel less magical.` },
@@ -233,9 +341,18 @@ registerRoadmap({
       theme: "The heavy section: design a ThreadPool API from scratch (pp 490–508).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch20.2</b>: simulate a slow request, then design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures (pp 490–508).` },
+          label: `Rust — <b>Ch20.2</b>: simulate a slow request, then design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures (pp 490–508).`,
+          sub: [
+            { id: "s1", est: 12, label: `simulate a slow request.` },
+            { id: "s2", est: 18, label: `design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures (pp 490–508).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 75, group: "g1",
-          label: `<b>Build:</b> implement the full thread pool and serve concurrent requests; verify a slow route no longer blocks others.` },
+          label: `<b>Build:</b> implement the full thread pool and serve concurrent requests; verify a slow route no longer blocks others.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Build:</b> implement the full thread pool.` },
+            { id: "s2", est: 25, label: `Serve concurrent requests.` },
+            { id: "s3", est: 20, label: `Verify a slow route no longer blocks others.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Everything from your Ch16 worker-pool tryout pays off here — same <code>mpsc</code> + <code>Arc&lt;Mutex&gt;</code> shape, now behind a clean API with <code>FnOnce</code> boxed jobs.` },
@@ -247,7 +364,12 @@ registerRoadmap({
       theme: "Ch6 is prose-heavy/thin — read for concepts, keep it light (overlap day).",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 30,
-          label: `FastAPI — <b>Ch6 Microservices</b>: principles, scaling, Redis/RabbitMQ, API gateway (pp 85–100). Conceptual — note ideas, don't rabbit-hole.` },
+          label: `FastAPI — <b>Ch6 Microservices</b>: principles, scaling, Redis/RabbitMQ, API gateway (pp 85–100). Conceptual — note ideas, don't rabbit-hole.`,
+          sub: [
+            { id: "s1", est: 10, label: `principles, scaling.` },
+            { id: "s2", est: 10, label: `Redis/RabbitMQ.` },
+            { id: "s3", est: 10, label: `API gateway (pp 85–100). Conceptual — note ideas, don't rabbit-hole.` },
+          ] },
         { id: "t2", obj: F, cat: "review", est: 20, optional: true,
           label: `<b>Bonus:</b> sketch how you'd split the CRUD app into two services + a gateway (diagram only).` },
       ],
@@ -263,9 +385,18 @@ registerRoadmap({
       theme: "Finish Ch20: Drop for the pool, signal workers to stop (pp 509–515).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
-          label: `Rust — <b>Ch20.3</b>: implement <code>Drop</code> for <code>ThreadPool</code>, signal threads to stop, graceful shutdown & cleanup (pp 509–515).` },
+          label: `Rust — <b>Ch20.3</b>: implement <code>Drop</code> for <code>ThreadPool</code>, signal threads to stop, graceful shutdown & cleanup (pp 509–515).`,
+          sub: [
+            { id: "s1", est: 7, label: `implement <code>Drop</code> for <code>ThreadPool</code>.` },
+            { id: "s2", est: 7, label: `signal threads to stop.` },
+            { id: "s3", est: 6, label: `graceful shutdown & cleanup (pp 509–515).` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 45, group: "g1",
-          label: `<b>Finish the project:</b> graceful shutdown after N requests; ensure every worker joins cleanly. 🎉 The Book's final project is done.` },
+          label: `<b>Finish the project:</b> graceful shutdown after N requests; ensure every worker joins cleanly. 🎉 The Book's final project is done.`,
+          sub: [
+            { id: "s1", est: 23, label: `<b>Finish the project:</b> graceful shutdown after N requests.` },
+            { id: "s2", est: 22, label: `Ensure every worker joins cleanly. 🎉 The Book's final project is done.` },
+          ] },
         { id: "t3", obj: R, cat: "challenge", est: 40, optional: true,
           label: `<b>Extend:</b> add a real router (a couple of routes) and a small static-file handler to your server.` },
       ],
@@ -278,9 +409,18 @@ registerRoadmap({
       theme: "Ch7 is thin on code — supplement with a real Docker deploy.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
-          label: `FastAPI — <b>Ch7 Deploying in Production</b>: Uvicorn vs Gunicorn, env security, Docker, AWS/GCP overviews (pp 101–116).` },
+          label: `FastAPI — <b>Ch7 Deploying in Production</b>: Uvicorn vs Gunicorn, env security, Docker, AWS/GCP overviews (pp 101–116).`,
+          sub: [
+            { id: "s1", est: 9, label: `Uvicorn vs Gunicorn, env security.` },
+            { id: "s2", est: 8, label: `Docker.` },
+            { id: "s3", est: 8, label: `AWS/GCP overviews (pp 101–116).` },
+          ] },
         { id: "t2", obj: F, cat: "project", est: 45, group: "g1",
-          label: `<b>Supplement:</b> write a real multi-stage <code>Dockerfile</code> for the CRUD app (uvicorn workers), a <code>.env</code>, and run it locally in a container.` },
+          label: `<b>Supplement:</b> write a real multi-stage <code>Dockerfile</code> for the CRUD app (uvicorn workers), a <code>.env</code>, and run it locally in a container.`,
+          sub: [
+            { id: "s1", est: 25, label: `<b>Supplement:</b> write a real multi-stage <code>Dockerfile</code> for the CRUD app (uvicorn workers), a <code>.env</code>.` },
+            { id: "s2", est: 20, label: `Run it locally in a container.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ The book's AWS/GCP sections are 2–3 pages each — overviews, not runbooks. For a real deploy, follow the official Uvicorn/Gunicorn deployment docs + your container platform's guide.` },
@@ -291,9 +431,17 @@ registerRoadmap({
       theme: "Modernize the app — kill deprecated patterns.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
-          label: `<b>Supplement — Lifespan events</b> <a href="https://fastapi.tiangolo.com/advanced/events/" target="_blank" rel="noopener">docs</a> and the <b>Pydantic v1→v2 migration</b> <a href="https://docs.pydantic.dev/latest/migration/" target="_blank" rel="noopener">guide</a>.` },
+          label: `<b>Supplement — Lifespan events</b> <a href="https://fastapi.tiangolo.com/advanced/events/" target="_blank" rel="noopener">docs</a> and the <b>Pydantic v1→v2 migration</b> <a href="https://docs.pydantic.dev/latest/migration/" target="_blank" rel="noopener">guide</a>.`,
+          sub: [
+            { id: "s1", est: 13, label: `<b>Supplement — Lifespan events</b> <a href="https://fastapi.tiangolo.com/advanced/events/" target="_blank" rel="noopener">docs</a>.` },
+            { id: "s2", est: 12, label: `the <b>Pydantic v1→v2 migration</b> <a href="https://docs.pydantic.dev/latest/migration/" target="_blank" rel="noopener">guide</a>.` },
+          ] },
         { id: "t2", obj: F, cat: "code", est: 40, group: "g1",
-          label: `Refactor: replace any <code>@app.on_event</code> with a <code>lifespan=</code> context manager; move to Pydantic-v2 APIs (<code>model_dump</code>, <code>field_validator</code>, <code>model_config</code>).` },
+          label: `Refactor: replace any <code>@app.on_event</code> with a <code>lifespan=</code> context manager; move to Pydantic-v2 APIs (<code>model_dump</code>, <code>field_validator</code>, <code>model_config</code>).`,
+          sub: [
+            { id: "s1", est: 20, label: `Refactor: replace any <code>@app.on_event</code> with a <code>lifespan=</code> context manager.` },
+            { id: "s2", est: 20, label: `Move to Pydantic-v2 APIs (<code>model_dump</code>, <code>field_validator</code>, <code>model_config</code>).` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Deprecated: <code>@app.on_event("startup"/"shutdown")</code> → use <code>lifespan=</code>. It's all-lifespan or all-events, never both.` },
@@ -305,7 +453,11 @@ registerRoadmap({
       theme: "Reference appendices (light) + the one with a real example: macros.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 25,
-          label: `Rust — <b>Appendix D Macros</b>: <code>macro_rules!</code> vs functions, then the worked <b>procedural derive macro</b> (<code>hello_macro</code>) (pp 531–540).` },
+          label: `Rust — <b>Appendix D Macros</b>: <code>macro_rules!</code> vs functions, then the worked <b>procedural derive macro</b> (<code>hello_macro</code>) (pp 531–540).`,
+          sub: [
+            { id: "s1", est: 12, label: `<code>macro_rules!</code> vs functions.` },
+            { id: "s2", est: 13, label: `the worked <b>procedural derive macro</b> (<code>hello_macro</code>) (pp 531–540).` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 35, optional: true,
           label: `<b>Bonus:</b> build the <code>hello_macro</code> derive crate yourself and derive it on a struct.`,
           fallback: { est: 15, label: `Just read & run the provided <code>hello_macro</code> code.` } },
@@ -321,7 +473,13 @@ registerRoadmap({
       theme: "Pull FastAPI together: a CRUD+auth+tests service from scratch.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 80, group: "g1",
-          label: `<b>Capstone (part 1):</b> design a fresh API (e.g. a bookmarks service) — models, <code>APIRouter</code> modules, DB layer, and CRUD routes with <code>response_model</code>. No book — you drive it.` },
+          label: `<b>Capstone (part 1):</b> design a fresh API (e.g. a bookmarks service) — models, <code>APIRouter</code> modules, DB layer, and CRUD routes with <code>response_model</code>. No book — you drive it.`,
+          sub: [
+            { id: "s1", est: 20, label: `<b>Capstone (part 1):</b> design a fresh API (e.g. a bookmarks service) — models.` },
+            { id: "s2", est: 20, label: `<code>APIRouter</code> modules.` },
+            { id: "s3", est: 20, label: `DB layer.` },
+            { id: "s4", est: 20, label: `CRUD routes with <code>response_model</code>. No book — you drive it.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "tryout", label: `Tryout: add pagination + filtering query params and a <code>response_model</code> for the list endpoint.` },
@@ -334,7 +492,12 @@ registerRoadmap({
       theme: "Finish the capstone with JWT auth and a real test suite.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 70, group: "g1",
-          label: `<b>Capstone (part 2):</b> add JWT auth (pwdlib+PyJWT), protect the write routes, and cover it all with <code>pytest</code> + <code>TestClient</code> (incl. 401 paths). 🎉 Capstone done.` },
+          label: `<b>Capstone (part 2):</b> add JWT auth (pwdlib+PyJWT), protect the write routes, and cover it all with <code>pytest</code> + <code>TestClient</code> (incl. 401 paths). 🎉 Capstone done.`,
+          sub: [
+            { id: "s1", est: 25, label: `<b>Capstone (part 2):</b> add JWT auth (pwdlib+PyJWT).` },
+            { id: "s2", est: 20, label: `Protect the write routes.` },
+            { id: "s3", est: 25, label: `Cover it all with <code>pytest</code> + <code>TestClient</code> (incl. 401 paths). 🎉 Capstone done.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 If you can override the DB dependency in tests and assert on 401s, you've internalized the two hardest FastAPI ideas: DI and security. That's the whole point of the supplement track.` },
@@ -345,9 +508,18 @@ registerRoadmap({
       theme: "The async DB pattern the book skipped.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 25, group: "g1",
-          label: `<b>Supplement — async SQLAlchemy 2.0:</b> <code>AsyncSession</code>, <code>async_sessionmaker</code>, <code>select()</code>. <a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html" target="_blank" rel="noopener">docs</a>` },
+          label: `<b>Supplement — async SQLAlchemy 2.0:</b> <code>AsyncSession</code>, <code>async_sessionmaker</code>, <code>select()</code>. <a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html" target="_blank" rel="noopener">docs</a>`,
+          sub: [
+            { id: "s1", est: 9, label: `<b>Supplement — async SQLAlchemy 2.0:</b> <code>AsyncSession</code>.` },
+            { id: "s2", est: 8, label: `<code>async_sessionmaker</code>.` },
+            { id: "s3", est: 8, label: `<code>select()</code>. <a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html" target="_blank" rel="noopener">docs</a>` },
+          ] },
         { id: "t2", obj: F, cat: "api", est: 45, group: "g1",
-          label: `Add one fully-async CRUD router to the capstone using an async engine; benchmark it against the sync one informally.` },
+          label: `Add one fully-async CRUD router to the capstone using an async engine; benchmark it against the sync one informally.`,
+          sub: [
+            { id: "s1", est: 25, label: `Add one fully-async CRUD router to the capstone using an async engine.` },
+            { id: "s2", est: 20, label: `Benchmark it against the sync one informally.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 SQLAlchemy 2.0 unifies ORM+Core behind <code>select()</code> and drops implicit autocommit / legacy <code>Query</code>. <a href="https://docs.sqlalchemy.org/en/20/changelog/migration_20.html" target="_blank" rel="noopener">migration guide</a>` },
@@ -358,7 +530,11 @@ registerRoadmap({
       theme: "Cement the advanced material with one integrative exercise.",
       tasks: [
         { id: "t1", obj: R, cat: "project", est: 60, group: "g1",
-          label: `<b>Combine-topics tryout:</b> extend your Ch20 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store and a couple of JSON routes — exercises smart pointers + concurrency + traits together.` },
+          label: `<b>Combine-topics tryout:</b> extend your Ch20 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store and a couple of JSON routes — exercises smart pointers + concurrency + traits together.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Combine-topics tryout:</b> extend your Ch20 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store.` },
+            { id: "s2", est: 30, label: `Add a couple of JSON routes — exercises smart pointers + concurrency + traits together.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 After the Book: <a href="https://github.com/rust-lang/rustlings" target="_blank" rel="noopener">Rustlings</a>, <a href="https://doc.rust-lang.org/rust-by-example/" target="_blank" rel="noopener">Rust by Example</a>, <a href="https://github.com/kyclark/command-line-rust" target="_blank" rel="noopener">Command-Line Rust</a>, then async (tokio) for real network services.` },
@@ -369,9 +545,17 @@ registerRoadmap({
       theme: "The Book (Ch15–20) and Mastering FastAPI (Ch4–7) are done. Take stock before the extension weeks.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 30, group: "g1",
-          label: `Rust — skim your notes across Ch15–20; list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).` },
+          label: `Rust — skim your notes across Ch15–20; list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).`,
+          sub: [
+            { id: "s1", est: 15, label: `Rust — skim your notes across Ch15–20.` },
+            { id: "s2", est: 15, label: `list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).` },
+          ] },
         { id: "t2", obj: F, cat: "review", est: 30, group: "g1",
-          label: `FastAPI — write a one-page "cheat sheet" of the DI + security + async patterns you built; note gaps for a future project.` },
+          label: `FastAPI — write a one-page "cheat sheet" of the DI + security + async patterns you built; note gaps for a future project.`,
+          sub: [
+            { id: "s1", est: 15, label: `FastAPI — write a one-page "cheat sheet" of the DI + security + async patterns you built.` },
+            { id: "s2", est: 15, label: `note gaps for a future project.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Both books are finished a full two weeks before the plan ends — that slack is intentional. Weeks 6–7 turn it into the two things the Book skips and the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
@@ -389,9 +573,17 @@ registerRoadmap({
       theme: "The Book is threads-only. Meet the other half of Rust concurrency.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model) + the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.` },
+          label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model) + the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.`,
+          sub: [
+            { id: "s1", est: 20, label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model).` },
+            { id: "s2", est: 15, label: `read the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.` },
+          ] },
         { id: "t2", obj: R, cat: "code", est: 45, group: "g1",
-          label: `Build a small tokio program: spawn several async tasks that sleep and race, and <code>join!</code> them. Feel how <code>.await</code> yields vs a blocking thread.` },
+          label: `Build a small tokio program: spawn several async tasks that sleep and race, and <code>join!</code> them. Feel how <code>.await</code> yields vs a blocking thread.`,
+          sub: [
+            { id: "s1", est: 25, label: `Build a small tokio program: spawn several async tasks that sleep and race, and <code>join!</code> them.` },
+            { id: "s2", est: 20, label: `Feel how <code>.await</code> yields vs a blocking thread.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 Bridge — your Ch16 worker-pool and Ch20 thread pool used OS threads + <code>mpsc</code>. Async is the same idea (concurrent work, message passing) but cooperatively scheduled on a runtime. <code>tokio::sync::mpsc</code> is the async twin of <code>std::sync::mpsc</code>.` },
@@ -403,9 +595,18 @@ registerRoadmap({
       theme: "Take the Week-4/5 capstone from 'runs locally' to 'deployed'.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 50, group: "g1",
-          label: `Deploy your capstone's Docker image to a real host (Fly.io / Railway / a VPS): env-based secrets, a managed Postgres, and a public URL with HTTPS.` },
+          label: `Deploy your capstone's Docker image to a real host (Fly.io / Railway / a VPS): env-based secrets, a managed Postgres, and a public URL with HTTPS.`,
+          sub: [
+            { id: "s1", est: 20, label: `Deploy your capstone's Docker image to a real host (Fly.io / Railway / a VPS): env-based secrets.` },
+            { id: "s2", est: 15, label: `a managed Postgres.` },
+            { id: "s3", est: 15, label: `a public URL with HTTPS.` },
+          ] },
         { id: "t2", obj: F, cat: "read", est: 20, group: "g1",
-          label: `Add <b>structured logging</b> + a <code>/health</code> endpoint; skim the <a href="https://fastapi.tiangolo.com/deployment/concepts/" target="_blank" rel="noopener">deployment concepts</a> doc (workers, proxies, restarts).` },
+          label: `Add <b>structured logging</b> + a <code>/health</code> endpoint; skim the <a href="https://fastapi.tiangolo.com/deployment/concepts/" target="_blank" rel="noopener">deployment concepts</a> doc (workers, proxies, restarts).`,
+          sub: [
+            { id: "s1", est: 10, label: `Add <b>structured logging</b> + a <code>/health</code> endpoint.` },
+            { id: "s2", est: 10, label: `skim the <a href="https://fastapi.tiangolo.com/deployment/concepts/" target="_blank" rel="noopener">deployment concepts</a> doc (workers, proxies, restarts).` },
+          ] },
         { id: "t3", obj: F, cat: "project", est: 30, optional: true,
           label: `<b>Bonus:</b> wire a GitHub Actions job that runs your pytest suite and builds the image on push.` },
       ],
@@ -418,9 +619,17 @@ registerRoadmap({
       theme: "Rebuild the Ch20 server the async way — the payoff of d25.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 25, group: "g1",
-          label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters; skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.` },
+          label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters; skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.`,
+          sub: [
+            { id: "s1", est: 13, label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters.` },
+            { id: "s2", est: 12, label: `skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.` },
+          label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection).` },
+            { id: "s2", est: 25, label: `Compare it to the thread-pool version — no pool needed, the runtime multiplexes.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Notice what disappeared: no manual <code>ThreadPool</code>, no <code>Arc&lt;Mutex&gt;</code> around the job queue. The runtime <i>is</i> the pool. That's why async won for network I/O.` },
@@ -449,9 +658,17 @@ registerRoadmap({
       theme: "One system that uses both languages: a Rust service behind a FastAPI gateway.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
-          label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d27, exposing a JSON endpoint or two) fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.` },
+          label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d27, exposing a JSON endpoint or two) fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.`,
+          sub: [
+            { id: "s1", est: 10, label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d27, exposing a JSON endpoint or two).` },
+            { id: "s2", est: 10, label: `fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 60, group: "g1",
-          label: `<b>Build (Rust side):</b> give the async server a couple of real JSON routes backed by an <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> (or sqlite) store — exercises smart pointers + concurrency + traits together.` },
+          label: `<b>Build (Rust side):</b> give the async server a couple of real JSON routes backed by an <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> (or sqlite) store — exercises smart pointers + concurrency + traits together.`,
+          sub: [
+            { id: "s1", est: 30, label: `<b>Build (Rust side):</b> give the async server a couple of real JSON routes.` },
+            { id: "s2", est: 30, label: `back them with an <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> (or sqlite) store — exercises smart pointers + concurrency + traits together.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 This is the project d24 used to only hint at. Doing it proves you can pick the right tool per layer: Rust for the hot path, FastAPI for the ergonomic edge.` },
@@ -462,7 +679,12 @@ registerRoadmap({
       theme: "One end-to-end request path across both services.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 70, group: "g1",
-          label: `<b>Build (FastAPI side):</b> a gateway that validates a JWT, forwards the request to the Rust service (httpx), and shapes the response with a <code>response_model</code>. Get one request flowing user → FastAPI → Rust → back.` },
+          label: `<b>Build (FastAPI side):</b> a gateway that validates a JWT, forwards the request to the Rust service (httpx), and shapes the response with a <code>response_model</code>. Get one request flowing user → FastAPI → Rust → back.`,
+          sub: [
+            { id: "s1", est: 20, label: `<b>Build (FastAPI side):</b> a gateway that validates a JWT.` },
+            { id: "s2", est: 20, label: `forwards the request to the Rust service (httpx).` },
+            { id: "s3", est: 30, label: `shapes the response with a <code>response_model</code>. Get one request flowing user → FastAPI → Rust → back.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "tryout", label: `Tryout: add a timeout + graceful error when the Rust service is down, so the gateway degrades instead of hanging. Real systems fail at the seams — practice the seam.` },
@@ -473,7 +695,11 @@ registerRoadmap({
       theme: "Make the capstone something you'd show.",
       tasks: [
         { id: "t1", obj: F, cat: "code", est: 40, group: "g1",
-          label: `Add a <code>pytest</code> happy-path + one failure test for the gateway; write a short README with a run command and an architecture line.` },
+          label: `Add a <code>pytest</code> happy-path + one failure test for the gateway; write a short README with a run command and an architecture line.`,
+          sub: [
+            { id: "s1", est: 20, label: `Add a <code>pytest</code> happy-path + one failure test for the gateway.` },
+            { id: "s2", est: 20, label: `write a short README with a run command and an architecture line.` },
+          ] },
         { id: "t2", obj: R, cat: "project", est: 30, optional: true,
           label: `<b>Bonus:</b> dockerize both services with a <code>docker-compose.yml</code> so the whole thing comes up with one command.` },
       ],
@@ -486,9 +712,18 @@ registerRoadmap({
       theme: "Close the journey; capture what you learned and where you go next.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 35, group: "g1",
-          label: `Write the one-page map: the Rust ideas you'll reuse (ownership, traits, concurrency, async) and the FastAPI ideas (DI, security, async DB). Note the 2–3 you'd re-read first.` },
+          label: `Write the one-page map: the Rust ideas you'll reuse (ownership, traits, concurrency, async) and the FastAPI ideas (DI, security, async DB). Note the 2–3 you'd re-read first.`,
+          sub: [
+            { id: "s1", est: 13, label: `Write the one-page map: the Rust ideas you'll reuse (ownership, traits, concurrency, async).` },
+            { id: "s2", est: 12, label: `the FastAPI ideas (DI, security, async DB).` },
+            { id: "s3", est: 10, label: `Note the 2–3 you'd re-read first.` },
+          ] },
         { id: "t2", obj: F, cat: "review", est: 25, group: "g1",
-          label: `Pick the <b>one</b> next real project (a service you actually want) and write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.` },
+          label: `Pick the <b>one</b> next real project (a service you actually want) and write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.`,
+          sub: [
+            { id: "s1", est: 13, label: `Pick the <b>one</b> next real project (a service you actually want).` },
+            { id: "s2", est: 12, label: `write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🔗 After here: async depth (<a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> + the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a>), the <a href="https://doc.rust-lang.org/nomicon/" target="_blank" rel="noopener">Nomicon</a> for unsafe, and a real FastAPI service with a queue. You have the fundamentals; now build something you'll keep.` },

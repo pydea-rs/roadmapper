@@ -17,9 +17,11 @@ doneOn(F, "d01.t1", 2026, 7, 13);   // req 30
 doneOn(F, "d01.t2", 2026, 7, 13);   // req 45
 doneOn(F, "d02.b1", 2026, 7, 13);   // bonus 40
 doneOn(F, "d03.t1", 2026, 7, 12);   // req 90 (previous day)
-// cross-roadmap day: one fixture + one rust task on 2026-07-15
+// cross-roadmap day: one fixture task + one rust LEAF on 2026-07-15. Effort is
+// logged per leaf, so with rust-fastapi now split into sub-tasks we tick a leaf
+// (the first sub-task if the task has any) — its est is what shows in the log.
 const rustTask = (() => { const rm = registry.getRoadmap(R);
-  for (const d of rm.days) for (const x of d.tasks) if (!x.optional) return x; })();
+  for (const d of rm.days) for (const x of d.tasks) if (!x.optional) return x.subs ? x.subs[0] : x; })();
 doneOn(F, "d04.t1", 2026, 7, 15);   // req 45
 doneOn(R, rustTask.id, 2026, 7, 15);
 
