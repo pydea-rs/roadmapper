@@ -502,14 +502,20 @@ switch ($action) {
         $q = function_exists("mb_substr") ? mb_substr($q, 0, 160) : substr($q, 0, 160);
         if ($q === "") fail(400, "empty query");
         $type = (($_GET["type"] ?? "") === "article") ? "article" : "video";
-        $results = ($type === "article") ? search_articles($q) : search_youtube($q);
-        echo json_encode([
+        $diag = null;
+        $results = ($type === "article") ? search_articles($q, $diag) : search_youtube($q, $diag);
+        $resp = [
             "ok"      => true,
             "type"    => $type,
             "q"       => $q,
             "fetched" => count($results) > 0,   // false => client shows its deep-link fallback
             "results" => array_slice($results, 0, 6),
-        ], JSON_UNESCAPED_SLASHES);
+        ];
+        // ?debug=1 adds non-sensitive scrape diagnostics (http code, byte count,
+        // curl error, parsed count) so a "nothing found" can be pinpointed. Safe
+        // to leave in: auth-gated, opt-in, exposes no secrets.
+        if (($_GET["debug"] ?? "") === "1") $resp["debug"] = ["fetch" => $diag, "parsed" => count($results)];
+        echo json_encode($resp, JSON_UNESCAPED_SLASHES);
         break;
     }
 
@@ -524,8 +530,17 @@ switch ($action) {
  * failure returns [] and the client renders its own results-page link instead.
  */
 
-/** GET a URL over HTTPS only, with a short timeout. Returns body or null. */
-function http_fetch(string $url, int $timeout = 8): ?string {
+/**
+ * GET a URL over HTTP(S) with a short timeout. Returns the (decoded) body or
+ * null. Reports diagnostics into $diag: { url, http, bytes, err } — so a caller
+ * can tell "network failed" from "fetched fine but parsed nothing".
+ *   - CURLOPT_ENCODING "" makes curl advertise gzip/deflate/br AND auto-decode,
+ *     otherwise YouTube's compressed HTML arrives as bytes the regex can't read.
+ *   - A real browser UA + consent cookie avoid the stripped/interstitial pages
+ *     these sites serve to bots.
+ */
+function http_fetch(string $url, ?array &$diag = null, array $headers = [], int $timeout = 8): ?string {
+    $diag = ["url" => $url, "http" => 0, "bytes" => 0, "err" => "curl-missing"];
     if (!function_exists("curl_init")) return null;
     $ch = curl_init($url);
     curl_setopt_array($ch, [
@@ -533,9 +548,14 @@ function http_fetch(string $url, int $timeout = 8): ?string {
         CURLOPT_TIMEOUT         => $timeout,
         CURLOPT_CONNECTTIMEOUT  => 5,
         CURLOPT_FOLLOWLOCATION  => true,
-        CURLOPT_MAXREDIRS       => 3,
-        CURLOPT_USERAGENT       => "Mozilla/5.0 (compatible; RoadmapsBot/1.0)",
-        CURLOPT_HTTPHEADER      => ["Accept-Language: en-US,en;q=0.9"],
+        CURLOPT_MAXREDIRS       => 4,
+        CURLOPT_ENCODING        => "",     // accept + auto-decode gzip/deflate/br
+        CURLOPT_USERAGENT       => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                                 . "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+        CURLOPT_HTTPHEADER      => array_merge([
+            "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language: en-US,en;q=0.9",
+        ], $headers),
     ]);
     // Pin to HTTP(S) so neither the URL nor a redirect can reach file://, gopher://, etc.
     if (defined("CURLPROTO_HTTP") && defined("CURLPROTO_HTTPS")) {
@@ -545,53 +565,69 @@ function http_fetch(string $url, int $timeout = 8): ?string {
     }
     $body = curl_exec($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $err  = curl_error($ch);
     curl_close($ch);
+    $diag = ["url" => $url, "http" => $code, "bytes" => is_string($body) ? strlen($body) : 0, "err" => $err];
     if (!is_string($body) || $code < 200 || $code >= 400) return null;
     return $body;
 }
 
 /** Parse YouTube's results page for a handful of {title,url,thumb} videos. */
-function search_youtube(string $q): array {
-    $html = http_fetch("https://www.youtube.com/results?search_query="
-        . urlencode($q) . "&sp=EgIQAQ%253D%253D");   // sp=... filters to type:Video
+function search_youtube(string $q, ?array &$diag = null): array {
+    // hl/gl + a consent cookie steer past the EU consent interstitial and pin
+    // English results; sp=EgIQAQ== filters to type:Video.
+    $url = "https://www.youtube.com/results?search_query=" . urlencode($q) . "&hl=en&gl=US&sp=EgIQAQ%3D%3D";
+    $html = http_fetch($url, $diag, ["Cookie: CONSENT=YES+cb; SOCS=CAI"]);
     return $html === null ? [] : parse_youtube($html);
 }
 
 function parse_youtube(string $html): array {
-    // Bound the regex to the ytInitialData blob so PCRE never scans megabytes.
+    // Work within the ytInitialData blob when present, else the whole page.
     $at = strpos($html, "ytInitialData");
-    if ($at !== false) $html = substr($html, $at, 2000000);
+    $scan = $at !== false ? substr($html, $at, 3000000) : $html;
     $out = []; $seen = [];
-    // Each result is a videoRenderer carrying a videoId and a title runs[0].text.
-    if (preg_match_all('/"videoRenderer":\{"videoId":"([\w-]{11})".*?"title":\{"runs":\[\{"text":"((?:\\\\.|[^"\\\\])*)"/s',
-            $html, $mm, PREG_SET_ORDER)) {
-        foreach ($mm as $r) {
-            $id = $r[1];
+    // Find every videoId, then in the span up to the NEXT videoId look for the
+    // first title of either form — search results use "runs", some cards use
+    // "simpleText". Bounding to the next id stops a video with no title of its
+    // own from binding the following video's title, and the earliest-of-either
+    // match avoids a nearby simpleText losing to a farther runs title.
+    if (preg_match_all('/"videoId":"([\w-]{11})"/', $scan, $ids, PREG_OFFSET_CAPTURE)) {
+        $pos = $ids[1];
+        $n = count($pos);
+        for ($i = 0; $i < $n; $i++) {
+            $id = $pos[$i][0];
             if (isset($seen[$id])) continue;
-            $seen[$id] = true;
-            $title = json_decode('"' . $r[2] . '"');
-            if (!is_string($title) || $title === "") $title = "YouTube video";
-            $out[] = [
-                "title"  => $title,
-                "url"    => "https://www.youtube.com/watch?v=" . $id,
-                "thumb"  => "https://i.ytimg.com/vi/" . $id . "/hqdefault.jpg",
-                "source" => "YouTube",
-            ];
-            if (count($out) >= 6) break;
+            $start = $pos[$i][1];
+            $end = ($i + 1 < $n) ? $pos[$i + 1][1] : min(strlen($scan), $start + 700);
+            $window = substr($scan, $start, $end - $start);
+            if (preg_match('/"title":\{(?:"runs":\[\{"text":"|[^{}]*?"simpleText":")((?:\\\\.|[^"\\\\])*)"/',
+                    $window, $mt)) {
+                $title = json_decode('"' . $mt[1] . '"');
+                if (!is_string($title) || $title === "") continue;
+                $seen[$id] = true;
+                $out[] = [
+                    "title"  => $title,
+                    "url"    => "https://www.youtube.com/watch?v=" . $id,
+                    "thumb"  => "https://i.ytimg.com/vi/" . $id . "/hqdefault.jpg",
+                    "source" => "YouTube",
+                ];
+                if (count($out) >= 6) break;
+            }
         }
     }
     return $out;
 }
 
 /** Parse DuckDuckGo's HTML endpoint for a handful of {title,url} articles. */
-function search_articles(string $q): array {
-    $html = http_fetch("https://html.duckduckgo.com/html/?q=" . urlencode($q));
+function search_articles(string $q, ?array &$diag = null): array {
+    $html = http_fetch("https://html.duckduckgo.com/html/?q=" . urlencode($q), $diag, ["Cookie: kl=us-en"]);
     return $html === null ? [] : parse_articles($html);
 }
 
 function parse_articles(string $html): array {
     $out = [];
-    if (preg_match_all('/<a[^>]+class="[^"]*result__a[^"]*"[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>/s',
+    // result__a (html endpoint) or result-link (lite endpoint) — accept either.
+    if (preg_match_all('/<a[^>]+class="[^"]*result(?:__a|-link)[^"]*"[^>]+href="([^"]+)"[^>]*>(.*?)<\/a>/s',
             $html, $mm, PREG_SET_ORDER)) {
         foreach ($mm as $r) {
             $href = html_entity_decode($r[1], ENT_QUOTES);

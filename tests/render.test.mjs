@@ -202,6 +202,15 @@ await new Promise(r => setTimeout(r, 5));
 t.ok(fpanel.querySelector(".finder-slot .finder-result"), "a manual shuffle surfaces a result card");
 t.ok(/Found video/.test(fpanel.querySelector(".fr-title")?.textContent || ""),
   "the surfaced card shows the fetched title");
+
+// Rebuilding the panel must re-show the last pick synchronously (survives Today
+// re-renders) rather than blocking on / blindly firing a fetch. With the backend
+// offline here, a throwing fetch proves no synchronous search is attempted.
+global.fetch = () => { throw new Error("no blind search on panel rebuild"); };
+render.renderToday(view);
+const reFinder = view.querySelector(".finder-panel");
+t.ok(/Found video/.test(reFinder.querySelector(".fr-title")?.textContent || ""),
+  "the found card is re-shown immediately when the panel is rebuilt");
 global.fetch = realFetch;
 render.renderToday(view);
 

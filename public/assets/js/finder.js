@@ -183,8 +183,9 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
   }
 
   btn.addEventListener("click", () => run({ manual: true }));
-  // Auto-fire ONCE per fresh open, silent, no retry — and only if nothing is
-  // already shown and the backend is up.
-  if (autoRun && !lastShown && sync.isServer()) run({ manual: false });
+  // Auto-fire once per fresh Today open (renderToday sets autoRun; a tick-driven
+  // re-render does not), silent, no retry. The last pick is re-shown above first,
+  // so opening never flashes empty while this resolves.
+  if (autoRun && sync.isServer()) run({ manual: false });
   return panel;
 }
