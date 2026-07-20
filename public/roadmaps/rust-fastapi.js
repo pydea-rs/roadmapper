@@ -1,16 +1,24 @@
 // rust-fastapi.js — Roadmap 1 (priority HIGH, 4–5 active days/week).
-// Two PRIMARY objectives: `rust` (The Rust Programming Language, resume Ch15/PDF335)
-// and `fastapi` (Mastering FastAPI, resume Ch4/PDF52 — brief book, supplemented
-// heavily with official docs). Page ranges are real PDF pages (see _research.md).
-// Style: do every listing; invent tryout projects where the book is thin; a
-// multi-day Ch20 web-server arc. Off-days vary per week; some days are lighter
-// (marked) to leave room for Roadmap 2 overlap.
+// Two PRIMARY objectives: `rust` (The Rust Programming Language, resume at Ch15
+// Smart Pointers) and `fastapi` (Mastering FastAPI, resume Ch4 — brief book,
+// supplemented heavily with official docs). Rust references point at the live
+// online Book (doc.rust-lang.org/stable/book) by SECTION NAME + URL — no page
+// numbers — so the plan tracks the current 21-chapter edition. Style: do every
+// listing; invent tryout projects where the book is thin; a multi-day Ch21
+// web-server arc. Off-days vary per week; some days are lighter (marked) to leave
+// room for Roadmap 2 overlap.
 //
-// EXTENDED (2026-07-17): the books (Rust Ch15–20, FastAPI Ch4–7) still finish at
-// d24, but weeks 6–7 (d25–d32) append the two things worth adding — async Rust
-// (tokio, the Book's biggest gap) and a Rust-service-behind-a-FastAPI-gateway
-// integration capstone — plus a real buffer day (d28). Moves the finish to
-// 2026-09-04. Existing ids/dates unchanged; d24 re-scoped to a checkpoint.
+// EXTENDED (2026-07-17): the books (Rust Ch15–21, FastAPI Ch4–7) still finish at
+// d24, but weeks 6–7 (d25–d32) append the two things worth adding — the Book's
+// async chapter (Ch17) applied for real with tokio, and a Rust-service-behind-a-
+// FastAPI-gateway integration capstone — plus a real buffer day (d28). Moves the
+// finish to 2026-09-04. Existing ids/dates unchanged; d24 re-scoped to a checkpoint.
+//
+// NEW-BOOK REFACTOR (2026-07-20): re-referenced from the old 20-chapter PDF to the
+// live 21-chapter Book. Async is now the Book's own Ch17 (was external-only); the
+// later chapters renumber 17→18 (OOP) / 18→19 (Patterns) / 19→20 (Advanced) /
+// 20→21 (web server); Macros moved from Appendix D into Ch20.5. Section names +
+// URLs replace every page range. Async (Ch17) is read/applied in weeks 6–7.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -20,7 +28,7 @@ registerRoadmap({
   slug: "rust-fastapi",
   title: "Rust + FastAPI",
   icon: "🦀",
-  subtitle: "Finish The Rust Programming Language (Ch15→20) and Mastering FastAPI (Ch4→), doc-supplemented.",
+  subtitle: "Finish The Rust Programming Language (Ch15→21, incl. async) and Mastering FastAPI (Ch4→), doc-supplemented.",
   accent: "#f0803c",
   schemaVersion: 1,
   cadence: { activeDaysPerWeek: [4, 5] },
@@ -36,7 +44,7 @@ registerRoadmap({
     { id: "w3", title: "Week 3 — Advanced Rust & the web-server arc", start: "2026-08-03" },
     { id: "w4", title: "Week 4 — Finish the server; deploy FastAPI", start: "2026-08-10" },
     { id: "w5", title: "Week 5 — Capstone & checkpoint", start: "2026-08-17" },
-    { id: "w6", title: "Week 6 — Async Rust & real deployment", start: "2026-08-24" },
+    { id: "w6", title: "Week 6 — Async Rust (Ch17) & real deployment", start: "2026-08-24" },
     { id: "w7", title: "Week 7 — Integration capstone & retro", start: "2026-08-31" },
   ],
 
@@ -47,10 +55,10 @@ registerRoadmap({
       theme: "Back into Rust at Ch15 — smart pointers on the heap.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — <b>Ch15.1–15.2</b>: <code>Box&lt;T&gt;</code> on the heap & recursive cons-list; the <b>Deref</b> trait (pp 335–346).`,
+          label: `Rust — <b>Ch15.1–15.2</b>: <code>Box&lt;T&gt;</code> on the heap & recursive cons-list; the <b>Deref</b> trait. <a href="https://doc.rust-lang.org/stable/book/ch15-01-box.html" target="_blank" rel="noopener">Book §15.1</a>`,
           sub: [
-            { id: "s1", est: 18, label: `Ch15.1 — <code>Box&lt;T&gt;</code> on the heap & the recursive cons-list.` },
-            { id: "s2", est: 17, label: `Ch15.2 — the <b>Deref</b> trait (pp 335–346).` },
+            { id: "s1", est: 18, label: `Ch15.1 <a href="https://doc.rust-lang.org/stable/book/ch15-01-box.html" target="_blank" rel="noopener">Using <code>Box&lt;T&gt;</code> to Point to Data on the Heap</a> & the recursive cons-list.` },
+            { id: "s2", est: 17, label: `Ch15.2 <a href="https://doc.rust-lang.org/stable/book/ch15-02-deref.html" target="_blank" rel="noopener">Treating Smart Pointers Like Regular References</a> (the <b>Deref</b> trait).` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 40, group: "g1",
           label: `Build the <code>MyBox&lt;T&gt;</code> example and prove <b>deref coercion</b> yourself; run every listing.`,
@@ -70,12 +78,12 @@ registerRoadmap({
       theme: "Interior mutability and reference cycles — the tricky half of Ch15.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 40, group: "g1",
-          label: `Rust — <b>Ch15.3–15.6</b>: <b>Drop</b>, <code>Rc&lt;T&gt;</code>, <code>RefCell&lt;T&gt;</code> & interior mutability, reference cycles & <code>Weak&lt;T&gt;</code> (pp 347–369).`,
+          label: `Rust — <b>Ch15.3–15.6</b>: <b>Drop</b>, <code>Rc&lt;T&gt;</code>, <code>RefCell&lt;T&gt;</code> & interior mutability, reference cycles & <code>Weak&lt;T&gt;</code>. <a href="https://doc.rust-lang.org/stable/book/ch15-03-drop.html" target="_blank" rel="noopener">Book §15.3</a>`,
           sub: [
-            { id: "s1", est: 10, label: `Ch15.3 — <b>Drop</b>.` },
-            { id: "s2", est: 10, label: `Ch15.4 — <code>Rc&lt;T&gt;</code>.` },
-            { id: "s3", est: 10, label: `Ch15.5 — <code>RefCell&lt;T&gt;</code> & interior mutability.` },
-            { id: "s4", est: 10, label: `Ch15.6 — reference cycles & <code>Weak&lt;T&gt;</code> (pp 347–369).` },
+            { id: "s1", est: 10, label: `Ch15.3 <a href="https://doc.rust-lang.org/stable/book/ch15-03-drop.html" target="_blank" rel="noopener">Running Code on Cleanup with the <code>Drop</code> Trait</a>.` },
+            { id: "s2", est: 10, label: `Ch15.4 <a href="https://doc.rust-lang.org/stable/book/ch15-04-rc.html" target="_blank" rel="noopener"><code>Rc&lt;T&gt;</code>, the Reference Counted Smart Pointer</a>.` },
+            { id: "s3", est: 10, label: `Ch15.5 <a href="https://doc.rust-lang.org/stable/book/ch15-05-interior-mutability.html" target="_blank" rel="noopener"><code>RefCell&lt;T&gt;</code> and the Interior Mutability Pattern</a>.` },
+            { id: "s4", est: 10, label: `Ch15.6 <a href="https://doc.rust-lang.org/stable/book/ch15-06-reference-cycles.html" target="_blank" rel="noopener">Reference Cycles Can Leak Memory</a> (<code>Weak&lt;T&gt;</code>).` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 35, group: "g1",
           label: `Work the mock-messenger (<code>RefCell</code>) and the leaf/branch tree (<code>Rc</code>+<code>Weak</code>) listings.`,
@@ -119,22 +127,22 @@ registerRoadmap({
       theme: "Threads, channels, Mutex/Arc — Ch16 (book is snippet-y, so we build).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch16</b>: threads (<code>spawn</code>/<code>join</code>/<code>move</code>), channels, <code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>, <code>Send</code>/<code>Sync</code> (pp 371–394).`,
+          label: `Rust — <b>Ch16</b>: threads (<code>spawn</code>/<code>join</code>/<code>move</code>), channels, <code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>, <code>Send</code>/<code>Sync</code>. <a href="https://doc.rust-lang.org/stable/book/ch16-01-threads.html" target="_blank" rel="noopener">Book §16.1</a>`,
           sub: [
-            { id: "s1", est: 8, label: `Threads (<code>spawn</code>/<code>join</code>/<code>move</code>).` },
-            { id: "s2", est: 7, label: `Channels.` },
-            { id: "s3", est: 8, label: `<code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>.` },
-            { id: "s4", est: 7, label: `<code>Send</code>/<code>Sync</code> (pp 371–394).` },
+            { id: "s1", est: 8, label: `Ch16.1 <a href="https://doc.rust-lang.org/stable/book/ch16-01-threads.html" target="_blank" rel="noopener">Using Threads to Run Code Simultaneously</a> (<code>spawn</code>/<code>join</code>/<code>move</code>).` },
+            { id: "s2", est: 7, label: `Ch16.2 <a href="https://doc.rust-lang.org/stable/book/ch16-02-message-passing.html" target="_blank" rel="noopener">Message Passing between Threads</a> (channels).` },
+            { id: "s3", est: 8, label: `Ch16.3 <a href="https://doc.rust-lang.org/stable/book/ch16-03-shared-state.html" target="_blank" rel="noopener">Shared-State Concurrency</a> (<code>Mutex&lt;T&gt;</code>+<code>Arc&lt;T&gt;</code>).` },
+            { id: "s4", est: 7, label: `Ch16.4 <a href="https://doc.rust-lang.org/stable/book/ch16-04-extensible-concurrency-sync-and-send.html" target="_blank" rel="noopener">Extensible Concurrency with <code>Send</code> and <code>Sync</code></a>.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel, accumulating results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch20's thread pool.)`,
+          label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel, accumulating results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch21's thread pool.)`,
           sub: [
             { id: "s1", est: 30, label: `<b>Combine-topics tryout:</b> a worker pool of N threads pulling jobs off an <code>mpsc</code> channel.` },
-            { id: "s2", est: 25, label: `Accumulate results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch20's thread pool.)` },
+            { id: "s2", est: 25, label: `Accumulate results behind an <code>Arc&lt;Mutex&lt;_&gt;&gt;</code>. (Warm-up for Ch21's thread pool.)` },
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 See also — the Book uses OS threads only. Async Rust (<a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">async book</a>, <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">tokio</a>) is the big topic it skips; note it for "after the book".` },
+        { id: "s1", type: "callout", label: `🔗 See also — this is OS-thread concurrency (Ch16). The very next chapter, <a href="https://doc.rust-lang.org/stable/book/ch17-00-async-await.html" target="_blank" rel="noopener">Ch17 Async & Await</a>, is the cooperative other half — you'll read and apply it in weeks 6–7 (with <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">tokio</a>).` },
         { id: "s2", type: "hint", label: `💡 <code>Send</code> = safe to move to another thread; <code>Sync</code> = safe to share by reference. They're auto-derived — you rarely implement them, but reading the errors teaches you the model.` },
       ],
     },
@@ -162,14 +170,14 @@ registerRoadmap({
     /* ---------------- Week 2 ---------------- */
     {
       id: "d06", date: "2026-07-27", week: "w2", title: "OOP in Rust",
-      theme: "Trait objects & the State pattern — Ch17 (example-rich).",
+      theme: "Trait objects & the State pattern — Ch18 (example-rich).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — <b>Ch17</b>: OO characteristics, <b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI, and the full <b>State pattern</b> blog example (pp 395–418).`,
+          label: `Rust — <b>Ch18</b>: OO characteristics, <b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI, and the full <b>State pattern</b> blog example. <a href="https://doc.rust-lang.org/stable/book/ch18-00-oop.html" target="_blank" rel="noopener">Book §18</a>`,
           sub: [
-            { id: "s1", est: 10, label: `OO characteristics.` },
-            { id: "s2", est: 12, label: `<b>trait objects</b> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI.` },
-            { id: "s3", est: 13, label: `the full <b>State pattern</b> blog example (pp 395–418).` },
+            { id: "s1", est: 10, label: `Ch18.1 <a href="https://doc.rust-lang.org/stable/book/ch18-01-what-is-oo.html" target="_blank" rel="noopener">Characteristics of Object-Oriented Languages</a>.` },
+            { id: "s2", est: 12, label: `Ch18.2 <a href="https://doc.rust-lang.org/stable/book/ch18-02-trait-objects.html" target="_blank" rel="noopener">Using Trait Objects to Abstract over Shared Behavior</a> (<code>dyn</code>, object safety) via the <code>Draw</code>/<code>Screen</code> GUI.` },
+            { id: "s3", est: 13, label: `Ch18.3 <a href="https://doc.rust-lang.org/stable/book/ch18-03-oo-design-patterns.html" target="_blank" rel="noopener">Implementing an Object-Oriented Design Pattern</a> (the <b>State pattern</b> blog example).` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 50, group: "g1",
           label: `Implement the whole <code>Post</code> State-pattern example; then <b>harden it</b> — add a <code>Rejected</code> state and a word-count guard on publish.`,
@@ -204,14 +212,14 @@ registerRoadmap({
     },
     {
       id: "d08", date: "2026-07-29", week: "w2", title: "Patterns & matching",
-      theme: "Ch18 is reference-y — so we build one thing that uses it all.",
+      theme: "Ch19 is reference-y — so we build one thing that uses it all.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch18</b>: all pattern places, refutability, and the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>) (pp 419–442).`,
+          label: `Rust — <b>Ch19</b>: all pattern places, refutability, and the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>). <a href="https://doc.rust-lang.org/stable/book/ch19-00-patterns.html" target="_blank" rel="noopener">Book §19</a>`,
           sub: [
-            { id: "s1", est: 10, label: `all pattern places.` },
-            { id: "s2", est: 10, label: `refutability.` },
-            { id: "s3", est: 10, label: `the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>) (pp 419–442).` },
+            { id: "s1", est: 10, label: `Ch19.1 <a href="https://doc.rust-lang.org/stable/book/ch19-01-all-the-places-for-patterns.html" target="_blank" rel="noopener">All the Places Patterns Can Be Used</a>.` },
+            { id: "s2", est: 10, label: `Ch19.2 <a href="https://doc.rust-lang.org/stable/book/ch19-02-refutability.html" target="_blank" rel="noopener">Refutability: Whether a Pattern Might Fail to Match</a>.` },
+            { id: "s3", est: 10, label: `Ch19.3 <a href="https://doc.rust-lang.org/stable/book/ch19-03-pattern-syntax.html" target="_blank" rel="noopener">Pattern Syntax</a> (destructuring, ranges, guards, <code>@</code>, <code>ref</code>).` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 50, group: "g1",
           label: `<b>Tryout:</b> a tiny command parser — <code>match</code> on an enum of commands using destructuring, ranges, match guards, and <code>@</code> bindings in one cohesive example.`,
@@ -249,13 +257,13 @@ registerRoadmap({
     },
     {
       id: "d10", date: "2026-08-01", week: "w2", title: "Advanced Rust I",
-      theme: "Unsafe & advanced lifetimes — Ch19 part 1.",
+      theme: "Unsafe Rust — Ch20 part 1 (the unsafe superpowers).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
-          label: `Rust — <b>Ch19.1–19.2</b>: <b>Unsafe Rust</b> (raw pointers, unsafe fns, statics) and <b>advanced lifetimes</b> (pp 443–459).`,
+          label: `Rust — <b>Ch20.1 Unsafe Rust</b>: the superpowers — deref raw pointers, call <code>unsafe</code> fns, access/modify mutable statics, impl unsafe traits, union fields (+ <code>extern</code>/FFI). <a href="https://doc.rust-lang.org/stable/book/ch20-01-unsafe-rust.html" target="_blank" rel="noopener">Book §20.1</a>`,
           sub: [
-            { id: "s1", est: 25, label: `<b>Unsafe Rust</b> (raw pointers, unsafe fns, statics).` },
-            { id: "s2", est: 20, label: `<b>advanced lifetimes</b> (pp 443–459).` },
+            { id: "s1", est: 25, label: `Ch20.1 <a href="https://doc.rust-lang.org/stable/book/ch20-01-unsafe-rust.html" target="_blank" rel="noopener">Unsafe Rust</a> — dereferencing raw pointers & calling <code>unsafe</code> functions.` },
+            { id: "s2", est: 20, label: `The rest of §20.1 — mutable statics, <code>unsafe</code> traits, union fields & <code>extern</code>/FFI.` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 30, group: "g1",
           label: `Write a small <code>unsafe</code> block that dereferences a raw pointer and a <code>split_at_mut</code>-style function; document <i>why</i> each unsafe use is sound.`,
@@ -272,20 +280,20 @@ registerRoadmap({
     /* ---------------- Week 3 ---------------- */
     {
       id: "d11", date: "2026-08-03", week: "w3", title: "Advanced Rust II",
-      theme: "Advanced traits/types/closures — the Book's most reference-like pages.",
+      theme: "Advanced traits/types/closures — the Book's most reference-like sections.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
-          label: `Rust — <b>Ch19.3–19.5</b>: advanced traits (associated types, operator overloading, supertraits, newtype), advanced types (<code>!</code>, DSTs, <code>Sized</code>), function pointers & returning closures (pp 460–478).`,
+          label: `Rust — <b>Ch20.2–20.4</b>: advanced traits (associated types, operator overloading, supertraits, newtype), advanced types (<code>!</code>, DSTs, <code>Sized</code>), function pointers & returning closures. <a href="https://doc.rust-lang.org/stable/book/ch20-02-advanced-traits.html" target="_blank" rel="noopener">Book §20.2</a>`,
           sub: [
-            { id: "s1", est: 15, label: `advanced traits (associated types, operator overloading, supertraits, newtype).` },
-            { id: "s2", est: 15, label: `advanced types (<code>!</code>, DSTs, <code>Sized</code>).` },
-            { id: "s3", est: 15, label: `function pointers & returning closures (pp 460–478).` },
+            { id: "s1", est: 15, label: `Ch20.2 <a href="https://doc.rust-lang.org/stable/book/ch20-02-advanced-traits.html" target="_blank" rel="noopener">Advanced Traits</a> (associated types, operator overloading, supertraits, newtype).` },
+            { id: "s2", est: 15, label: `Ch20.3 <a href="https://doc.rust-lang.org/stable/book/ch20-03-advanced-types.html" target="_blank" rel="noopener">Advanced Types</a> (<code>!</code>, DSTs, <code>Sized</code>).` },
+            { id: "s3", est: 15, label: `Ch20.4 <a href="https://doc.rust-lang.org/stable/book/ch20-04-advanced-functions-and-closures.html" target="_blank" rel="noopener">Advanced Functions and Closures</a> (fn pointers & returning closures).` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type, plus a supertrait for <code>Display</code>. Ties four Ch19 topics together.`,
+          label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type, plus a supertrait for <code>Display</code>. Ties four Ch20 topics together.`,
           sub: [
             { id: "s1", est: 30, label: `<b>Integrative tryout:</b> a mini units library — a <code>Meters(f64)</code> newtype implementing <code>Add</code> (operator overloading) with an associated <code>Output</code> type.` },
-            { id: "s2", est: 25, label: `Add a supertrait for <code>Display</code>. Ties four Ch19 topics together.` },
+            { id: "s2", est: 25, label: `Add a supertrait for <code>Display</code>. Ties four Ch20 topics together.` },
           ] },
       ],
       soft: [
@@ -316,14 +324,14 @@ registerRoadmap({
     },
     {
       id: "d13", date: "2026-08-05", week: "w3", title: "Web server I — single-threaded",
-      theme: "Ch20 begins. It IS the tryout — one continuous project.",
+      theme: "Ch21 begins. It IS the tryout — one continuous project.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
-          label: `Rust — <b>Ch20.1</b>: listen on TCP, read the request, anatomy of an HTTP request, write a response, return real HTML, validate & route (pp 480–489).`,
+          label: `Rust — <b>Ch21.1 Building a Single-Threaded Web Server</b>: listen on TCP, read the request, anatomy of an HTTP request, write a response, return real HTML, validate & route. <a href="https://doc.rust-lang.org/stable/book/ch21-01-single-threaded.html" target="_blank" rel="noopener">Book §21.1</a>`,
           sub: [
             { id: "s1", est: 7, label: `listen on TCP, read the request.` },
             { id: "s2", est: 7, label: `anatomy of an HTTP request, write a response.` },
-            { id: "s3", est: 6, label: `return real HTML, validate & route (pp 480–489).` },
+            { id: "s3", est: 6, label: `return real HTML, validate & route.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 60, group: "g1",
           label: `<b>Build:</b> the single-threaded web server end to end — serve <code>hello.html</code> and a 404 page, selectively by request line.`,
@@ -338,13 +346,13 @@ registerRoadmap({
     },
     {
       id: "d14", date: "2026-08-07", week: "w3", title: "Web server II — the thread pool",
-      theme: "The heavy section: design a ThreadPool API from scratch (pp 490–508).",
+      theme: "The heavy section: design a ThreadPool API from scratch — Ch21.2.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Rust — <b>Ch20.2</b>: simulate a slow request, then design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures (pp 490–508).`,
+          label: `Rust — <b>Ch21.2 From Single-Threaded to Multithreaded</b>: simulate a slow request, then design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures. <a href="https://doc.rust-lang.org/stable/book/ch21-02-multithreaded.html" target="_blank" rel="noopener">Book §21.2</a>`,
           sub: [
             { id: "s1", est: 12, label: `simulate a slow request.` },
-            { id: "s2", est: 18, label: `design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures (pp 490–508).` },
+            { id: "s2", est: 18, label: `design & build the <b>thread pool</b> — <code>ThreadPool</code>, <code>Worker</code>, channels/<code>Job</code>, <code>Send</code> closures.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 75, group: "g1",
           label: `<b>Build:</b> implement the full thread pool and serve concurrent requests; verify a slow route no longer blocks others.`,
@@ -382,14 +390,14 @@ registerRoadmap({
     /* ---------------- Week 4 ---------------- */
     {
       id: "d16", date: "2026-08-10", week: "w4", title: "Web server III — graceful shutdown",
-      theme: "Finish Ch20: Drop for the pool, signal workers to stop (pp 509–515).",
+      theme: "Finish Ch21: Drop for the pool, signal workers to stop.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 20, group: "g1",
-          label: `Rust — <b>Ch20.3</b>: implement <code>Drop</code> for <code>ThreadPool</code>, signal threads to stop, graceful shutdown & cleanup (pp 509–515).`,
+          label: `Rust — <b>Ch21.3 Graceful Shutdown and Cleanup</b>: implement <code>Drop</code> for <code>ThreadPool</code>, signal threads to stop, graceful shutdown & cleanup. <a href="https://doc.rust-lang.org/stable/book/ch21-03-graceful-shutdown-and-cleanup.html" target="_blank" rel="noopener">Book §21.3</a>`,
           sub: [
             { id: "s1", est: 7, label: `implement <code>Drop</code> for <code>ThreadPool</code>.` },
             { id: "s2", est: 7, label: `signal threads to stop.` },
-            { id: "s3", est: 6, label: `graceful shutdown & cleanup (pp 509–515).` },
+            { id: "s3", est: 6, label: `graceful shutdown & cleanup.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 45, group: "g1",
           label: `<b>Finish the project:</b> graceful shutdown after N requests; ensure every worker joins cleanly. 🎉 The Book's final project is done.`,
@@ -449,20 +457,20 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-08-14", week: "w4", title: "Rust appendices & macros",
-      theme: "Reference appendices (light) + the one with a real example: macros.",
+      id: "d19", date: "2026-08-14", week: "w4", title: "Rust macros & reference appendices",
+      theme: "The last Advanced-Features section, macros — plus the reference appendices (light).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 25,
-          label: `Rust — <b>Appendix D Macros</b>: <code>macro_rules!</code> vs functions, then the worked <b>procedural derive macro</b> (<code>hello_macro</code>) (pp 531–540).`,
+          label: `Rust — <b>Ch20.5 Macros</b>: <code>macro_rules!</code> vs functions, then the worked <b>procedural derive macro</b> (<code>hello_macro</code>). <a href="https://doc.rust-lang.org/stable/book/ch20-05-macros.html" target="_blank" rel="noopener">Book §20.5</a>`,
           sub: [
-            { id: "s1", est: 12, label: `<code>macro_rules!</code> vs functions.` },
-            { id: "s2", est: 13, label: `the worked <b>procedural derive macro</b> (<code>hello_macro</code>) (pp 531–540).` },
+            { id: "s1", est: 12, label: `<code>macro_rules!</code> (declarative macros) vs functions.` },
+            { id: "s2", est: 13, label: `the worked <b>procedural derive macro</b> (<code>hello_macro</code>).` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 35, optional: true,
           label: `<b>Bonus:</b> build the <code>hello_macro</code> derive crate yourself and derive it on a struct.`,
           fallback: { est: 15, label: `Just read & run the provided <code>hello_macro</code> code.` } },
         { id: "t3", obj: R, cat: "alt", est: 15, optional: true,
-          label: `<b>Skim (reference):</b> Appendices A Keywords, B Operators, C Derivable Traits (pp 517–530) — bookmark, don't memorize.` },
+          label: `<b>Skim (reference):</b> Appendices <a href="https://doc.rust-lang.org/stable/book/appendix-01-keywords.html" target="_blank" rel="noopener">A Keywords</a>, B Operators, C Derivable Traits, and the new <a href="https://doc.rust-lang.org/stable/book/appendix-04-useful-development-tools.html" target="_blank" rel="noopener">D Useful Development Tools</a> (rustfmt, clippy, rust-analyzer) — bookmark, don't memorize.` },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 <code>macro_rules!</code> is pattern-matching on token trees; procedural macros are Rust programs that run at compile time over a <code>TokenStream</code>. The book only samples both — a whole world (<code>syn</code>/<code>quote</code>) lies beyond.` },
@@ -530,9 +538,9 @@ registerRoadmap({
       theme: "Cement the advanced material with one integrative exercise.",
       tasks: [
         { id: "t1", obj: R, cat: "project", est: 60, group: "g1",
-          label: `<b>Combine-topics tryout:</b> extend your Ch20 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store and a couple of JSON routes — exercises smart pointers + concurrency + traits together.`,
+          label: `<b>Combine-topics tryout:</b> extend your Ch21 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store and a couple of JSON routes — exercises smart pointers + concurrency + traits together.`,
           sub: [
-            { id: "s1", est: 30, label: `<b>Combine-topics tryout:</b> extend your Ch20 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store.` },
+            { id: "s1", est: 30, label: `<b>Combine-topics tryout:</b> extend your Ch21 web server with a <code>Arc&lt;Mutex&lt;HashMap&gt;&gt;</code> in-memory store.` },
             { id: "s2", est: 30, label: `Add a couple of JSON routes — exercises smart pointers + concurrency + traits together.` },
           ] },
       ],
@@ -542,13 +550,13 @@ registerRoadmap({
     },
     {
       id: "d24", date: "2026-08-21", week: "w5", title: "Checkpoint — books closed",
-      theme: "The Book (Ch15–20) and Mastering FastAPI (Ch4–7) are done. Take stock before the extension weeks.",
+      theme: "The Book's core (Ch15–16, 18–21) and Mastering FastAPI (Ch4–7) are done. Async (Ch17) + integration are next.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 30, group: "g1",
-          label: `Rust — skim your notes across Ch15–20; list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).`,
+          label: `Rust — skim your notes across Ch15–16 & 18–21; list the 3 ideas you'd most want to re-read (likely unsafe, advanced traits, or the thread pool). Async (Ch17) is the weeks-6–7 focus.`,
           sub: [
-            { id: "s1", est: 15, label: `Rust — skim your notes across Ch15–20.` },
-            { id: "s2", est: 15, label: `list the 3 ideas you'd most want to re-read (likely lifetimes, unsafe, or the thread pool).` },
+            { id: "s1", est: 15, label: `Rust — skim your notes across Ch15–16 & 18–21.` },
+            { id: "s2", est: 15, label: `list the 3 ideas you'd most want to re-read (likely unsafe, advanced traits, or the thread pool).` },
           ] },
         { id: "t2", obj: F, cat: "review", est: 30, group: "g1",
           label: `FastAPI — write a one-page "cheat sheet" of the DI + security + async patterns you built; note gaps for a future project.`,
@@ -558,25 +566,26 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Both books are finished a full two weeks before the plan ends — that slack is intentional. Weeks 6–7 turn it into the two things the Book skips and the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
+        { id: "s1", type: "hint", label: `💡 The core is finished a full two weeks before the plan ends — that slack is intentional. Weeks 6–7 read the Book's async chapter (Ch17) for real and build the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
       ],
       note: "Milestone checkpoint — the core is done; weeks 6–7 are deepening + buffer.",
     },
 
     /* ================================================================ *
-     *  Week 6 — Async Rust & real deployment  (extension: the Book's
-     *  biggest gap is async; here we fill it and ship the FastAPI capstone
-     *  for real. Deliberately lighter/flexible — this is your buffer.)
+     *  Week 6 — Async Rust (Ch17) & real deployment  (the Book's newest
+     *  chapter, async/await, read here and applied for real with tokio;
+     *  plus we ship the FastAPI capstone. Deliberately lighter/flexible —
+     *  this is your buffer.)
      * ================================================================ */
     {
-      id: "d25", date: "2026-08-24", week: "w6", title: "Async Rust I — futures & tokio",
-      theme: "The Book is threads-only. Meet the other half of Rust concurrency.",
+      id: "d25", date: "2026-08-24", week: "w6", title: "Async Rust I — the Book's Ch17 (futures & async)",
+      theme: "The Book's newest chapter: async, await & futures — the other half of Rust concurrency.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35, group: "g1",
-          label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model) + the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.`,
+          label: `Rust — <b>Ch17.1–17.3</b>: futures & the async syntax, applying concurrency with async, and working with any number of futures (<code>join!</code>/<code>race</code>). <a href="https://doc.rust-lang.org/stable/book/ch17-01-futures-and-syntax.html" target="_blank" rel="noopener">Book §17.1</a>`,
           sub: [
-            { id: "s1", est: 20, label: `Rust — read the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a> §1–3 (futures, <code>async</code>/<code>.await</code>, the executor model).` },
-            { id: "s2", est: 15, label: `read the <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> "Hello Tokio" + "Spawning" chapters.` },
+            { id: "s1", est: 20, label: `Ch17.1 <a href="https://doc.rust-lang.org/stable/book/ch17-01-futures-and-syntax.html" target="_blank" rel="noopener">Futures and the Async Syntax</a> + Ch17.2 <a href="https://doc.rust-lang.org/stable/book/ch17-02-concurrency-with-async.html" target="_blank" rel="noopener">Applying Concurrency with Async</a>.` },
+            { id: "s2", est: 15, label: `Ch17.3 <a href="https://doc.rust-lang.org/stable/book/ch17-03-more-futures.html" target="_blank" rel="noopener">Working With Any Number of Futures</a>. The Book uses the <code>trpl</code> crate; <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> is the real runtime it wraps.` },
           ] },
         { id: "t2", obj: R, cat: "code", est: 45, group: "g1",
           label: `Build a small tokio program: spawn several async tasks that sleep and race, and <code>join!</code> them. Feel how <code>.await</code> yields vs a blocking thread.`,
@@ -586,7 +595,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 Bridge — your Ch16 worker-pool and Ch20 thread pool used OS threads + <code>mpsc</code>. Async is the same idea (concurrent work, message passing) but cooperatively scheduled on a runtime. <code>tokio::sync::mpsc</code> is the async twin of <code>std::sync::mpsc</code>.` },
+        { id: "s1", type: "callout", label: `🔗 Bridge — your Ch16 worker-pool and Ch21 thread pool used OS threads + <code>mpsc</code>. Async is the same idea (concurrent work, message passing) but cooperatively scheduled on a runtime. <code>tokio::sync::mpsc</code> is the async twin of <code>std::sync::mpsc</code>.` },
         { id: "s2", type: "hint", label: `💡 A <code>Future</code> is a state machine the compiler builds from your <code>async fn</code>; it does nothing until polled by an executor. That "lazy until awaited" model is the single biggest difference from threads.` },
       ],
     },
@@ -616,18 +625,18 @@ registerRoadmap({
     },
     {
       id: "d27", date: "2026-08-26", week: "w6", title: "Async Rust II — an async web server",
-      theme: "Rebuild the Ch20 server the async way — the payoff of d25.",
+      theme: "Rebuild the Ch21 server the async way — the payoff of d25.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 25, group: "g1",
-          label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters; skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.`,
+          label: `Rust — <b>Ch17.4–17.6</b>: streams, a closer look at the async traits, and futures-vs-tasks-vs-threads; then skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world for a real async framework. <a href="https://doc.rust-lang.org/stable/book/ch17-04-streams.html" target="_blank" rel="noopener">Book §17.4</a>`,
           sub: [
-            { id: "s1", est: 13, label: `Rust — read the Tokio tutorial "I/O" + "Select" chapters.` },
-            { id: "s2", est: 12, label: `skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world to see a real async framework.` },
+            { id: "s1", est: 13, label: `Ch17.4 <a href="https://doc.rust-lang.org/stable/book/ch17-04-streams.html" target="_blank" rel="noopener">Streams: Futures in Sequence</a> + Ch17.5 <a href="https://doc.rust-lang.org/stable/book/ch17-05-traits-for-async.html" target="_blank" rel="noopener">A Closer Look at the Traits for Async</a> + Ch17.6 <a href="https://doc.rust-lang.org/stable/book/ch17-06-futures-tasks-threads.html" target="_blank" rel="noopener">Futures, Tasks, and Threads</a>.` },
+            { id: "s2", est: 12, label: `Skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world (a real async web framework) and the Tokio "I/O"/"Select" tutorial chapters.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 55, group: "g1",
-          label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.`,
+          label: `<b>Build:</b> re-implement your Ch21 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.`,
           sub: [
-            { id: "s1", est: 30, label: `<b>Build:</b> re-implement your Ch20 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection).` },
+            { id: "s1", est: 30, label: `<b>Build:</b> re-implement your Ch21 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection).` },
             { id: "s2", est: 25, label: `Compare it to the thread-pool version — no pool needed, the runtime multiplexes.` },
           ] },
       ],

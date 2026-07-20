@@ -3,8 +3,10 @@
 // These are the "commercials between phases": a specific, hand-picked video or
 // article that sits BETWEEN two days in the timeline (after `afterDay`),
 // unrelated to task state — just a "seen" checkbox. They're placed at meaningful
-// concept boundaries (after a serious idea has been learned) and summarise,
-// extend, or preview the surrounding material.
+// concept boundaries (after a serious idea has been learned) and are strictly a
+// "read/watch more" — they EXTEND or go BEYOND the surrounding material and never
+// re-link a roadmap's own main reference (its book/course/official docs). If a
+// card would just point back into the main reading, it's the wrong card.
 //
 // Each card links DIRECTLY to one specific resource (`url`) — not a search page.
 // The URLs were researched and verified to resolve to on-topic content (YouTube
@@ -30,11 +32,11 @@ const INTERLUDES = {
       url: "https://www.youtube.com/watch?v=xcygqF5LVmM",
       query: "rust traits generics trait objects dynamic dispatch explained" },
     { id: "il3", afterDay: "d15", kind: "article",
-      title: "The Rust Book: Building a Multithreaded Web Server",
-      source: "doc.rust-lang.org",
-      note: "You built a single-threaded server then a thread pool — this is the canonical end-to-end walkthrough of exactly that final project.",
-      url: "https://doc.rust-lang.org/book/ch21-00-final-project-a-web-server.html",
-      query: "the rust book final project multithreaded web server thread pool" },
+      title: "epoll: The API That Powers the Modern Internet",
+      source: "darkcoding.net",
+      note: "You just built a thread-pool server. Here's why async is the next step: how one event loop (epoll) serves tens of thousands of connections where a thread pool stalls — the C10k problem that tokio is built on.",
+      url: "https://darkcoding.net/software/epoll-the-api-that-powers-the-modern-internet/",
+      query: "epoll c10k event loop async server scaling" },
     { id: "il4", afterDay: "d24", kind: "video",
       title: "The What and How of Futures & async/await in Rust",
       source: "Jon Gjengset",
@@ -44,24 +46,24 @@ const INTERLUDES = {
   ],
 
   "interp-go": [
-    { id: "il1", afterDay: "d03", kind: "article",
-      title: "Crafting Interpreters: A Tree-Walk Interpreter",
-      source: "craftinginterpreters.com",
-      note: "jlox's control flow and functions are done. Step back and see the whole tree-walker — scanner, parser, evaluator — laid out by the book you're following.",
-      url: "https://craftinginterpreters.com/a-tree-walk-interpreter.html",
-      query: "tree walking interpreter how it works crafting interpreters" },
+    { id: "il1", afterDay: "d03", kind: "video",
+      title: "Parsing Explained",
+      source: "Computerphile",
+      note: "jlox's parser is done. Step outside the book for a plain-English take on what parsing really is — grammars, ambiguity, how source text becomes a tree — so the idea sticks beyond one implementation.",
+      url: "https://www.youtube.com/watch?v=bxpc9Pp5pZM",
+      query: "parsing explained grammar ambiguity computerphile" },
     { id: "il2", afterDay: "d08", kind: "video",
       title: "Pratt Parsing (Top-Down Operator Precedence)",
       source: "Colin James",
       note: "jlox is finished and clox's compiler is next — Pratt parsing is the trick at its heart. Get ahead of it.",
       url: "https://www.youtube.com/watch?v=2l1Si4gSb9A",
       query: "pratt parsing top down operator precedence tutorial" },
-    { id: "il3", afterDay: "d13", kind: "article",
-      title: "Crafting Interpreters: A Bytecode Virtual Machine",
-      source: "craftinginterpreters.com",
-      note: "Now that clox is a bytecode VM: how a stack machine runs compiled instructions, and why it leaves tree-walking in the dust.",
-      url: "https://craftinginterpreters.com/a-virtual-machine.html",
-      query: "bytecode virtual machine stack machine interpreter explained" },
+    { id: "il3", afterDay: "d13", kind: "video",
+      title: "A Bit about Bytes: Understanding Python Bytecode",
+      source: "PyCon · James Bennett",
+      note: "You built clox's stack-based bytecode VM. Here's a REAL one: how CPython compiles to bytecode, stores it in .pyc files, and runs it on a stack machine — your toy VM, shipped to production.",
+      url: "https://www.youtube.com/watch?v=cSSpnq362Bk",
+      query: "python bytecode stack machine cpython disassembly" },
     { id: "il4", afterDay: "d24", kind: "article",
       title: "Implementing CSRF Protection in Go Web Apps",
       source: "themsaid.com",
@@ -95,12 +97,12 @@ const INTERLUDES = {
       note: "You just wrote the gravitational-attraction kernel. Here's the N-body problem built up as a simulation — the exact shape of your Big Bang.",
       url: "https://www.youtube.com/watch?v=L9N7ZbGSckk",
       query: "n-body gravity simulation algorithm explained" },
-    { id: "il4", afterDay: "d22", kind: "article",
-      title: "Nature of Code: Particle Systems",
-      source: "natureofcode.com",
-      note: "As you build particle systems: emitter design, applying forces per particle, and the additive blending that makes them glow — all in one chapter.",
-      url: "https://natureofcode.com/particles/",
-      query: "particle system tutorial emitter forces additive blending" },
+    { id: "il4", afterDay: "d22", kind: "video",
+      title: "Coding Adventure: Compute Shaders",
+      source: "Sebastian Lague",
+      note: "Your particle systems run on the CPU today. This is the leap you make next: pushing thousands of particles onto the GPU with compute shaders — the same simulation, hundreds of times faster.",
+      url: "https://www.youtube.com/watch?v=9RHGLZLUuwc",
+      query: "compute shader gpu particle simulation" },
   ],
 
   "bedrock": [
