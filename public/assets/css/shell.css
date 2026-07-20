@@ -51,7 +51,10 @@
 .sb-collapse svg { transition: transform var(--dur) var(--ease); }
 #app[data-sidebar="collapsed"] .sb-collapse svg { transform: rotate(180deg); }
 
-.sb-list { flex: 1; overflow-y: auto; padding: var(--s3) var(--s2); display: flex; flex-direction: column; gap: 2px; }
+/* min-height:0 lets this flex child shrink below its content height so its own
+ * overflow-y scroll engages — without it a long week list (post 8-item-cap
+ * removal) grows past the sidebar and can't be scrolled to. */
+.sb-list { flex: 1; min-height: 0; overflow-y: auto; padding: var(--s3) var(--s2); display: flex; flex-direction: column; gap: 2px; }
 .sb-section-label { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em;
   color: var(--text-3); padding: var(--s3) var(--s3) var(--s2); font-weight: 600; }
 

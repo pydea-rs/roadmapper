@@ -19,16 +19,29 @@
 // later chapters renumber 17→18 (OOP) / 18→19 (Patterns) / 19→20 (Advanced) /
 // 20→21 (web server); Macros moved from Appendix D into Ch20.5. Section names +
 // URLs replace every page range. Async (Ch17) is read/applied in weeks 6–7.
+//
+// RWP EXTENSION (2026-07-20): APPENDED a third objective — `rwp` (Rust Web
+// Programming, 3rd ed., Flitton/Packt, the local EPUB). It's a hands-on
+// continuation of the Book's async/web-server chapters: one to-do app grown into
+// a nanoservices stack (async Hyper server → React frontend → Rust/WASM →
+// PostgreSQL/SQLx → JWT auth server → inter-server comms → Redis cache → actor
+// logging), the EPUB's 13 chapters. Added as weeks w8–w28 / days d33–d74 at a
+// gentle ~2 sessions/week (Thu+Sat rhythm), starting 2026-09-07 and finishing
+// 2027-01-30 (~5 months). The original 32 days (d01–d32) are UNCHANGED — this is a
+// pure append, deliberately dated to never collide with a raylib side-track day
+// (keeps the light-day scheduling invariant intact). The EPUB has no per-section
+// URLs, so RWP tasks cite chapter + section NAME; official docs appear only as
+// optional "go deeper" supplements.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
-const R = "rust", F = "fastapi";
+const R = "rust", F = "fastapi", W = "rwp";
 
 registerRoadmap({
   slug: "rust-fastapi",
   title: "Rust + FastAPI",
   icon: "🦀",
-  subtitle: "Finish The Rust Programming Language (Ch15→21, incl. async) and Mastering FastAPI (Ch4→), doc-supplemented.",
+  subtitle: "The Rust Programming Language (Ch15→21) + Mastering FastAPI (Ch4→), then Rust Web Programming (3rd ed.) end-to-end.",
   accent: "#f0803c",
   schemaVersion: 1,
   cadence: { activeDaysPerWeek: [4, 5] },
@@ -36,6 +49,7 @@ registerRoadmap({
   objectives: [
     { id: R, title: "Rust — The Book", tier: "primary", weight: 1 },
     { id: F, title: "FastAPI", tier: "primary", weight: 1 },
+    { id: W, title: "Rust Web Programming", tier: "primary", weight: 1 },
   ],
 
   weeks: [
@@ -46,6 +60,28 @@ registerRoadmap({
     { id: "w5", title: "Week 5 — Capstone & checkpoint", start: "2026-08-17" },
     { id: "w6", title: "Week 6 — Async Rust (Ch17) & real deployment", start: "2026-08-24" },
     { id: "w7", title: "Week 7 — Integration capstone & retro", start: "2026-08-31" },
+    /* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 8–28 ---- */
+    { id: "w8", title: "Week 8 — RWP: setup & Rust review (Ch1)", start: "2026-09-07" },
+    { id: "w9", title: "Week 9 — RWP: patterns & app design (Ch2)", start: "2026-09-14" },
+    { id: "w10", title: "Week 10 — RWP: Cargo & nanoservices (Ch3)", start: "2026-09-21" },
+    { id: "w11", title: "Week 11 — RWP: nanoservices & the DAL (Ch3)", start: "2026-09-28" },
+    { id: "w12", title: "Week 12 — RWP: foundations checkpoint + Async (Ch4)", start: "2026-10-05" },
+    { id: "w13", title: "Week 13 — RWP: tokio/Hyper & serving HTTP (Ch4–5)", start: "2026-10-12" },
+    { id: "w14", title: "Week 14 — RWP: processing requests (Ch5–6)", start: "2026-10-19" },
+    { id: "w15", title: "Week 15 — RWP: full CRUD + backend checkpoint (Ch6)", start: "2026-10-26" },
+    { id: "w16", title: "Week 16 — RWP: a browser frontend (Ch7)", start: "2026-11-02" },
+    { id: "w17", title: "Week 17 — RWP: styling & Rust-in-WASM (Ch7–8)", start: "2026-11-09" },
+    { id: "w18", title: "Week 18 — RWP: WASM kernel & client (Ch8)", start: "2026-11-16" },
+    { id: "w19", title: "Week 19 — RWP: full-stack checkpoint + PostgreSQL (Ch9)", start: "2026-11-23" },
+    { id: "w20", title: "Week 20 — RWP: SQLx & migrations (Ch9)", start: "2026-11-30" },
+    { id: "w21", title: "Week 21 — RWP: persistence checkpoint + auth (Ch10)", start: "2026-12-07" },
+    { id: "w22", title: "Week 22 — RWP: users, JWT & login (Ch10)", start: "2026-12-14" },
+    { id: "w23", title: "Week 23 — RWP: server-to-server comms (Ch11)", start: "2026-12-21" },
+    { id: "w24", title: "Week 24 — RWP: caching with Redis (Ch12)", start: "2026-12-28" },
+    { id: "w25", title: "Week 25 — RWP: cache kernel & logging (Ch12–13)", start: "2027-01-04" },
+    { id: "w26", title: "Week 26 — RWP: logging actor + stack checkpoint (Ch13)", start: "2027-01-11" },
+    { id: "w27", title: "Week 27 — RWP: capstone — run & harden", start: "2027-01-18" },
+    { id: "w28", title: "Week 28 — RWP: retro & buffer", start: "2027-01-25" },
   ],
 
   days: [
@@ -738,6 +774,862 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🔗 After here: async depth (<a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> + the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">Async Book</a>), the <a href="https://doc.rust-lang.org/nomicon/" target="_blank" rel="noopener">Nomicon</a> for unsafe, and a real FastAPI service with a queue. You have the fundamentals; now build something you'll keep.` },
       ],
     },
+    {
+      id: "d33", date: "2026-09-10", week: "w8", title: "New book: Rust Web Programming (3rd ed.)",
+      theme: "A new arc begins — the Rust Book's web/async ideas, applied end-to-end. Set up, then meet the book's plan.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 30,
+          label: `<b>Orientation:</b> read the Preface & the intro to <b>Ch1 A Quick Introduction to Rust</b> — how the book grows one to-do app into <b>nanoservices</b> (async server → frontend → WASM → Postgres → auth → Redis → logging). Skim the whole table of contents so the destination is clear.`,
+          sub: [
+            { id: "s1", est: 15, label: `Read the Preface + Ch1 opener; note the nanoservices end-state.` },
+            { id: "s2", est: 15, label: `Skim the 13-chapter map so you know where each piece lands.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 30,
+          label: `<b>Set up the workspace:</b> confirm your toolchain (<code>rustc</code>/<code>cargo</code> current, <code>rustup update</code>), install <code>rust-analyzer</code>, and create a fresh <code>rust-web-programming/</code> repo you'll grow chapter by chapter.`,
+          sub: [
+            { id: "s1", est: 15, label: `Verify <code>rustc --version</code> &amp; <code>cargo --version</code>; <code>rustup update stable</code>.` },
+            { id: "s2", est: 15, label: `Init the repo + a <code>.gitignore</code> (<code>/target</code>, <code>.env</code>); first commit.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `📖 This book is a local EPUB — tasks reference it by <b>chapter &amp; section name</b>, not URL. Official-doc links are added only as optional "go deeper" supplements.` },
+        { id: "s2", type: "hint", label: `💡 You already finished The Rust Book — Ch1 here is a fast review. Don't grind it; confirm what's rusty and move on.` },
+      ],
+      note: "Very light kickoff — the pace stays gentle (2 sessions/week) through February.",
+    },
+    {
+      id: "d34", date: "2026-09-12", week: "w8", title: "Ch1 review — types, collections, errors",
+      theme: "Fast confirm-only pass over the fundamentals, framed for web code.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch1</b>: skim <i>data types &amp; variables</i>, <i>strings</i>, <i>integers/floats</i>, <i>arrays</i>, <i>enums</i>, <i>vectors</i>, <i>HashMaps</i>, and <i>handling results &amp; errors</i>. You know these — read for the book's web-flavoured examples.`,
+          sub: [
+            { id: "s1", est: 12, label: `Types, strings, ints/floats, arrays.` },
+            { id: "s2", est: 13, label: `Enums, vectors, HashMaps, <code>Result</code>/error handling.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "review", est: 20,
+          label: `Do the chapter's <b>Questions</b> section and check your answers; jot the 1–2 idioms the book uses that you'd not have reached for.`,
+          sub: [
+            { id: "s1", est: 12, label: `Work the Ch1 Questions.` },
+            { id: "s2", est: 8, label: `Note book-specific idioms to reuse.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Treat Ch1/Ch2 as a warm-up ramp — the real work starts at Ch3 when the project is scaffolded.` },
+      ],
+    },
+    {
+      id: "d35", date: "2026-09-17", week: "w9", title: "Ch1 review — ownership, lifetimes, structs",
+      theme: "The borrow-checker half of the review — the part that matters most for the server.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 30,
+          label: `<b>Ch1</b>: <i>controlling variable ownership</i> — copying vs moving, immutable/mutable borrowing, <i>scopes</i>, <i>lifetimes</i>, and <i>building structs</i>. Confirm the mental model before the app leans on it hard.`,
+          sub: [
+            { id: "s1", est: 15, label: `Copy/move, immutable &amp; mutable borrows, scopes.` },
+            { id: "s2", est: 15, label: `Lifetimes &amp; building structs.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 20,
+          label: `Quick drill: write a <code>struct</code> with a borrowed field and a method returning a reference, and make the lifetime annotations compile — the shape you'll see all over the DAL.`,
+          sub: [
+            { id: "s1", est: 10, label: `Struct with a <code>&amp;str</code> field + a lifetime.` },
+            { id: "s2", est: 10, label: `A method returning a borrowed field; make it compile.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Rustier lifetimes refresher (optional): <a href="https://doc.rust-lang.org/nomicon/lifetimes.html" target="_blank" rel="noopener">Nomicon — Lifetimes</a>.` },
+      ],
+    },
+    {
+      id: "d36", date: "2026-09-19", week: "w9", title: "Ch2 — traits & macros for the web",
+      theme: "Patterns the whole book leans on: trait-based verification and macro metaprogramming.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 30,
+          label: `<b>Ch2 Useful Rust Patterns</b>: <i>verifying with traits</i> and <i>metaprogramming with macros</i> — how the book uses traits as a compile-time contract and <code>macro_rules!</code> to cut boilerplate.`,
+          sub: [
+            { id: "s1", est: 15, label: `Verifying with traits (trait-as-contract).` },
+            { id: "s2", est: 15, label: `Metaprogramming with macros — <code>macro_rules!</code> basics.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 35,
+          label: `Build the chapter's trait-verification example; then write a tiny declarative macro of your own and expand it with <code>cargo expand</code> to see what it generates.`,
+          sub: [
+            { id: "s1", est: 20, label: `Implement the trait-verification pattern.` },
+            { id: "s2", est: 15, label: `Write a small <code>macro_rules!</code>; inspect with <code>cargo expand</code>.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 This chapter is the "why" behind a lot of later code — when a struct "just knows" it's valid, it's this trait pattern doing the work.` },
+      ],
+    },
+    {
+      id: "d37", date: "2026-09-24", week: "w10", title: "Ch2 — messages, config traits, typed state",
+      theme: "Finish the patterns: macro-mapped messages and compiler-enforced struct state.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch2</b>: <i>mapping messages with macros</i>, <i>configuring our functions with traits</i>, and <i>checking struct state with the compiler</i> (the typestate pattern).`,
+          sub: [
+            { id: "s1", est: 12, label: `Mapping messages with macros.` },
+            { id: "s2", est: 13, label: `Trait-configured functions + compiler-checked struct state.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 30,
+          label: `Implement the <b>typestate</b> example so an invalid transition won't compile; prove it by trying a bad call and reading the error.`,
+          sub: [
+            { id: "s1", est: 20, label: `Build the typestate struct (state as a type parameter).` },
+            { id: "s2", est: 10, label: `Attempt an illegal transition; confirm it fails to compile.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Typestate = "make illegal states unrepresentable." You'll recognise it later when the auth flow refuses to serialise an unverified user.` },
+      ],
+    },
+    {
+      id: "d38", date: "2026-09-26", week: "w10", title: "Ch3 — Cargo, deeper",
+      theme: "Managing a real multi-crate project with Cargo — the toolbox for everything ahead.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch3 Designing Your Web Application in Rust</b>: <i>managing a software project with Cargo</i> — basic compilation, building with Cargo, shipping crates, documenting, and interacting with Cargo.`,
+          sub: [
+            { id: "s1", est: 15, label: `Compilation model + building/shipping crates.` },
+            { id: "s2", est: 12, label: `Documenting (<code>cargo doc</code>) &amp; interacting with Cargo.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 28,
+          label: `Set up a Cargo <b>workspace</b> with a couple of member crates (the seed of the nanoservices layout); generate and open the docs.`,
+          sub: [
+            { id: "s1", est: 18, label: `Create a workspace + 2 member crates.` },
+            { id: "s2", est: 10, label: `<code>cargo doc --open</code>; skim the generated site.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Reference: <a href="https://doc.rust-lang.org/cargo/reference/workspaces.html" target="_blank" rel="noopener">Cargo — Workspaces</a>.` },
+      ],
+    },
+    {
+      id: "d39", date: "2026-09-30", week: "w11", title: "Ch3 — nanoservices structure",
+      theme: "The book's architecture: splitting the app into small, sharply-scoped services.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch3</b>: <i>structuring code through nanoservices</i>, <i>building to-do structs</i>, and <i>managing structs with an API</i> — the layered core/networking split the rest of the book builds on.`,
+          sub: [
+            { id: "s1", est: 15, label: `The nanoservices structure &amp; layering.` },
+            { id: "s2", est: 12, label: `To-do structs + managing them with an API.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Scaffold the <b>to-do core</b> crate: the <code>Base</code>/<code>Pending</code>/<code>Done</code> item structs and the create/get/edit/delete API surface (in-memory for now).`,
+          sub: [
+            { id: "s1", est: 20, label: `Define the to-do item structs + enum states.` },
+            { id: "s2", est: 15, label: `Sketch the core API functions (no storage yet).` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 "Nanoservice" here = a crate with one job and a clean boundary. Keep the <b>core</b> (logic) ignorant of the <b>networking</b> and <b>storage</b> layers — that separation is the whole design.` },
+      ],
+    },
+    {
+      id: "d40", date: "2026-10-03", week: "w11", title: "Ch3 — the Data Access Layer",
+      theme: "A storage boundary the rest of the app talks to — swappable later for SQLx.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 22,
+          label: `<b>Ch3</b>: <i>storing tasks with our Data Access Layer</i> and <i>creating a task using our DAL</i> — the trait-shaped seam between logic and persistence.`,
+          sub: [
+            { id: "s1", est: 12, label: `The DAL concept &amp; its trait boundary.` },
+            { id: "s2", est: 10, label: `Creating a task through the DAL.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 38,
+          label: `Build a file/JSON-backed DAL behind a trait, and wire "create task" end-to-end through core → DAL. This trait is what Ch9 swaps for Postgres.`,
+          sub: [
+            { id: "s1", est: 20, label: `Define the DAL trait + a JSON-file implementation.` },
+            { id: "s2", est: 18, label: `Wire create/read task through core → DAL; test by hand.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Because the DAL is a trait, Ch9's PostgreSQL swap is a new <code>impl</code>, not a rewrite. Design for that seam now.` },
+      ],
+    },
+    {
+      id: "d41", date: "2026-10-08", week: "w12", title: "Checkpoint — foundations solid",
+      theme: "Catch up and make sure the scaffolding is real before the async server lands.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 30,
+          label: `<b>Consolidation:</b> re-run everything from Ch2–Ch3; make sure the workspace builds, the to-do core + DAL create/read a task, and your notes capture the traits/macros patterns.`,
+          sub: [
+            { id: "s1", est: 15, label: `<code>cargo build</code> clean across the workspace; DAL create/read works.` },
+            { id: "s2", est: 15, label: `One-page notes: nanoservices layout + the DAL trait seam.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 20, optional: true,
+          label: `<b>If caught up:</b> add a couple of unit tests around the core API (create then get returns it). Optional.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Nothing new today by design — a light week keeps the 5-month pace sustainable.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d42", date: "2026-10-10", week: "w12", title: "Ch4 — Async Rust, the book's way",
+      theme: "You met async in The Book; here it's applied to build a task queue and a server.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch4 Async Rust</b>: <i>understanding asynchronous programming</i> and <i>understanding async and await</i> — the futures/poll model, refreshed with the book's framing.`,
+          sub: [
+            { id: "s1", est: 15, label: `Async programming model; why it beats a thread-per-conn.` },
+            { id: "s2", est: 12, label: `<code>async</code>/<code>.await</code> &amp; the <code>Future</code> state machine.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Implement the chapter's <b>own async task queue</b> — spawn futures, await results — to feel the runtime before <code>tokio</code> hides it.`,
+          sub: [
+            { id: "s1", est: 20, label: `Build the hand-rolled async task queue.` },
+            { id: "s2", est: 13, label: `Drive it: enqueue N tasks, await all, print results.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Runtime it wraps: <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio tutorial</a>. You built a tokio server in the async-Rust weeks — this reuses that muscle.` },
+      ],
+    },
+    {
+      id: "d43", date: "2026-10-14", week: "w13", title: "Ch4 — tokio & a Hyper server",
+      theme: "From hand-rolled futures to a real async runtime and a raw HTTP server.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch4</b>: <i>exploring high-level concepts of tokio</i> and <i>implementing a HTTP server in Hyper</i> — the async stack the app's networking layer sits on.`,
+          sub: [
+            { id: "s1", est: 13, label: `tokio high-level concepts (tasks, runtime, <code>spawn</code>).` },
+            { id: "s2", est: 12, label: `A minimal <code>hyper</code> HTTP server.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Stand up the <b>Hyper server</b> from the chapter: bind a port, answer a hello route async. This is the networking-layer seed for Ch5–6.`,
+          sub: [
+            { id: "s1", est: 22, label: `Build &amp; run the hyper server; curl the route.` },
+            { id: "s2", est: 13, label: `Confirm concurrent requests don't block each other.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://hyper.rs/guides/1/" target="_blank" rel="noopener">Hyper 1.0 guides</a>. Hyper is the low-level HTTP the ergonomic frameworks are built on — the book uses it directly on purpose.` },
+      ],
+    },
+    {
+      id: "d44", date: "2026-10-18", week: "w13", title: "Ch5 — serving the to-do core",
+      theme: "Wire the async server to the to-do core: a real API surface starts to form.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 24,
+          label: `<b>Ch5 Handling HTTP Requests</b>: <i>launching a basic web server</i> and <i>connecting the core to the server</i> — routing requests into the core API from Ch3.`,
+          sub: [
+            { id: "s1", est: 12, label: `Launch the basic web server (routing skeleton).` },
+            { id: "s2", est: 12, label: `Connect the to-do core to the server.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Route <code>GET</code> requests through the server into the core and return the to-do list as JSON.`,
+          sub: [
+            { id: "s1", est: 20, label: `Wire a route → core → response.` },
+            { id: "s2", est: 13, label: `Serialise the item list to JSON (<code>serde</code>).` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://serde.rs/" target="_blank" rel="noopener">Serde</a> — the (de)serialisation crate every JSON route here uses.` },
+      ],
+    },
+    {
+      id: "d45", date: "2026-10-22", week: "w14", title: "Ch5 — serving items & error handling",
+      theme: "Refactor to-do items into the response and give endpoints real error handling.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch5</b>: <i>refactoring our to-do items</i>, <i>serving our to-do items</i>, and <i>handling errors in API endpoints</i> — turning ad-hoc handlers into a clean, fallible API.`,
+          sub: [
+            { id: "s1", est: 13, label: `Refactor + serve to-do items.` },
+            { id: "s2", est: 12, label: `Error handling in API endpoints.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Give the API a typed error → HTTP-status mapping (a custom error enum → <code>4xx/5xx</code>), so a bad request returns a clean status, not a panic.`,
+          sub: [
+            { id: "s1", est: 20, label: `Define an API error enum + <code>into_response</code> mapping.` },
+            { id: "s2", est: 13, label: `Prove a bad path returns the right status.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Modelling errors as a type (then mapping to status) is the same instinct as FastAPI's <code>HTTPException</code> — one place decides how failure looks to clients.` },
+      ],
+    },
+    {
+      id: "d46", date: "2026-10-24", week: "w14", title: "Ch6 — params & POST bodies",
+      theme: "Read data out of requests: URL params and JSON bodies.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 24,
+          label: `<b>Ch6 Processing HTTP Requests</b>: <i>passing parameters via the URL</i> and <i>passing data via a POST body</i> — extracting and validating input.`,
+          sub: [
+            { id: "s1", est: 12, label: `URL parameters (path + query).` },
+            { id: "s2", est: 12, label: `POST body → deserialised, validated struct.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Add <b>create</b> (POST a new to-do from a JSON body) and a filtered <b>list</b> (query param) to the API; validate the body with the trait pattern from Ch2.`,
+          sub: [
+            { id: "s1", est: 22, label: `POST create from a JSON body.` },
+            { id: "s2", est: 13, label: `Query-param filtered list.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Reuse your Ch2 trait-verification here so an invalid body can't reach the core — validation at the edge.` },
+      ],
+    },
+    {
+      id: "d47", date: "2026-10-29", week: "w15", title: "Ch6 — PUT, DELETE & headers",
+      theme: "Round out the verbs and read request headers (the seam auth uses later).",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 24,
+          label: `<b>Ch6</b>: <i>deleting resources using the DELETE method</i>, <i>updating resources using the PUT method</i>, and <i>extracting data from HTTP request headers</i>.`,
+          sub: [
+            { id: "s1", est: 12, label: `DELETE + PUT handlers.` },
+            { id: "s2", est: 12, label: `Reading request headers.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Complete the CRUD verbs (edit + delete a to-do) and read a custom header in a handler — the hook Ch10's JWT will plug into.`,
+          sub: [
+            { id: "s1", est: 20, label: `PUT edit + DELETE remove, end-to-end.` },
+            { id: "s2", est: 13, label: `Read a header (e.g. a fake token) in a handler.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Full CRUD now works over HTTP against the core + DAL — the backend is functionally complete before any frontend or database.` },
+      ],
+    },
+    {
+      id: "d48", date: "2026-10-31", week: "w15", title: "Checkpoint — the backend API",
+      theme: "Prove the whole backend with curl before turning to the browser.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 30,
+          label: `<b>Consolidation:</b> exercise every endpoint with curl — create, list, filter, edit, delete — and confirm error paths return clean statuses. Write the API down as a short reference.`,
+          sub: [
+            { id: "s1", est: 18, label: `curl each verb; confirm happy + error responses.` },
+            { id: "s2", est: 12, label: `One-page API reference (routes, bodies, statuses).` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 20, optional: true,
+          label: `<b>If caught up:</b> add a couple of integration tests hitting the running server. Optional.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Half the book done. The backend nanoservice is real; Ch7 gives it a face.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d49", date: "2026-11-05", week: "w16", title: "Ch7 — serving a frontend from Rust",
+      theme: "The app grows a browser face: dev setup and serving static assets from Rust.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch7 Displaying Content in the Browser</b>: <i>building out the development setup</i> and <i>serving frontend from Rust</i> — how the Rust server ships HTML/JS to the browser.`,
+          sub: [
+            { id: "s1", est: 13, label: `Frontend dev setup (build tooling).` },
+            { id: "s2", est: 12, label: `Serving the frontend from the Rust server.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 32,
+          label: `Serve an <code>index.html</code> + bundle from the Hyper server and load it in the browser; confirm the static route and the API route coexist.`,
+          sub: [
+            { id: "s1", est: 20, label: `Static-file route from Rust; load the page.` },
+            { id: "s2", est: 12, label: `Confirm API + static routes both respond.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 One Rust process serving both the API and the static frontend is the book's deployment simplicity — no separate web server yet.` },
+      ],
+    },
+    {
+      id: "d50", date: "2026-11-07", week: "w16", title: "Ch7 — React components on the API",
+      theme: "A real component UI talking to the Rust backend.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch7</b>: <i>connecting backend API endpoints to the frontend</i> and <i>creating React components</i> — fetching from the API and rendering the to-do list.`,
+          sub: [
+            { id: "s1", est: 13, label: `Wiring fetch calls to the API endpoints.` },
+            { id: "s2", est: 14, label: `Creating the React components.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Build the to-do list + add-item components against your live API; create, toggle and delete from the browser.`,
+          sub: [
+            { id: "s1", est: 22, label: `List + add-item components calling the API.` },
+            { id: "s2", est: 15, label: `Toggle/delete wired to PUT/DELETE.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 If React is new-ish, don't rabbit-hole — the book keeps the JS minimal on purpose; the interesting part is the Rust it talks to.` },
+      ],
+    },
+    {
+      id: "d51", date: "2026-11-12", week: "w17", title: "Ch7 — styling the app",
+      theme: "Make it presentable, then close out the frontend chapter.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 20,
+          label: `<b>Ch7</b>: <i>inserting styles with CSS</i> — structuring the stylesheet and wiring it into the served frontend.`,
+          sub: [
+            { id: "s1", est: 10, label: `CSS structure + serving it from Rust.` },
+            { id: "s2", est: 10, label: `Apply styles to the components.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 32,
+          label: `Style the to-do UI into something you'd screenshot; verify the full create→render→edit→delete loop looks and works right.`,
+          sub: [
+            { id: "s1", est: 20, label: `Style the list, form, and item states.` },
+            { id: "s2", est: 12, label: `Full-loop smoke test in the browser.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Milestone in sight: after Ch8 you'll have a styled, Rust-served, WASM-accelerated frontend on a real async backend.` },
+      ],
+    },
+    {
+      id: "d52", date: "2026-11-14", week: "w17", title: "Ch8 — Rust in the browser (WASM) I",
+      theme: "The hard, fun chapter: compile Rust to WebAssembly and run it in the page.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch8 Injecting Rust in the Frontend with WASM</b>: <i>setting up our WASM build</i> and <i>loading WASM in the front-end</i> / <i>on the local machine</i>.`,
+          sub: [
+            { id: "s1", est: 15, label: `WASM build setup (<code>wasm-pack</code>/<code>wasm-bindgen</code>).` },
+            { id: "s2", est: 12, label: `Loading the WASM module in the front-end.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Get a trivial Rust function compiled to WASM and called from the page's JS — the toolchain working end-to-end before the real kernel.`,
+          sub: [
+            { id: "s1", est: 20, label: `Build a hello-WASM crate; call it from JS.` },
+            { id: "s2", est: 13, label: `Confirm it loads locally + in the served page.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://rustwasm.github.io/docs/book/" target="_blank" rel="noopener">The rustwasm Book</a> &amp; <a href="https://rustwasm.github.io/wasm-pack/" target="_blank" rel="noopener">wasm-pack</a> — reach for these if the build fights you.` },
+      ],
+    },
+    {
+      id: "d53", date: "2026-11-19", week: "w18", title: "Ch8 — WASM kernel & library",
+      theme: "Grow the WASM from toy to a real, reusable module.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch8</b>: <i>building a WASM kernel</i> and <i>building a WASM library</i> — structuring the Rust-in-browser code as something the frontend can lean on.`,
+          sub: [
+            { id: "s1", est: 14, label: `Building the WASM kernel.` },
+            { id: "s2", est: 13, label: `Building the WASM library.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Move a piece of real logic (e.g. client-side validation or filtering) into the WASM library and call it from the components.`,
+          sub: [
+            { id: "s1", est: 20, label: `Implement the WASM library function.` },
+            { id: "s2", est: 15, label: `Call it from React; verify in the browser.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 The payoff: shared Rust logic on both sides of the wire — the same validation the server trusts can run in the browser.` },
+      ],
+    },
+    {
+      id: "d54", date: "2026-11-21", week: "w18", title: "Ch8 — the WASM client",
+      theme: "Tie the WASM into a proper client layer the app uses.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 24,
+          label: `<b>Ch8</b>: <i>building a WASM client</i> — wrapping the WASM library into the frontend's data/client layer.`,
+          sub: [
+            { id: "s1", est: 12, label: `Designing the WASM client wrapper.` },
+            { id: "s2", est: 12, label: `Integrating it into the frontend flow.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Wire the WASM client into the to-do UI so a user action flows through Rust-in-the-browser; confirm the full frontend still works.`,
+          sub: [
+            { id: "s1", est: 20, label: `Route a UI action through the WASM client.` },
+            { id: "s2", est: 13, label: `Regression-check the whole frontend loop.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Frontend chapters done: a styled React UI, served from Rust, with Rust/WASM in the browser. Next it gets a real database.` },
+      ],
+    },
+    {
+      id: "d55", date: "2026-11-26", week: "w19", title: "Checkpoint — the full-stack app",
+      theme: "Step back: the whole app runs, browser to backend. Catch up before Postgres.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 30,
+          label: `<b>Consolidation:</b> run the entire stack — React UI → Rust server → core → JSON DAL — and confirm every feature. Capture the architecture as a one-page diagram.`,
+          sub: [
+            { id: "s1", est: 15, label: `Full end-to-end run of every feature.` },
+            { id: "s2", est: 15, label: `Draw the current architecture (layers + data flow).` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 20, optional: true,
+          label: `<b>If caught up:</b> tidy the workspace — clippy pass, remove dead code, commit a clean checkpoint. Optional.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 The JSON DAL was always temporary scaffolding — Ch9 replaces it with real PostgreSQL, and the trait seam makes that a swap, not a rewrite.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d56", date: "2026-11-28", week: "w19", title: "Ch9 — PostgreSQL in Docker",
+      theme: "Real persistence begins: a database, containerised, wired to routing.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch9 Data Persistence with PostgreSQL</b>: <i>why a proper database</i>, <i>why Docker</i>, <i>running a database in Docker</i>, <i>routing &amp; ports</i>, and <i>running it in the background with bash scripts</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Why a DB + why Docker; docker networking/ports.` },
+            { id: "s2", est: 12, label: `Bash scripts to run Postgres in the background.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 30,
+          label: `Stand up PostgreSQL in Docker with a start/stop script and connect to it from <code>psql</code>; confirm the container + port routing.`,
+          sub: [
+            { id: "s1", est: 18, label: `Docker Postgres up via a script; connect with <code>psql</code>.` },
+            { id: "s2", est: 12, label: `Confirm host↔container port routing.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://docs.docker.com/get-started/" target="_blank" rel="noopener">Docker get-started</a> if the container basics are rusty.` },
+      ],
+    },
+    {
+      id: "d57", date: "2026-12-03", week: "w20", title: "Ch9 — SQLx & database transactions",
+      theme: "Swap the JSON DAL for real SQL behind the same trait.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch9</b>: <i>adding SQLX to our Data Access Layer</i>, <i>defining our database transactions</i>, and <i>connecting our transactions to the core</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Adding SQLx to the DAL.` },
+            { id: "s2", est: 13, label: `Defining DB transactions + connecting to core.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Implement the DAL trait against Postgres with <code>sqlx</code> (compile-time-checked queries) and route create/read/update/delete through it.`,
+          sub: [
+            { id: "s1", est: 22, label: `SQLx <code>impl</code> of the DAL trait (real queries).` },
+            { id: "s2", est: 15, label: `CRUD flows through core → SQLx DAL.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://docs.rs/sqlx" target="_blank" rel="noopener">SQLx</a> — note the compile-time query checking; it catches SQL typos at <code>cargo build</code>.` },
+      ],
+    },
+    {
+      id: "d58", date: "2026-12-05", week: "w20", title: "Ch9 — migrations & frontend refactor",
+      theme: "Version the schema and reconnect the browser to the persistent backend.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch9</b>: <i>connecting our transactions to the server</i>, <i>creating our database migrations</i>, and <i>refactoring our frontend</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Transactions → server; creating migrations.` },
+            { id: "s2", est: 12, label: `Refactoring the frontend for the DB-backed API.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Add SQLx migrations (schema as versioned files), run them on startup, and confirm the React app now reads/writes real Postgres rows that survive a restart.`,
+          sub: [
+            { id: "s1", est: 20, label: `Write + run migrations; schema created on boot.` },
+            { id: "s2", est: 15, label: `Browser create → restart container → data persists.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Migrations are the honest way to evolve a schema — never hand-edit prod tables. Same discipline as Alembic in the FastAPI world.` },
+      ],
+    },
+    {
+      id: "d59", date: "2026-12-10", week: "w21", title: "Checkpoint — it persists",
+      theme: "Confirm the persistence layer is solid before authentication complicates things.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 27,
+          label: `<b>Consolidation:</b> verify the DB-backed app fully — migrations reproducible from scratch, CRUD survives restarts, and the JSON DAL is gone. Note anything flaky.`,
+          sub: [
+            { id: "s1", est: 15, label: `Drop &amp; recreate via migrations; full CRUD works.` },
+            { id: "s2", est: 12, label: `Confirm restart-persistence; list open questions.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 20, optional: true,
+          label: `<b>If caught up:</b> add a DB integration test (insert → query) using a throwaway test database. Optional.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 The app is a real persistent full-stack service now. Ch10–13 make it multi-user, multi-server, cached, and observable.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d60", date: "2026-12-12", week: "w21", title: "Ch10 — the auth server & passwords",
+      theme: "A second nanoservice appears: authentication, starting with safe password storage.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch10 Managing User Sessions</b>: <i>building our auth server</i> (data-access / core / networking layers), <i>defining our user data model</i>, and <i>storing &amp; verifying passwords</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Auth server's three layers + user data model.` },
+            { id: "s2", est: 13, label: `Storing &amp; verifying passwords (hashing).` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Scaffold the <b>auth</b> nanoservice with its own DAL/core/networking, a user table, and password hashing + verification.`,
+          sub: [
+            { id: "s1", est: 20, label: `Auth crate skeleton (three layers) + user model.` },
+            { id: "s2", est: 15, label: `Hash on store, verify on check; never store plaintext.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 The auth server mirrors the to-do server's layering — same nanoservice shape, different job. That symmetry is the point.` },
+      ],
+    },
+    {
+      id: "d61", date: "2026-12-17", week: "w22", title: "Ch10 — users & JWT",
+      theme: "Create users, then build the JWT machinery that proves who they are.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 28,
+          label: `<b>Ch10</b>: <i>creating users</i> (DB transaction, core endpoint, networking endpoint) and <i>refactoring/restructuring our JWT</i> — <i>get-key</i>, <i>encoding</i>, and <i>decoding the token</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Create-user across DB tx → core → networking.` },
+            { id: "s2", est: 14, label: `JWT: get-key, encode, decode.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Implement create-user end-to-end and a JWT module that encodes a signed token and decodes/validates it; unit-test round-tripping a token.`,
+          sub: [
+            { id: "s1", est: 20, label: `Create-user endpoint working against Postgres.` },
+            { id: "s2", est: 15, label: `JWT encode/decode module + a round-trip test.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://docs.rs/jsonwebtoken" target="_blank" rel="noopener">jsonwebtoken</a> — the crate behind the encode/decode; mind the expiry (<code>exp</code>) claim.` },
+      ],
+    },
+    {
+      id: "d62", date: "2026-12-19", week: "w22", title: "Ch10 — login & frontend auth",
+      theme: "Close the loop: a login API and a browser flow that carries the token.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch10</b>: <i>building our login API</i> (get user by email, core login, mount to server) and <i>adding authentication to our frontend</i> — login call, tokens on API calls, a login form wired into the app.`,
+          sub: [
+            { id: "s1", est: 13, label: `Login API: by-email lookup → core login → server.` },
+            { id: "s2", est: 13, label: `Frontend: login call, attach token, login form.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Wire login end-to-end: submit the form → get a JWT → attach it to subsequent API calls → a protected route accepts it and rejects a missing/expired one.`,
+          sub: [
+            { id: "s1", est: 22, label: `Login form → token → authenticated API calls.` },
+            { id: "s2", est: 15, label: `Protected route: 200 with token, 401 without.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Same three ideas as your FastAPI JWT work — hash, sign, verify — now in Rust across a dedicated auth service. The concepts transfer; the plumbing differs.` },
+      ],
+    },
+    {
+      id: "d63", date: "2026-12-24", week: "w23", title: "Ch11 — servers talking to servers",
+      theme: "The to-do service asks the auth service who a user is — real inter-service calls.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch11 Communicating Between Servers</b>: <i>getting users from auth with a unique ID</i> (adding get-by-unique-id to dal / core / networking) and <i>making auth accessible to other servers</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `get-by-unique-id through dal → core → networking.` },
+            { id: "s2", est: 12, label: `Exposing auth so other servers can call it.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Add a get-user-by-id path to the auth service and expose it; have the to-do service call auth over HTTP to resolve a token's user.`,
+          sub: [
+            { id: "s1", est: 20, label: `Auth exposes get-by-id; to-do calls it.` },
+            { id: "s2", est: 13, label: `Resolve the JWT's user via a real inter-service request.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 This is the "micro/nano-service tax" made concrete: a boundary you now cross over HTTP. Ch12 caches it so you don't pay every request.` },
+      ],
+    },
+    {
+      id: "d64", date: "2026-12-26", week: "w23", title: "Ch11 — tethering users to items",
+      theme: "Ownership: to-do items belong to users, threaded through every layer.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch11</b>: <i>tethering users to to-do items</i> — linking items to users in the database and adding user IDs to data-access, core, and networking functions; plus <i>testing server-to-server communication with bash</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Link items→users in the DB; user IDs through the layers.` },
+            { id: "s2", est: 12, label: `Bash test of the two servers cooperating.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Add a <code>user_id</code> to the to-do schema (migration) and scope every query to the authenticated user; verify with a two-server bash test that users only see their own items.`,
+          sub: [
+            { id: "s1", est: 20, label: `Migration + user-scoped queries end-to-end.` },
+            { id: "s2", est: 15, label: `Bash test: user A can't see user B's items.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Multi-user + multi-server now works. Two milestones from the finish: caching (Ch12) and observability (Ch13).` },
+      ],
+    },
+    {
+      id: "d65", date: "2026-12-31", week: "w24", title: "Ch12 — caching with Redis",
+      theme: "Stop hitting the auth server every request: cache sessions in Redis.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch12 Caching Auth Sessions</b>: <i>what is caching</i>, <i>setting up Redis</i>, <i>building our Redis module</i>, and <i>defining the user session</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Caching concepts; Redis set-up (Docker).` },
+            { id: "s2", est: 12, label: `The Redis module + user-session shape.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 31,
+          label: `Run Redis in Docker alongside Postgres and build the Redis module + a typed user-session value you can store and fetch.`,
+          sub: [
+            { id: "s1", est: 18, label: `Redis container + connection module.` },
+            { id: "s2", est: 13, label: `Store/fetch a typed user session.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 <a href="https://docs.rs/redis" target="_blank" rel="noopener">redis crate</a>. Cache invalidation is the hard part — watch how the book handles logout/update next.` },
+      ],
+    },
+    {
+      id: "d66", date: "2027-01-02", week: "w24", title: "Ch12 — session lifecycle & client",
+      theme: "Login/logout/update flows through the cache, behind a clean client.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch12</b>: <i>building the login / logout / update processes</i> and <i>building our Redis client</i> (login-logout client, update client).`,
+          sub: [
+            { id: "s1", est: 14, label: `Login/logout/update cache processes.` },
+            { id: "s2", est: 13, label: `The Redis client wrapping them.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Implement login (write session), logout (evict), and update (refresh) against Redis behind a client; confirm a logged-out token stops working immediately.`,
+          sub: [
+            { id: "s1", est: 20, label: `Login/logout/update via the Redis client.` },
+            { id: "s2", est: 15, label: `Verify eviction: logout invalidates the session now.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 The cache is the source of truth for "is this session live?" — get eviction right and logout is instant; get it wrong and it's a security bug.` },
+      ],
+    },
+    {
+      id: "d67", date: "2027-01-07", week: "w25", title: "Ch12 — the cache kernel",
+      theme: "A shared cache boundary both servers call — the caching capstone.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch12</b>: <i>connecting our cache</i>, <i>building our cache kernel</i>, and <i>calling the kernel from the to-do server</i> and <i>from the auth server</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `The cache kernel abstraction.` },
+            { id: "s2", est: 12, label: `Calling it from both servers.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Build the cache kernel and route both servers' session checks through it; confirm the auth service is no longer hit on a cache hit.`,
+          sub: [
+            { id: "s1", est: 20, label: `Cache kernel + both servers wired to it.` },
+            { id: "s2", est: 13, label: `Measure: cache hit skips the auth round-trip.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 The kernel pattern (a shared, swappable boundary) is the same instinct as the DAL trait — one seam, many callers.` },
+      ],
+    },
+    {
+      id: "d68", date: "2027-01-09", week: "w25", title: "Ch13 — logging & middleware",
+      theme: "The last chapter: see what the system is doing, via structured logging.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 28,
+          label: `<b>Ch13 Observability through Logging</b>: <i>what are RESTful services</i>, <i>building frontend code on command</i>, <i>what is logging</i>, <i>logging via the terminal</i>, <i>defining a logger</i>, <i>creating a logging middleware</i>, and <i>integrating it into our servers</i>.`,
+          sub: [
+            { id: "s1", est: 15, label: `Logging basics; define a logger + terminal logging.` },
+            { id: "s2", est: 13, label: `Logging middleware; integrate into both servers.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Add a logging middleware that records each request (method, path, status, latency) and wire it into the to-do and auth servers.`,
+          sub: [
+            { id: "s1", est: 20, label: `Request-logging middleware (method/path/status/latency).` },
+            { id: "s2", est: 13, label: `Integrated across both servers; watch the logs.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Ecosystem standard worth knowing: <a href="https://docs.rs/tracing" target="_blank" rel="noopener">tracing</a> (structured, async-aware spans) — compare it to the book's logger.` },
+      ],
+    },
+    {
+      id: "d69", date: "2027-01-14", week: "w26", title: "Ch13 — the logging actor & DB",
+      theme: "Logging to a database via an actor — concurrency you now understand.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch13</b>: <i>logging via a database</i>, <i>what is an actor</i>, <i>building our logging actor</i>, <i>updating logging functions</i>, and <i>configuring our logging database</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `The actor model; the logging actor.` },
+            { id: "s2", est: 13, label: `Logging to a DB + configuring it.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Build the logging actor (a task owning the log channel) and persist logs to a database; confirm requests across both servers land as rows. 🎉 The book's content is complete.`,
+          sub: [
+            { id: "s1", est: 20, label: `Logging actor over a channel; DB-backed logs.` },
+            { id: "s2", est: 15, label: `Requests → log rows from both servers.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 An actor is just a task that owns some state and takes messages — your Ch4 async + Ch16 channels, combined. The whole book converges here.` },
+      ],
+    },
+    {
+      id: "d70", date: "2027-01-16", week: "w26", title: "Checkpoint — the whole nanoservices stack",
+      theme: "Everything running together: to-do, auth, cache, logs, browser.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 33,
+          label: `<b>Consolidation:</b> boot the full stack — Postgres, Redis, the to-do &amp; auth servers, the React/WASM frontend, logging — and walk a user journey (register → login → CRUD → logout) watching the logs and cache behave.`,
+          sub: [
+            { id: "s1", est: 18, label: `Full stack up; complete a real user journey.` },
+            { id: "s2", est: 15, label: `Confirm cache hits + log rows along the way.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "review", est: 15,
+          label: `Draw the final architecture: every nanoservice, the DB/cache, and the request/response + logging flows.`,
+          sub: [
+            { id: "s1", est: 15, label: `Final architecture diagram (services + data stores + flows).` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 This is the system the book set out to build. The last few days harden it and plan what's beyond the EPUB.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d71", date: "2027-01-21", week: "w27", title: "Capstone I — run it like it's real",
+      theme: "Treat the stack as a product: one-command boot, a clean demo path.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "project", est: 40,
+          label: `Make the whole system start with one command (a <code>docker-compose</code> or a top-level script bringing up Postgres, Redis, both servers, and the frontend) and document the demo path.`,
+          sub: [
+            { id: "s1", est: 25, label: `One-command bring-up of the entire stack.` },
+            { id: "s2", est: 15, label: `Write the demo script (register → CRUD → logout).` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "review", est: 15,
+          label: `List the rough edges you'd fix for "real" (secrets handling, error surfaces, missing tests) — the honest to-do for a portfolio version.`,
+          sub: [
+            { id: "s1", est: 15, label: `Rough-edges / hardening backlog.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 "Runs with one command and I can explain it in one sentence" is the bar for a project worth showing.` },
+      ],
+    },
+    {
+      id: "d72", date: "2027-01-23", week: "w27", title: "Capstone II — harden & document",
+      theme: "Tests where they matter and a README that lets someone else run it.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "project", est: 40,
+          label: `Add the highest-value tests (an auth round-trip, a user-scoped CRUD, a cache-eviction check) and write a <b>README</b>: architecture in a paragraph, run command, and the nanoservice map.`,
+          sub: [
+            { id: "s1", est: 22, label: `Three high-value integration tests.` },
+            { id: "s2", est: 18, label: `README: architecture, run command, service map.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Pick tests that would catch a real regression (auth, ownership, eviction) over exhaustive coverage — depth over breadth for a finale.` },
+      ],
+    },
+    {
+      id: "d73", date: "2027-01-28", week: "w28", title: "Retro & what's beyond this EPUB",
+      theme: "Close the arc; map the ground the print edition covers next.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 27,
+          label: `Write the one-page map of what you built and the ideas you'll reuse (nanoservice layering, the DAL/kernel seams, async Hyper, WASM-on-both-sides, JWT+Redis sessions, actor logging). Note the 2–3 you'd revisit first.`,
+          sub: [
+            { id: "s1", est: 15, label: `What you built + the transferable patterns.` },
+            { id: "s2", est: 12, label: `The 2–3 ideas to revisit first.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "review", est: 23,
+          label: `Scope what's <b>beyond</b> this EPUB (the print 3rd edition continues into <i>testing</i>, <i>deployment on AWS</i>, and <i>Docker/Kubernetes in production</i>) and pick your next concrete step.`,
+          sub: [
+            { id: "s1", est: 13, label: `List the next-chapter topics (testing, AWS, K8s).` },
+            { id: "s2", est: 10, label: `Choose one next step and write its first 3 tasks.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 Natural continuations: containerise for prod, add CI, and deploy the stack — the same instincts as the FastAPI deploy track, now for Rust.` },
+      ],
+    },
+    {
+      id: "d74", date: "2027-01-30", week: "w28", title: "Buffer / overflow",
+      theme: "Deliberate slack — the shock absorber for the 5-month run.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 20, optional: true,
+          label: `<b>Pure buffer:</b> if any chapter's build slipped — a listing that didn't compile, a feature you stubbed, notes you meant to write — this is the day to close it, guilt-free.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 A plan with zero slack breaks on the first bad week. Nothing is required today by design. 🎉 Rust Web Programming complete.` },
+      ],
+      note: "Pure buffer day — required load is near zero on purpose.",
+    },
   ],
 
   milestones: [
@@ -761,6 +1653,23 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d26.t1"] } },
     { id: "w7.m1", week: "w7", title: "🏁 Integration capstone (Rust + FastAPI)",
       rule: { type: "tasks", require: ["d29.t2", "d30.t1"] } },
+    /* ---- RWP extension milestones (Ch2 → capstone) ---- */
+    { id: "w11.m1", week: "w11", title: "RWP — Rust patterns & app design (Ch2–3)",
+      rule: { type: "tasks", require: ["d37.t2","d40.t2"] } },
+    { id: "w14.m1", week: "w14", title: "RWP — async backend serving HTTP (Ch4–5)",
+      rule: { type: "tasks", require: ["d43.t2","d45.t2"] } },
+    { id: "w15.m1", week: "w15", title: "🏁 RWP backend API — full CRUD (Ch6)",
+      rule: { type: "tasks", require: ["d47.t2"] } },
+    { id: "w18.m1", week: "w18", title: "RWP — React + WASM frontend (Ch7–8)",
+      rule: { type: "tasks", require: ["d51.t2","d54.t2"] } },
+    { id: "w20.m1", week: "w20", title: "RWP — persistence on PostgreSQL (Ch9)",
+      rule: { type: "tasks", require: ["d58.t2"] } },
+    { id: "w23.m1", week: "w23", title: "RWP — auth & multi-server (Ch10–11)",
+      rule: { type: "tasks", require: ["d62.t2","d64.t2"] } },
+    { id: "w25.m1", week: "w25", title: "RWP — Redis-cached sessions (Ch12)",
+      rule: { type: "tasks", require: ["d67.t2"] } },
+    { id: "w28.m1", week: "w28", title: "🎓 RWP complete — the nanoservices stack",
+      rule: { type: "tasks", require: ["d69.t2","d72.t1"] } },
   ],
 
   features: [
@@ -774,6 +1683,12 @@ registerRoadmap({
       `<a href="https://fastapi.tiangolo.com/tutorial/bigger-applications/" target="_blank" rel="noopener">Bigger Applications</a> · <a href="https://fastapi.tiangolo.com/tutorial/dependencies/" target="_blank" rel="noopener">Dependencies</a> · <a href="https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/" target="_blank" rel="noopener">OAuth2 + JWT</a>.`,
       `<a href="https://fastapi.tiangolo.com/tutorial/testing/" target="_blank" rel="noopener">Testing</a> · <a href="https://fastapi.tiangolo.com/advanced/events/" target="_blank" rel="noopener">Lifespan</a> · <a href="https://docs.sqlalchemy.org/en/20/orm/extensions/asyncio.html" target="_blank" rel="noopener">async SQLAlchemy 2.0</a>.`,
       `Migrations: <a href="https://docs.pydantic.dev/latest/migration/" target="_blank" rel="noopener">Pydantic v1→v2</a> · <a href="https://docs.sqlalchemy.org/en/20/changelog/migration_20.html" target="_blank" rel="noopener">SQLAlchemy 1.x→2.0</a>.`,
+    ] },
+    { title: "Rust Web Programming — the stack it builds on", items: [
+      `Async HTTP: <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> · <a href="https://hyper.rs/guides/1/" target="_blank" rel="noopener">Hyper</a> · JSON: <a href="https://serde.rs/" target="_blank" rel="noopener">Serde</a>.`,
+      `Frontend-in-Rust: <a href="https://rustwasm.github.io/docs/book/" target="_blank" rel="noopener">rustwasm Book</a> · <a href="https://rustwasm.github.io/wasm-pack/" target="_blank" rel="noopener">wasm-pack</a>.`,
+      `Data & auth: <a href="https://docs.rs/sqlx" target="_blank" rel="noopener">SQLx</a> · <a href="https://docs.rs/redis" target="_blank" rel="noopener">redis</a> · <a href="https://docs.rs/jsonwebtoken" target="_blank" rel="noopener">jsonwebtoken</a> · <a href="https://docs.rs/tracing" target="_blank" rel="noopener">tracing</a>.`,
+      `Beyond the EPUB (print 3rd ed.): testing, AWS deployment, Docker/Kubernetes in production.`,
     ] },
   ],
 });
