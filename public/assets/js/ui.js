@@ -322,7 +322,7 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
     if (rm.slug === expanded && rm.weeks && rm.weeks.length) {
       const sub = el("div.sb-sub" + (switched ? ".enter" : ""));
       const links = [el("a", { href: `#/${rm.slug}/today`, text: "→ Today" })];
-      for (const w of rm.weeks.slice(0, 8))
+      for (const w of rm.weeks)
         links.push(el("a", { href: `#/${rm.slug}/${w.id}`, text: w.title || w.id }));
       links.forEach((a, i) => { if (switched) a.style.setProperty("--sd", i * 18 + "ms"); sub.append(a); });
       list.append(sub);
