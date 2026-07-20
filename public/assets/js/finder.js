@@ -36,43 +36,74 @@ function taskText(task) {
 const titleCase = s => String(s).replace(/\b[a-z]/g, c => c.toUpperCase());
 
 /**
- * Distil a search query from a roadmap and a set of its due/overdue tasks.
- * Returns { q, type, topic }. `type` is randomised (≈70% video). Extraction is
- * intentionally rough — the query only needs to be *related*, not perfect.
+ * Build a rich, salience-ordered vocabulary from a set of tasks:
+ *   codes    — <code> API/identifier names (highest signal),
+ *   unigrams — single keywords by frequency,
+ *   bigrams  — adjacent-word PHRASES ("smart pointers", "thread pool"), by freq.
+ * This is the "wide list of words and phrases" the query sampler draws from.
  */
-export function deriveQuery(rm, tasks, { rng = Math.random } = {}) {
-  // Anchor the query in the roadmap's own tech so results stay on-subject.
-  const anchor = String(rm.slug || "").split(/[-_]/).filter(w => w.length > 1).slice(0, 2);
-
+export function buildPool(tasks) {
   const html = (tasks || []).map(taskText).join(" ");
 
   // <code> spans are API/identifier names — the highest-signal keywords.
-  const codePick = [];
+  const codes = [];
   const codeRe = /<code>([\s\S]*?)<\/code>/gi;
   let m;
   while ((m = codeRe.exec(html))) {
     const id = (stripTags(m[1]).match(/[A-Za-z][A-Za-z0-9+#]{2,}/) || [])[0];
-    if (id && !codePick.some(x => x.toLowerCase() === id.toLowerCase())) codePick.push(id);
+    if (id && !codes.some(x => x.toLowerCase() === id.toLowerCase())) codes.push(id);
   }
 
-  // Frequency over the remaining plain words (minus stopwords / numbers).
-  const freq = new Map();
-  for (const raw of (stripTags(html).toLowerCase().match(/[a-z][a-z0-9+#]{2,}/g) || [])) {
-    if (STOP.has(raw) || /^\d+$/.test(raw)) continue;
-    freq.set(raw, (freq.get(raw) || 0) + 1);
+  // Ordered token stream (stopwords / numbers dropped) → unigram + bigram freqs.
+  const toks = (stripTags(html).toLowerCase().match(/[a-z][a-z0-9+#]{2,}/g) || [])
+    .filter(w => !STOP.has(w) && !/^\d+$/.test(w));
+  const uf = new Map(), bf = new Map();
+  for (let i = 0; i < toks.length; i++) {
+    uf.set(toks[i], (uf.get(toks[i]) || 0) + 1);
+    if (i > 0) { const p = toks[i - 1] + " " + toks[i]; bf.set(p, (bf.get(p) || 0) + 1); }
   }
-  const topPlain = [...freq.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]);
+  const unigrams = [...uf.entries()].sort((a, b) => b[1] - a[1]).map(e => e[0]);
+  const bigrams = [...bf.entries()].filter(e => e[0].length <= 34)
+    .sort((a, b) => b[1] - a[1]).map(e => e[0]);
+  return { codes, unigrams, bigrams };
+}
 
-  // Assemble: anchors, up to two code identifiers, then fill with frequent words.
-  const q = [];
-  const push = w => { if (w && !q.some(x => x.toLowerCase() === w.toLowerCase())) q.push(w); };
-  anchor.forEach(push);
-  codePick.slice(0, 2).forEach(push);
-  for (const t of topPlain) { if (q.length >= 6) break; push(t); }
+/**
+ * Distil a search query from a roadmap and a set of its due/overdue tasks.
+ * Returns { q, type, topic }. Rather than always emitting the same top keywords,
+ * it samples the pool (codes / keywords / phrases) through a randomly chosen
+ * "recipe", so every shuffle yields a different — but still on-topic — query.
+ * Always anchored in the roadmap's own tech. `type` is randomised (≈70% video).
+ */
+export function deriveQuery(rm, tasks, { rng = Math.random } = {}) {
+  const anchor = String(rm.slug || "").split(/[-_]/).filter(w => w.length > 1).slice(0, 2);
+  const { codes, unigrams, bigrams } = buildPool(tasks);
+  const anchorWord = anchor[0] || unigrams[0] || "";
 
+  // Sample one item from the top `window` of a list (variety without drifting
+  // off-topic — the salient terms sit at the front).
+  const pick = (list, window = 4) => list.length
+    ? list[Math.floor(rng() * Math.min(window, list.length))] : null;
+
+  const parts = [];
+  const push = w => { if (w && !parts.some(x => x.toLowerCase() === w.toLowerCase())) parts.push(w); };
+
+  // Six recipes of different shape/length; all keep the roadmap anchor in play.
+  switch (Math.floor(rng() * 6)) {
+    case 0: push(anchorWord); push(pick(bigrams)); break;
+    case 1: push(anchorWord); push(pick(codes)); push(pick(unigrams)); break;
+    case 2: push(anchorWord); push(pick(unigrams)); push(pick(unigrams, 8)); break;
+    case 3: push(pick(codes)); push(pick(bigrams)); push(anchorWord); break;
+    case 4: push(anchorWord); push(pick(bigrams)); push(pick(unigrams, 6)); break;
+    default: push(anchorWord); push(pick(codes) || pick(bigrams)); push(pick(unigrams));
+  }
+  // Guarantee at least two meaningful terms, filling from the frequency list.
+  for (const u of [anchorWord, ...unigrams]) { if (parts.filter(Boolean).length >= 2) break; push(u); }
+
+  const q = parts.filter(Boolean).join(" ").split(/\s+/).slice(0, 6).join(" ").trim();
   const type = rng() < 0.7 ? "video" : "article";
-  const topic = titleCase(anchor[0] || topPlain[0] || "your roadmap");
-  return { q: q.slice(0, 6).join(" "), type, topic };
+  const topic = titleCase(anchor[0] || bigrams[0] || unigrams[0] || "your roadmap");
+  return { q: q || anchorWord || String(rm.slug || "roadmap"), type, topic };
 }
 
 /* ---------- result rendering (pure) ---------- */
@@ -174,7 +205,12 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
     livePanel.classList.add("loading");
     stateNote(liveSlot, "loading", `<span class="finder-spin"></span> Finding something good…`);
     try {
-      const g = groups[Math.floor(Math.random() * groups.length)];
+      // Weight the anchor pick by how much work each roadmap has due today, so
+      // successive shuffles draw across ALL of today's tasks (not one fixed
+      // roadmap) while each query stays coherent to its anchor roadmap.
+      const total = groups.reduce((s, x) => s + x.tasks.length, 0) || 1;
+      let r = Math.random() * total, g = groups[groups.length - 1];
+      for (const cand of groups) { r -= cand.tasks.length; if (r <= 0) { g = cand; break; } }
       const { q, type, topic } = deriveQuery(g.rm, g.tasks);
       let pick = null;
       if (q) {

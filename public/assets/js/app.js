@@ -18,6 +18,7 @@ import {
 import { $, debounce, downloadJSON, pickFile, readFileText, todayStr, daysBetween } from "./util.js";
 
 let activeSlug = null;
+let sidebarExpandedSlug = null;         // which roadmap's sidebar quick-jumps are open (togglable)
 let lock = null;
 let routeWired = false;                 // hashchange listener registered once (survives re-unlock)
 
@@ -139,6 +140,7 @@ function route() {
   // Global cross-roadmap "Today" digest (#/today).
   if (slug === "today" && !sub) {
     activeSlug = null;
+    sidebarExpandedSlug = null;      // no roadmap quick-jumps expanded on the global view
     swapView(() => { renderToday($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
@@ -151,6 +153,7 @@ function route() {
     if (rm) { location.hash = `#/${rm.slug}`; return; }
   }
   activeSlug = rm.slug;
+  sidebarExpandedSlug = rm.slug;     // viewing a roadmap expands its quick-jumps by default
   localStorage.setItem("roadmaps_last", rm.slug);
   swapView(animate => {
     renderRoadmap(rm, $("#view"), { animate });
@@ -190,6 +193,19 @@ function scrollToSub(rm, sub) {
 const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : s;
 function navigate(slug) { location.hash = `#/${slug}`; }
 
+// Sidebar click: navigating to a different roadmap opens its quick-jumps; clicking
+// the roadmap you're already viewing TOGGLES its quick-jumps (so an expanded
+// section can be collapsed in place, not only replaced by expanding another).
+function onSidebarNav(slug) {
+  if (slug === activeSlug) {
+    sidebarExpandedSlug = sidebarExpandedSlug === slug ? null : slug;
+    updateSidebar();
+  } else {
+    sidebarExpandedSlug = slug;
+    navigate(slug);
+  }
+}
+
 /* ================================================================== *
  *  Sidebar + sync pill
  * ================================================================== */
@@ -197,7 +213,7 @@ function updateSidebar() {
   renderSidebar({
     roadmaps: getRoadmaps(), active: activeSlug,
     statsFor: slug => { try { return sidebarStats(getRoadmap(slug)); } catch { return { pct: 0, track: "on" }; } },
-    onNavigate: navigate, expandedSlug: activeSlug,
+    onNavigate: onSidebarNav, expandedSlug: sidebarExpandedSlug,
   });
 }
 function updateSyncPill(s) {

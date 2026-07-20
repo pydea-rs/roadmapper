@@ -110,9 +110,17 @@
 .sb-today-label { font-weight: 600; font-size: var(--t-sm); white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis; }
 
-/* jump list under an expanded sidebar item */
+/* jump list under an expanded sidebar item. Bounded height + its own scroll so a
+ * long roadmap (many weeks) doesn't push the whole sidebar; overscroll-behavior
+ * keeps a scroll gesture inside it from also scrolling the outer list. */
 .sb-sub { display: flex; flex-direction: column; gap: 1px; padding: 2px 0 var(--s2) 42px;
-  overflow: hidden; }
+  max-height: 42vh; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.sb-sub::-webkit-scrollbar { width: 7px; }
+.sb-sub::-webkit-scrollbar-track { background: transparent; }
+.sb-sub::-webkit-scrollbar-thumb { background: var(--border); border-radius: 6px;
+  border: 2px solid transparent; background-clip: padding-box; }
+.sb-sub::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
 .sb-sub a { font-size: var(--t-sm); color: var(--text-3); padding: 4px var(--s2); border-radius: 6px;
   transition: color var(--dur-fast), background var(--dur-fast), transform var(--dur-fast); }
 .sb-sub a:hover { color: var(--text); background: var(--surface-3); transform: translateX(2px); }

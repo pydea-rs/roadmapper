@@ -286,7 +286,9 @@ let lastExpandedSlug;
 export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expandedSlug }) {
   const list = $("#sb-list");
   list.innerHTML = "";
-  const expanded = expandedSlug || active;
+  // `expandedSlug` is explicit and may be null (a section collapsed in place) —
+  // only fall back to `active` when it wasn't provided at all.
+  const expanded = expandedSlug === undefined ? active : expandedSlug;
   const switched = lastExpandedSlug !== undefined && expanded !== lastExpandedSlug;
 
   // Global cross-roadmap "Today" digest.
