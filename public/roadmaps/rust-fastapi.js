@@ -32,6 +32,20 @@
 // (keeps the light-day scheduling invariant intact). The EPUB has no per-section
 // URLs, so RWP tasks cite chapter + section NAME; official docs appear only as
 // optional "go deeper" supplements.
+//
+// RWP PART B (2026-07-21): the 3rd-ed EPUB stops at Ch13 (observability), so the
+// "left-off" chapters are stitched in from the COMPLETE 2nd edition (2023,
+// Actix/Diesel — B18722). Only its UNIQUE chapters are used (Ch1–8 overlap the
+// 3rd-ed spine and are skipped): Ch9 Testing, Ch10 Deploy/AWS, Ch11 HTTPS+NGINX,
+// Ch13 Clean-repo/CI, Ch12 Rocket, then Part 6 low-level async/protocols
+// (Ch14 Tokio, Ch15 TCP, Ch16 protocol framing, Ch17 Hyper actors, Ch18 Redis
+// queue). Appended as weeks w29–w40 / days d75–d98, same gentle 2/week (Thu+Sat),
+// 2027-02-04 → 2027-04-24. Ordered by lifecycle: build (3rd-ed) → test → deploy →
+// secure → automate → flex (Rocket) → understand (Part 6). By Feb 2027 every other
+// roadmap has ended, so Part B has no scheduling constraints. The 2nd-ed stack
+// (Actix/Diesel) differs from the app's (Hyper/SQLx) — tasks apply the CONCEPTS to
+// the learner's app and flag the differences; Part 6 chapters are standalone.
+// (The 1st-ed PDF is a strict subset of the 2nd ed — unused.)
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -41,7 +55,7 @@ registerRoadmap({
   slug: "rust-fastapi",
   title: "Rust + FastAPI",
   icon: "🦀",
-  subtitle: "The Rust Programming Language (Ch15→21) + Mastering FastAPI (Ch4→), then Rust Web Programming (3rd ed.) end-to-end.",
+  subtitle: "The Rust Programming Language (Ch15→21) + Mastering FastAPI (Ch4→), then a complete Rust Web Programming reference (3rd + 2nd eds) — build, deploy & go low-level.",
   accent: "#f0803c",
   schemaVersion: 1,
   cadence: { activeDaysPerWeek: [4, 5] },
@@ -82,6 +96,19 @@ registerRoadmap({
     { id: "w26", title: "Week 26 — RWP: logging actor + stack checkpoint (Ch13)", start: "2027-01-11" },
     { id: "w27", title: "Week 27 — RWP: capstone — run & harden", start: "2027-01-18" },
     { id: "w28", title: "Week 28 — RWP: retro & buffer", start: "2027-01-25" },
+    /* ---- RWP Part B (2nd-ed Ch9–18) — weeks 29–40 ---- */
+    { id: "w29", title: "Week 29 — RWP Part B — Testing (2nd-ed Ch9)", start: "2027-02-01" },
+    { id: "w30", title: "Week 30 — RWP Part B — Testing → Deploy (Ch9–10)", start: "2027-02-08" },
+    { id: "w31", title: "Week 31 — RWP Part B — Deploy on AWS (Ch10)", start: "2027-02-15" },
+    { id: "w32", title: "Week 32 — RWP Part B — HTTPS & NGINX (Ch11)", start: "2027-02-22" },
+    { id: "w33", title: "Week 33 — RWP Part B — deploy checkpoint + clean repo (Ch13)", start: "2027-03-01" },
+    { id: "w34", title: "Week 34 — RWP Part B — CI + Rocket (Ch13, Ch12)", start: "2027-03-08" },
+    { id: "w35", title: "Week 35 — RWP Part B — Rocket + Tokio (Ch12, Ch14)", start: "2027-03-15" },
+    { id: "w36", title: "Week 36 — RWP Part B — actors & TCP (Ch14–15)", start: "2027-03-22" },
+    { id: "w37", title: "Week 37 — RWP Part B — TCP & protocols (Ch15–16)", start: "2027-03-29" },
+    { id: "w38", title: "Week 38 — RWP Part B — framing & Hyper actors (Ch16–17)", start: "2027-04-05" },
+    { id: "w39", title: "Week 39 — RWP Part B — Hyper server & Redis queue (Ch17–18)", start: "2027-04-12" },
+    { id: "w40", title: "Week 40 — RWP Part B — Redis queue & capstone (Ch18)", start: "2027-04-19" },
   ],
 
   days: [
@@ -1630,6 +1657,509 @@ registerRoadmap({
       ],
       note: "Pure buffer day — required load is near zero on purpose.",
     },
+    {
+      id: "d75", date: "2027-02-04", week: "w29", title: "2nd-ed Ch9 — unit & JWT tests",
+      theme: "Part B begins: the 2nd edition (2023) covers everything the 3rd-ed EPUB stopped short of. First — testing what you built.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 28,
+          label: `<b>2nd-ed Ch9 Testing</b>: <i>building our unit tests</i> and <i>building JWT unit tests</i> — test config, JWT test requirements, basic JWT function tests. (Book is Actix/Diesel; the testing ideas map straight onto your Hyper/SQLx app.)`,
+          sub: [
+            { id: "s1", est: 15, label: `Unit-test structure + a test config.` },
+            { id: "s2", est: 13, label: `JWT tests: requirements + basic function tests.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 35,
+          label: `Write real unit tests for your app's core logic and a JWT encode/decode test; run them green.`,
+          sub: [
+            { id: "s1", est: 20, label: `Unit tests over the to-do core + DAL.` },
+            { id: "s2", est: 15, label: `JWT round-trip + expiry test.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `📖 PART B (2026-07-20 plan): these chapters come from the <b>2nd edition</b> EPUB — the 3rd-ed EPUB ends at Ch13 (observability). Where its Actix/Diesel stack differs from your Hyper/SQLx app, it's flagged; Part 6 (Ch14–18) are standalone.` },
+        { id: "s2", type: "hint", label: `💡 Test the <b>core</b> nanoservice in isolation (no HTTP) first — pure functions are the easiest, highest-value tests.` },
+      ],
+    },
+    {
+      id: "d76", date: "2027-02-06", week: "w29", title: "2nd-ed Ch9 — web-request tests & Postman",
+      theme: "Test the HTTP surface, then drive it from Postman.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch9</b>: <i>building tests for web requests</i> and <i>writing tests in Postman</i> — ordered requests and creating a test for an HTTP request.`,
+          sub: [
+            { id: "s1", est: 13, label: `Integration tests for web requests.` },
+            { id: "s2", est: 12, label: `Postman: ordered requests + an HTTP-request test.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 35,
+          label: `Add integration tests that hit your running server (create→list→auth paths), and build a Postman collection that walks a full user journey.`,
+          sub: [
+            { id: "s1", est: 20, label: `Server integration tests (happy + 401).` },
+            { id: "s2", est: 15, label: `Postman collection: register → login → CRUD.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Postman collections double as living API docs and as the seed for the Newman CI step next.` },
+      ],
+    },
+    {
+      id: "d77", date: "2027-02-11", week: "w30", title: "2nd-ed Ch9 — Newman & a test pipeline",
+      theme: "Automate the whole test run — the first taste of CI.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch9</b>: <i>automating Postman tests with Newman</i> and <i>building an entire automated testing pipeline</i>.`,
+          sub: [
+            { id: "s1", est: 12, label: `Newman: run the Postman collection headless.` },
+            { id: "s2", est: 13, label: `Wiring cargo test + Newman into one pipeline.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 32,
+          label: `Script a single command that spins up the app, runs <code>cargo test</code> + Newman against it, and reports pass/fail — your local CI in miniature.`,
+          sub: [
+            { id: "s1", est: 20, label: `One-command test pipeline (unit + integration + Newman).` },
+            { id: "s2", est: 12, label: `Make it fail loudly on a broken endpoint.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 This pipeline is what Ch13's GitHub Actions will run on every push — build it locally first.` },
+      ],
+    },
+    {
+      id: "d78", date: "2027-02-13", week: "w30", title: "2nd-ed Ch10 — Docker images",
+      theme: "Package the app into containers — the unit of deployment.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch10 Deploying on AWS</b>: <i>setting up the build environment</i> (AWS SSH key + EC2, AWS client) and <i>managing our software with Docker</i> — writing & building Docker image files.`,
+          sub: [
+            { id: "s1", est: 13, label: `Build env: AWS account, SSH key, EC2, AWS CLI.` },
+            { id: "s2", est: 13, label: `Writing + building the server Docker image.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Write a Dockerfile for each of your services (to-do server, auth server) and build the images locally; confirm the containers run and talk to Postgres/Redis.`,
+          sub: [
+            { id: "s1", est: 22, label: `Dockerfiles for the server(s); build locally.` },
+            { id: "s2", est: 13, label: `Compose them with Postgres/Redis; smoke-test.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `⚠️ Your app is multi-service (nanoservices) — you'll containerise each server, unlike the book's single Actix binary. Same Docker skills, one more image or two.` },
+      ],
+    },
+    {
+      id: "d79", date: "2027-02-18", week: "w31", title: "2nd-ed Ch10 — Terraform & build scripts",
+      theme: "Infrastructure-as-code and repeatable build orchestration.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch10</b>: <i>setting up our Terraform build</i>, the <i>Python build script</i>, the <i>Bash deployment script</i>, an <i>EC2 build server via Terraform</i>, and <i>orchestrating builds with Bash</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Terraform for an EC2 build server.` },
+            { id: "s2", est: 13, label: `Python/Bash build + deploy orchestration.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Write a Terraform config that stands up an EC2 instance and a script that builds your images on it; apply it and tear it down cleanly.`,
+          sub: [
+            { id: "s1", est: 22, label: `Terraform EC2 + a build/deploy script.` },
+            { id: "s2", est: 13, label: `<code>apply</code> then <code>destroy</code> — confirm reproducible.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Infra-as-code means the server is a file you can recreate, not a pet you configured by hand. Same discipline as DB migrations.` },
+      ],
+    },
+    {
+      id: "d80", date: "2027-02-20", week: "w31", title: "2nd-ed Ch10 — deploy to AWS",
+      theme: "Push the images and run the app on real infrastructure.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch10</b>: a <i>Docker image for the React frontend</i>, <i>deploying images onto Docker Hub</i>, and <i>deploying the application on AWS</i> (running locally, then on AWS) via the build script.`,
+          sub: [
+            { id: "s1", est: 13, label: `Frontend image + push all images to a registry.` },
+            { id: "s2", est: 13, label: `Deploy + run the stack on AWS.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Push your images to a registry and bring the app up on the EC2 instance; hit the public IP and complete a real request against the deployed app.`,
+          sub: [
+            { id: "s1", est: 22, label: `Registry push + AWS bring-up of the full stack.` },
+            { id: "s2", est: 15, label: `Live request against the deployed app.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Your app now runs somewhere other than your laptop. Next: put a real domain + HTTPS in front of it.` },
+      ],
+    },
+    {
+      id: "d81", date: "2027-02-25", week: "w32", title: "2nd-ed Ch11 — HTTPS, locally",
+      theme: "Understand TLS/HTTP-2, then terminate HTTPS in front of the app.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch11 HTTPS with NGINX</b>: <i>what is HTTPS?</i> (binary protocol, compressed headers, persistent connections, multiplex streaming) and <i>implementing HTTPS locally with docker-compose</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `HTTPS/HTTP-2 mechanics.` },
+            { id: "s2", est: 12, label: `NGINX + docker-compose terminating TLS locally.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Put an NGINX reverse proxy in front of your app via docker-compose and serve it over HTTPS locally with a self-signed cert.`,
+          sub: [
+            { id: "s1", est: 20, label: `NGINX reverse-proxy in compose.` },
+            { id: "s2", est: 13, label: `Local HTTPS with a self-signed cert.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 NGINX terminates TLS and proxies to your Rust server — the same edge pattern regardless of Actix vs Hyper.` },
+      ],
+    },
+    {
+      id: "d82", date: "2027-02-27", week: "w32", title: "2nd-ed Ch11 — HTTPS on AWS",
+      theme: "A real domain, real certificates, and a load balancer.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 27,
+          label: `<b>Ch11</b>: <i>attaching a URL</i> (elastic IP, domain registration), <i>enforcing HTTPS</i> (certificates), and scaling out — <i>multiple EC2 instances</i>, a <i>load balancer</i>, and <i>security groups</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Elastic IP + domain + TLS certificates.` },
+            { id: "s2", est: 13, label: `Load balancer + security groups across instances.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Attach a domain to your deployment, get a real certificate, and force HTTPS; put a load balancer in front and lock traffic down with security groups.`,
+          sub: [
+            { id: "s1", est: 22, label: `Domain + real cert + forced HTTPS.` },
+            { id: "s2", est: 15, label: `Load balancer + locked-down security groups.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Security groups are your firewall — open only 443 (and 22 to yourself). Everything else stays shut.` },
+      ],
+    },
+    {
+      id: "d83", date: "2027-03-04", week: "w33", title: "Checkpoint — tested, deployed, secured",
+      theme: "The app is real, public, and safe. Catch up before professionalising the repo.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 27,
+          label: `<b>Consolidation:</b> confirm the full lifecycle — tests green, images built, deployed on AWS, reachable over HTTPS on a real domain behind a load balancer. Note anything fragile.`,
+          sub: [
+            { id: "s1", est: 15, label: `End-to-end: test → deploy → HTTPS all working.` },
+            { id: "s2", est: 12, label: `Write the deploy runbook (commands + gotchas).` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 20, optional: true,
+          label: `<b>If caught up:</b> tighten one rough edge from deployment (secrets, health checks, restart policy). Optional.` },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 A tested app running on secured AWS infra is a real milestone. Ch13 makes the repo itself production-grade.` },
+      ],
+      note: "Light checkpoint day.",
+    },
+    {
+      id: "d84", date: "2027-03-06", week: "w33", title: "2nd-ed Ch13 — a clean repository",
+      theme: "Structure the repo and its config the way a professional project is laid out.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch13 Best Practices for a Clean Web App Repository</b>: <i>the general layout of a clean repository</i>, <i>configuration from environment variables</i>, a <i>local development database</i>, and <i>managing variables in Postman tests</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Clean repo layout + env-var configuration.` },
+            { id: "s2", est: 12, label: `Local dev DB + parameterised Postman vars.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Refactor your repo to the clean layout: all config via env vars (no hardcoded secrets), a one-command local dev database, and Postman variables per environment.`,
+          sub: [
+            { id: "s1", est: 20, label: `Env-var config + clean layout across services.` },
+            { id: "s2", est: 13, label: `One-command dev DB + env-scoped Postman vars.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 "Config in the environment, not the code" is the 12-factor rule — it's what makes the same image run in dev, CI and prod unchanged.` },
+      ],
+    },
+    {
+      id: "d85", date: "2027-03-11", week: "w34", title: "2nd-ed Ch13 — distroless images & GitHub Actions CI",
+      theme: "Tiny secure images and a pipeline that runs on every push.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch13</b>: <i>building distroless tiny-server Docker images</i>, <i>a clean test pipeline</i>, and <i>continuous integration with GitHub Actions</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Distroless multi-stage image builds.` },
+            { id: "s2", est: 13, label: `GitHub Actions CI running the test pipeline.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 37,
+          label: `Convert your images to distroless multi-stage builds (tiny, no shell) and add a GitHub Actions workflow that builds, tests (unit + Newman), and reports on every push.`,
+          sub: [
+            { id: "s1", est: 22, label: `Distroless multi-stage Dockerfiles.` },
+            { id: "s2", est: 15, label: `GitHub Actions: build + test on push.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Distroless = no shell, no package manager in the final image — smaller attack surface and faster pulls. Your Ch9/local pipeline slots straight into the Actions runner.` },
+      ],
+    },
+    {
+      id: "d86", date: "2027-03-13", week: "w34", title: "2nd-ed Ch12 — Rocket: setup & modules",
+      theme: "Framework flexibility: stand the app up on a different web framework.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch12 Recreating Our Application in Rocket</b>: <i>what is Rocket?</i>, <i>setting up the server</i>, <i>plugging in existing modules</i>, and <i>implementing Rocket traits</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Rocket vs your current stack; server setup.` },
+            { id: "s2", est: 13, label: `Reusing your core/DAL modules under Rocket.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Spin up a Rocket server and wire your existing core + DAL into it — proving your logic is framework-independent (the whole point of the nanoservice split).`,
+          sub: [
+            { id: "s1", est: 20, label: `Rocket server booting.` },
+            { id: "s2", est: 15, label: `Core/DAL plugged in behind Rocket routes.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 Because your logic lives in the core (not the framework), swapping Hyper→Rocket is a networking-layer rewrite, not an app rewrite. This chapter proves that seam works.` },
+      ],
+    },
+    {
+      id: "d87", date: "2027-03-18", week: "w35", title: "2nd-ed Ch12 — Rocket: views, JSON & tests",
+      theme: "Port the routes and confirm the same tests still pass.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch12</b>: <i>plugging in existing views</i>, <i>accepting/returning JSON</i>, <i>returning raw HTML</i>, <i>returning status</i> (single & multiple), <i>registering views</i>, and <i>plugging in existing tests</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Rocket views + JSON/HTML/status responses.` },
+            { id: "s2", est: 12, label: `Running your existing test suite against Rocket.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 33,
+          label: `Port your routes to Rocket (JSON in/out, proper statuses) and run your Ch9 test suite against the Rocket version — same behaviour, different framework.`,
+          sub: [
+            { id: "s1", est: 20, label: `Routes ported; JSON + statuses correct.` },
+            { id: "s2", est: 13, label: `Existing tests green against Rocket.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 If the same tests pass against both Hyper and Rocket, your API contract is genuinely decoupled from its framework. That's a strong design signal.` },
+      ],
+    },
+    {
+      id: "d88", date: "2027-03-20", week: "w35", title: "2nd-ed Ch14 — the Tokio framework",
+      theme: "Part 6 (standalone async/systems track): go under the hood of async Rust.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch14 Exploring the Tokio Framework</b>: <i>Tokio for async programming</i> and <i>working with workers</i> — the runtime beneath everything you've built.`,
+          sub: [
+            { id: "s1", est: 14, label: `Tokio runtime, tasks, and workers.` },
+            { id: "s2", est: 12, label: `How the executor schedules async work.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Build the chapter's worker examples: spawn tasks across the runtime and observe how work is distributed.`,
+          sub: [
+            { id: "s1", est: 20, label: `Spawn + coordinate Tokio workers.` },
+            { id: "s2", est: 13, label: `Observe scheduling across the runtime.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `📖 Part 6 (Ch14–18) are self-contained mini-projects on low-level async & networking — not tied to the web-app stack. Pure Rust systems programming.` },
+      ],
+    },
+    {
+      id: "d89", date: "2027-03-25", week: "w36", title: "2nd-ed Ch14 — the actor model",
+      theme: "Actors and channels — the concurrency pattern the 3rd-ed logging used.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>Ch14</b>: <i>the actor model for async programming</i>, <i>working with channels</i>, and <i>working with actors in Tokio</i>.`,
+          sub: [
+            { id: "s1", est: 14, label: `Actor model + channels in Tokio.` },
+            { id: "s2", est: 12, label: `Building actors that own state.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Build an actor (a task owning state, driven by a channel of messages) and drive it from several producers — the pattern behind async state management.`,
+          sub: [
+            { id: "s1", est: 20, label: `A channel-driven Tokio actor.` },
+            { id: "s2", est: 13, label: `Multiple producers → one actor; no shared locks.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 You met actors in the 3rd-ed logging chapter — here's the full model. An actor replaces <code>Arc&lt;Mutex&gt;</code> with message passing.` },
+      ],
+    },
+    {
+      id: "d90", date: "2027-03-27", week: "w36", title: "2nd-ed Ch15 — accepting TCP with Tokio",
+      theme: "Below HTTP: raw TCP sockets and byte processing.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>2nd-ed Ch15 Accepting TCP Traffic with Tokio</b>: <i>exploring TCP</i>, <i>accepting TCP</i>, <i>processing bytes</i>, and <i>passing TCP to an actor</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `TCP basics; accepting connections in Tokio.` },
+            { id: "s2", est: 12, label: `Reading/processing raw bytes off a socket.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Build a Tokio TCP server that accepts connections, reads bytes, and hands each connection to an actor.`,
+          sub: [
+            { id: "s1", est: 20, label: `Tokio TCP listener + byte processing.` },
+            { id: "s2", est: 13, label: `Route each connection to an actor.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 This is the layer under Hyper — seeing HTTP as bytes on a TCP socket demystifies every framework you've used.` },
+      ],
+    },
+    {
+      id: "d91", date: "2027-04-01", week: "w37", title: "2nd-ed Ch15 — actors over TCP",
+      theme: "Coordinate state across a TCP server using chained actors.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch15</b>: <i>keeping track of orders with actors</i>, <i>chaining communication between actors</i>, <i>responding with TCP</i>, and <i>sending different commands via the client</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Stateful actors + chaining messages.` },
+            { id: "s2", est: 12, label: `Responding over TCP; a command client.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Extend your TCP server so a client sends commands, actors maintain shared order state, and the server responds — a tiny stateful protocol.`,
+          sub: [
+            { id: "s1", est: 20, label: `Command client + actor-held state.` },
+            { id: "s2", est: 13, label: `Server responses over TCP.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 You're building a stateful networked service from sockets up — no framework doing the plumbing.` },
+      ],
+    },
+    {
+      id: "d92", date: "2027-04-03", week: "w37", title: "2nd-ed Ch16 — protocols on TCP",
+      theme: "Structured messages over a byte stream — the framing problem.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>2nd-ed Ch16 Building Protocols on Top of TCP</b>: <i>setting up the TCP client and server</i>, <i>processing bytes using structs</i>, and <i>creating a message-sender client</i> / <i>processing messages in the server</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Struct-based message (de)serialisation over TCP.` },
+            { id: "s2", est: 12, label: `Message-sender client + server processing.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Define a message struct, serialise it over TCP, and parse it on the server — a typed protocol instead of ad-hoc bytes.`,
+          sub: [
+            { id: "s1", est: 20, label: `Typed message over TCP (encode/decode).` },
+            { id: "s2", est: 13, label: `Client sends, server parses struct messages.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `💡 "Where does one message end?" is the core problem of any byte-stream protocol — framing (next) is the answer.` },
+      ],
+    },
+    {
+      id: "d93", date: "2027-04-08", week: "w38", title: "2nd-ed Ch16 — framing & an HTTP frame",
+      theme: "Length-framing messages, then rebuild HTTP from scratch.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch16</b>: <i>utilizing framing</i> (rewriting client & server to support it) and <i>building an HTTP frame on top of TCP</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Framing: delimit messages on the stream.` },
+            { id: "s2", est: 12, label: `Constructing an HTTP frame over raw TCP.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 35,
+          label: `Add length-based framing to your protocol, then hand-build a minimal HTTP request/response frame over your TCP layer — HTTP, from first principles.`,
+          sub: [
+            { id: "s1", est: 20, label: `Framed client + server.` },
+            { id: "s2", est: 15, label: `A hand-rolled HTTP frame over TCP.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Once you've built HTTP on top of TCP by hand, Hyper stops being magic — it's this, hardened and optimised.` },
+      ],
+    },
+    {
+      id: "d94", date: "2027-04-10", week: "w38", title: "2nd-ed Ch17 — actors with Hyper",
+      theme: "Bring actors and Hyper together into one async service.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 26,
+          label: `<b>2nd-ed Ch17 Actors and Async with Hyper</b>: <i>breaking down the project</i>, <i>defining channel messages</i>, and building the <i>runner</i> and <i>state</i> actors.`,
+          sub: [
+            { id: "s1", est: 14, label: `Project shape; channel message types.` },
+            { id: "s2", est: 12, label: `Runner actor + state actor.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Build the runner + state actors and the channels between them — the async backbone the Hyper server will sit on.`,
+          sub: [
+            { id: "s1", est: 20, label: `Runner + state actors over channels.` },
+            { id: "s2", est: 13, label: `Drive them with test messages.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 This ties Part 6 together: the actor model (Ch14) + TCP/framing (Ch15–16) + Hyper (3rd-ed Ch4) in one design.` },
+      ],
+    },
+    {
+      id: "d95", date: "2027-04-15", week: "w39", title: "2nd-ed Ch17 — the Hyper server",
+      theme: "Serve HTTP over the actor system you just built.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch17</b>: <i>handling HTTP requests using Hyper</i>, <i>building an HTTP server using Hyper</i>, and <i>running the Hyper HTTP server</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Hyper request handling wired to the actors.` },
+            { id: "s2", est: 12, label: `Assembling + running the server.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "code", est: 33,
+          label: `Put Hyper in front of your actor system so HTTP requests drive the runner/state actors; run it and hit it with curl.`,
+          sub: [
+            { id: "s1", est: 20, label: `Hyper server → actors → response.` },
+            { id: "s2", est: 13, label: `Run + curl the actor-backed server.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Compare this hand-built actor+Hyper service to the 3rd-ed's framework-assisted one — same shape, now fully understood end to end.` },
+      ],
+    },
+    {
+      id: "d96", date: "2027-04-17", week: "w39", title: "2nd-ed Ch18 — a Redis task queue",
+      theme: "The finale project: offload work to background workers via Redis.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>2nd-ed Ch18 Queuing Tasks with Redis</b>: <i>breaking down the project</i>, <i>building the HTTP server</i>, <i>building the polling worker</i>, and <i>getting it running with Redis</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Queue architecture: server + polling worker + Redis.` },
+            { id: "s2", est: 12, label: `Standing up the server and worker.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Build an HTTP server that enqueues tasks to Redis and a worker that polls and runs them — the producer/consumer pattern for slow work.`,
+          sub: [
+            { id: "s1", est: 22, label: `Server enqueues → Redis → worker polls & runs.` },
+            { id: "s2", est: 13, label: `Confirm a slow task runs off the request path.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 A task queue is how real apps handle slow work (email, image processing) without blocking requests — the pattern behind Celery/Sidekiq, in Rust.` },
+      ],
+    },
+    {
+      id: "d97", date: "2027-04-22", week: "w40", title: "2nd-ed Ch18 — tasks, messages & Docker",
+      theme: "Finish the queue: typed tasks/messages, routing, and containerised.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "read", est: 25,
+          label: `<b>Ch18</b>: <i>defining tasks for workers</i>, <i>defining messages for the Redis queue</i>, <i>integrating routing in the HTTP server</i>, and <i>running it all in Docker</i>.`,
+          sub: [
+            { id: "s1", est: 13, label: `Typed tasks + queue messages.` },
+            { id: "s2", est: 12, label: `Routing + running the whole thing in Docker.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "project", est: 35,
+          label: `Add typed tasks/messages and routing, then bring the whole queue system up in Docker — a self-contained, containerised async service. 🎉 Both books complete.`,
+          sub: [
+            { id: "s1", est: 20, label: `Typed tasks/messages + routes.` },
+            { id: "s2", est: 15, label: `Full system up in Docker.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Everything in Part 6 has been Docker-first — the same deployment discipline you learned in Ch10/13 carries the systems track too.` },
+      ],
+    },
+    {
+      id: "d98", date: "2027-04-24", week: "w40", title: "Two-book capstone & retro",
+      theme: "Close the complete Rust-web reference — both editions, one map.",
+      tasks: [
+        { id: "t1", obj: "rwp", cat: "review", est: 27,
+          label: `Write the master map: the full journey across <b>both books</b> — build (3rd-ed: nanoservices, Hyper, SQLx, WASM, auth, Redis cache, logging) → operate (2nd-ed: testing, AWS deploy, HTTPS, CI) → flex (Rocket) → understand (Part 6: Tokio, TCP, protocols, Hyper actors, task queue). Note the 3–4 ideas you'd revisit first.`,
+          sub: [
+            { id: "s1", est: 15, label: `The complete two-book map: build → operate → flex → understand.` },
+            { id: "s2", est: 12, label: `The 3–4 ideas most worth revisiting.` },
+          ] },
+        { id: "t2", obj: "rwp", cat: "review", est: 23,
+          label: `Pick the next real thing to build with all of it, and write its first few tasks while the momentum's hot. 🎉 Rust web programming — complete.`,
+          sub: [
+            { id: "s1", est: 13, label: `Choose the next real project.` },
+            { id: "s2", est: 10, label: `Write its first 3 tasks.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🔗 You now hold a complete, current Rust web reference stitched from two editions — from a single heap allocation to a load-balanced, HTTPS, CI-deployed, queue-backed nanoservices stack. Build something you'll keep.` },
+      ],
+      note: "🎓 Final day of the Rust + FastAPI + Rust Web Programming roadmap.",
+    },
   ],
 
   milestones: [
@@ -1670,6 +2200,15 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d67.t2"] } },
     { id: "w28.m1", week: "w28", title: "🎓 RWP complete — the nanoservices stack",
       rule: { type: "tasks", require: ["d69.t2","d72.t1"] } },
+    /* ---- RWP Part B milestones (Ch9 → capstone) ---- */
+    { id: "w30.m1", week: "w30", title: "RWP — application tested (2nd-ed Ch9)",
+      rule: { type: "tasks", require: ["d77.t2"] } },
+    { id: "w32.m1", week: "w32", title: "🏁 RWP — deployed on AWS over HTTPS (Ch10–11)",
+      rule: { type: "tasks", require: ["d80.t2","d82.t2"] } },
+    { id: "w35.m1", week: "w35", title: "RWP — production repo, CI & Rocket (Ch12–13)",
+      rule: { type: "tasks", require: ["d85.t2","d87.t2"] } },
+    { id: "w40.m1", week: "w40", title: "🎓 RWP — complete two-book reference (Part 6)",
+      rule: { type: "tasks", require: ["d96.t2","d98.t1"] } },
   ],
 
   features: [
@@ -1688,7 +2227,11 @@ registerRoadmap({
       `Async HTTP: <a href="https://tokio.rs/tokio/tutorial" target="_blank" rel="noopener">Tokio</a> · <a href="https://hyper.rs/guides/1/" target="_blank" rel="noopener">Hyper</a> · JSON: <a href="https://serde.rs/" target="_blank" rel="noopener">Serde</a>.`,
       `Frontend-in-Rust: <a href="https://rustwasm.github.io/docs/book/" target="_blank" rel="noopener">rustwasm Book</a> · <a href="https://rustwasm.github.io/wasm-pack/" target="_blank" rel="noopener">wasm-pack</a>.`,
       `Data & auth: <a href="https://docs.rs/sqlx" target="_blank" rel="noopener">SQLx</a> · <a href="https://docs.rs/redis" target="_blank" rel="noopener">redis</a> · <a href="https://docs.rs/jsonwebtoken" target="_blank" rel="noopener">jsonwebtoken</a> · <a href="https://docs.rs/tracing" target="_blank" rel="noopener">tracing</a>.`,
-      `Beyond the EPUB (print 3rd ed.): testing, AWS deployment, Docker/Kubernetes in production.`,
+    ] },
+    { title: "Part B — operate & go low-level (from the 2nd ed.)", items: [
+      `Test & ship: unit/integration tests · <a href="https://www.postman.com/" target="_blank" rel="noopener">Postman</a>/Newman · <a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker</a> · <a href="https://www.terraform.io/" target="_blank" rel="noopener">Terraform</a> · AWS EC2.`,
+      `Secure & automate: <a href="https://nginx.org/en/docs/" target="_blank" rel="noopener">NGINX</a> + HTTPS/TLS · distroless images · <a href="https://docs.github.com/actions" target="_blank" rel="noopener">GitHub Actions</a> CI · <a href="https://rocket.rs/" target="_blank" rel="noopener">Rocket</a> (alt framework).`,
+      `Low-level (Part 6): raw <a href="https://docs.rs/tokio" target="_blank" rel="noopener">Tokio</a> · TCP sockets · protocol framing · actor model · a Redis task queue.`,
     ] },
   ],
 });
