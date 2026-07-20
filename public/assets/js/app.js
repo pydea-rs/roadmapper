@@ -174,7 +174,9 @@ function scrollToCurrentDay(rm) {
     || rm.days.find(d => d.date >= today)
     || rm.days[rm.days.length - 1];
   const node = target && $(`.day[data-day="${cssEsc(target.id)}"]`);
-  if (node) { node.classList.add("open"); node.scrollIntoView({ block: "start" }); }
+  // Center the day in the viewport (a tall card that can't fit just sits with its
+  // top in view) so it lands with breathing room above, not flush at the edge.
+  if (node) { node.classList.add("open"); node.scrollIntoView({ block: "center" }); }
 }
 function scrollToSub(rm, sub) {
   let targetDay = null;

@@ -31,8 +31,11 @@ for (const rm of roadmaps) {
     t.ok(rm.daysById.has(il.afterDay), `${rm.slug}/${il.id}: afterDay "${il.afterDay}" is a real day`);
     t.ok(il.kind === "video" || il.kind === "article", `${rm.slug}/${il.id}: kind is video|article`);
     t.ok(typeof il.title === "string" && il.title.length > 0, `${rm.slug}/${il.id}: has a title`);
-    t.ok(typeof il.query === "string" && il.query.trim().length > 0, `${rm.slug}/${il.id}: has a search query`);
-    t.ok(/^https:\/\//.test(interludeUrl(il)), `${rm.slug}/${il.id}: builds an https results link`);
+    t.ok(typeof il.source === "string" && il.source.length > 0, `${rm.slug}/${il.id}: has a source label`);
+    // must link DIRECTLY to a specific resource, not a search-results page
+    t.ok(typeof il.url === "string" && /^https:\/\//.test(il.url), `${rm.slug}/${il.id}: has a direct https url`);
+    t.ok(!/[?&](q|search_query)=/.test(il.url), `${rm.slug}/${il.id}: url is a specific resource, not a search page`);
+    t.eq(interludeUrl(il), il.url, `${rm.slug}/${il.id}: interludeUrl uses the direct url`);
   }
 }
 t.ok(interludeTotal >= 15, `all four roadmaps carry a spread of interludes (${interludeTotal})`);
