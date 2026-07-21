@@ -65,12 +65,13 @@ export function burnup(leaves, today) {
   const total = rl.length;
   if (!total) return null;
   let first = null, last = null;
-  const plannedBy = new Map(), doneBy = new Map(), ontimeBy = new Map();
+  const plannedBy = new Map(), doneBy = new Map(), ontimeBy = new Map(), origDoneBy = new Map();
   const inc = (m, k) => m.set(k, (m.get(k) || 0) + 1);
   for (const l of rl) {
     if (!first || l.origDate < first) first = l.origDate;
     if (!last || l.origDate > last) last = l.origDate;
-    inc(plannedBy, l.origDate);
+    inc(plannedBy, l.origDate);                                   // scheduled by its original date
+    if (l.done) inc(origDoneBy, l.origDate);                      // DONE, attributed to its original date
     if (l.doneDate) { inc(doneBy, l.doneDate); if (l.doneDate <= l.origDate) inc(ontimeBy, l.doneDate); }
   }
   if (today > last) last = today;
@@ -81,13 +82,24 @@ export function burnup(leaves, today) {
   const N = Math.max(0, daysBetween(first, last));
   const todayIdx = clamp(daysBetween(first, today), 0, N);
 
-  const planned = [], actual = [], ontime = [];
-  let cp = 0, ca = 0, co = 0;
+  // Four series:
+  //   Planned  — the schedule ramp (everything scheduled by its original date).
+  //   Original — of work scheduled by day d, how much is done (progress vs plan).
+  //   Actual   — completion by the day you actually ticked it (done_at).
+  //   On-time  — completion done on/before its original date.
+  // Original/Actual/On-time stop at today; Planned spans the whole schedule.
+  const planned = [], original = [], actual = [], ontime = [];
+  let cp = 0, cod = 0, ca = 0, co = 0;
   for (let i = 0; i <= N; i++) {
     const d = addDays(first, i);
-    cp += plannedBy.get(d) || 0; ca += doneBy.get(d) || 0; co += ontimeBy.get(d) || 0;
+    cp += plannedBy.get(d) || 0; cod += origDoneBy.get(d) || 0;
+    ca += doneBy.get(d) || 0; co += ontimeBy.get(d) || 0;
     planned.push({ x: i, y: (cp / total) * 100 });
-    if (i <= todayIdx) { actual.push({ x: i, y: (ca / total) * 100 }); ontime.push({ x: i, y: (co / total) * 100 }); }
+    if (i <= todayIdx) {
+      original.push({ x: i, y: (cod / total) * 100 });
+      actual.push({ x: i, y: (ca / total) * 100 });
+      ontime.push({ x: i, y: (co / total) * 100 });
+    }
   }
   // month ticks
   const xTicks = [];
@@ -99,8 +111,9 @@ export function burnup(leaves, today) {
     }
   }
   return {
-    total, first, last, N, todayIdx, planned, actual, ontime, xTicks,
+    total, first, last, N, todayIdx, planned, original, actual, ontime, xTicks,
     plannedNow: planned[todayIdx] ? planned[todayIdx].y : 0,
+    originalNow: original.length ? original[original.length - 1].y : 0,
     actualNow: actual.length ? actual[actual.length - 1].y : 0,
     ontimeNow: ontime.length ? ontime[ontime.length - 1].y : 0,
   };
@@ -261,8 +274,21 @@ function buildBody(scope) {
   );
   out.push(strip);
 
+  // ---- highlights pills ----
+  const hi = highlights(effort);
+  if (hi.activeDays) {
+    const row = el("div.ins-highlights");
+    row.append(pill("📅", `${hi.activeDays}`, hi.activeDays === 1 ? "active day" : "active days"));
+    if (hi.best.date) row.append(pill("⚡", fmtMins(hi.best.mins), `best day · ${fmtDateHuman(hi.best.date)}`));
+    row.append(pill("📈", fmtMins(hi.avgActive), "avg / active day"));
+    const topCat = topCategory(rl);
+    if (topCat) row.append(pill("🏷️", capital(topCat.cat), `top category · ${topCat.n} done`));
+    out.push(row);
+  }
+
   // ---- burn-up (flagship) ----
-  out.push(card("Progress over time", "Cumulative % of required tasks by day — the plan vs. what you actually did.",
+  out.push(card("Progress over time",
+    "Cumulative % of required tasks by day. Actual = when you finished · Original = progress vs. the original schedule · On-time = done as planned · Planned = the target pace.",
     burnupChart(bu, scope), "wide"));
 
   // ---- grid of smaller charts ----
@@ -281,9 +307,8 @@ function buildBody(scope) {
       ],
     })));
 
-  // daily effort bars (last N days)
-  grid.append(card("Daily effort", "Minutes of work completed each day (required + bonus).",
-    dailyEffortChart(effort, today)));
+  // daily effort bars (last N days) — with a range toggle
+  grid.append(effortCard(effort, today));
 
   // punctuality trend
   grid.append(card("Punctuality trend", "Of the tasks due each week, how many you finished on time.",
@@ -340,6 +365,31 @@ function momentumSub(delta) {
   if (!delta) return "same as last week";
   return `${delta > 0 ? "▲" : "▼"} ${fmtMins(Math.abs(delta))} vs last week`;
 }
+function pill(ico, strong, label) {
+  const p = el("div.ins-pill");
+  p.append(el("span.ip-ico", { text: ico }), el("b", { text: strong }), el("span.ip-lbl", { text: label }));
+  return p;
+}
+
+/** Best-day / active-day highlights from the completion effort map. */
+function highlights(effort) {
+  let activeDays = 0, totalMins = 0, best = { date: null, mins: 0 };
+  for (const [date, e] of effort) {
+    if (e.tasks <= 0) continue;
+    const m = e.req + e.bonus;
+    activeDays++; totalMins += m;
+    if (m > best.mins) best = { date, mins: m };
+  }
+  return { activeDays, avgActive: activeDays ? Math.round(totalMins / activeDays) : 0, best };
+}
+/** The category with the most completed required leaves. */
+function topCategory(rl) {
+  const by = new Map();
+  for (const l of rl) if (l.done) by.set(l.cat, (by.get(l.cat) || 0) + 1);
+  let top = null;
+  for (const [cat, n] of by) if (!top || n > top.n) top = { cat, n };
+  return top;
+}
 
 /* ---------- individual charts ---------- */
 function burnupChart(bu, scope) {
@@ -349,13 +399,40 @@ function burnupChart(bu, scope) {
   };
   return lineChart({
     xMax: bu.N, yMax: 100, todayX: bu.todayIdx, xTicks: bu.xTicks,
-    xLabelFor, height: 340,
+    xLabelFor, height: 330, axisFont: 15,
     series: [
-      { name: "Planned", color: "var(--text-3)", points: bu.planned, dashed: true },
-      { name: "Actual", color: "var(--accent)", points: bu.actual, fill: true },
-      { name: "On-time", color: "var(--ontime)", points: bu.ontime },
+      { name: "Actual", color: "var(--accent)", points: bu.actual, fill: true, w: 3.2 },
+      { name: "Original", color: "var(--text-2)", points: bu.original, w: 2.4 },
+      { name: "On-time", color: "var(--ontime)", points: bu.ontime, w: 2.4 },
+      { name: "Planned", color: "var(--info)", points: bu.planned, dashed: true, faint: true, w: 2 },
     ],
   });
+}
+
+/** Daily-effort card with a 30/45/90-day range toggle that repaints just its chart. */
+function effortCard(effort, today) {
+  const c = el("div.ins-card");
+  const head = el("div.ins-card-head.with-ctrl");
+  const tw = el("div");
+  tw.append(el("h3", { text: "Daily effort" }));
+  tw.append(el("p.ins-hint", { text: "Minutes of work completed each day (required + bonus)." }));
+  const seg = el("div.seg", { role: "group", "aria-label": "Range" });
+  const holder = el("div.chart-hold");
+  const draw = n => {
+    holder.innerHTML = "";
+    const ch = dailyEffortChart(effort, today, n);
+    const svg = ch.querySelector("svg"); if (svg) svg.setAttribute("aria-label", `Daily effort, last ${n} days`);
+    holder.append(ch);
+  };
+  [30, 45, 90].forEach((n, i) => {
+    const b = el("button.seg-btn" + (i === 1 ? ".on" : ""), { type: "button", text: n + "d" });
+    b.onclick = () => { [...seg.children].forEach(x => x.classList.toggle("on", x === b)); draw(n); };
+    seg.append(b);
+  });
+  head.append(tw, seg);
+  c.append(head, holder);
+  draw(45);
+  return c;
 }
 
 function dailyEffortChart(effort, today, days = 45) {

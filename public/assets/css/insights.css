@@ -41,6 +41,15 @@
 .ins-kpis .kpi.t-bad .v { color: var(--bad); }
 .ins-kpis .kpi .v small { display: inline; white-space: nowrap; }
 
+/* ---- highlights pills ---- */
+.ins-highlights { display: flex; flex-wrap: wrap; gap: var(--s3); }
+.ins-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-pill);
+  box-shadow: var(--shadow-sm); font-size: var(--t-sm); color: var(--text-3); }
+.ins-pill .ip-ico { font-size: 15px; }
+.ins-pill b { color: var(--text); font-variant-numeric: tabular-nums; }
+.ins-pill .ip-lbl { color: var(--text-3); }
+
 /* ---- cards + grid ---- */
 .ins-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
   padding: var(--s4) var(--s4) var(--s5); box-shadow: var(--shadow-sm); min-width: 0; }
@@ -48,6 +57,17 @@
 .ins-card-head h3 { font-size: var(--t-lg); letter-spacing: -.01em; }
 .ins-hint { font-size: var(--t-sm); color: var(--text-3); margin-top: 2px; }
 .ins-card.wide { }
+
+/* header with a control (range toggle) on the right */
+.ins-card-head.with-ctrl { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s3); }
+.ins-card-head.with-ctrl > div { min-width: 0; }
+.seg { display: inline-flex; flex: none; background: var(--surface-2); border: 1px solid var(--border);
+  border-radius: var(--r-pill); padding: 3px; gap: 2px; }
+.seg-btn { padding: 4px 11px; border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 700;
+  color: var(--text-3); font-variant-numeric: tabular-nums; transition: background var(--dur-fast), color var(--dur-fast); }
+.seg-btn:hover { color: var(--text); }
+.seg-btn.on { background: var(--surface); color: var(--accent); box-shadow: var(--shadow-sm); }
+.chart-hold { min-height: 0; }
 
 .ins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); }
 @media (max-width: 900px) { .ins-grid { grid-template-columns: 1fr; } }
@@ -62,10 +82,11 @@
  *  Chart primitives
  * ================================================================== */
 .chart-svg { width: 100%; height: auto; display: block; overflow: visible;
-  font-family: var(--font-sans); }
+  font-family: var(--font-sans); font-size: 15px; }
+.chart-svg text { font-size: inherit; }        /* per-chart size set inline on the <svg> */
 .chart-svg .grid { stroke: var(--grid); stroke-width: 1; }
 .chart-svg .grid.faint { stroke: var(--grid); stroke-dasharray: 2 5; }
-.chart-svg .axis { fill: var(--text-3); font-size: 25px; font-weight: 600; }
+.chart-svg .axis { fill: var(--text-3); font-weight: 600; }
 .chart-svg .axis.today { fill: var(--accent); font-weight: 700; }
 .chart-svg .axis.avg { fill: var(--text-2); font-weight: 700; }
 .chart-svg .today-mark { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 4; opacity: .7; }

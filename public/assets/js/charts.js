@@ -42,19 +42,23 @@ export function lineChart(opts) {
   const {
     series = [], xMax = 1, yMax = 100, todayX = null,
     xTicks = [], yTicks = [0, 25, 50, 75, 100],
-    yFmt = v => v + "%", xLabelFor = null, legend = true, height = 320,
+    yFmt = v => v + "%", xLabelFor = null, legend = true, height = 320, axisFont = 15,
   } = opts;
 
   // viewBox is 1000 wide; height in the SAME units keeps the display aspect ratio
   // (width:100%/height:auto), so the chart shows ≈`height`px tall at full width.
+  // Text lives in viewBox units, so it scales with the chart: a WIDE chart (near
+  // 1:1 display scale) needs a SMALL axisFont, a narrow grid chart a larger one,
+  // to land at roughly the same on-screen pixel size.
   const W = 1000, H = height;
-  const padL = 46, padR = 18, padT = 18, padB = 40;
+  const padL = 46, padR = 18, padT = 22, padB = 42;
   const plotW = W - padL - padR, plotH = H - padT - padB;
   const X = x => padL + (xMax > 0 ? (x / xMax) : 0) * plotW;
   const Y = y => padT + (1 - (yMax > 0 ? y / yMax : 0)) * plotH;
 
   const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "chart-svg linechart",
     preserveAspectRatio: "none", role: "img" });
+  svg.style.fontSize = axisFont + "px";
 
   // horizontal gridlines + y labels
   for (const yt of yTicks) {
@@ -89,12 +93,16 @@ export function lineChart(opts) {
     if (!ser.points || ser.points.length < 1) continue;
     const line = s("path", { d: pathFor(ser.points), class: "line" + (ser.dashed ? " dashed" : "") });
     line.style.stroke = ser.color;
+    if (ser.w) line.style.strokeWidth = ser.w;
+    if (ser.faint) line.style.opacity = ".55";
     svg.append(line);
-    // endpoint dot
-    const last = ser.points[ser.points.length - 1];
-    const dot = s("circle", { cx: X(last.x), cy: Y(last.y), r: 5, class: "endpt" });
-    dot.style.fill = ser.color;
-    svg.append(dot);
+    // endpoint dot (skip on faint baselines to reduce clutter)
+    if (!ser.faint) {
+      const last = ser.points[ser.points.length - 1];
+      const dot = s("circle", { cx: X(last.x), cy: Y(last.y), r: 5, class: "endpt" });
+      dot.style.fill = ser.color;
+      svg.append(dot);
+    }
   }
 
   // ---- hover crosshair + tooltip ----
@@ -169,7 +177,7 @@ export function chartLegend(items) {
  */
 export function barChart(opts) {
   const { bars = [], yMax: yMaxIn, yFmt = v => v, avg = null,
-    height = 240, barLabelEvery = 1, gridTicks = 4 } = opts;
+    height = 240, barLabelEvery = 1, gridTicks = 4, axisFont = 26 } = opts;
   const W = 1000, H = height;
   const padL = 44, padR = 12, padT = 14, padB = 34;
   const plotW = W - padL - padR, plotH = H - padT - padB;
@@ -181,6 +189,7 @@ export function barChart(opts) {
   const bw = Math.max(2, Math.min(slot * 0.72, 46));
 
   const svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "chart-svg barchart", preserveAspectRatio: "none", role: "img" });
+  svg.style.fontSize = axisFont + "px";
   // gridlines + y labels
   for (let i = 0; i <= gridTicks; i++) {
     const v = (maxVal / gridTicks) * i;

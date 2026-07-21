@@ -63,18 +63,31 @@ t.ok(sum.done === sum.ontime + sum.lateDone, "done splits into on-time + late");
 t.ok(sum.pending + sum.overdue === sum.total - sum.done, "undone splits into pending + overdue");
 t.eq(sum.puncRate, Math.round((4 / 6) * 100), "punctuality rate = on-time / done");
 
-t.group("burnup: cumulative, monotonic, bounded, three params");
+t.group("burnup: cumulative, monotonic, bounded, four params");
 const bu = insights.burnup(leaves, TODAY);
 t.eq(bu.total, reqLeaves.length, "burn-up total = required leaves");
 const mono = arr => arr.every((p, i) => i === 0 || p.y >= arr[i - 1].y - 1e-9);
 t.ok(mono(bu.planned), "planned is non-decreasing");
+t.ok(mono(bu.original), "original is non-decreasing");
 t.ok(mono(bu.actual), "actual is non-decreasing");
 t.ok(mono(bu.ontime), "on-time is non-decreasing");
 t.ok(bu.planned[bu.planned.length - 1].y <= 100 + 1e-9, "planned tops out at ≤100%");
 t.ok(bu.actual.every((p, i) => p.y >= bu.ontime[i].y - 1e-9), "actual ≥ on-time at every day");
+t.ok(bu.original.every((p, i) => p.y >= bu.ontime[i].y - 1e-9), "original ≥ on-time at every day");
 const lastActual = bu.actual[bu.actual.length - 1].y;
 t.ok(Math.abs(lastActual - (6 / bu.total) * 100) < 1e-6, "final actual = done/total%");
-t.ok(bu.actual.length <= bu.planned.length, "actual line stops at today; planned spans full schedule");
+t.eq(bu.original.length, bu.actual.length, "original & actual share the same truncated span");
+t.ok(bu.actual.length <= bu.planned.length, "completion lines stop at today; planned spans full schedule");
+
+t.group("original diverges from actual for work done off-schedule");
+// finish a FUTURE-scheduled task today (ahead of its plan): Actual counts it now,
+// Original (attributed to its later original date) does not → actualNow > originalNow.
+const future = reqLeaves.filter(l => l.date > TODAY).pop();
+t.ok(!!future, "roadmap has a future-scheduled task to pull forward");
+doneOnDate(rm.slug, future.id, TODAY);
+const bu2 = insights.burnup(insights.collectLeaves(rm.slug), TODAY);
+t.ok(bu2.actualNow > bu2.originalNow + 1e-9, "early completion lifts Actual above Original at today");
+store.setTask(rm.slug, future.id, false);   // undo so later assertions see the original 6 done
 
 t.group("Total scope aggregates every roadmap's required work");
 const allLeaves = insights.collectLeaves("__all__");
@@ -93,7 +106,11 @@ t.eq(sel.querySelectorAll("option").length, reg.getRoadmaps().length + 1, "one o
 t.eq(sel.querySelector("option").value, "__all__", "first option is Total");
 t.ok(view.querySelector(".ins-readout"), "pace readout renders");
 t.ok(view.querySelectorAll(".ins-kpis .kpi").length >= 5, "KPI strip renders");
-t.ok(view.querySelector(".linechart .line"), "burn-up line chart renders lines");
+t.eq(view.querySelectorAll("svg.linechart .line").length, 4, "burn-up renders 4 lines (Actual/Original/On-time/Planned)");
+t.eq(view.querySelector("svg.linechart").style.fontSize, "15px", "wide burn-up uses a small axis font");
+t.eq(view.querySelector("svg.barchart").style.fontSize, "26px", "grid bar chart uses a larger axis font");
+t.ok(view.querySelector(".ins-highlights .ins-pill"), "highlights pills render");
+t.eq(view.querySelectorAll(".seg .seg-btn").length, 3, "daily-effort range toggle has 3 options");
 t.ok(view.querySelector(".chart-donut .donut-seg"), "completion donut renders segments");
 t.ok(view.querySelector(".barchart .bar"), "a bar chart renders bars");
 t.ok(view.querySelector(".hbars .hbar-row"), "objective bars render for a single roadmap");
