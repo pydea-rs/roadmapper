@@ -590,10 +590,6 @@ function parse_youtube(string $html): array {
     $scan = $at !== false ? substr($html, $at, 3000000) : $html;
     $out = []; $seen = [];
     // Find every videoId, then in the span up to the NEXT videoId look for the
-    // first title of either form — search results use "runs", some cards use
-    // "simpleText". Bounding to the next id stops a video with no title of its
-    // own from binding the following video's title, and the earliest-of-either
-    // match avoids a nearby simpleText losing to a farther runs title.
     if (preg_match_all('/"videoId":"([\w-]{11})"/', $scan, $ids, PREG_OFFSET_CAPTURE)) {
         $pos = $ids[1];
         $n = count($pos);

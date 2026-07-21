@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-07-20", "the journey starts today (2026-07-20), not a week later");
+t.ok(rm.days[0].date === "2026-07-21", "the journey starts on 2026-07-21 (start shifted +1 day), not a week later");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
