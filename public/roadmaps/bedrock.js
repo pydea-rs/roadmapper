@@ -25,7 +25,7 @@ import { registerRoadmap } from "../assets/js/registry.js";
 
 const NET = "net", SYS = "sys", DATA = "data", CACHE = "cache", MSG = "msg",
       OPS = "devops", CHAIN = "chain", SEC = "sec", REV = "review", DIST = "dist",
-      CORE = "internals";
+      CORE = "internals", COMP = "compilers";
 
 registerRoadmap({
   slug: "bedrock",
@@ -48,6 +48,7 @@ registerRoadmap({
     { id: SEC,   title: "Security",                tier: "primary", color: "#f43f5e" },
     { id: DIST,  title: "Distributed systems",     tier: "primary", color: "#22d3ee" },
     { id: CORE,  title: "Data-structure & runtime internals", tier: "primary", color: "#f472b6" },
+    { id: COMP,  title: "Compilers & interpreters",    tier: "primary", color: "#a3e635" },
     { id: REV,   title: "Language & framework review", tier: "primary", color: "#94a3b8" },
   ],
 
@@ -83,6 +84,10 @@ registerRoadmap({
     { id: "w27", title: "Week 27 — The JS heap, garbage collection & the allocator", start: "2027-01-20" },
     { id: "w28", title: "Week 28 — Floats, the JIT & Unicode",                       start: "2027-01-27" },
     { id: "w29", title: "Week 29 — Branch prediction & Bloom filters",               start: "2027-02-03" },
+    // ---- Extension III: "how the languages are built" — compilers & interpreters ----
+    { id: "w30", title: "Week 30 — The territory, CPython & parsing",                 start: "2027-02-10" },
+    { id: "w31", title: "Week 31 — The Go compiler, tree-walkers & the JVM",          start: "2027-02-17" },
+    { id: "w32", title: "Week 32 — Bytecode VMs, LLVM & code generation",             start: "2027-02-24" },
   ],
 
   days: [
@@ -1650,6 +1655,17 @@ registerRoadmap({
             { q: `Why is XDP so fast?`, a: `It runs in the NIC driver's RX path <b>before</b> the kernel allocates an skb (and before the full stack) — dropping/redirecting at line rate.` },
             { q: `The XDP verdicts?`, a: `<code>XDP_DROP</code>, <code>XDP_PASS</code> (to the stack), <code>XDP_TX</code> (bounce out the same NIC), <code>XDP_REDIRECT</code>.` },
           ] },
+        { id: "t2", obj: COMP, cat: "read", est: 35,
+          lead: `<b>Compiler lens</b> — before that BPF program runs, a verifier <i>proves</i> it safe and a JIT compiles it. A compiler pipeline living in ring 0.`,
+          refs: [
+            `Skim the kernel's <a href="https://docs.kernel.org/bpf/verifier.html" target="_blank" rel="noopener">eBPF verifier</a> doc, then the verify-then-JIT half of <a href="https://ebpf.io/what-is-ebpf/" target="_blank" rel="noopener">"What is eBPF?"</a>.`,
+          ],
+          model: `Loading eBPF is a two-stage <b>compiler back-end</b> inside the kernel. First the <b>verifier</b> does a static, path-sensitive analysis — it symbolically walks every path (a DAG, with <b>state pruning</b> so it doesn't explode), proving bounded loops, in-bounds memory, and correct register types; anything it can't prove safe is rejected, not loaded. Only then does a per-architecture <b>JIT</b> lower the accepted bytecode to native instructions, so it runs at near-C speed. It's the same <i>front-end checks → back-end codegen</i> shape you'll meet in the JVM and V8 — the difference is the kernel <b>can't trust</b> the input, so the "type checker" is a safety proof.`,
+          cards: [
+            { q: `What does the eBPF verifier guarantee before a program can load?`, a: `Termination + memory safety: it statically explores all paths (with state pruning) proving bounded loops, in-bounds access and correct register/pointer types. Can't prove it ⇒ rejected. It's a static analyzer, i.e. a compiler front-end.` },
+            { q: `Why is loaded eBPF still fast if it was "interpreted" bytecode?`, a: `After verification a per-architecture <b>JIT</b> compiles the BPF bytecode to native machine code, so it executes at near-native speed rather than being interpreted.` },
+            { q: `How is this like/unlike a language compiler?`, a: `Same shape — front-end checks then back-end codegen — but the verifier proves <b>safety</b> on untrusted input (reject on doubt), where a normal type checker assumes a cooperating programmer.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Only <b>native/driver</b> XDP is fast — <b>generic</b> mode runs after skb alloc (no perf win). "XDP always bypasses skb" is wrong for generic mode.` },
@@ -1692,6 +1708,17 @@ registerRoadmap({
           cards: [
             { q: `What does a release-store / acquire-load pair guarantee?`, a: `<b>Happens-before</b>: all writes before the release are visible to a thread that acquire-loads that value. That's how you publish data lock-free.` },
             { q: `relaxed vs seq_cst?`, a: `<code>relaxed</code> = atomicity only, no ordering; <code>seq_cst</code> = a single global total order across all seq_cst ops (the safe default).` },
+          ] },
+        { id: "t2", obj: COMP, cat: "read", est: 35,
+          lead: `<b>Compiler lens</b> — half of "memory ordering" is the <i>compiler</i> reordering your code. Meet the <b>as-if rule</b> and why <code>-O2</code> is allowed to move things.`,
+          refs: [
+            `Read the <a href="https://en.wikipedia.org/wiki/As-if_rule" target="_blank" rel="noopener">as-if rule</a> (C/C++ "observable behavior"), then <a href="https://en.wikipedia.org/wiki/Register_allocation" target="_blank" rel="noopener">register allocation</a> — one concrete optimization the compiler runs on your IR.`,
+          ],
+          model: `A compiler may perform <b>any</b> transformation as long as the program's <b>observable behavior</b> is unchanged — that's the <b>as-if rule</b>. On a single thread "observable" means I/O + volatile access + final state, so the optimizer freely reorders, folds, inlines, and keeps values in registers (<b>register allocation</b> — graph-coloring / linear-scan, spilling to the stack when it runs out). The catch: "as-if" reasons about <i>one</i> thread, so it will happily reorder ordinary loads/stores that another thread is watching. <code>std::atomic</code> with an ordering is how you tell the compiler (and CPU) "this access <b>is</b> observable — don't reorder across it." So <code>volatile</code> ≠ a fence: it blocks the compiler for that one variable but orders nothing else and emits no barrier.`,
+          cards: [
+            { q: `What is the "as-if" rule?`, a: `A compiler may apply any optimization provided the program's <b>observable behavior</b> (I/O, volatile access, final state) is preserved — it reasons about a <i>single</i> thread.` },
+            { q: `Why does that make lock-free code dangerous?`, a: `"As-if" only preserves single-thread observable behavior, so the optimizer reorders ordinary memory ops another thread can see. <code>std::atomic</code> orderings (d73) re-declare those accesses observable so they aren't reordered.` },
+            { q: `Is <code>volatile</code> a thread-safety tool in C++?`, a: `No — it stops the compiler from optimizing away/reordering that one variable's accesses but emits <b>no CPU fence</b> and orders nothing else. Use <code>std::atomic</code> for inter-thread ordering.` },
           ] },
       ],
       soft: [
@@ -1884,6 +1911,17 @@ registerRoadmap({
             { q: `Monomorphic vs megamorphic call site?`, a: `An inline cache sees 1 shape (monomorphic — fast, inlinable) vs many (megamorphic — falls back to a generic dictionary lookup). Keep hot sites monomorphic.` },
             { q: `V8's young-generation collector?`, a: `The <b>Scavenger</b> — a semispace copying collector (minor GC); survivors are promoted to the old generation (concurrent mark-sweep-compact). Part of the Orinoco project.` },
           ] },
+        { id: "t2", obj: COMP, cat: "read", est: 40,
+          lead: `<b>Compiler lens</b> — the shapes above only pay off because V8 <i>compiles</i> hot JS. Walk the Ignition → TurboFan tiering.`,
+          refs: [
+            `Read V8's <a href="https://v8.dev/blog/launching-ignition-and-turbofan" target="_blank" rel="noopener">"Launching Ignition and TurboFan"</a>, then skim <a href="https://v8.dev/blog/maglev" target="_blank" rel="noopener">Maglev</a> (the mid-tier added between Sparkplug and TurboFan).`,
+          ],
+          model: `V8 is a <b>tiered JIT</b>, not "an interpreter". Source is parsed to an AST, then <b>Ignition</b> compiles it to compact <b>bytecode</b> and interprets it while collecting <b>type feedback</b> (which shapes actually flow through each site). Hot functions are handed to optimizing compilers — <b>Sparkplug</b> (fast baseline), <b>Maglev</b> (mid-tier), <b>TurboFan</b> (top-tier, speculative) — which <b>speculate</b> on that feedback (e.g. "this is always a small int") and emit specialized machine code. If a speculation later breaks (a different shape appears), it <b>deoptimizes</b> — bails back to Ignition bytecode. This is exactly why monomorphic, stable-shape code is fast: it keeps the inline caches and the JIT's speculation valid.`,
+          cards: [
+            { q: `What are Ignition and TurboFan?`, a: `<b>Ignition</b> = V8's bytecode compiler + interpreter that also gathers type feedback; <b>TurboFan</b> = the top-tier optimizing JIT that speculatively compiles hot functions to machine code using that feedback (Sparkplug/Maglev sit between).` },
+            { q: `What is deoptimization and what triggers it?`, a: `When an optimizing tier's speculation is invalidated at runtime (e.g. a new object shape / unexpected type), V8 discards the optimized code and falls back to Ignition bytecode — then may re-optimize later.` },
+            { q: `Why does keeping call sites monomorphic help the JIT (not just the ICs)?`, a: `Stable shapes keep the type feedback that TurboFan speculates on valid, so hot code stays optimized instead of repeatedly deoptimizing back to bytecode.` },
+          ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🧭 Review tasks re-derive runtime models you already use (Rust d32, Go d49, Python d61, C++ d73, Rust async d77). This is the JS engine's turn.` },
@@ -2045,10 +2083,219 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🏁 Bedrock complete — 29 weeks, wire → runtime → data structure. From the OSI myth to why a hash map is O(1): the theory a backend/blockchain engineer is expected to own, taught from the ground up.` },
+        { id: "s1", type: "callout", label: `🎓 Extension II complete — wire → runtime → data structure. From the OSI myth to why a hash map is O(1). One thread left: how the languages themselves are built.` },
         { id: "s2", type: "hint", label: `💡 Callback to d19/d70: you met HyperLogLog (Redis) and Bloom filters (LSM-trees) in passing — now you own the machinery. Reach for a sketch when exact answers cost too much memory.` },
       ],
-      note: "🎓 Bedrock complete — 29 weeks across 11 threads, from the OSI myth to Bloom filters. Your interview-and-tech-talk bedrock, end to end.",
+      note: "🎓 Extension II complete — data-structure & runtime internals owned. Extension III (weeks 30–32) closes the loop: how compilers & interpreters actually turn your code into behavior.",
+    },
+
+    /* ==================================================================== *
+     *  EXTENSION III — "how the languages are built" (authored 2026-07-21)
+     *  A new COMPILERS & INTERPRETERS thread (COMP), interleaved day-by-day
+     *  with language-implementation REVIEWs so consecutive days still switch
+     *  lens. Complements (does NOT duplicate) the interp-go roadmap: that one
+     *  BUILDS a toy interpreter in Go; this one dissects how REAL production
+     *  implementations (CPython, gc, the JVM, V8, LLVM) do it. Also seeded
+     *  earlier by "Compiler lens" tasks woven into d71 (eBPF verifier/JIT),
+     *  d73 (the as-if rule) and d81 (Ignition/TurboFan).
+     * ==================================================================== */
+    {
+      id: "d89", date: "2027-02-11", week: "w30", dow: "Thu", title: "A map of the territory: interpreters, compilers & JITs",
+      theme: "Compilers · part 1 — the whole pipeline, and the words for each stage.",
+      tasks: [
+        { id: "t1", obj: COMP, cat: "read", est: 50,
+          lead: `<b>Compilers ①</b> — the vocabulary and the shape of every language implementation, before we build one.`,
+          refs: [
+            `Read Crafting Interpreters, <a href="https://craftinginterpreters.com/a-map-of-the-territory.html" target="_blank" rel="noopener">"A Map of the Territory"</a> (the mountain diagram: scanning → parsing → analysis → codegen).`,
+            `Then Wikipedia's <a href="https://en.wikipedia.org/wiki/Just-in-time_compilation" target="_blank" rel="noopener">Just-in-time compilation</a> to place JIT against AOT and pure interpretation.`,
+          ],
+          model: `Every implementation climbs the same mountain: <b>scanning</b> (text → tokens) → <b>parsing</b> (tokens → AST) → <b>static analysis</b> (binding/typing) → an <b>intermediate representation</b> → down the far side to <b>code generation</b>. Where you stop and how you run it names the tool: a <b>tree-walking interpreter</b> executes the AST directly; a <b>bytecode VM</b> lowers to its own instruction set and interprets that; an <b>AOT compiler</b> emits native code ahead of time; a <b>JIT</b> compiles hot code to native <i>at runtime</i> using profiling. "Compiler vs interpreter" is a false binary — CPython compiles <i>to bytecode</i> then interprets; V8 interprets <i>then</i> JITs. It's a spectrum of when you translate.`,
+          cards: [
+            { q: `Name the stages of the classic compiler "mountain".`, a: `Scanning (→ tokens) → parsing (→ AST) → static analysis (binding/typing) → intermediate representation → optimization → code generation. Front end goes up, back end comes down.` },
+            { q: `Tree-walk vs bytecode-VM vs AOT vs JIT?`, a: `Tree-walk runs the AST directly (simple, slow); bytecode-VM lowers to its own ISA and interprets that; AOT emits native code before running; JIT compiles hot code to native at runtime using profiles.` },
+            { q: `Why is "compiler vs interpreter" a false dichotomy?`, a: `Most real systems are both — CPython compiles source to bytecode then interprets it; V8 interprets JS then JIT-compiles hot functions. It's a spectrum of <i>when</i> translation happens, not either/or.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 This thread dissects how <b>real</b> engines work; the interp-go roadmap has you <b>build</b> a toy one. Two halves of the same skill — theory here, hands-on there.` },
+        { id: "s2", type: "callout", label: `🧭 Keep the mountain diagram in your head — every later day (lexing, parsing, VMs, SSA, JITs) is one stretch of that same climb.` },
+      ],
+    },
+    {
+      id: "d90", date: "2027-02-13", week: "w30", dow: "Sat", title: "Review: how CPython runs your code — bytecode & the eval loop",
+      theme: "Review · the interpreter you use daily, opened up.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 45,
+          lead: `<b>Review</b> — Python isn't "interpreted line by line": it's compiled to bytecode and run by a loop. See it.`,
+          refs: [
+            `Play with the <a href="https://docs.python.org/3/library/dis.html" target="_blank" rel="noopener">dis</a> module — <code>dis.dis(fn)</code> on a couple of your own functions and read the opcodes.`,
+            `Then CPython's own <a href="https://github.com/python/cpython/blob/main/InternalDocs/interpreter.md" target="_blank" rel="noopener">"The bytecode interpreter"</a> internal doc (frames + dispatch); optional: the <a href="https://devguide.python.org/internals/compiler/" target="_blank" rel="noopener">compiler design</a> devguide.`,
+          ],
+          model: `CPython <b>compiles</b> each function to a <code>code</code> object of stack-based <b>bytecode</b> (see it with <code>dis</code>), then the eval loop (<code>_PyEval_EvalFrameDefault</code>, historically "ceval") executes it: a big dispatch over opcodes operating on a per-call <b>frame</b> (its own value stack + locals). It's a <b>stack machine</b> — <code>LOAD_FAST</code> pushes, <code>BINARY_OP</code> pops two and pushes the result. 3.11+ made it much faster via a faster frame layout and <b>adaptive specializing</b> (PEP 659): hot opcodes rewrite themselves in place to type-specialized variants (<code>BINARY_OP</code> → <code>BINARY_OP_ADD_INT</code>) — a small in-interpreter JIT-of-sorts, and 3.13+ ships an experimental real JIT.`,
+          cards: [
+            { q: `What does CPython actually execute?`, a: `Not source text — it compiles each function to a <code>code</code> object of <b>stack-based bytecode</b> (inspect via <code>dis</code>), which the eval loop dispatches opcode by opcode over a per-call <b>frame</b>.` },
+            { q: `Is CPython a stack or register machine?`, a: `A <b>stack machine</b>: <code>LOAD_FAST</code> pushes a local, <code>BINARY_OP</code> pops two operands and pushes the result. (Contrast register-based bytecode like Lua/Dalvik.)` },
+            { q: `What did PEP 659 (3.11+) add?`, a: `<b>Adaptive specialization</b>: hot generic opcodes rewrite themselves in place into type-specialized forms (e.g. <code>BINARY_OP_ADD_INT</code>) using observed types — a quickening step short of a full JIT.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🧭 Callback to d89: CPython is the "compile to bytecode, then interpret" point on the spectrum — and callback to d61 (the GIL) which is a property of this same eval loop.` },
+        { id: "s2", type: "hint", label: `💡 "Python is slow because it's interpreted" is half the story — it's the per-opcode dispatch + boxing, which is exactly what specialization (3.11+) and the 3.13 JIT attack.` },
+      ],
+    },
+    {
+      id: "d91", date: "2027-02-15", week: "w30", dow: "Mon", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
+      theme: "Compilers · part 2 — turning flat text into a tree.",
+      tasks: [
+        { id: "t1", obj: COMP, cat: "read", est: 55,
+          lead: `<b>Compilers ②</b> — the front end: scan characters into tokens, then tokens into an AST that encodes precedence.`,
+          refs: [
+            `Read Crafting Interpreters <a href="https://craftinginterpreters.com/scanning.html" target="_blank" rel="noopener">"Scanning"</a> (regular tokens) + <a href="https://craftinginterpreters.com/parsing-expressions.html" target="_blank" rel="noopener">"Parsing Expressions"</a> (recursive descent).`,
+            `Then Bob Nystrom's <a href="https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/" target="_blank" rel="noopener">"Pratt Parsers: Expression Parsing Made Easy"</a> for operator precedence done cleanly.`,
+          ],
+          model: `The <b>lexer/scanner</b> turns a character stream into <b>tokens</b> (<code>IDENT("x")</code>, <code>NUMBER(12)</code>, <code>PLUS</code>) — token shapes are a <b>regular</b> language, so a lexer is essentially a DFA (d92-adjacent: regexes compile to DFAs). The <b>parser</b> turns tokens into an <b>AST</b> per a <b>context-free grammar</b>. <b>Recursive descent</b> writes one function per grammar rule (top-down, LL) — readable, and what gcc/Clang/V8 actually use. Precedence is the hard part: pure recursive descent needs one level of function per precedence tier, while <b>Pratt parsing</b> (top-down operator precedence) attaches a <i>binding power</i> to each operator token and folds precedence into one compact loop — the trick most handwritten parsers reach for.`,
+          cards: [
+            { q: `Why is a lexer basically a state machine / DFA?`, a: `Token shapes (identifiers, numbers, operators) form a <b>regular</b> language, so recognizing them is exactly what a finite automaton does — the same reason regexes compile to DFAs.` },
+            { q: `What is recursive-descent parsing?`, a: `A top-down (LL) parser with <b>one function per grammar rule</b> that calls itself to match nested structure, producing an AST. Readable and widely used in production (Clang, V8).` },
+            { q: `What problem does Pratt parsing solve, and how?`, a: `Operator <b>precedence/associativity</b> without a ladder of one-rule-per-level functions: each operator token carries a <b>binding power</b> and a single loop consumes higher-binding operators first.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d89's mountain: scanning + parsing = the entire "front end". Everything after operates on the AST, never the raw text again.` },
+        { id: "s2", type: "callout", label: `🔬 "Parser generators" (yacc/ANTLR) build bottom-up LR tables from a grammar; most beloved handwritten parsers are top-down recursive-descent + Pratt because errors and edge cases are easier to control.` },
+      ],
+    },
+    {
+      id: "d92", date: "2027-02-17", week: "w31", dow: "Wed", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
+      theme: "Review · the toolchain that builds everything you ship in Go.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 45,
+          lead: `<b>Review</b> — you compile Go every day; walk the four phases the <code>gc</code> compiler runs.`,
+          refs: [
+            `Read the <a href="https://github.com/golang/go/blob/master/src/cmd/compile/README.md" target="_blank" rel="noopener">"Introduction to the Go compiler"</a> (cmd/compile README) — the phase list (also on <a href="https://go.dev/src/cmd/compile/README" target="_blank" rel="noopener">go.dev</a>).`,
+          ],
+          model: `Go's <code>gc</code> compiler runs, roughly: (1) <b>parse</b> — source → tokens → AST, with syntactic sugar noted; (2) <b>type-check & AST transform</b> — resolve names/types, desugar, decide escape analysis and inlining; (3) <b>SSA generation & lowering</b> — convert to a machine-independent <b>SSA</b> IR, run ~dozens of optimization passes (dead-code, constant folding, nil-check elimination), then <b>lower</b> to a machine-specific SSA; (4) <b>codegen</b> — register allocation, instruction layout, emit machine code + the object file. <b>Escape analysis</b> here is why a Go value lands on the stack (freed cheaply) vs the heap (GC'd) — a compile-time decision, not a keyword. It's a fast, non-JIT AOT compiler with its own backend (not LLVM).`,
+          cards: [
+            { q: `The four phases of the Go (gc) compiler?`, a: `(1) parse → AST; (2) type-check + AST transforms (desugar, inline, escape analysis); (3) SSA generation, optimization passes, then machine-specific lowering; (4) codegen — register allocation + emit machine code.` },
+            { q: `What does escape analysis decide, and when?`, a: `At <b>compile time</b>, whether a value can stay on the stack (freed on return) or must go on the heap (GC-managed) because it "escapes" its function. It's inferred, not annotated.` },
+            { q: `Does Go use LLVM?`, a: `The default <code>gc</code> toolchain has its own SSA-based backend (not LLVM); <code>gccgo</code> and TinyGo are separate frontends onto GCC/LLVM.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🧭 Callback to d49 (Go's scheduler) and d89: this is the AOT-with-its-own-backend point on the spectrum — no JIT, but a full SSA optimizer.` },
+        { id: "s2", type: "hint", label: `💡 SSA (next-day-adjacent, d94/d97) is what makes those optimization passes tractable — each value is assigned once, so "where did this come from?" has a single answer.` },
+      ],
+    },
+    {
+      id: "d93", date: "2027-02-19", week: "w31", dow: "Fri", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
+      theme: "Compilers · part 3 — the simplest way to actually run the tree.",
+      tasks: [
+        { id: "t1", obj: COMP, cat: "read", est: 55,
+          lead: `<b>Compilers ③</b> — walk the AST and execute it: environments, lexical scope, and how closures capture.`,
+          refs: [
+            `Read Crafting Interpreters <a href="https://craftinginterpreters.com/evaluating-expressions.html" target="_blank" rel="noopener">"Evaluating Expressions"</a> + <a href="https://craftinginterpreters.com/statements-and-state.html" target="_blank" rel="noopener">"Statements and State"</a> (environments).`,
+            `Then <a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">"Closures"</a> — how a function captures its defining environment.`,
+          ],
+          model: `A <b>tree-walking interpreter</b> recursively visits AST nodes (the Visitor pattern) and returns values: a <code>+</code> node evaluates its two children and adds them. State lives in an <b>environment</b> — a map of name → value, <b>chained</b> to its enclosing scope, so a lookup walks outward (lexical scoping). A <b>closure</b> is a function value that holds a reference to the environment where it was <i>defined</i> (not called) — that's how an inner function still sees an outer variable after the outer call returns. The upside: tiny and direct. The downside: you re-walk the tree and re-resolve names on every execution — pointer-chasing, no locality — which is exactly why the next tier compiles to bytecode.`,
+          cards: [
+            { q: `How does a tree-walking interpreter run a program?`, a: `It recursively evaluates AST nodes (Visitor pattern), each node computing from its children's values — e.g. a binary <code>+</code> node evaluates both operands then adds. Simple, but re-walks the tree every time.` },
+            { q: `What is an "environment" and how does lexical scope work?`, a: `A name→value map <b>chained</b> to its enclosing scope; a variable lookup walks the chain outward. Inner scopes shadow outer ones — that chain <i>is</i> lexical scoping.` },
+            { q: `What exactly does a closure capture?`, a: `A reference to the <b>environment where the function was defined</b> (not where it's called), so it keeps seeing those variables even after the defining call has returned.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d61/d90: CPython does NOT tree-walk — it compiles to bytecode first. Tree-walking is the teaching baseline; almost every fast language moves to a VM.` },
+        { id: "s2", type: "callout", label: `🔬 Closures force a real decision: capture by reference (shared, JS/Python) vs by value (copied). Loop-variable capture bugs come straight from this choice.` },
+      ],
+    },
+    {
+      id: "d94", date: "2027-02-21", week: "w31", dow: "Sun", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
+      theme: "Review · the other great managed runtime, next to V8.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 45,
+          lead: `<b>Review</b> — how HotSpot turns bytecode into some of the fastest managed code on earth — eventually.`,
+          refs: [
+            `Read Ben Evans, <a href="https://www.oracle.com/technical-resources/articles/java/architect-evans-pt1.html" target="_blank" rel="noopener">"Understanding Java JIT Compilation with JITWatch"</a> (profiling + tiers).`,
+            `Then the <a href="https://en.wikipedia.org/wiki/HotSpot_(virtual_machine)" target="_blank" rel="noopener">HotSpot</a> overview (C1/C2, tiered compilation); optional deep cuts: <a href="https://shipilev.net/jvm/anatomy-quarks/" target="_blank" rel="noopener">JVM Anatomy Quarks</a>.`,
+          ],
+          model: `<code>javac</code> is only a <b>front end</b>: it compiles <code>.java</code> to portable <b>bytecode</b> (<code>.class</code>) with almost no optimization. The real compiler is inside the <b>JVM</b>: HotSpot starts by <b>interpreting</b> bytecode while profiling, then uses <b>tiered compilation</b> — <b>C1</b> (fast, lightly optimized) for methods that warm up, <b>C2</b> (slow, aggressive: inlining, escape analysis, loop opts) for the hottest. Because it optimizes on <i>observed</i> behavior it <b>speculates</b> (e.g. a call site is effectively monomorphic) and installs a guard; if the guard fails it <b>deoptimizes</b> back to the interpreter. Hence <b>warmup</b>: the same code is slow for the first thousands of calls, then fast — which is why JVM benchmarks must warm up first.`,
+          cards: [
+            { q: `What does <code>javac</code> actually do — and not do?`, a: `It compiles Java source to portable <b>bytecode</b> (<code>.class</code>) with little optimization. The heavy optimization happens later, at runtime, inside the JVM's JIT.` },
+            { q: `C1 vs C2 in HotSpot's tiered compilation?`, a: `<b>C1</b> compiles quickly with light optimization (for merely-warm code); <b>C2</b> compiles slowly with aggressive optimization (inlining, escape analysis) for the hottest methods.` },
+            { q: `Why do JVM programs need "warmup"?`, a: `Code starts <b>interpreted</b> while HotSpot profiles it, and only gets JIT-compiled (C1→C2) once hot — so early runs are slow, and a bad speculation can <b>deoptimize</b> back to the interpreter.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🧭 Callback to d81/d89: same idea as V8 (interpret + profile → speculatively JIT → deopt on guard failure). Managed runtimes converge on this design.` },
+        { id: "s2", type: "hint", label: `💡 "The JVM is slow to start" and "Java is fast" are both true — that's warmup. AOT options (GraalVM native-image) trade peak throughput for instant start.` },
+      ],
+    },
+    {
+      id: "d95", date: "2027-02-24", week: "w32", dow: "Wed", title: "Bytecode compilers & a stack VM (the clox model)",
+      theme: "Compilers · part 4 — why every fast interpreter compiles to its own instruction set.",
+      tasks: [
+        { id: "t1", obj: COMP, cat: "read", est: 55,
+          lead: `<b>Compilers ④</b> — trade the AST for a flat bytecode array and a stack machine: locality, speed, portability.`,
+          refs: [
+            `Read Crafting Interpreters Part III openers — <a href="https://craftinginterpreters.com/a-bytecode-virtual-machine.html" target="_blank" rel="noopener">"Chunks of Bytecode"</a> + <a href="https://craftinginterpreters.com/a-virtual-machine.html" target="_blank" rel="noopener">"A Virtual Machine"</a> (the stack + dispatch loop).`,
+            `Then <a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">"Compiling Expressions"</a> — a single-pass, Pratt-driven bytecode compiler.`,
+          ],
+          model: `Instead of re-walking a tree of scattered pointers, compile the AST (or even parse straight) into a flat array of <b>bytecode</b> — one-byte opcodes + operands — and run a <b>virtual machine</b>: a loop that fetches an opcode, dispatches (a <code>switch</code>, or a computed-goto "threaded" dispatch for speed), and mutates a <b>value stack</b>. Most VMs are <b>stack machines</b> (<code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes) because they're simple to compile to; some (Lua, Dalvik) are <b>register machines</b> (fewer instructions, more per-instruction work). The win is <b>locality</b> — sequential bytes, no pointer chasing — plus a portable artifact you can ship and, later, JIT. This is the leap CPython, the JVM, and Lua all make; the tree-walker (d93) was the on-ramp.`,
+          cards: [
+            { q: `Why compile to bytecode instead of walking the AST?`, a: `A flat bytecode array gives <b>cache locality</b> and cheap sequential dispatch (no pointer-chasing through tree nodes), plus a portable artifact you can ship and later JIT — far faster than re-walking the tree each run.` },
+            { q: `What is a stack-based VM, concretely?`, a: `A fetch-decode-dispatch loop over opcodes that operate on a <b>value stack</b>: <code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes their sum. Simple to compile to; contrast register VMs (Lua/Dalvik).` },
+            { q: `What is "threaded" / computed-goto dispatch?`, a: `Replacing the big <code>switch</code> with a jump directly from the end of one opcode's handler to the next's (via a label-address table), which the CPU's branch predictor handles far better — a common VM speedup.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "hint", label: `💡 Callback to d90/d94: this IS what CPython and the JVM do — you're now seeing the machinery behind "compiles to bytecode, then interprets". clox even folds parsing + codegen into one pass.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d87 (branch prediction): the interpreter's central dispatch is one hyper-hot indirect branch — which is exactly why computed-goto/threaded dispatch measurably wins.` },
+      ],
+    },
+    {
+      id: "d96", date: "2027-02-26", week: "w32", dow: "Fri", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
+      theme: "Review · the compiler infrastructure under half the languages you use.",
+      tasks: [
+        { id: "t1", obj: REV, cat: "review", est: 50,
+          lead: `<b>Review</b> — how one optimizer + backend serves C, C++, Rust, Swift and more: a shared IR.`,
+          refs: [
+            `Skim the <a href="https://llvm.org/docs/LangRef.html" target="_blank" rel="noopener">LLVM Language Reference</a> intro (what LLVM IR looks like: typed, SSA, <code>phi</code> nodes).`,
+            `Then walk chapters of the <a href="https://llvm.org/docs/tutorial/MyFirstLanguageFrontend/index.html" target="_blank" rel="noopener">"My First Language Frontend" (Kaleidoscope)</a> tutorial — lexer → parser → LLVM IR → JIT.`,
+          ],
+          model: `LLVM's idea: define one well-specified, typed, <b>SSA</b> <b>intermediate representation</b>, and split every compiler into a language <b>front end</b> (Clang for C/C++, <code>rustc</code>, <code>swiftc</code> → LLVM IR) and a shared <b>middle/back end</b> (target-independent optimization passes, then per-target codegen). Write your optimizer and register allocator <b>once</b> against the IR; every language and every CPU benefits. <b>SSA</b> — static single assignment, each virtual register assigned exactly once, with <code>phi</code> nodes merging values at control-flow joins — is what makes those passes clean: data-flow questions have a single definition to follow. That's why a new language can get a serious optimizing compiler by just emitting LLVM IR.`,
+          cards: [
+            { q: `What is LLVM IR and why does it matter?`, a: `A typed, <b>SSA-form</b> intermediate representation that decouples language front ends (Clang, rustc, swiftc) from a shared optimizer + per-target backend — so optimization/codegen is written once and reused across languages and CPUs.` },
+            { q: `What is SSA form and its signature feature?`, a: `<b>Static single assignment</b>: every value is assigned exactly once; <b>phi</b> nodes select which incoming value applies at a control-flow merge. Single definitions make data-flow optimization tractable.` },
+            { q: `How does Rust/Swift get a good optimizing compiler "for free"?`, a: `Its front end lowers to LLVM IR; LLVM's existing target-independent passes and backends then optimize and generate machine code — no need to re-implement register allocation, inlining, etc.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🧭 Callback to d92: Go's <code>gc</code> deliberately does NOT use LLVM (its own SSA backend, for fast builds) — a real engineering trade-off vs Rust's LLVM dependency (slower builds, heavier optimization).` },
+        { id: "s2", type: "hint", label: `💡 SSA appears in three places you've now seen: Go's compiler (d92), LLVM here, and modern JITs. Learn it once; recognize it everywhere.` },
+      ],
+    },
+    {
+      id: "d97", date: "2027-02-28", week: "w32", dow: "Sun", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
+      theme: "Compilers · part 5 (capstone) — the back end that makes it fast, and the rule that lets it.",
+      tasks: [
+        { id: "t1", obj: COMP, cat: "read", est: 55,
+          lead: `<b>Compilers ⑤ (capstone)</b> — how an optimizer is <i>allowed</i> to rewrite your code, and the last mile to machine instructions.`,
+          refs: [
+            `Read <a href="https://en.wikipedia.org/wiki/Static_single-assignment_form" target="_blank" rel="noopener">Static single-assignment form</a> (why optimizers use it) + <a href="https://en.wikipedia.org/wiki/Register_allocation" target="_blank" rel="noopener">register allocation</a> (graph-coloring / linear scan).`,
+            `Then <a href="https://en.wikipedia.org/wiki/Instruction_selection" target="_blank" rel="noopener">instruction selection</a>, and revisit the <a href="https://en.wikipedia.org/wiki/As-if_rule" target="_blank" rel="noopener">as-if rule</a> (d73) that authorizes it all.`,
+          ],
+          model: `The back end earns the speed. On an <b>SSA</b> IR, classic passes fall out cheaply: constant folding/propagation, dead-code elimination, common-subexpression elimination, loop-invariant code motion — each easy because every value has one definition. Then the machine-specific mile: <b>instruction selection</b> (map IR ops to real opcodes — often tree/DAG tiling), <b>instruction scheduling</b> (reorder to hide latency), and <b>register allocation</b> (fit unbounded virtual registers into a handful of physical ones — modeled as <b>graph coloring</b>, or <b>linear scan</b> in JITs; when it can't, it <b>spills</b> to the stack). All of this is licensed by one rule: the <b>as-if rule</b> — transform however you like as long as <b>observable behavior</b> is preserved. That single principle is why <code>-O2</code> can delete, reorder, and vectorize your code, and why (d73) it needs <code>atomic</code>/<code>volatile</code> to know what it must NOT touch.`,
+          cards: [
+            { q: `Why do optimizers convert to SSA before optimizing?`, a: `With every value assigned once, data-flow facts (reaching definitions, liveness) have a single source — so constant folding, dead-code elimination, CSE and LICM become simple, local rewrites.` },
+            { q: `What problem is register allocation, and how is it modeled?`, a: `Mapping unbounded virtual registers onto a few physical ones. Modeled as <b>graph coloring</b> (interference graph) or <b>linear scan</b> (fast, JIT-friendly); values that don't fit are <b>spilled</b> to the stack.` },
+            { q: `What licenses every compiler optimization — and its limit?`, a: `The <b>as-if rule</b>: any transformation is legal if the program's <b>observable behavior</b> is unchanged. Its limit is that "observable" is defined per single thread — hence atomics/volatile (d73) to mark what must not be reordered.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🏁 Bedrock complete — 32 weeks, 12 threads, from the OSI myth to how a compiler is allowed to rewrite your code. The wire, the runtime, the data structure, and now the language itself: the theory a backend/blockchain engineer is expected to own, end to end.` },
+        { id: "s2", type: "hint", label: `💡 Callbacks close the loop: the as-if rule (d73), branch prediction in the dispatch loop (d87), V8's JIT (d81), the eBPF verifier (d71). You've now seen compilation from the kernel to the cloud.` },
+      ],
+      note: "🏁 Bedrock complete — 32 weeks across 12 threads. From \"there is no OSI layer 5 on the wire\" to \"the as-if rule is why -O2 is allowed\": your interview-and-tech-talk bedrock, wire to compiler.",
     },
   ],
 
@@ -2069,13 +2316,18 @@ registerRoadmap({
     // ---- Extension II (internals) milestone ----
     { id: "w29.m3", week: "w29", title: "🎓 Extension II complete — data-structure & runtime internals",
       rule: { type: "tasks", require: ["d78.t1", "d80.t1", "d82.t1", "d84.t1", "d88.t1"] } },
+    // ---- Extension III (compilers & interpreters) milestones ----
+    { id: "w31.m4", week: "w31", title: "Extension III — the front end: maps, lexing, parsing & real interpreters",
+      rule: { type: "tasks", require: ["d89.t1", "d90.t1", "d91.t1"] } },
+    { id: "w32.m4", week: "w32", title: "🎓 Extension III complete — how compilers & interpreters really work",
+      rule: { type: "tasks", require: ["d93.t1", "d95.t1", "d97.t1"] } },
   ],
 
   features: [
     { title: "How this track works", items: [
       `Each domain is an ordered <b>thread</b>; threads are <b>interleaved</b> across days, so consecutive side-days switch topics but each thread advances in order.`,
       `Progress, streak and effort are <b>separate from your main roadmaps</b> — only the Today panel's "Main + Side" line combines them.`,
-      `<b>Core</b> (weeks 1–12) lays the foundations; <b>Extension I</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–29) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters).`,
+      `<b>Core</b> (weeks 1–12) lays the foundations; <b>Extension I</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–29) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters); <b>Extension III</b> (weeks 30–32) closes with a <b>Compilers & interpreters</b> thread — how real implementations (CPython, the Go compiler, the JVM, V8, LLVM) turn your code into behavior, interleaved with language-implementation reviews.`,
       `Complete a task to <b>unlock its recall cards</b> 🎴 — short Q/A prompts you can re-test yourself on; the Today view resurfaces a few from earlier days so knowledge sticks.`,
     ] },
   ],

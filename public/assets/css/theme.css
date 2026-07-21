@@ -64,6 +64,9 @@ code, pre, kbd { font-family: var(--font-mono); }
 
   /* status */
   --ok: #22c55e; --warn: #f59e0b; --bad: #ef4444; --info: #38bdf8;
+  /* on-time meter — a "punctual" gold, distinct from every roadmap accent, the
+     grey original and the amber warn; used by the third progress ring/bar */
+  --ontime: #eab308;
 
   --dur-fast: 120ms; --dur: 220ms; --dur-slow: 380ms;
   --ease: cubic-bezier(.22,.61,.36,1);

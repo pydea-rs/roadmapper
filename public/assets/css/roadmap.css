@@ -11,9 +11,10 @@
 .hero .sub { color: var(--text-2); margin-top: 6px; max-width: 60ch; }
 .hero-actions { margin-left: auto; display: flex; gap: var(--s2); }
 
-.hero-progress { margin-top: var(--s5); display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5);
+.hero-progress { margin-top: var(--s5); display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--s5);
   padding: var(--s5); background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--r3); box-shadow: var(--shadow-sm); }
+@media (max-width: 860px) { .hero-progress { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 620px) { .hero-progress { grid-template-columns: 1fr; gap: var(--s4); } }
 
 .dual { }
@@ -27,8 +28,8 @@
 .pbar > i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; width: 0;
   background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #7c3aed));
   transition: width var(--dur-slow) var(--ease); }
-/* a slow light sweep travels across the filled portion of the primary bar */
-.pbar:not(.orig) > i::after { content: ""; position: absolute; inset: 0; border-radius: inherit;
+/* a slow light sweep travels across the filled portion of the primary (actual) bar */
+.pbar:not(.orig):not(.ontime) > i::after { content: ""; position: absolute; inset: 0; border-radius: inherit;
   background: linear-gradient(100deg, transparent 25%, color-mix(in srgb, #fff 55%, transparent) 50%, transparent 75%);
   transform: translateX(-120%); animation: barSheen 3.4s var(--ease) 1.2s infinite; }
 @keyframes barSheen { to { transform: translateX(120%); } }
@@ -36,6 +37,11 @@
   color-mix(in srgb, var(--ok) 70%, #000) 6px, color-mix(in srgb, var(--ok) 70%, #000) 12px); }
 .pbar.orig > i { background: linear-gradient(90deg, var(--text-3), var(--text-2)); }
 .dual.orig .lead b { color: var(--text-2); }
+/* on-time meter — a warm "punctual" amber, distinct from the accent + the grey original */
+.ontime-c { color: var(--ontime); }
+.pbar.ontime > i { background: linear-gradient(90deg, color-mix(in srgb, var(--ontime) 70%, #d97706), var(--ontime)); }
+.dual.ontime .lead b { color: var(--ontime); }
+.dual .cap { position: relative; }
 
 .projection { margin-top: var(--s4); display: flex; align-items: center; gap: var(--s3);
   flex-wrap: wrap; font-size: var(--t-sm); color: var(--text-2); }
@@ -291,18 +297,36 @@
   text-overflow: ellipsis; }
 .today-badge { font-size: var(--t-xs); font-weight: 700; color: var(--accent);
   background: var(--accent-soft); padding: 2px 8px; border-radius: var(--r-pill); }
-.day-figs { display: flex; align-items: center; gap: var(--s3); flex: none; }
-.day-ring { --p: 0; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+.day-figs { display: flex; align-items: flex-start; gap: var(--s3); flex: none; }
+/* a ring + its caption, stacked */
+.ring-cell { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.ring-cap { font-size: 9px; line-height: 1; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--text-3); font-weight: 700; }
+.day-ring { --p: 0; --ring: var(--accent); width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center; flex: none;
   font-size: var(--t-xs); font-weight: 800; font-variant-numeric: tabular-nums; position: relative;
-  background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--track) 0);
+  background: conic-gradient(var(--ring) calc(var(--p) * 1%), var(--track) 0);
   transition: --p var(--dur-slow) var(--ease); }
 .day-ring i { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: grid;
-  place-items: center; transition: color var(--dur-fast); }
+  place-items: center; transition: color var(--dur-fast); font-size: var(--t-xs); }
+/* colour per meter — accent (actual), grey (original), gold (on-time) */
+.day-ring.actual { --ring: var(--accent); }
+.day-ring.orig   { --ring: var(--text-3); }
+.day-ring.ontime { --ring: var(--ontime); }
+/* minis ride alongside the headline actual ring */
+.day-ring.mini { width: 30px; height: 30px; font-size: 9px; }
+.day-ring.mini i { width: 22px; height: 22px; font-size: 9px; }
 .day-ring.full i { color: var(--ok); }
+.day-ring.orig.full i { color: var(--text-2); }
+.day-ring.ontime.full i { color: var(--ontime); }
 .day-ring.pulse { animation: ringPulse .6s var(--ease-spring); }
 @keyframes ringPulse { 0% { transform: scale(1); } 45% { transform: scale(1.18); } 100% { transform: scale(1); } }
 .day-ring.off i { color: var(--text-3); }
 .day-mini-orig { font-size: var(--t-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
+/* week-head triple readout colours */
+.week-dual .wd-actual b { color: var(--accent); }
+.week-dual .wd-orig b { color: var(--text-2); }
+.week-dual .wd-ontime b { color: var(--ontime); }
 
 .day-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur) var(--ease); }
 .day.open .day-body { grid-template-rows: 1fr; }

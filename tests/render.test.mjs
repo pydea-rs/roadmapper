@@ -48,6 +48,13 @@ for (const rm of reg.getRoadmaps()) {
   t.ok(view.querySelector(".timeline"), `${rm.slug}: timeline rendered`);
 }
 
+t.group("day cards show three progress rings (actual / original / on-time)");
+render.renderRoadmap(reg.getRoadmap("interp-go"), view);   // has past days at the frozen now
+t.ok(view.querySelector(".day-ring.actual"), "the Actual ring renders");
+t.ok(view.querySelector(".day-ring.orig"), "the Original ring renders on reached days");
+t.ok(view.querySelector(".day-ring.ontime"), "the On-time ring renders on reached days");
+t.ok(view.querySelector(".ring-cell .ring-cap"), "each ring carries a caption");
+
 t.group("Today view + the 'Your effort' panel");
 render.renderToday(view);
 t.ok(view.querySelector(".today-view"), "today view rendered");

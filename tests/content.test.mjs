@@ -63,6 +63,22 @@ t.ok(bedrock.days.some(d => d.date >= "2027-01-11"), "Extension II days are date
 t.ok(bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "internals").length >= 6,
   "the internals thread has its full run of tasks");
 
+// Extension III (weeks 30–32) adds a Compilers & interpreters thread, interleaved
+// with language-implementation reviews, plus "Compiler lens" tasks woven into a
+// few earlier second-half days.
+t.ok(bedrock.days.length >= 97, "Extension III lands (>= 97 days)");
+t.ok(bedrock.objById.has("compilers"), "Extension III adds a Compilers & interpreters objective");
+t.ok(bedrock.weeksById.has("w32"), "Extension III reaches week 32");
+t.ok(bedrock.days.some(d => d.date >= "2027-02-10"), "Extension III days are dated after Extension II");
+const compTasks = bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "compilers");
+t.ok(compTasks.length >= 8, "the compilers thread has its full run of tasks (appended + woven)");
+// the woven "Compiler lens" seeds live on EARLIER days as a 2nd task, so they must
+// never sit at tasks[0] (that would perturb the interleaving invariant).
+const wovenComp = bedrock.days.filter(d => d.date < "2027-02-10" && d.tasks.some(x => x.obj === "compilers"));
+t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 earlier second-half days");
+t.ok(wovenComp.every(d => d.tasks[0].obj !== "compilers"),
+  "woven compiler tasks are additive (never the day's first/anchor task)");
+
 // no two side-days may share a calendar date (the digest/effort views key off date)
 const bDates = bedrock.days.map(d => d.date);
 t.eq(new Set(bDates).size, bDates.length, "bedrock day dates are unique (no collisions)");

@@ -10,7 +10,7 @@
 // their OWN meters — bonus never enters `invested`/`remaining`/the primary
 // denominator, and undone bonus never inflates the required remaining/ETA.
 import { suite } from "./_harness.mjs";
-import { store, stats, util, loadFixture } from "./_load.mjs";
+import { store, stats, util, loadFixture, doneOn } from "./_load.mjs";
 
 const t = suite("stats");
 const rm = await loadFixture();
@@ -149,6 +149,38 @@ const today = util.todayStr();
 const pastActive = rm.days.filter(d => !d.off && d.date <= today &&
   d.tasks.some(x => !x.optional && (rm.objById.get(x.obj) || {}).tier !== "secondary"));
 t.eq(s.streak, pastActive.length, `streak = ${pastActive.length} past active days, all complete`);
+
+t.group("on-time — done on/before the ORIGINAL date counts; later ticks don't");
+// d01 (2026-07-13) primary: t1=30, t2=45, t3=15
+reset();
+doneOn(S, "d01.t1", 2026, 7, 13);            // on the day → on-time
+doneOn(S, "d01.t3", 2026, 7, 12);            // a day early → on-time
+doneOn(S, "d01.t2", 2026, 7, 20);            // a week late → NOT on-time
+s = compute();
+t.eq(s.days["d01"].original.done, 3, "d01 original counts all three done");
+t.eq(s.days["d01"].ontime.done, 2, "d01 on-time counts only the two finished by its date");
+t.eq(s.days["d01"].ontime.total, 3, "on-time denominator = the day's original tasks (3)");
+t.eq(s.days["d01"].ontime.pct, util.pct(2, 3), "d01 on-time pct = 67");
+t.eq(s.overall.ontime.done, 2, "overall on-time = 2");
+t.eq(s.overall.actual.done, 3, "actual still counts all three");
+t.eq(s.weeks["w1"].ontime.done, 2, "week-1 on-time rolls the two up");
+t.eq(s.objectives.find(o => o.id === "core").ontime.done, 2, "core objective on-time = 2");
+
+t.group("a done task with no done_at stamp cannot be proven on-time");
+reset();
+store.setCell(S, "d01.t1", "task", "true");  // ticked, but no timestamp written
+s = compute();
+t.eq(s.days["d01"].actual.done, 1, "it still counts as done");
+t.eq(s.days["d01"].ontime.done, 0, "but not as on-time (no timestamp = can't prove it)");
+
+t.group("on-time is judged by the ORIGINAL date — a move can't change it");
+reset();
+store.setMove(S, "d01.t1", "d05");           // push it to a later day…
+doneOn(S, "d01.t1", 2026, 7, 13);            // …but finish it on d01's original date
+s = compute();
+t.eq(s.days["d01"].ontime.done, 1, "on-time credit stays on the ORIGIN day (d01)");
+t.eq(s.days["d05"].ontime.done, 0, "the move destination earns no on-time credit");
+t.eq(s.overall.ontime.done, 1, "still exactly one on-time overall");
 
 t.group("sidebarStats summary");
 reset();

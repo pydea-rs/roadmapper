@@ -762,16 +762,22 @@ function hero(rm, S) {
   wrap.append(top);
 
   const prog = el("div.hero-progress");
-  prog.append(dualBlock("Actual progress", S.overall.actual, S.overall.bonus, false));
-  prog.append(dualBlock("Original progress", S.overall.original, null, true));
+  prog.append(dualBlock("Actual progress", S.overall.actual, S.overall.bonus, "actual"));
+  prog.append(dualBlock("Original progress", S.overall.original, null, "orig"));
+  prog.append(dualBlock("On-time progress", S.overall.ontime, null, "ontime"));
   wrap.append(prog);
 
   wrap.append(projectionLine(rm, S));
   return wrap;
 }
 
-function dualBlock(cap, figure, bonus, isOrig) {
-  const b = el("div.dual" + (isOrig ? ".orig" : ""));
+function dualBlock(cap, figure, bonus, kind) {
+  // kind: "actual" | "orig" | "ontime" — controls the bar colour + caption hint.
+  kind = kind === true ? "orig" : (kind || "actual");
+  const hint = { actual: "Current progress after any moves.",
+    orig: "Tasks done regardless of when.",
+    ontime: "Tasks finished on or before their original date — how well you kept to the plan." }[kind] || "";
+  const b = el("div.dual." + kind, hint ? { title: hint } : null);
   b.append(el("div.cap", { text: cap }));
   const lead = el("div.lead");
   lead.append(el("b", { text: figure.pct + "%" }));
@@ -782,7 +788,7 @@ function dualBlock(cap, figure, bonus, isOrig) {
     title: `${bonus.done} bonus task${bonus.done === 1 ? "" : "s"} done` +
       (bonus.estDone ? ` · +${fmtMins(bonus.estDone)}` : "") }));
   b.append(lead);
-  const bar = el("div.pbar" + (bonus && bonus.total ? ".bonus" : "") + (isOrig ? ".orig" : ""));
+  const bar = el("div.pbar" + (bonus && bonus.total ? ".bonus" : "") + (kind !== "actual" ? "." + kind : ""));
   bar.append(el("i", { style: `width:${Math.min(100, figure.pct)}%` }));
   b.append(bar);
   if (bonus && bonus.total) {
@@ -823,6 +829,7 @@ function statsStrip(rm, S) {
     const val = el("div.v", { text: v }); if (sub) val.append(el("small", { text: " " + sub })); c.append(val); return c; };
   strip.append(kpi("Actual", S.overall.actual.pct + "%"));
   strip.append(kpi("Original", S.overall.original.pct + "%"));
+  strip.append(kpi("On-time", (S.overall.ontime || {}).pct + "%"));
   const wk = currentWeekFigure(rm, S);
   strip.append(kpi("This week", wk));
   strip.append(kpi("Streak", S.streak, S.streak === 1 ? "day" : "days"));
@@ -1142,12 +1149,13 @@ function timeline(rm, S, open) {
 function weekGroup(rm, S, weekId, days, open) {
   const wg = el("div.week-group");
   const week = rm.weeksById.get(weekId);
-  const f = S.weeks[weekId] || { actual: { pct: 0, done: 0, total: 0 }, original: { pct: 0, done: 0, total: 0 } };
+  const f = S.weeks[weekId] || { actual: { pct: 0, done: 0, total: 0 }, original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0 } };
   const head = el("div.week-head");
   head.append(el("span.wk", { html: `${escapeHtml((week && week.title) || weekId)}` }));
   const dual = el("div.week-dual");
-  dual.append(el("span", { html: `actual <b>${f.actual.pct}%</b>` }));
-  dual.append(el("span", { html: `original <b>${f.original.pct}%</b>` }));
+  dual.append(el("span.wd-actual", { html: `actual <b>${f.actual.pct}%</b>`, title: "Current progress after any moves" }));
+  dual.append(el("span.wd-orig", { html: `original <b>${f.original.pct}%</b>`, title: "Tasks done regardless of when" }));
+  dual.append(el("span.wd-ontime", { html: `on-time <b>${(f.ontime || {}).pct || 0}%</b>`, title: "Done on or before the original date" }));
   head.append(dual);
   // week milestone chip
   const ms = S.milestones.find(m => m.week === weekId && (m.rule || {}));
@@ -1209,12 +1217,33 @@ function interludeCard(rm, il) {
   return card;
 }
 
+/* A small circular progress ring for a day's figure. `kind` (actual/orig/ontime)
+ * picks the colour; `big` is the headline Actual ring, the others ride along as
+ * minis. A short caption + hover title spell out which meter it is, so the three
+ * are never ambiguous. */
+function progRing(figure, { kind, label, full = false, big = false }) {
+  const f = figure || { pct: 0, done: 0, total: 0 };
+  const pctv = f.pct || 0;
+  const cap = { actual: "Actual", orig: "Original", ontime: "On-time" }[kind] || label;
+  const hint = { actual: "current progress (after any moves)",
+    orig: "tasks done regardless of when",
+    ontime: "done on or before the original date" }[kind] || "";
+  const cell = el("div.ring-cell");
+  const ring = el("div.day-ring." + kind + (big ? ".big" : ".mini") + (full ? ".full" : ""),
+    { style: `--p:${pctv}`, title: `${cap} — ${f.done || 0}/${f.total || 0} (${pctv}%)${hint ? " · " + hint : ""}` });
+  ring.append(el("i", { text: pctv + "%" }));
+  cell.append(ring);
+  cell.append(el("span.ring-cap", { text: label }));
+  return cell;
+}
+
 function dayCard(rm, S, day, open) {
   const today = todayStr();
   const isToday = day.date === today;
   const isPast = day.date < today;
   const isOpen = open.has(day.id);
-  const df = S.days[day.id] || { actual: { pct: 0, done: 0, total: 0 }, original: { pct: 0, done: 0, total: 0 } };
+  const df = S.days[day.id] || { actual: { pct: 0, done: 0, total: 0 },
+    original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0, done: 0, total: 0 } };
 
   const isComplete = df.actual.total > 0 && df.actual.pct >= 100;
   const card = el("div.day" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (isOpen ? ".open" : "") +
@@ -1235,13 +1264,19 @@ function dayCard(rm, S, day, open) {
   if (day.theme) info.append(el("div.day-theme", { text: day.theme }));
   head.append(info);
 
+  // Three circular meters: Actual (headline), Original, and On-time. Original +
+  // On-time appear once a day is reached or has any progress, so untouched future
+  // days stay clean. All three are colour-coded and captioned.
   const figs = el("div.day-figs");
-  const ring = el("div.day-ring" + (isComplete ? ".full" : ""),
-    { style: `--p:${df.actual.pct}`, title: `Actual ${df.actual.pct}%` });
-  ring.append(el("i", { text: df.actual.pct + "%" }));
-  figs.append(ring);
-  if (df.original.total && (df.original.done !== df.actual.done || df.original.total !== df.actual.total))
-    figs.append(el("span.day-mini-orig", { title: "Original", text: `orig ${df.original.pct}%` }));
+  const on = df.ontime || { pct: 0, done: 0, total: 0 };
+  figs.append(progRing(df.actual, { kind: "actual", label: "actual", big: true, full: isComplete }));
+  const reached = isPast || isToday;
+  if (df.original.total && (reached || df.actual.done > 0 || df.original.done > 0)) {
+    figs.append(progRing(df.original, { kind: "orig", label: "orig",
+      full: df.original.total > 0 && df.original.pct >= 100 }));
+    figs.append(progRing(on, { kind: "ontime", label: "on-time",
+      full: on.total > 0 && on.pct >= 100 }));
+  }
   head.append(figs);
 
   const toggle = () => {

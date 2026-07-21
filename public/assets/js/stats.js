@@ -2,13 +2,32 @@
 // (roadmap structure + journey state). Nothing here is stored; it is always
 // recomputed, so it is always truthful (DESIGN §10, §12, §13).
 //
-// Dual progress:
+// Triple progress:
 //   actual(scope)   — tasks whose CURRENT day/week/month is `scope`
 //   original(scope) — tasks whose ORIGIN day/week/month is `scope`
-// where current = move destination if moved, else origin.
+//   ontime(scope)   — tasks ORIGINALLY in `scope` that were completed ON OR BEFORE
+//                     their original date (i.e. done as planned, not just eventually).
+// where current = move destination if moved, else origin. On-time always measures
+// against the ORIGINAL date, so moving a task never changes it — it answers
+// "how much of the plan did I keep to the schedule?".
 
 import * as store from "./store.js";
-import { pct, pct1, daysBetween, todayStr, addDays, clamp } from "./util.js";
+import { pct, pct1, daysBetween, todayStr, addDays, clamp, fmtDate } from "./util.js";
+
+/** Local calendar date (YYYY-MM-DD) of a done_at ISO stamp, or null. Matches
+ *  todayStr()/activity.js (local components), so comparisons line up. */
+function doneLocalDate(slug, leafId) {
+  const iso = store.doneAt(slug, leafId);
+  if (!iso) return null;
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : fmtDate(d);
+}
+/** Was this (done) leaf completed on or before its original day's date? A done
+ *  leaf with no timestamp can't be proven on-time, so it counts as late. */
+function isOnTime(slug, leafId, originDate) {
+  const at = doneLocalDate(slug, leafId);
+  return !!at && at <= originDate;
+}
 
 const PER_DAY_MINS = 180;             // flexible ~3h/day budget (DESIGN §13)
 const OVERLAP_TAX = 0.85;             // capacity factor when roadmaps overlap
@@ -41,19 +60,22 @@ function withPct(b) { return { ...b, pct: pct(b.done, b.total), pct1: pct1(b.don
 export function computeAll(rm) {
   const slug = rm.slug;
 
-  // Per-scope accumulators for actual (by current) and original (by origin).
+  // Per-scope accumulators for actual (by current), original (by origin), and
+  // on-time (by origin, only leaves finished on/before their original date).
   const dayA = new Map(), dayO = new Map();
   const weekA = new Map(), weekO = new Map();
   const monthA = new Map(), monthO = new Map();
+  const dayT = new Map(), weekT = new Map(), monthT = new Map();   // on-time done counts
   const objAcc = new Map();            // objId -> {req:{a,o}, bonus:{done,total,est}}
   const catDist = {};
-  let overallReqDone = 0, overallReqTotal = 0;
+  let overallReqDone = 0, overallReqTotal = 0, overallReqTimely = 0;
   let bonusDone = 0, bonusTotal = 0, bonusEstDone = 0, bonusEstRemaining = 0;
   let remainingReqMins = 0, investedMins = 0;
   let remainingSecMins = 0;
 
   const get = (m, k) => { let v = m.get(k); if (!v) { v = blank(); m.set(k, v); } return v; };
-  const objOf = id => { let v = objAcc.get(id); if (!v) { v = { req: { aDone:0,aTot:0,oDone:0,oTot:0,estDone:0,estTot:0 },
+  const incT = (m, k) => m.set(k, (m.get(k) || 0) + 1);   // on-time done tally
+  const objOf = id => { let v = objAcc.get(id); if (!v) { v = { req: { aDone:0,aTot:0,oDone:0,oTot:0,tDone:0,estDone:0,estTot:0 },
     bonus: { done:0, total:0, estDone:0, estTot:0 } }; objAcc.set(id, v); } return v; };
 
   for (const day of rm.days) {
@@ -68,6 +90,9 @@ export function computeAll(rm) {
       // parent-level; done-state and est are per-leaf.
       for (const leaf of (task.subs || [task])) {
         const done = store.isDone(slug, leaf.id);
+        // on-time is measured against the ORIGINAL day's date (the loop's `day`),
+        // so a moved task is judged by when it was actually meant to be done.
+        const onTime = done && isOnTime(slug, leaf.id, day.date);
         const est = leaf.est || 0;
 
         if (task.optional) {
@@ -88,6 +113,7 @@ export function computeAll(rm) {
           // secondary required work lives on the secondary meter, never in primary rollups
           oa.req.oTot++; if (done) oa.req.oDone++;
           oa.req.aTot++; if (done) oa.req.aDone++;
+          if (onTime) oa.req.tDone++;
           oa.req.estTot += est; if (done) { oa.req.estDone += est; investedMins += est; }
           else remainingSecMins += est;
           continue;
@@ -95,6 +121,7 @@ export function computeAll(rm) {
 
         // primary required leaf — drives the headline numbers
         overallReqTotal++; if (done) overallReqDone++;
+        if (onTime) overallReqTimely++;
         if (done) investedMins += est; else remainingReqMins += est;
 
         // actual (current)
@@ -109,8 +136,12 @@ export function computeAll(rm) {
         const wO = get(weekO, day.week); wO.total++; if (done) wO.done++;
         const mO = get(monthO, day.month); mO.total++; if (done) mO.done++;
 
+        // on-time (origin scope, done on/before original date)
+        if (onTime) { incT(dayT, day.id); incT(weekT, day.week); incT(monthT, day.month); }
+
         oa.req.aTot++; if (done) oa.req.aDone++;
         oa.req.oTot++; if (done) oa.req.oDone++;
+        if (onTime) oa.req.tDone++;
         oa.req.estTot += est; if (done) oa.req.estDone += est;
       }
     }
@@ -118,11 +149,12 @@ export function computeAll(rm) {
 
   // ---- objective summaries ----
   const objectives = rm.objectives.map(o => {
-    const a = objAcc.get(o.id) || { req:{aDone:0,aTot:0,oDone:0,oTot:0,estTot:0,estDone:0}, bonus:{done:0,total:0,estDone:0,estTot:0} };
+    const a = objAcc.get(o.id) || { req:{aDone:0,aTot:0,oDone:0,oTot:0,tDone:0,estTot:0,estDone:0}, bonus:{done:0,total:0,estDone:0,estTot:0} };
     return {
       id: o.id, title: o.title, tier: o.tier, weight: o.weight,
       actual: withPct({ done: a.req.aDone, total: a.req.aTot }),
       original: withPct({ done: a.req.oDone, total: a.req.oTot }),
+      ontime: withPct({ done: a.req.tDone || 0, total: a.req.oTot }),
       bonus: { done: a.bonus.done, total: a.bonus.total, pct: pct(a.bonus.done, a.bonus.total),
         estDone: a.bonus.estDone, estTotal: a.bonus.estTot },
       estTotal: a.req.estTot, estDone: a.req.estDone,
@@ -130,7 +162,8 @@ export function computeAll(rm) {
   });
 
   const primary = { actual: withPct({ done: overallReqDone, total: overallReqTotal }),
-    original: withPct(sumOrig(dayO)) };
+    original: withPct(sumOrig(dayO)),
+    ontime: withPct({ done: overallReqTimely, total: overallReqTotal }) };
   const secObjs = objectives.filter(o => o.tier === "secondary");
   const secondary = withPct(secObjs.reduce((acc, o) => ({ done: acc.done + o.actual.done, total: acc.total + o.actual.total }),
     { done: 0, total: 0 }));
@@ -140,16 +173,21 @@ export function computeAll(rm) {
   for (const day of rm.days) {
     const a = dayA.get(day.id) || blank();
     const o = dayO.get(day.id) || blank();
-    days[day.id] = { actual: withPct(a), original: withPct(o), off: day.off,
+    days[day.id] = { actual: withPct(a), original: withPct(o),
+      ontime: withPct({ done: dayT.get(day.id) || 0, total: o.total }), off: day.off,
       hasCurrent: a.total > 0, hasOrigin: o.total > 0 };
   }
   const weeks = {};
   for (const w of rm.weeks) {
-    weeks[w.id] = { actual: withPct(weekA.get(w.id) || blank()), original: withPct(weekO.get(w.id) || blank()) };
+    const o = weekO.get(w.id) || blank();
+    weeks[w.id] = { actual: withPct(weekA.get(w.id) || blank()), original: withPct(o),
+      ontime: withPct({ done: weekT.get(w.id) || 0, total: o.total }) };
   }
   const months = {};
   for (const m of rm.months) {
-    months[m.key] = { actual: withPct(monthA.get(m.key) || blank()), original: withPct(monthO.get(m.key) || blank()) };
+    const o = monthO.get(m.key) || blank();
+    months[m.key] = { actual: withPct(monthA.get(m.key) || blank()), original: withPct(o),
+      ontime: withPct({ done: monthT.get(m.key) || 0, total: o.total }) };
   }
 
   // ---- milestones ----
@@ -166,7 +204,7 @@ export function computeAll(rm) {
   return {
     slug,
     overall: {
-      actual: primary.actual, original: primary.original,
+      actual: primary.actual, original: primary.original, ontime: primary.ontime,
       bonus: { done: bonusDone, total: bonusTotal, pct: pct(bonusDone, bonusTotal),
         estDone: bonusEstDone, estRemaining: bonusEstRemaining },
     },
