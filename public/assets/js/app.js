@@ -9,6 +9,7 @@ import { getRoadmaps, getRoadmap, validateAll } from "./registry.js";
 import * as store from "./store.js";
 import * as sync from "./sync.js";
 import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest } from "./render.js";
+import { renderInsights } from "./insights.js";
 import { sidebarStats } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
@@ -142,6 +143,15 @@ function route() {
     activeSlug = null;
     sidebarExpandedSlug = null;      // no roadmap quick-jumps expanded on the global view
     swapView(() => { renderToday($("#view")); updateSidebar(); scrollMainTop(); });
+    closeMobileSidebar();
+    return;
+  }
+
+  // Global cross-roadmap analytics (#/insights).
+  if (slug === "insights" && !sub) {
+    activeSlug = null;
+    sidebarExpandedSlug = null;
+    swapView(() => { renderInsights($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
   }

@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/shell.css">
   <link rel="stylesheet" href="assets/css/roadmap.css">
+  <link rel="stylesheet" href="assets/css/insights.css">
   <style>
     /* inline critical: avoid any flash before theme.css loads */
     html,body{margin:0;height:100%;background:#0e1017}

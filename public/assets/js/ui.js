@@ -299,6 +299,14 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
   todayLink.append(el("span.sb-today-label", { text: "Today · all roadmaps" }));
   list.append(todayLink);
 
+  // Analytics / insights digest (cross-roadmap charts & stats).
+  const onInsights = location.hash.replace(/^#\/?/, "") === "insights";
+  const insightsLink = el("a.sb-today.sb-insights" + (onInsights ? ".active" : ""),
+    { href: "#/insights", "aria-current": onInsights ? "true" : "false" });
+  insightsLink.append(el("span.sb-ico", { text: "📊" }));
+  insightsLink.append(el("span.sb-today-label", { text: "Insights · charts & stats" }));
+  list.append(insightsLink);
+
   // Render one roadmap's sidebar entry (+ its quick-jumps when expanded).
   const renderItem = rm => {
     const st = statsFor ? statsFor(rm.slug) : { pct: 0, track: "on" };

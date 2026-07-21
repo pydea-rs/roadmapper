@@ -1,0 +1,136 @@
+/* insights.css — the Insights (analytics) view: toolbar, KPI readout, and the
+ * SVG chart primitives (line / bar / donut / hbars). Theme-aware via tokens. */
+
+:root, :root[data-theme="light"] { --track-ink: #b9c0d0; --grid: rgba(20,25,40,.08); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --track-ink: #3a4150; --grid: rgba(255,255,255,.07); } }
+:root[data-theme="dark"] { --track-ink: #3a4150; --grid: rgba(255,255,255,.07); }
+
+.insights-view { display: flex; flex-direction: column; gap: var(--s5); }
+.insights-hero { margin-bottom: 0; }
+
+/* ---- toolbar / selector ---- */
+.ins-toolbar { display: flex; align-items: center; gap: var(--s3); flex-wrap: wrap; }
+.ins-tb-label { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em;
+  font-weight: 700; color: var(--text-3); }
+.ins-select { appearance: none; -webkit-appearance: none; background: var(--surface);
+  border: 1px solid var(--border-2); color: var(--text); font-weight: 600;
+  padding: 10px 40px 10px 14px; border-radius: var(--r2); box-shadow: var(--shadow-sm);
+  cursor: pointer; min-width: 240px; max-width: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b93a7' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.ins-select:hover { border-color: var(--accent); }
+.ins-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.ins-body { display: flex; flex-direction: column; gap: var(--s5); }
+
+/* ---- pace readout ---- */
+.ins-readout { display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4);
+  background: var(--surface); border: 1px solid var(--border); border-left-width: 4px;
+  border-radius: var(--r2); box-shadow: var(--shadow-sm); font-size: var(--t-md); color: var(--text-2); }
+.ins-readout b { color: var(--text); font-variant-numeric: tabular-nums; }
+.ins-readout .warn-ink { color: var(--bad); }
+.ins-readout .ir-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+.ins-readout.ahead { border-left-color: var(--ok); } .ins-readout.ahead .ir-dot { background: var(--ok); }
+.ins-readout.on { border-left-color: var(--info); } .ins-readout.on .ir-dot { background: var(--info); }
+.ins-readout.behind { border-left-color: var(--warn); } .ins-readout.behind .ir-dot { background: var(--warn); }
+
+/* ---- KPI tones (extends .kpi/.stats-strip from roadmap.css) ---- */
+.ins-kpis .kpi.t-good .v { color: var(--ok); }
+.ins-kpis .kpi.t-warn .v { color: var(--warn); }
+.ins-kpis .kpi.t-bad .v { color: var(--bad); }
+.ins-kpis .kpi .v small { display: inline; white-space: nowrap; }
+
+/* ---- cards + grid ---- */
+.ins-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
+  padding: var(--s4) var(--s4) var(--s5); box-shadow: var(--shadow-sm); min-width: 0; }
+.ins-card-head { margin-bottom: var(--s4); }
+.ins-card-head h3 { font-size: var(--t-lg); letter-spacing: -.01em; }
+.ins-hint { font-size: var(--t-sm); color: var(--text-3); margin-top: 2px; }
+.ins-card.wide { }
+
+.ins-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s5); }
+@media (max-width: 900px) { .ins-grid { grid-template-columns: 1fr; } }
+
+.ins-moves { display: flex; align-items: center; gap: var(--s3); padding: var(--s3) var(--s4);
+  background: var(--surface-2); border: 1px dashed var(--border-2); border-radius: var(--r2);
+  color: var(--text-2); font-size: var(--t-sm); }
+.ins-moves b { color: var(--text); font-variant-numeric: tabular-nums; }
+.ins-moves .im-ico { font-size: 18px; }
+
+/* ================================================================== *
+ *  Chart primitives
+ * ================================================================== */
+.chart-svg { width: 100%; height: auto; display: block; overflow: visible;
+  font-family: var(--font-sans); }
+.chart-svg .grid { stroke: var(--grid); stroke-width: 1; }
+.chart-svg .grid.faint { stroke: var(--grid); stroke-dasharray: 2 5; }
+.chart-svg .axis { fill: var(--text-3); font-size: 25px; font-weight: 600; }
+.chart-svg .axis.today { fill: var(--accent); font-weight: 700; }
+.chart-svg .axis.avg { fill: var(--text-2); font-weight: 700; }
+.chart-svg .today-mark { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 3 4; opacity: .7; }
+
+/* line chart */
+.chart-wrap { position: relative; }
+.linechart .line { fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round;
+  vector-effect: non-scaling-stroke; }
+.linechart .line.dashed { stroke-dasharray: 7 6; stroke-width: 2.5; }
+.linechart .endpt { vector-effect: non-scaling-stroke; stroke: var(--surface); stroke-width: 2; }
+.linechart .crosshair { stroke: var(--text-3); stroke-width: 1; stroke-dasharray: 3 3; }
+.linechart .hoverdot { stroke: var(--surface); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.linechart .hit { cursor: crosshair; }
+
+.chart-tip { position: absolute; top: 6px; pointer-events: none; z-index: 3;
+  background: var(--surface); border: 1px solid var(--border-2); border-radius: var(--r2);
+  box-shadow: var(--shadow); padding: 8px 10px; font-size: var(--t-xs); min-width: 120px;
+  transition: opacity var(--dur-fast); }
+.chart-tip .tt-head { font-weight: 700; color: var(--text); margin-bottom: 4px; white-space: nowrap; }
+.chart-tip .tt-rows { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; }
+.chart-tip .tk { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); }
+.chart-tip .tk i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+.chart-tip b { color: var(--text); font-variant-numeric: tabular-nums; }
+
+/* legend */
+.chart-legend { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s3);
+  font-size: var(--t-sm); color: var(--text-2); }
+.chart-legend .lg-key { display: inline-flex; align-items: center; gap: 7px; }
+.chart-legend .lg-key i { width: 14px; height: 4px; border-radius: 2px; display: inline-block; }
+.chart-legend .lg-key.dashed i { background: none !important;
+  border-top: 3px dashed var(--c, var(--text-3)); height: 0; }
+
+/* bar chart */
+.barchart .bar { transition: opacity var(--dur-fast); }
+.barchart .bar:hover { opacity: .8; }
+.barchart .avg-line { stroke: var(--text-2); stroke-width: 1.5; stroke-dasharray: 5 4; opacity: .8; }
+
+/* donut */
+.chart-donut { display: flex; align-items: center; gap: var(--s5); flex-wrap: wrap; }
+.chart-donut .donut { flex: none; }
+.donut .donut-seg { transition: opacity var(--dur-fast); cursor: default; }
+.donut .donut-seg:hover { opacity: .82; }
+.donut .donut-empty { stroke: var(--track); }
+.donut .donut-c-top { fill: var(--text); font-size: 34px; font-weight: 800; letter-spacing: -.02em; }
+.donut .donut-c-bot { fill: var(--text-3); font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.donut-legend { display: flex; flex-direction: column; gap: 7px; min-width: 130px; flex: 1; }
+.dl-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 9px; font-size: var(--t-sm); }
+.dl-sw { width: 12px; height: 12px; border-radius: 3px; }
+.dl-name { color: var(--text-2); }
+.dl-val { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* horizontal bars */
+.hbars { display: flex; flex-direction: column; gap: var(--s4); }
+.hbar-row { display: flex; flex-direction: column; gap: 5px; }
+.hbar-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); }
+.hbar-name { font-weight: 600; font-size: var(--t-sm); color: var(--text); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap; }
+.hbar-val { font-weight: 700; font-size: var(--t-sm); color: var(--text-2); font-variant-numeric: tabular-nums; flex: none; }
+.hbar-track { height: 10px; border-radius: 6px; background: var(--track); overflow: hidden; }
+.hbar-fill { display: block; height: 100%; border-radius: 6px; background: var(--accent);
+  transition: width var(--dur-slow) var(--ease); }
+.hbar-sub { font-size: var(--t-xs); color: var(--text-3); }
+
+.chart-empty { display: flex; align-items: center; justify-content: center; min-height: 140px;
+  color: var(--text-3); font-size: var(--t-sm); font-style: italic; }
+
+/* entrance (suppressed when motion off / reduced — handled globally) */
+.ins-card, .ins-readout, .ins-kpis .kpi { animation: revealUp .5s var(--ease-out) both; }
