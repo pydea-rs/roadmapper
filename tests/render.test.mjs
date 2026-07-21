@@ -55,6 +55,16 @@ t.ok(view.querySelector(".day-ring.orig"), "the Original ring renders on reached
 t.ok(view.querySelector(".day-ring.ontime"), "the On-time ring renders on reached days");
 t.ok(view.querySelector(".ring-cell .ring-cap"), "each ring carries a caption");
 
+t.group("a week straddling a month boundary renders its header/figures only once");
+render.renderRoadmap(reg.getRoadmap("interp-go"), view);   // interp-go has weeks crossing Jul→Aug, Sep→Oct
+const totalWeekGroups = view.querySelectorAll(".week-group").length;
+const contGroups = view.querySelectorAll(".week-group.cont").length;
+t.ok(contGroups > 0, "continuation slices exist (some weeks span two calendar months)");
+t.eq(view.querySelectorAll(".week-dual").length, totalWeekGroups - contGroups,
+  "the figures block renders exactly once per week, never duplicated on a continuation slice");
+t.eq(view.querySelectorAll(".week-group.cont .week-dual, .week-group.cont .wk-milestone").length, 0,
+  "continuation slices carry no percentages or milestone chip");
+
 t.group("Today view + the 'Your effort' panel");
 render.renderToday(view);
 t.ok(view.querySelector(".today-view"), "today view rendered");

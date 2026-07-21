@@ -2317,10 +2317,12 @@ registerRoadmap({
     { id: "w29.m3", week: "w29", title: "🎓 Extension II complete — data-structure & runtime internals",
       rule: { type: "tasks", require: ["d78.t1", "d80.t1", "d82.t1", "d84.t1", "d88.t1"] } },
     // ---- Extension III (compilers & interpreters) milestones ----
+    // Anchored to w31 because its last required task (the tree-walker, d93) lives
+    // in w31 — the deadline/at-risk math keys off the milestone's week end.
     { id: "w31.m4", week: "w31", title: "Extension III — the front end: maps, lexing, parsing & real interpreters",
-      rule: { type: "tasks", require: ["d89.t1", "d90.t1", "d91.t1"] } },
+      rule: { type: "tasks", require: ["d89.t1", "d90.t1", "d91.t1", "d93.t1"] } },
     { id: "w32.m4", week: "w32", title: "🎓 Extension III complete — how compilers & interpreters really work",
-      rule: { type: "tasks", require: ["d93.t1", "d95.t1", "d97.t1"] } },
+      rule: { type: "tasks", require: ["d95.t1", "d97.t1"] } },
   ],
 
   features: [

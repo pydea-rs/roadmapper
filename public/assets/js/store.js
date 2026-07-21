@@ -13,6 +13,8 @@
 // Item ids:  "d03.t2" (task) · "move:d03.t2" (move) · "soft:d03.s1" · "flag:..." · "note:<ulid>"
 // Absence is expressed by value:null in a change, which the server turns into a row delete.
 
+import { clone } from "./util.js";
+
 const SEP = "\x01";                   // must match api.php KEY_SEP ("\x01")
 const listeners = new Set();          // (slug, itemId) => void  — for re-render
 let sink = null;                      // (slug, change) => void  — for DB write
@@ -55,8 +57,14 @@ export const doneAt = (slug, taskId) => {
   const c = getCell(slug, `done_at:${taskId}`); return c ? c.value : null;
 };
 export function setTask(slug, taskId, done) {
+  const was = isDone(slug, taskId);
   setCell(slug, taskId, "task", done ? "true" : null);
-  setCell(slug, `done_at:${taskId}`, "meta", done ? new Date().toISOString() : null, { silent: false });
+  // Stamp done_at only on the false→true transition. An idempotent re-tick (e.g.
+  // ticking a parent whose sub-tasks are already done, or a re-render) must NOT
+  // overwrite an existing completion time — doing so would push done_at to "now"
+  // and silently flip an already on-time leaf to late in the on-time metric.
+  if (done) { if (!was) setCell(slug, `done_at:${taskId}`, "meta", new Date().toISOString()); }
+  else setCell(slug, `done_at:${taskId}`, "meta", null);
 }
 
 /** Move: value is the destination day id; null = back to origin (row deleted). */
@@ -130,14 +138,15 @@ export function toFlatMap(onlySlug = null) {
   return out;
 }
 
-/** Per-roadmap export payload (portable JSON). */
+/** Per-roadmap export payload (portable JSON). Clones so a consumer that mutates
+ *  the payload never reaches into the live in-memory journey. */
 export function exportRoadmap(slug) {
   return { format: "roadmaps.journey", version: 1, scope: "roadmap", slug,
-    exportedAt: new Date().toISOString(), items: state[slug] || {} };
+    exportedAt: new Date().toISOString(), items: clone(state[slug] || {}) };
 }
 export function exportAll() {
   return { format: "roadmaps.journey", version: 1, scope: "all",
-    exportedAt: new Date().toISOString(), state };
+    exportedAt: new Date().toISOString(), state: clone(state) };
 }
 
 /** Replace one roadmap's in-memory state (import). Persistence is done by the

@@ -346,6 +346,9 @@ switch ($action) {
     }
 
     case "logout":
+        // POST-only like every other state-changing action, so a cross-site
+        // top-level GET (SameSite=Lax still sends the cookie) can't force a logout.
+        if ($method !== "POST") fail(405, "logout is POST-only");
         session_boot(false, $SESSION_LIFETIME);
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION = [];
@@ -558,11 +561,11 @@ function http_fetch(string $url, ?array &$diag = null, array $headers = [], int 
         ], $headers),
     ]);
     // Pin to HTTP(S) so neither the URL nor a redirect can reach file://, gopher://, etc.
-    if (defined("CURLPROTO_HTTP") && defined("CURLPROTO_HTTPS")) {
-        $web = CURLPROTO_HTTP | CURLPROTO_HTTPS;
-        curl_setopt($ch, CURLOPT_PROTOCOLS, $web);
-        curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $web);
-    }
+    // Unconditional: fall back to the well-known numeric flags (HTTP=1, HTTPS=2) on
+    // the rare build where the constants aren't defined, so the pin is never skipped.
+    $web = (defined("CURLPROTO_HTTP") ? CURLPROTO_HTTP : 1) | (defined("CURLPROTO_HTTPS") ? CURLPROTO_HTTPS : 2);
+    curl_setopt($ch, CURLOPT_PROTOCOLS, $web);
+    curl_setopt($ch, CURLOPT_REDIR_PROTOCOLS, $web);
     $body = curl_exec($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err  = curl_error($ch);

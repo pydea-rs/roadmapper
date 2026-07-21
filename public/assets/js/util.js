@@ -104,7 +104,10 @@ export function fmtDateHuman(s) {
 
 /* ---------- numbers ---------- */
 export const clamp = (n, lo, hi) => Math.max(lo, Math.min(hi, n));
-export const pct = (num, den) => den > 0 ? Math.round((num / den) * 100) : 0;
+// Never report 100% unless the scope is genuinely complete (num >= den): plain
+// rounding would turn 199/200 (99.5%) into "100%", making an incomplete day/ring
+// read as done and disagree with the count-based `complete`/`met` flags.
+export const pct = (num, den) => den > 0 ? (num >= den ? 100 : Math.min(Math.round((num / den) * 100), 99)) : 0;
 export const pct1 = (num, den) => den > 0 ? Math.round((num / den) * 1000) / 10 : 0;
 
 export function fmtMins(m) {

@@ -122,11 +122,16 @@ export function pickResult(results, rng = Math.random) {
 /** Build the clickable result card. Titles/urls come from the scrape → set via
  *  text/href only (never innerHTML), so a hostile title can't inject markup. */
 export function resultCard(r, { topic, type = "video", isSearch = false } = {}) {
+  // Titles/urls come from an external scrape. Text/href-only already blocks markup
+  // injection, but href must also reject dangerous schemes (javascript:/data:) —
+  // only http(s) links are ever legitimate here. Same guard for the thumbnail src.
+  const isHttp = u => /^https?:\/\//i.test(u || "");
+  const href = isHttp(r.url) ? r.url : null;
   const a = el("a.finder-result" + (type === "article" ? ".article" : ".video"),
-    { href: r.url, target: "_blank", rel: "noopener noreferrer" });
+    { href: href || "#", target: "_blank", rel: "noopener noreferrer" });
 
   const thumb = el("div.fr-thumb");
-  if (r.thumb) {
+  if (r.thumb && isHttp(r.thumb)) {
     const img = el("img.fr-img", { src: r.thumb, alt: "", loading: "lazy" });
     img.addEventListener("error", () => { thumb.classList.add("noimg"); img.remove(); });
     thumb.append(img);

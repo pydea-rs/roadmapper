@@ -774,6 +774,7 @@ function hero(rm, S) {
 function dualBlock(cap, figure, bonus, kind) {
   // kind: "actual" | "orig" | "ontime" — controls the bar colour + caption hint.
   kind = kind === true ? "orig" : (kind || "actual");
+  figure = figure || { pct: 0, done: 0, total: 0 };   // never throw / print "undefined%"
   const hint = { actual: "Current progress after any moves.",
     orig: "Tasks done regardless of when.",
     ontime: "Tasks finished on or before their original date — how well you kept to the plan." }[kind] || "";
@@ -1135,22 +1136,40 @@ function timeline(rm, S, open) {
     wm.get(d.week).push(d);
   }
 
+  // A calendar week can straddle a month boundary (its active days fall in two
+  // months), so it appears in two month buckets. Render its FULL header (figures +
+  // milestone chip) only the first time; later buckets get a muted continuation
+  // label — otherwise the same week's percentages/milestone render twice.
+  const seenWeeks = new Set();
   for (const [monthKey, weeksMap] of byMonth) {
     const mg = el("div.month-group");
     if (showMonths) mg.append(el("div.month-head", { text: monthLabel(rm.days.find(d => d.month === monthKey).date) }));
     for (const [weekId, days] of weeksMap) {
-      mg.append(weekGroup(rm, S, weekId, days, open));
+      const cont = seenWeeks.has(weekId);
+      seenWeeks.add(weekId);
+      mg.append(weekGroup(rm, S, weekId, days, open, cont));
     }
     wrap.append(mg);
   }
   return wrap;
 }
 
-function weekGroup(rm, S, weekId, days, open) {
-  const wg = el("div.week-group");
+function weekGroup(rm, S, weekId, days, open, cont = false) {
+  const wg = el("div.week-group" + (cont ? ".cont" : ""));
   const week = rm.weeksById.get(weekId);
   const f = S.weeks[weekId] || { actual: { pct: 0, done: 0, total: 0 }, original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0 } };
   const head = el("div.week-head");
+  // Continuation slice (week split across months): just a muted label, no figures
+  // or milestone chip — those already rendered under the earlier month.
+  if (cont) {
+    head.append(el("span.wk", { html: `${escapeHtml((week && week.title) || weekId)} <small>cont.</small>` }));
+    wg.append(head);
+    for (const d of days) {
+      wg.append(dayCard(rm, S, d, open));
+      for (const il of interludesAfter(rm.slug, d.id)) wg.append(interludeCard(rm, il));
+    }
+    return wg;
+  }
   head.append(el("span.wk", { html: `${escapeHtml((week && week.title) || weekId)}` }));
   const dual = el("div.week-dual");
   dual.append(el("span.wd-actual", { html: `actual <b>${f.actual.pct}%</b>`, title: "Current progress after any moves" }));

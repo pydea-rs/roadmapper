@@ -46,6 +46,11 @@ t.eq(pct(1, 3), 33, "1/3 rounds to 33");
 t.eq(pct(2, 3), 67, "2/3 rounds to 67");
 t.eq(pct(1, 9), 11, "1/9 rounds to 11");
 t.eq(pct(9, 9), 100, "full");
+// 100% must mean genuinely complete — near-full ratios never round UP to 100.
+t.eq(pct(199, 200), 99, "199/200 (99.5%) caps at 99, not rounded to 100");
+t.eq(pct(999, 1000), 99, "999/1000 caps at 99");
+t.eq(pct(200, 200), 100, "exactly full is 100");
+t.eq(pct(5, 5), 100, "small exactly-full is 100");
 t.eq(pct1(1, 3), 33.3, "pct1 keeps one decimal");
 t.eq(pct1(2, 3), 66.7, "pct1 rounds one decimal");
 

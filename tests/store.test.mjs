@@ -19,6 +19,14 @@ store.setTask(S, "d01.t1", false);
 t.eq(store.isDone(S, "d01.t1"), false, "unticked → not done");
 t.eq(store.doneAt(S, "d01.t1"), null, "unticked → done_at cleared (no orphan stamp)");
 
+t.group("an idempotent re-tick preserves the original done_at (on-time stays true)");
+store.resetAll();
+store.setTask(S, "d05.t1", true);
+store.setCell(S, "done_at:d05.t1", "meta", "2020-01-01T00:00:00.000Z");  // pin an earlier completion
+store.setTask(S, "d05.t1", true);   // re-tick (e.g. ticking a parent whose sub is already done)
+t.eq(store.doneAt(S, "d05.t1"), "2020-01-01T00:00:00.000Z",
+  "re-ticking an already-done task does NOT bump done_at to now");
+
 t.group("moves: destination id, back-to-origin clears");
 t.eq(store.getMove(S, "d01.t2"), null, "absent move → null (on origin)");
 store.setMove(S, "d01.t2", "d05");

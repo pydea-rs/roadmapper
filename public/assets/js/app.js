@@ -179,7 +179,7 @@ function scrollToCurrentDay(rm) {
   const node = target && $(`.day[data-day="${cssEsc(target.id)}"]`);
   // Center the day in the viewport (a tall card that can't fit just sits with its
   // top in view) so it lands with breathing room above, not flush at the edge.
-  if (node) { node.classList.add("open"); node.scrollIntoView({ block: "center" }); }
+  if (node) { openCard(node); node.scrollIntoView({ block: "center" }); }
 }
 function scrollToSub(rm, sub) {
   let targetDay = null;
@@ -187,10 +187,17 @@ function scrollToSub(rm, sub) {
   else { const wk = rm.weeksById.get(sub); if (wk) targetDay = rm.days.find(d => d.week === sub); }
   if (targetDay) {
     const node = $(`.day[data-day="${cssEsc(targetDay.id)}"]`);
-    if (node) { node.classList.add("open"); node.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    if (node) { openCard(node); node.scrollIntoView({ behavior: "smooth", block: "start" }); }
   }
 }
-const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : s;
+/** Open a day card the way the user would: trigger its own toggle so aria-expanded
+ *  and the persisted open-set stay in sync (adding `.open` by hand desyncs both). */
+function openCard(node) {
+  if (node.classList.contains("open")) return;
+  const head = node.querySelector(".day-head");
+  if (head) head.click(); else node.classList.add("open");
+}
+const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/[^\w-]/g, "\\$&");
 function navigate(slug) { location.hash = `#/${slug}`; }
 
 // Sidebar click: navigating to a different roadmap opens its quick-jumps; clicking

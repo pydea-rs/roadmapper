@@ -299,7 +299,9 @@ function project(rm, slug, remainingMins, done, total, investedMins) {
     remainingMins, perWeekMins: Math.round(perWeekMins),
     expectedFinish, optimisticFinish,
     track,
-    done: remainingMins === 0 && total > 0,
+    // Completion is a count fact, not a time fact: a leaf may legitimately carry
+    // est:0, so "no minutes left" does not mean "all tasks done". Gate on counts.
+    done: total > 0 && done === total,
   };
 }
 function projectSecondary(rm, remainingMins) {
@@ -323,9 +325,13 @@ function computeStreak(rm, slug, dayO) {
   const past = rm.days.filter(d => !d.off && d.date <= todayStr() && (dayO.get(d.id)?.total || 0) > 0)
     .sort((a, b) => a.date < b.date ? 1 : -1);
   let streak = 0;
+  const today = todayStr();
   for (const d of past) {
     const o = dayO.get(d.id);
     if (o && o.done === o.total && o.total > 0) streak++;
+    // Today is usually still in progress; an unfinished *today* shouldn't wipe a
+    // real run of completed past days — skip it and keep counting backwards.
+    else if (d.date === today) continue;
     else break;
   }
   return streak;
