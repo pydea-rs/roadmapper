@@ -87,6 +87,10 @@ t.ok(!!future, "roadmap has a future-scheduled task to pull forward");
 doneOnDate(rm.slug, future.id, TODAY);
 const bu2 = insights.burnup(insights.collectLeaves(rm.slug), TODAY);
 t.ok(bu2.actualNow > bu2.originalNow + 1e-9, "early completion lifts Actual above Original at today");
+// On-time is attributed to the ORIGINAL date (like stats.js), so finishing a
+// future task early must NOT push On-time above Original — they share one axis.
+t.ok(bu2.ontimeNow <= bu2.originalNow + 1e-9, "On-time never exceeds Original at today");
+t.ok(bu2.ontime.every((p, i) => p.y <= bu2.original[i].y + 1e-9), "On-time ⊆ Original at every day");
 store.setTask(rm.slug, future.id, false);   // undo so later assertions see the original 6 done
 
 t.group("Total scope aggregates every roadmap's required work");
@@ -107,7 +111,7 @@ t.eq(sel.querySelector("option").value, "__all__", "first option is Total");
 t.ok(view.querySelector(".ins-readout"), "pace readout renders");
 t.ok(view.querySelectorAll(".ins-kpis .kpi").length >= 5, "KPI strip renders");
 t.eq(view.querySelectorAll("svg.linechart .line").length, 4, "burn-up renders 4 lines (Actual/Original/On-time/Planned)");
-t.eq(view.querySelector("svg.linechart").style.fontSize, "15px", "wide burn-up uses a small axis font");
+t.eq(view.querySelector("svg.linechart").style.fontSize, "12px", "wide burn-up uses a small axis font");
 t.eq(view.querySelector("svg.barchart").style.fontSize, "26px", "grid bar chart uses a larger axis font");
 t.ok(view.querySelector(".ins-highlights .ins-pill"), "highlights pills render");
 t.eq(view.querySelectorAll(".seg .seg-btn").length, 3, "daily-effort range toggle has 3 options");

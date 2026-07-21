@@ -178,6 +178,16 @@ function route() {
   closeMobileSidebar();
 }
 function scrollMainTop() { const m = document.getElementById("main"); if (m) m.scrollTop = 0; }
+
+// Repaint whatever view is active after a settings / import / reset action. A
+// roadmap updates in place via rerender() (no entrance cascade, stable scroll);
+// the global Today/Insights views keep no persistent `cur` in render.js, so
+// rerender() there would wrongly stamp the LAST roadmap into #view — re-run the
+// router instead to repaint the correct global view.
+function repaintView() {
+  if (activeSlug) { rerender(); updateSidebar(); }
+  else route();
+}
 /* Land on the day the user is currently on: today's day, else the nearest
  * upcoming day, else (roadmap already finished) its last day. Falls back to the
  * top when the card isn't found. */
@@ -284,8 +294,8 @@ function drawerHooks() {
     resetAll: resetAllIO,
     resetRoadmap: resetRoadmapIO,
     activeTitle: () => { const rm = getRoadmap(activeSlug); return rm ? rm.title : null; },
-    repaint: () => { rerender(); updateSidebar(); },
-    syncNow: async () => { await sync.flush(); await sync.loadAndReconcile(); rerender(); updateSidebar(); toast("Synced", { type: "ok" }); },
+    repaint: () => repaintView(),
+    syncNow: async () => { await sync.flush(); await sync.loadAndReconcile(); repaintView(); toast("Synced", { type: "ok" }); },
     lock: lockNowIO,
   };
 }
@@ -300,7 +310,7 @@ async function resetRoadmapIO() {
   store.resetRoadmap(activeSlug);
   if (ids.length) await sync.saveRoadmapFull(activeSlug, ids.map(id => ({ id, value: null })),
     { stashFirst: true, reason: "reset-roadmap" });
-  closeDrawer(); rerender(); updateSidebar(); toast("Roadmap reset", { type: "ok" });
+  closeDrawer(); repaintView(); toast("Roadmap reset", { type: "ok" });
 }
 
 function exportRoadmapIO(slug) {
@@ -331,7 +341,7 @@ async function importRoadmapIO(slug) {
   for (const id of before) if (!(id in after)) changes.push({ id, value: null });
   for (const [id, cell] of Object.entries(after)) changes.push({ id, kind: cell.kind, value: cell.value });
   await sync.saveRoadmapFull(slug, changes, { stashFirst: true, reason: "roadmap-import" });
-  rerender(); updateSidebar(); toast("Imported", { type: "ok" });
+  repaintView(); toast("Imported", { type: "ok" });
 }
 
 async function importAllIO() {
@@ -345,7 +355,7 @@ async function importAllIO() {
   if (!ok) return;
   store.importAll(full);
   await sync.saveFull(store.toFlatMap(), { stashFirst: true, reason: "journey-import" });
-  closeDrawer(); rerender(); updateSidebar(); toast("Journey imported", { type: "ok" });
+  closeDrawer(); repaintView(); toast("Journey imported", { type: "ok" });
 }
 
 async function resetAllIO() {
@@ -359,7 +369,7 @@ async function resetAllIO() {
   store.resetAll();
   for (const [slug, ids] of Object.entries(deletes))
     if (ids.length) await sync.saveRoadmapFull(slug, ids.map(id => ({ id, value: null })), { stashFirst: true, reason: "reset-all" });
-  closeDrawer(); rerender(); updateSidebar(); toast("Everything reset", { type: "ok" });
+  closeDrawer(); repaintView(); toast("Everything reset", { type: "ok" });
 }
 
 async function lockNowIO() {

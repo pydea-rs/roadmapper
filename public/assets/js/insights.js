@@ -15,7 +15,7 @@ import { computeAll } from "./stats.js";
 import { lineChart, barChart, donut, hbars } from "./charts.js";
 import {
   el, todayStr, parseDate, addDays, daysBetween, fmtDate, fmtMins,
-  fmtDateHuman, MONTHS, clamp,
+  fmtDateHuman, MONTHS, clamp, pct,
 } from "./util.js";
 
 const ALL = "__all__";
@@ -72,7 +72,13 @@ export function burnup(leaves, today) {
     if (!last || l.origDate > last) last = l.origDate;
     inc(plannedBy, l.origDate);                                   // scheduled by its original date
     if (l.done) inc(origDoneBy, l.origDate);                      // DONE, attributed to its original date
-    if (l.doneDate) { inc(doneBy, l.doneDate); if (l.doneDate <= l.origDate) inc(ontimeBy, l.doneDate); }
+    if (l.doneDate) {
+      inc(doneBy, l.doneDate);                                    // Actual: the day you actually ticked it
+      // On-time attributed to its ORIGINAL date (matches stats.js's canonical
+      // origin-scoped on-time), so On-time ⊆ Original on the same axis — working
+      // ahead can never push the gold line above the grey one.
+      if (l.doneDate <= l.origDate) inc(ontimeBy, l.origDate);
+    }
   }
   if (today > last) last = today;
   if (today < first) first = today;
@@ -86,7 +92,7 @@ export function burnup(leaves, today) {
   //   Planned  — the schedule ramp (everything scheduled by its original date).
   //   Original — of work scheduled by day d, how much is done (progress vs plan).
   //   Actual   — completion by the day you actually ticked it (done_at).
-  //   On-time  — completion done on/before its original date.
+  //   On-time  — done on/before its original date, plotted at that ORIGINAL date.
   // Original/Actual/On-time stop at today; Planned spans the whole schedule.
   const planned = [], original = [], actual = [], ontime = [];
   let cp = 0, cod = 0, ca = 0, co = 0;
@@ -133,8 +139,10 @@ export function summarize(leaves, today) {
   }
   return {
     total, done, ontime, lateDone, overdue, pending, invested,
-    pct: total ? Math.round((done / total) * 100) : 0,
-    puncRate: done ? Math.round((ontime / done) * 100) : 0,
+    // Shared pct(): never rounds an incomplete scope up to 100% (199/200 → 99%),
+    // keeping the KPI/donut/readout in step with the count-based rings elsewhere.
+    pct: pct(done, total),
+    puncRate: pct(ontime, done),
   };
 }
 
@@ -399,7 +407,7 @@ function burnupChart(bu, scope) {
   };
   return lineChart({
     xMax: bu.N, yMax: 100, todayX: bu.todayIdx, xTicks: bu.xTicks,
-    xLabelFor, height: 330, axisFont: 15,
+    xLabelFor, height: 330, axisFont: 12,
     series: [
       { name: "Actual", color: "var(--accent)", points: bu.actual, fill: true, w: 3.2 },
       { name: "Original", color: "var(--text-2)", points: bu.original, w: 2.4 },
@@ -461,8 +469,9 @@ function dailyEffortChart(effort, today, days = 45) {
 function punctualityChart(rl, today, maxWeeks = 20) {
   const byWeek = new Map();      // monday → {due, ontime}
   for (const l of rl) {
+    if (l.origDate > today) continue;   // not due yet — can't count for/against on-time,
+                                        // so it must not deflate the current week's rate
     const wk = mondayOf(l.origDate);
-    if (wk > today) continue;    // week not started
     let e = byWeek.get(wk); if (!e) { e = { due: 0, ontime: 0 }; byWeek.set(wk, e); }
     e.due++; if (l.done && l.doneDate && l.doneDate <= l.origDate) e.ontime++;
   }
@@ -470,7 +479,7 @@ function punctualityChart(rl, today, maxWeeks = 20) {
   if (weeks.length > maxWeeks) weeks = weeks.slice(weeks.length - maxWeeks);
   if (!weeks.length) return emptyChart("No due weeks yet.");
   const bars = weeks.map(([wk, e], i) => {
-    const rate = e.due ? Math.round((e.ontime / e.due) * 100) : 0;
+    const rate = pct(e.ontime, e.due);
     const dt = parseDate(wk);
     return {
       label: (i === 0 || dt.getDate() <= 7) ? `${MONTHS[dt.getMonth()].slice(0, 3)} ${dt.getDate()}` : "",

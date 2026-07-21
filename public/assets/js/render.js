@@ -37,6 +37,7 @@ let msResizeHandler = null;            // the milestone slideshow's live resize 
 // tick rerenders (which rebuild the DOM) but resets on a full reload.
 const expandedTasks = new Set();
 const taskKey = (slug, id) => `${slug}\x00${id}`;
+const msIndex = new Map();              // slug → active milestone-carousel index; survives tick rerenders
 
 /** Tick (or clear) every leaf of a parent task at once. */
 function setAllSubs(slug, task, done) {
@@ -914,8 +915,10 @@ function msSlideshow(rm, S) {
   box.append(vp);
 
   const n = cards.length;
-  let idx = S.milestones.findIndex(m => !m.met);
-  if (idx < 0) idx = Math.max(0, n - 1);          // all met → rest on the last
+  // Restore the position the user last navigated to (survives tick rerenders);
+  // otherwise land on the first not-yet-met milestone.
+  let idx = msIndex.has(rm.slug) ? msIndex.get(rm.slug) : S.milestones.findIndex(m => !m.met);
+  if (idx < 0 || idx >= n) idx = Math.max(0, n - 1);   // all met / stale → rest on the last
   let animate = false;
 
   const geom = () => {
@@ -934,7 +937,7 @@ function msSlideshow(rm, S) {
     $$(".ms-dot", dots).forEach((d, i) => d.setAttribute("aria-current", i === idx ? "true" : "false"));
     animate = true;                                 // first paint snaps, later moves glide
   };
-  const go = i => { idx = (i % n + n) % n; update(); };   // wrap-around = "infinite"
+  const go = i => { idx = (i % n + n) % n; msIndex.set(rm.slug, idx); update(); };   // wrap-around = "infinite"
 
   // controls
   const nav = el("div.ms-show-nav");
@@ -1177,7 +1180,6 @@ function weekGroup(rm, S, weekId, days, open, cont = false) {
   dual.append(el("span.wd-ontime", { html: `on-time <b>${(f.ontime || {}).pct || 0}%</b>`, title: "Done on or before the original date" }));
   head.append(dual);
   // week milestone chip
-  const ms = S.milestones.find(m => m.week === weekId && (m.rule || {}));
   const wm = S.milestones.filter(m => m.week === weekId);
   if (wm.length) {
     const worst = wm.some(m => m.status === "missed") ? "missed"
@@ -1719,6 +1721,7 @@ function taskRecall(rm, task) {
 }
 
 function catChip(cat, rm) {
+  cat = cat || "alt";                                   // never render a literal "undefined" chip
   const colorVar = `var(--cat-${cat}, var(--cat-alt))`;
   return el("span.chip", { text: cat, style: `--chip:${colorVar}` });
 }
