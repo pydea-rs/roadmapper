@@ -260,7 +260,7 @@ t.ok(!store.isSeen("raylib", ilId), "ticking again clears 'seen'");
 store.resetRoadmap("raylib");
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-18) is OVERDUE. A
+// "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-07-22) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
