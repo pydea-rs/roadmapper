@@ -56,33 +56,33 @@ registerRoadmap({
   ],
 
   // Re-paced 2026-07-20 to a denser 3 days/week (from the old ~2/week front) so the
-  // simple early material moves faster; the arc now finishes ~4 weeks sooner (Nov 25).
+  // simple early material moves faster; the arc now finishes ~4 weeks sooner (Nov 27).
   weeks: [
-    { id: "w1",  title: "Week 1 — First pixels, noise & shapes",             start: "2026-07-22" },
-    { id: "w2",  title: "Week 2 — Vectors & motion: the mover",              start: "2026-07-29" },
-    { id: "w3",  title: "Week 3 — Finish drawing; Newton's laws",            start: "2026-08-05" },
-    { id: "w4",  title: "Week 4 — Input, forces & the update loop",          start: "2026-08-12" },
-    { id: "w5",  title: "Week 5 — The N-body kernel & collisions",           start: "2026-08-19" },
-    { id: "w6",  title: "Week 6 — Oscillation, tilemaps & the 2D camera",    start: "2026-08-26" },
-    { id: "w7",  title: "Week 7 — Waves, springs & an OOP build",            start: "2026-09-02" },
-    { id: "w8",  title: "Week 8 — First projects & the particle system",     start: "2026-09-09" },
-    { id: "w9",  title: "Week 9 — The simulation begins 🌌 & the burst",     start: "2026-09-16" },
-    { id: "w10", title: "Week 10 — GUI, a port-along & gravity switches on",  start: "2026-09-23" },
-    { id: "w11", title: "Week 11 — Audio capstone, integration & thousands",  start: "2026-09-30" },
-    { id: "w12", title: "Week 12 — Thousands of particles & the glow",       start: "2026-10-07" },
-    { id: "w13", title: "Week 13 — Optimization, Barnes–Hut & into 3D",      start: "2026-10-14" },
-    { id: "w14", title: "Week 14 — The third dimension & 3D N-body",         start: "2026-10-21" },
-    { id: "w15", title: "Week 15 — Physics consolidated; shaders begin",     start: "2026-10-28" },
-    { id: "w16", title: "Week 16 — The glowing-particle shader",             start: "2026-11-04" },
-    { id: "w17", title: "Week 17 — Noise, fBm & the nebula",                 start: "2026-11-11" },
-    { id: "w18", title: "Week 18 — Bloom & the finishing physics",           start: "2026-11-18" },
-    { id: "w19", title: "Week 19 — Polish & the capstone 🎓",                start: "2026-11-25" },
+    { id: "w1",  title: "Week 1 — First pixels, noise & shapes",             start: "2026-07-24" },
+    { id: "w2",  title: "Week 2 — Vectors & motion: the mover",              start: "2026-07-31" },
+    { id: "w3",  title: "Week 3 — Finish drawing; Newton's laws",            start: "2026-08-07" },
+    { id: "w4",  title: "Week 4 — Input, forces & the update loop",          start: "2026-08-14" },
+    { id: "w5",  title: "Week 5 — The N-body kernel & collisions",           start: "2026-08-21" },
+    { id: "w6",  title: "Week 6 — Oscillation, tilemaps & the 2D camera",    start: "2026-08-28" },
+    { id: "w7",  title: "Week 7 — Waves, springs & an OOP build",            start: "2026-09-04" },
+    { id: "w8",  title: "Week 8 — First projects & the particle system",     start: "2026-09-11" },
+    { id: "w9",  title: "Week 9 — The simulation begins 🌌 & the burst",     start: "2026-09-18" },
+    { id: "w10", title: "Week 10 — GUI, a port-along & gravity switches on",  start: "2026-09-25" },
+    { id: "w11", title: "Week 11 — Audio capstone, integration & thousands",  start: "2026-10-02" },
+    { id: "w12", title: "Week 12 — Thousands of particles & the glow",       start: "2026-10-09" },
+    { id: "w13", title: "Week 13 — Optimization, Barnes–Hut & into 3D",      start: "2026-10-16" },
+    { id: "w14", title: "Week 14 — The third dimension & 3D N-body",         start: "2026-10-23" },
+    { id: "w15", title: "Week 15 — Physics consolidated; shaders begin",     start: "2026-10-30" },
+    { id: "w16", title: "Week 16 — The glowing-particle shader",             start: "2026-11-06" },
+    { id: "w17", title: "Week 17 — Noise, fBm & the nebula",                 start: "2026-11-13" },
+    { id: "w18", title: "Week 18 — Bloom & the finishing physics",           start: "2026-11-20" },
+    { id: "w19", title: "Week 19 — Polish & the capstone 🎓",                start: "2026-11-27" },
   ],
 
   days: [
     /* ==================== WEEK 1 ==================== */
     {
-      id: "d01", date: "2026-07-22", week: "w1", title: "First pixels: install raylib & open a window",
+      id: "d01", date: "2026-07-24", week: "w1", title: "First pixels: install raylib & open a window",
       theme: "raylib course · thread part 1 — the whole library is one draw loop.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -109,7 +109,7 @@ registerRoadmap({
 
     /* ==================== WEEK 2 ==================== */
     {
-      id: "d02", date: "2026-07-24", week: "w1", title: "Randomness & Perlin noise — how to seed a universe",
+      id: "d02", date: "2026-07-26", week: "w1", title: "Randomness & Perlin noise — how to seed a universe",
       theme: "Nature of Code · thread part 1 — believable randomness isn't flat.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 45,
@@ -127,7 +127,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d03", date: "2026-07-26", week: "w1", title: "Shapes I: the coordinate system, rectangles & colour",
+      id: "d03", date: "2026-07-28", week: "w1", title: "Shapes I: the coordinate system, rectangles & colour",
       theme: "raylib course · thread part 2 — and the y-axis trap that will bite every ported formula.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 55,
@@ -147,7 +147,7 @@ registerRoadmap({
 
     /* ==================== WEEK 3 ==================== */
     {
-      id: "d04", date: "2026-07-29", week: "w2", title: "Vectors I: the substrate of everything that moves",
+      id: "d04", date: "2026-07-31", week: "w2", title: "Vectors I: the substrate of everything that moves",
       theme: "Nature of Code · thread part 2 — position, velocity, acceleration are all one type.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 45,
@@ -164,7 +164,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-07-31", week: "w2", title: "Shapes II: motion with sin & cos",
+      id: "d05", date: "2026-08-02", week: "w2", title: "Shapes II: motion with sin & cos",
       theme: "raylib course · thread part 3 — turning time into smooth movement.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -183,7 +183,7 @@ registerRoadmap({
 
     /* ==================== WEEK 4 ==================== */
     {
-      id: "d06", date: "2026-08-02", week: "w2", title: "Vectors II: velocity, acceleration & a mover",
+      id: "d06", date: "2026-08-04", week: "w2", title: "Vectors II: velocity, acceleration & a mover",
       theme: "Nature of Code · thread part 3 — the integration step that never changes.",
       tasks: [
         { id: "t1", obj: NOC, cat: "code", est: 50,
@@ -201,7 +201,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d07", date: "2026-08-07", week: "w3", title: "Orientation: the examples gallery & a 20-minute setup",
+      id: "d07", date: "2026-08-09", week: "w3", title: "Orientation: the examples gallery & a 20-minute setup",
       theme: "Examples · thread part 1 — your API dictionary is 140 runnable programs.",
       tasks: [
         { id: "t1", obj: EX, cat: "watch", est: 55,
@@ -223,7 +223,7 @@ registerRoadmap({
 
     /* ==================== WEEK 5 ==================== */
     {
-      id: "d08", date: "2026-08-09", week: "w3", title: "Shapes III: triangles, bezier curves & wrapping up drawing",
+      id: "d08", date: "2026-08-11", week: "w3", title: "Shapes III: triangles, bezier curves & wrapping up drawing",
       theme: "raylib course · thread part 4 — you now have every 2D primitive.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 50,
@@ -241,7 +241,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-08-11", week: "w3", title: "Forces I: Newton's laws & force accumulation",
+      id: "d09", date: "2026-08-13", week: "w3", title: "Forces I: Newton's laws & force accumulation",
       theme: "Nature of Code · thread part 4 — sum the forces, get one acceleration.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -261,7 +261,7 @@ registerRoadmap({
 
     /* ==================== WEEK 6 ==================== */
     {
-      id: "d10", date: "2026-08-14", week: "w4", title: "Input: keyboard & mouse",
+      id: "d10", date: "2026-08-16", week: "w4", title: "Input: keyboard & mouse",
       theme: "raylib course · thread part 5 — held vs pressed, the #1 input bug.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -279,7 +279,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d11", date: "2026-08-16", week: "w4", title: "Forces II: gravity, friction & drag",
+      id: "d11", date: "2026-08-18", week: "w4", title: "Forces II: gravity, friction & drag",
       theme: "Nature of Code · thread part 5 — a constant field is NOT attraction.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 55,
@@ -299,7 +299,7 @@ registerRoadmap({
 
     /* ==================== WEEK 7 ==================== */
     {
-      id: "d12", date: "2026-08-18", week: "w4", title: "The update loop & delta-time, done right",
+      id: "d12", date: "2026-08-20", week: "w4", title: "The update loop & delta-time, done right",
       theme: "raylib course · thread part 6 — split update from draw, scale by dt.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "code", est: 50,
@@ -317,7 +317,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d13", date: "2026-08-22", week: "w5", title: "Forces III: gravitational attraction — the N-body kernel ⚛️",
+      id: "d13", date: "2026-08-24", week: "w5", title: "Forces III: gravitational attraction — the N-body kernel ⚛️",
       theme: "Nature of Code · thread part 6 — this one formula IS the simulation engine.",
       tasks: [
         { id: "t1", obj: NOC, cat: "code", est: 55,
@@ -342,7 +342,7 @@ registerRoadmap({
 
     /* ==================== WEEK 8 ==================== */
     {
-      id: "d14", date: "2026-08-24", week: "w5", title: "Collision detection",
+      id: "d14", date: "2026-08-26", week: "w5", title: "Collision detection",
       theme: "raylib course · thread part 7 — cheap test first, precise test only if it passes.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -359,7 +359,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d15", date: "2026-08-26", week: "w6", title: "Port-along #1: Basics → Movement → Input (Clear Code)",
+      id: "d15", date: "2026-08-28", week: "w6", title: "Port-along #1: Basics → Movement → Input (Clear Code)",
       theme: "Examples · thread part 2 — the API is the same in Python and C++.",
       tasks: [
         { id: "t1", obj: EX, cat: "code", est: 55,
@@ -380,7 +380,7 @@ registerRoadmap({
 
     /* ==================== WEEK 9 ==================== */
     {
-      id: "d16", date: "2026-08-28", week: "w6", title: "Oscillation I: angles, trig & polar coordinates",
+      id: "d16", date: "2026-08-30", week: "w6", title: "Oscillation I: angles, trig & polar coordinates",
       theme: "Nature of Code · thread part 7 — the natural language of an explosion.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -398,7 +398,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-08-30", week: "w6", title: "Tilemaps & the 2D camera 🎮",
+      id: "d17", date: "2026-09-01", week: "w6", title: "Tilemaps & the 2D camera 🎮",
       theme: "raylib course · thread part 8 — Camera2D is a lens; ~half the basics owned.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "code", est: 50,
@@ -422,7 +422,7 @@ registerRoadmap({
 
     /* ==================== WEEK 10 ==================== */
     {
-      id: "d18", date: "2026-09-02", week: "w7", title: "Oscillation II: waves, pendulums & springs",
+      id: "d18", date: "2026-09-04", week: "w7", title: "Oscillation II: waves, pendulums & springs",
       theme: "Nature of Code · thread part 8 — restoring forces for soft structure.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -440,7 +440,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-09-04", week: "w7", title: "An OOP build: Conway's Game of Life (Nick, C++)",
+      id: "d19", date: "2026-09-06", week: "w7", title: "An OOP build: Conway's Game of Life (Nick, C++)",
       theme: "Examples · thread part 3 — stepping a whole field from state N to N+1.",
       tasks: [
         { id: "t1", obj: EX, cat: "code", est: 45,
@@ -460,7 +460,7 @@ registerRoadmap({
 
     /* ==================== WEEK 11 ==================== */
     {
-      id: "d20", date: "2026-09-06", week: "w7", title: "Projects I: a guided build (course tapering)",
+      id: "d20", date: "2026-09-08", week: "w7", title: "Projects I: a guided build (course tapering)",
       theme: "raylib course · thread part 9 — the shape every finished program shares.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -478,7 +478,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d21", date: "2026-09-09", week: "w8", title: "Particle systems I: one particle → a system",
+      id: "d21", date: "2026-09-11", week: "w8", title: "Particle systems I: one particle → a system",
       theme: "Nature of Code · thread part 9 — std::vector is the ArrayList, erase the dead.",
       tasks: [
         { id: "t1", obj: NOC, cat: "code", est: 55,
@@ -498,7 +498,7 @@ registerRoadmap({
 
     /* ==================== WEEK 12 ==================== */
     {
-      id: "d22", date: "2026-09-11", week: "w8", title: "Particle systems II: forces & repellers",
+      id: "d22", date: "2026-09-13", week: "w8", title: "Particle systems II: forces & repellers",
       theme: "Nature of Code · thread part 10 — one step from N-body already.",
       tasks: [
         { id: "t1", obj: NOC, cat: "code", est: 50,
@@ -516,7 +516,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d23", date: "2026-09-13", week: "w8", title: "Projects II: a second build + consolidation",
+      id: "d23", date: "2026-09-15", week: "w8", title: "Projects II: a second build + consolidation",
       theme: "raylib course · thread part 10 — the moment the patterns start repeating.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -536,7 +536,7 @@ registerRoadmap({
 
     /* ==================== WEEK 13 ==================== */
     {
-      id: "d24", date: "2026-09-16", week: "w9", title: "🌌 The simulation begins: one particle in the void",
+      id: "d24", date: "2026-09-18", week: "w9", title: "🌌 The simulation begins: one particle in the void",
       theme: "Big Bang · v0 — nail the loop before scale can hide bugs.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -558,7 +558,7 @@ registerRoadmap({
       note: "The Udemy course is winding down to its final GUI/audio section — the simulation is now the spine of the journey.",
     },
     {
-      id: "d25", date: "2026-09-18", week: "w9", title: "Particle systems III: textures & additive blending ✨",
+      id: "d25", date: "2026-09-20", week: "w9", title: "Particle systems III: textures & additive blending ✨",
       theme: "Nature of Code · thread part 11 — the bridge from physics to look.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -578,7 +578,7 @@ registerRoadmap({
 
     /* ==================== WEEK 14 ==================== */
     {
-      id: "d26", date: "2026-09-20", week: "w9", title: "Big Bang v1: the burst 💥",
+      id: "d26", date: "2026-09-22", week: "w9", title: "Big Bang v1: the burst 💥",
       theme: "Big Bang · v1 — seed the universe with polar velocities.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -596,7 +596,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d27", date: "2026-09-23", week: "w10", title: "Music & GUI I: buttons, sliders & a control panel",
+      id: "d27", date: "2026-09-25", week: "w10", title: "Music & GUI I: buttons, sliders & a control panel",
       theme: "raylib course · thread part 11 — immediate-mode widgets for the sim.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -614,7 +614,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d28", date: "2026-09-25", week: "w10", title: "Port-along #2: Cameras → Classes → Timers → Animations",
+      id: "d28", date: "2026-09-27", week: "w10", title: "Port-along #2: Cameras → Classes → Timers → Animations",
       theme: "Examples · thread part 4 — steal the Timer pattern for spawning.",
       tasks: [
         { id: "t1", obj: EX, cat: "code", est: 55,
@@ -634,7 +634,7 @@ registerRoadmap({
 
     /* ==================== WEEK 15 ==================== */
     {
-      id: "d29", date: "2026-09-27", week: "w10", title: "Big Bang v2: gravity switches on — real N-body",
+      id: "d29", date: "2026-09-29", week: "w10", title: "Big Bang v2: gravity switches on — real N-body",
       theme: "Big Bang · v2 — structure emerges from one formula.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -655,7 +655,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d30", date: "2026-10-01", week: "w11", title: "Music & GUI II: audio — the course capstone 🎓",
+      id: "d30", date: "2026-10-03", week: "w11", title: "Music & GUI II: audio — the course capstone 🎓",
       theme: "raylib course · thread part 12 — the whole library, end to end.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 45,
@@ -674,7 +674,7 @@ registerRoadmap({
       note: "The raylib course is finished. The rest of the journey is Nature of Code's tail, the Book of Shaders, and building the simulation.",
     },
     {
-      id: "d31", date: "2026-10-03", week: "w11", title: "Integration methods: Euler vs Verlet (stability) 🩹",
+      id: "d31", date: "2026-10-05", week: "w11", title: "Integration methods: Euler vs Verlet (stability) 🩹",
       theme: "Nature of Code · thread part 12 — a one-line change that keeps orbits bound.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -694,7 +694,7 @@ registerRoadmap({
 
     /* ==================== WEEK 16 ==================== */
     {
-      id: "d32", date: "2026-10-06", week: "w11", title: "Big Bang v3: thousands of particles",
+      id: "d32", date: "2026-10-08", week: "w11", title: "Big Bang v3: thousands of particles",
       theme: "Big Bang · v3 — scale is a data-layout problem.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -712,7 +712,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d33", date: "2026-10-08", week: "w12", title: "Draw-count & blending study",
+      id: "d33", date: "2026-10-10", week: "w12", title: "Draw-count & blending study",
       theme: "Examples · thread part 5 — why particles become textured/instanced.",
       tasks: [
         { id: "t1", obj: EX, cat: "read", est: 50,
@@ -730,7 +730,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d34", date: "2026-10-11", week: "w12", title: "Big Bang v4: the glow look in 2D ✨",
+      id: "d34", date: "2026-10-13", week: "w12", title: "Big Bang v4: the glow look in 2D ✨",
       theme: "Big Bang · v4 — additive blending sells the cosmos.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -753,7 +753,7 @@ registerRoadmap({
 
     /* ==================== WEEK 17 ==================== */
     {
-      id: "d35", date: "2026-10-13", week: "w12", title: "Big Bang v5: camera, trails & time controls",
+      id: "d35", date: "2026-10-15", week: "w12", title: "Big Bang v5: camera, trails & time controls",
       theme: "Big Bang · v5 — from demo to something you can explore.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -771,7 +771,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d36", date: "2026-10-15", week: "w13", title: "Optimization: why O(n²) hurts & spatial ideas",
+      id: "d36", date: "2026-10-17", week: "w13", title: "Optimization: why O(n²) hurts & spatial ideas",
       theme: "Nature of Code · thread part 13 — the last physics chapter that matters here.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 50,
@@ -789,7 +789,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d37", date: "2026-10-17", week: "w13", title: "Big Bang v6: Barnes–Hut & softening tuning",
+      id: "d37", date: "2026-10-19", week: "w13", title: "Big Bang v6: Barnes–Hut & softening tuning",
       theme: "Big Bang · v6 — O(n²) → O(n log n) via center-of-mass.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -809,7 +809,7 @@ registerRoadmap({
 
     /* ==================== WEEK 18 ==================== */
     {
-      id: "d38", date: "2026-10-19", week: "w13", title: "Into 3D: cameras, point clouds & billboards",
+      id: "d38", date: "2026-10-21", week: "w13", title: "Into 3D: cameras, point clouds & billboards",
       theme: "Examples · thread part 6 — same loop, one more axis.",
       tasks: [
         { id: "t1", obj: EX, cat: "watch", est: 50,
@@ -827,7 +827,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d39", date: "2026-10-21", week: "w14", title: "Big Bang v7: the third dimension",
+      id: "d39", date: "2026-10-23", week: "w14", title: "Big Bang v7: the third dimension",
       theme: "Big Bang · v7 — the physics is dimension-agnostic.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -845,7 +845,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d40", date: "2026-10-23", week: "w14", title: "Port-along #3: 3D basics, imports & a peek at shaders",
+      id: "d40", date: "2026-10-25", week: "w14", title: "Port-along #3: 3D basics, imports & a peek at shaders",
       theme: "Examples · thread part 7 — first sight of the shader pipeline.",
       tasks: [
         { id: "t1", obj: EX, cat: "code", est: 50,
@@ -865,7 +865,7 @@ registerRoadmap({
 
     /* ==================== WEEK 19 ==================== */
     {
-      id: "d41", date: "2026-10-25", week: "w14", title: "Big Bang v8: 3D N-body & orbit cinematics",
+      id: "d41", date: "2026-10-27", week: "w14", title: "Big Bang v8: 3D N-body & orbit cinematics",
       theme: "Big Bang · v8 — filaments in space you can fly through.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -883,7 +883,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d42", date: "2026-10-28", week: "w15", title: "Consolidate the physics (Nature of Code ~70–80%)",
+      id: "d42", date: "2026-10-30", week: "w15", title: "Consolidate the physics (Nature of Code ~70–80%)",
       theme: "Nature of Code · thread part 14 — correctness is invariants, not vibes.",
       tasks: [
         { id: "t1", obj: NOC, cat: "review", est: 50,
@@ -904,7 +904,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d43", date: "2026-10-30", week: "w15", title: "Book of Shaders I: the fragment shader & uniforms",
+      id: "d43", date: "2026-11-01", week: "w15", title: "Book of Shaders I: the fragment shader & uniforms",
       theme: "Shaders · thread part 1 — one program per pixel, on the GPU.",
       tasks: [
         { id: "t1", obj: SH, cat: "read", est: 50,
@@ -925,7 +925,7 @@ registerRoadmap({
 
     /* ==================== WEEK 20 ==================== */
     {
-      id: "d44", date: "2026-11-01", week: "w15", title: "Book of Shaders II: shaping functions & colour",
+      id: "d44", date: "2026-11-03", week: "w15", title: "Book of Shaders II: shaping functions & colour",
       theme: "Shaders · thread part 2 — smoothstep + mix are 80% of pretty.",
       tasks: [
         { id: "t1", obj: SH, cat: "read", est: 50,
@@ -943,7 +943,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d45", date: "2026-11-04", week: "w16", title: "Book of Shaders III: distance fields → a glowing particle",
+      id: "d45", date: "2026-11-06", week: "w16", title: "Book of Shaders III: distance fields → a glowing particle",
       theme: "Shaders · thread part 3 — one shader draws a perfect glowing dot.",
       tasks: [
         { id: "t1", obj: SH, cat: "code", est: 55,
@@ -961,7 +961,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d46", date: "2026-11-06", week: "w16", title: "Big Bang v9: GPU glow on every particle",
+      id: "d46", date: "2026-11-08", week: "w16", title: "Big Bang v9: GPU glow on every particle",
       theme: "Big Bang · v9 — move the look onto the GPU.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -981,7 +981,7 @@ registerRoadmap({
 
     /* ==================== WEEK 21 ==================== */
     {
-      id: "d47", date: "2026-11-08", week: "w16", title: "Book of Shaders IV: noise",
+      id: "d47", date: "2026-11-10", week: "w16", title: "Book of Shaders IV: noise",
       theme: "Shaders · thread part 4 — GPU 'random' is a deterministic hash.",
       tasks: [
         { id: "t1", obj: SH, cat: "read", est: 50,
@@ -999,7 +999,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d48", date: "2026-11-11", week: "w17", title: "Book of Shaders V: fBm → a nebula",
+      id: "d48", date: "2026-11-13", week: "w17", title: "Book of Shaders V: fBm → a nebula",
       theme: "Shaders · thread part 5 — octaves of noise = clouds.",
       tasks: [
         { id: "t1", obj: SH, cat: "code", est: 55,
@@ -1017,7 +1017,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d49", date: "2026-11-13", week: "w17", title: "Big Bang v10: the cosmos gets a nebula",
+      id: "d49", date: "2026-11-15", week: "w17", title: "Big Bang v10: the cosmos gets a nebula",
       theme: "Big Bang · v10 — couple the art to the physics.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -1037,7 +1037,7 @@ registerRoadmap({
 
     /* ==================== WEEK 22 ==================== */
     {
-      id: "d50", date: "2026-11-15", week: "w17", title: "Book of Shaders VI: blur & blend → bloom",
+      id: "d50", date: "2026-11-17", week: "w17", title: "Book of Shaders VI: blur & blend → bloom",
       theme: "Shaders · thread part 6 — the recipe for light bleed.",
       tasks: [
         { id: "t1", obj: SH, cat: "read", est: 55,
@@ -1055,7 +1055,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d51", date: "2026-11-18", week: "w18", title: "Big Bang v11: bloom post-process",
+      id: "d51", date: "2026-11-20", week: "w18", title: "Big Bang v11: bloom post-process",
       theme: "Big Bang · v11 — bright cores bleed light.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -1073,7 +1073,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d52", date: "2026-11-20", week: "w18", title: "Finish the physics tail & consider GPU N-body",
+      id: "d52", date: "2026-11-22", week: "w18", title: "Finish the physics tail & consider GPU N-body",
       theme: "Nature of Code · thread part 15 — the path to 100k+ particles.",
       tasks: [
         { id: "t1", obj: NOC, cat: "review", est: 50,
@@ -1093,7 +1093,7 @@ registerRoadmap({
 
     /* ==================== WEEK 23 ==================== */
     {
-      id: "d53", date: "2026-11-22", week: "w18", title: "Big Bang v12: time, colour & cinematics",
+      id: "d53", date: "2026-11-24", week: "w18", title: "Big Bang v12: time, colour & cinematics",
       theme: "Big Bang · v12 — the last 10% that makes it an instrument.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
@@ -1111,7 +1111,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d54", date: "2026-11-25", week: "w19", title: "🎓 Capstone: the Big Bang, from void to cosmos",
+      id: "d54", date: "2026-11-27", week: "w19", title: "🎓 Capstone: the Big Bang, from void to cosmos",
       theme: "Big Bang · capstone — the whole pipeline, and what you actually built.",
       tasks: [
         { id: "t1", obj: PROJ, cat: "project", est: 55,
