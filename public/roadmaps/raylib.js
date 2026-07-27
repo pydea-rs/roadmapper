@@ -640,7 +640,10 @@ registerRoadmap({
         { id: "t1", obj: PROJ, cat: "project", est: 55,
           lead: `<b>Big Bang v2</b> — every particle pulls every other.`,
           sub: [
-            { id: "s1", est: 30, label: `Apply the N-body kernel (NoC 2.9–2.10) across the system: nested loop summing <code>F = G·m·m/(r²+ε²)</code> for every pair; integrate; <b>watch clumping emerge</b>.` },
+            { id: "s1", est: 30, label: `Apply the N-body kernel (NoC 2.9–2.10) across the system: nested loop summing <code>F = G·m·m/(r²+ε²)</code> for every pair; integrate; <b>watch clumping emerge</b>.`,
+              info: `<p>The <b>ε²</b> ("softening length") in <code>F = G·m·m/(r²+ε²)</code> is the one term that stops the whole simulation from blowing up.</p>
+<p>Pure Newtonian gravity goes as <code>1/r²</code>: as two particles approach, <code>r → 0</code> and the force → <b>infinity</b>. With a discrete timestep that hands a particle a near-infinite kick and flings it off-screen — the classic "my N-body sim exploded" bug.</p>
+<p>Adding a small constant ε² caps the force at close range (when <code>r ≪ ε</code> the denominator ≈ ε², finite) while leaving distant pairs essentially unchanged — it models particles as soft blobs instead of point singularities. Tune ε to your scale: too small and it still explodes, too large and the structure turns mushy.</p>` },
             { id: "s2", est: 25, label: `Use <a href="https://github.com/pmocz/nbody-python" target="_blank" rel="noopener">Philip Mocz's N-body</a> for sane constants & softening. Keep N small (≤ ~1000) for now.`,
               note: `All-pairs is O(n²), so it bogs down before optimization — Barnes–Hut comes later. Structure (clumps, filaments) emerging from one formula is the whole point.` },
           ],

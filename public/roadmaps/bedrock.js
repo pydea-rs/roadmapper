@@ -177,7 +177,14 @@ registerRoadmap({
           lead: `<b>Networking ②</b> — subnet math you can do in your head.`,
           sub: [
             { id: "s1", est: 18, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/network-layer/what-is-a-subnet/" target="_blank" rel="noopener">"What is a subnet?"</a>, then do the binary yourself.` },
-            { id: "s2", est: 15, label: `<code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask <code>/24</code>=<code>255.255.255.0</code>.` },
+            { id: "s2", est: 15, label: `<code>/n</code> = first <i>n</i> bits are the network prefix. <code>/24</code>=256 addrs (254 usable), <code>/16</code>=65,536; each extra bit halves the block. Mask <code>/24</code>=<code>255.255.255.0</code>.`,
+              info: `<p>CIDR <code>a.b.c.d/n</code> just says "the first <i>n</i> bits are the fixed network; the rest address hosts."</p>
+<ul>
+<li>Hosts in a block = 2^(32−n) − 2 (network + broadcast). <code>/24</code> → 2^8 = 256 → 254 usable.</li>
+<li>Each bit added to the prefix <b>halves</b> the block, each bit removed doubles it: <code>/25</code> = 128, <code>/23</code> = 512.</li>
+<li>The mask is those n bits set: <code>/20</code> = <code>255.255.240.0</code>.</li>
+</ul>
+<p><b>Subnetting</b> = borrowing host bits to split one block into smaller ones (a <code>/24</code> into four <code>/26</code>s). This is the math behind every VPC subnet, k8s pod CIDR, and firewall rule.</p>` },
             { id: "s3", est: 12, label: `Memorize the RFC 1918 private ranges: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code> — they're in every VPC/Docker/k8s.` },
           ],
           model: `"Same subnet?" → AND both IPs with the mask; equal ⇒ they talk directly at L2, else traffic goes to the <b>default gateway</b>. That's how your machine decides gateway-vs-direct for every packet.`,
@@ -220,7 +227,13 @@ registerRoadmap({
           lead: `<b>Databases ①</b> — the mental model of a B-tree index.`,
           sub: [
             { id: "s1", est: 22, label: `Read <i>Use The Index, Luke!</i> (free): <a href="https://use-the-index-luke.com/sql/anatomy" target="_blank" rel="noopener">Anatomy of an SQL Index</a> → <a href="https://use-the-index-luke.com/sql/anatomy/the-tree" target="_blank" rel="noopener">The B-Tree</a> → <a href="https://use-the-index-luke.com/sql/anatomy/slow-indexes" target="_blank" rel="noopener">Slow Indexes</a>.` },
-            { id: "s2", est: 15, label: `Leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N), so billions of rows are 3–5 levels deep.` },
+            { id: "s2", est: 15, label: `Leaf nodes are a doubly-linked list (range scans walk sideways); height ~log(N), so billions of rows are 3–5 levels deep.`,
+              info: `<p>A B-tree keeps data <b>sorted</b> and <b>shallow</b>. Internal nodes hold only separator keys + child pointers; the actual rows (or pointers to them) live in the <b>leaves</b>.</p>
+<ul>
+<li>Each node fills a disk page (hundreds of keys), so the tree stays <b>3–5 levels</b> deep even for billions of rows — a lookup is a handful of page reads, i.e. <code>O(log N)</code> with a huge base.</li>
+<li>Leaves are chained in a <b>doubly-linked list</b>, so a range scan (<code>BETWEEN</code>, <code>ORDER BY</code>) finds the start then walks sideways — no re-descending the tree.</li>
+</ul>
+<p>That's why an index accelerates <code>=</code>, range, prefix and sort queries but can't help an unanchored <code>LIKE '%foo'</code> or a function-wrapped column.</p>` },
             { id: "s3", est: 13, label: `Hurts on low-cardinality columns, when a function wraps the column (<code>WHERE lower(email)=…</code> needs an expression index), and every index is <b>write amplification</b>.` },
           ],
           model: `<b>Leftmost-prefix rule:</b> <code>INDEX(a,b,c)</code> serves <code>a</code>, <code>a,b</code>, <code>a,b,c</code> — but NOT <code>b</code> alone. Put equality columns first, then the range/sort column. The #1 composite-index mistake.`,
@@ -244,7 +257,14 @@ registerRoadmap({
           lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you.`,
           sub: [
             { id: "s1", est: 22, label: `Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>.` },
-            { id: "s2", est: 16, label: `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.` },
+            { id: "s2", est: 16, label: `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.`,
+              info: `<p>The four things that make TCP reliable, ordered and congestion-aware:</p>
+<ul>
+<li><b>3-way handshake</b> (SYN → SYN-ACK → ACK) agrees on starting sequence numbers before any data — one round-trip of latency before byte one.</li>
+<li><b>Slow-start + AIMD</b>: the sender ramps its congestion window up exponentially, then on loss backs off (additive-increase / multiplicative-decrease) — TCP <i>discovers</i> the path's capacity rather than being told it.</li>
+<li><b>Receive window</b> = flow control: the receiver advertises free buffer so a fast sender can't overrun a slow reader (distinct from congestion control, which protects the <i>network</i>).</li>
+<li><b>Head-of-line blocking</b>: one lost segment stalls everything behind it because bytes must arrive in order — the exact problem HTTP/3-over-QUIC was built to escape.</li>
+</ul>` },
             { id: "s3", est: 12, label: `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).` },
           ],
           model: `Two different HOL blockings: TCP's byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams). The latter is what QUIC/HTTP-3 fixes — and what interviewers usually mean.`,
@@ -337,7 +357,15 @@ registerRoadmap({
           lead: `<b>Networking ④</b> — trace a name to an address, hop by hop.`,
           sub: [
             { id: "s1", est: 16, label: `Read Cloudflare <a href="https://www.cloudflare.com/learning/dns/what-is-dns/" target="_blank" rel="noopener">"What is DNS?"</a> + <a href="https://www.cloudflare.com/learning/dns/dns-server-types/" target="_blank" rel="noopener">DNS server types</a>.` },
-            { id: "s2", est: 14, label: `The path: stub resolver → <b>recursive resolver</b> → root (13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA, with caching (TTL) at every hop.` },
+            { id: "s2", est: 14, label: `The path: stub resolver → <b>recursive resolver</b> → root (13 root-server IPs) → TLD (<code>.com</code>) → authoritative → A/AAAA, with caching (TTL) at every hop.`,
+              info: `<p>Resolving <code>www.example.com</code> walks a delegation chain, cached at every hop:</p>
+<ol>
+<li>Your <b>stub resolver</b> (the OS) asks a <b>recursive resolver</b> (your ISP / 1.1.1.1 / 8.8.8.8).</li>
+<li>The recursor asks a <b>root</b> server (13 well-known anycast IPs) → "ask the <code>.com</code> TLD servers."</li>
+<li>The <b>TLD</b> servers → "ask example.com's <b>authoritative</b> servers."</li>
+<li>The authoritative server returns the <b>A/AAAA</b> record.</li>
+</ol>
+<p>Each answer carries a <b>TTL</b>, so the recursor caches it and later queries skip most of the walk — which is also why DNS changes take time to propagate.</p>` },
             { id: "s3", cat: "lab", est: 10, label: `Run <code>dig +trace google.com</code> to watch the root→TLD→authoritative delegation live.` },
           ],
           model: `DNS is why "it works on my machine" can be a caching lie: resolvers, the OS, and your app each cache records for the TTL, so a stale A record survives long after you change it.`,
@@ -426,7 +454,13 @@ registerRoadmap({
           lead: `<b>Databases ③</b> — multi-version concurrency control, and why tables bloat.`,
           sub: [
             { id: "s1", est: 24, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/mvcc-intro.html" target="_blank" rel="noopener">Ch 13.1 Concurrency Control (MVCC)</a> + <a href="https://www.postgresql.org/docs/current/transaction-iso.html" target="_blank" rel="noopener">13.2 Transaction Isolation</a>.` },
-            { id: "s2", est: 18, label: `Each row version carries <code>xmin</code>/<code>xmax</code>; each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa.` },
+            { id: "s2", est: 18, label: `Each row version carries <code>xmin</code>/<code>xmax</code>; each txn sees a <b>snapshot</b>, so readers never block writers and vice-versa.`,
+              info: `<p><b>MVCC</b> = Multi-Version Concurrency Control: instead of locking a row for a reader, Postgres keeps <i>multiple versions</i> of it.</p>
+<ul>
+<li>Every row version is stamped with <code>xmin</code> (the txid that created it) and <code>xmax</code> (the txid that deleted/superseded it).</li>
+<li>Each transaction gets a <b>snapshot</b> — the set of txids visible to it — and sees only versions whose <code>xmin</code> is visible and whose <code>xmax</code> is not.</li>
+</ul>
+<p>So <b>readers never block writers and writers never block readers</b>: an <code>UPDATE</code> writes a new version while existing readers keep seeing the old one. The cost is dead tuples that <b>VACUUM</b> later reclaims (d40).</p>` },
             { id: "s3", est: 13, label: `Deeper tuple-level detail: Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.` },
           ],
           model: `An <code>UPDATE</code> is really <i>insert a new row version + mark the old dead</i> — so heavy-update tables bloat and need <b>VACUUM</b>/autovacuum. That single fact explains "my table is 5× its data size."`,
@@ -513,7 +547,10 @@ registerRoadmap({
           lead: `<b>Caching ①</b> — how one thread does millions of ops/sec.`,
           sub: [
             { id: "s1", est: 20, label: `Read the Redis <a href="https://redis.io/docs/latest/develop/get-started/faq/" target="_blank" rel="noopener">FAQ</a> (single-thread rationale) + <a href="https://redis.io/docs/latest/develop/data-types/" target="_blank" rel="noopener">data types</a>.` },
-            { id: "s2", est: 16, label: `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.` },
+            { id: "s2", est: 16, label: `Command execution runs on <b>one thread on an event loop</b> → every command is atomic (no client-side locks for <code>INCR</code>/<code>SETNX</code>). Redis 6+ multithreads only network I/O, not command execution.`,
+              info: `<p>Redis runs your commands on a <b>single thread</b> pulling from one event loop, so each command runs start-to-finish with nothing interleaved — it's <b>atomic by construction</b>. That's why <code>INCR</code>, <code>SETNX</code>, <code>LPUSH</code> need no client-side locks.</p>
+<p>The flip side: one <b>O(N)</b> command (<code>KEYS *</code>, a huge <code>LRANGE</code>, a big <code>SORT</code>) blocks <i>every other client</i> for its whole duration — use <code>SCAN</code> and bounded ranges in production.</p>
+<p>"Redis is multi-threaded now" (6+) only means it parallelizes <b>network I/O</b>; command execution stays one thread — which is exactly what preserves the atomicity guarantee.</p>` },
             { id: "s3", est: 14, label: `Structures by use: sorted sets → leaderboards & sliding-window rate limiting; hashes → objects; streams → event log; HLL → cardinality.` },
           ],
           model: `Redis is memory/network-bound, not CPU-bound. Because it's one loop, a single O(N) command (<code>KEYS *</code>, a huge <code>SMEMBERS</code>/<code>SORT</code>) blocks <i>every</i> client — use <code>SCAN</code>, keep values small, never <code>KEYS</code> in prod.`,
@@ -655,7 +692,14 @@ registerRoadmap({
           lead: `<b>Security ②</b> — the modern auth flow, and how tokens get forged.`,
           sub: [
             { id: "s1", est: 32, label: `Read the OAuth <a href="https://www.rfc-editor.org/rfc/rfc6749" target="_blank" rel="noopener">RFC 6749</a> authorization-code flow + <a href="https://www.rfc-editor.org/rfc/rfc7636" target="_blank" rel="noopener">PKCE (RFC 7636)</a>, and PortSwigger's <a href="https://portswigger.net/web-security/jwt" target="_blank" rel="noopener">JWT attacks</a>.` },
-            { id: "s2", est: 28, label: `<b>Authorization Code + PKCE</b> is the modern default for all client types: send <code>code_challenge=S256(code_verifier)</code> up front, the raw verifier on the back channel, so a stolen code is useless.` },
+            { id: "s2", est: 28, label: `<b>Authorization Code + PKCE</b> is the modern default for all client types: send <code>code_challenge=S256(code_verifier)</code> up front, the raw verifier on the back channel, so a stolen code is useless.`,
+              info: `<p><b>PKCE</b> (Proof Key for Code Exchange) closes the "stolen authorization code" hole in the OAuth Authorization-Code flow, especially for mobile/SPA clients that can't hold a secret.</p>
+<ol>
+<li>The client invents a random <b>code_verifier</b> and sends only its hash, <code>code_challenge = S256(verifier)</code>, when starting the flow.</li>
+<li>The auth server returns a code bound to that challenge.</li>
+<li>To redeem the code the client must present the <b>raw verifier</b> — which never travelled over the redirect, so an attacker who intercepts the code can't use it.</li>
+</ol>
+<p>It's now recommended for <i>all</i> client types (public and confidential), replacing the old implicit flow.</p>` },
           ],
           model: `For JWT: pin the expected <code>alg</code> <b>server-side</b>; never trust the token's <code>alg</code> header. The <b>alg:none</b> attack drops the signature; the RS256→HS256 confusion attack signs with the public key as an HMAC secret. Treat accepted algorithms as an allowlist.`,
           cards: [
@@ -841,7 +885,15 @@ registerRoadmap({
           lead: `<b>Caching ②</b> — patterns, persistence, and surviving a hot-key expiry.`,
           sub: [
             { id: "s1", est: 27, label: `Read AWS <a href="https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html" target="_blank" rel="noopener">caching patterns</a> (cache-aside vs write-through vs write-behind) and the Redis <a href="https://redis.io/docs/latest/develop/reference/eviction/" target="_blank" rel="noopener">eviction</a> + <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/" target="_blank" rel="noopener">persistence (RDB/AOF)</a> pages.` },
-            { id: "s2", est: 23, label: `Handle the <b>stampede/thundering herd</b> (hot key expires → thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>.` },
+            { id: "s2", est: 23, label: `Handle the <b>stampede/thundering herd</b> (hot key expires → thousands of misses hit the DB) with single-flight/request-coalescing, a per-key lock (<code>SET k v NX PX ttl</code>), stale-while-revalidate, and <b>TTL jitter</b>.`,
+              info: `<p>A <b>cache stampede</b> (thundering herd / dogpile) happens when a hot key expires and, in the gap before it's repopulated, thousands of concurrent requests all miss and hammer the database at once — often knocking it over.</p>
+<p>The defenses, roughly in order:</p>
+<ul>
+<li><b>Single-flight / request coalescing</b> — only the first miss recomputes; the rest await its result.</li>
+<li><b>Per-key lock</b> (<code>SET key val NX PX ttl</code>) — one worker wins the right to rebuild.</li>
+<li><b>Stale-while-revalidate</b> — serve the slightly-stale value while one request refreshes in the background.</li>
+<li><b>TTL jitter</b> — randomize expiries so keys written together don't all expire on the same second.</li>
+</ul>` },
           ],
           model: `Prefer <b>delete-on-write</b> over update to avoid caching a value a concurrent write races. Eviction: <code>allkeys-lru/lfu</code> for a pure cache, <code>volatile-*</code> when you mix cache + persistent keys (Redis uses <i>sampled</i>, not exact, LRU/LFU).`,
           cards: [
@@ -930,7 +982,13 @@ registerRoadmap({
           sub: [
             { id: "s1", est: 17, label: `Read the OWASP <a href="https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html" target="_blank" rel="noopener">Password Storage</a> + <a href="https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html" target="_blank" rel="noopener">Session Management</a> cheat sheets.` },
             { id: "s2", est: 15, label: `Use <b>Argon2id</b> (min m=19 MiB, t=2, p=1) for new systems; <b>bcrypt</b> (cost ≥10) is legacy-only and caps input at 72 bytes.` },
-            { id: "s3", est: 13, label: `Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and never store tokens in <code>localStorage</code> (XSS reads it).` },
+            { id: "s3", est: 13, label: `Sessions vs tokens: server-side session ids in <code>Secure; HttpOnly; SameSite</code> cookies vs stateless JWTs — and never store tokens in <code>localStorage</code> (XSS reads it).`,
+              info: `<p>Two ways to remember a logged-in user:</p>
+<ul>
+<li><b>Server-side sessions</b> — the server stores the state and hands the browser an opaque <b>session id</b> in a cookie. Easy to revoke (delete the record); needs session storage shared across your servers.</li>
+<li><b>Stateless JWTs</b> — the token carries signed claims, so any server verifies it with no lookup. Scales trivially, but is <b>hard to revoke</b> before expiry (you need a denylist) → keep them short-lived and pair with refresh tokens.</li>
+</ul>
+<p>Either way, put it in a <code>Secure; HttpOnly; SameSite</code> cookie. <b>Never</b> store a token in <code>localStorage</code>: any XSS on the page can read it and walk off with the session.</p>` },
           ],
           model: `Passwords are <b>hashed</b> (one-way, slow, salted) — not encrypted, never home-rolled. "Slow" is the point: it caps an attacker's guesses/sec. Fast hashes (SHA-256) are wrong for passwords.`,
           cards: [
@@ -1888,7 +1946,15 @@ registerRoadmap({
           sub: [
             { id: "s1", est: 20, label: `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d09).` },
             { id: "s2", est: 18, label: `Then Martin Thompson, <a href="https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html" target="_blank" rel="noopener">"False Sharing"</a> — a benchmark + the padding fix.` },
-            { id: "s3", est: 17, label: `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.` },
+            { id: "s3", est: 17, label: `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.`,
+              info: `<p>Each core has its own L1/L2 cache, so hardware needs a protocol to stop two cores disagreeing about a memory location. <b>MESI</b> tags every cache line with one of four states:</p>
+<ul>
+<li><b>Modified</b> — this core has the only copy, and it's dirty.</li>
+<li><b>Exclusive</b> — only copy, clean.</li>
+<li><b>Shared</b> — clean; other cores may also hold it.</li>
+<li><b>Invalid</b> — stale, must re-fetch.</li>
+</ul>
+<p>To <i>write</i>, a core must first own the line <b>Exclusive</b>, which <b>invalidates every other core's copy</b>. This is why <b>false sharing</b> is slow: two threads writing different variables that happen to share one 64-byte line keep stealing it from each other, even though they never touch the same data.</p>` },
           ],
           model: `<b>False sharing</b>: two cores repeatedly write different variables that happen to share one cache line — no logical dependency, but each write invalidates the other's copy, so the line <b>ping-pongs</b> across the interconnect and throughput collapses. Fix by <i>layout</i>: pad/align to separate lines (<code>alignas(64)</code>, C++17 <code>hardware_destructive_interference_size</code>, per-thread structs). <b>NUMA</b>: remote memory is ~1.5–2× slower, and Linux places a page on the node that <b>first writes</b> it (first-touch) — not where you malloc'd it.`,
           cards: [
@@ -1910,7 +1976,13 @@ registerRoadmap({
           lead: `<b>Internals ②</b> — the structure you reach for daily, and why its O(1) has fine print.`,
           sub: [
             { id: "s1", est: 20, label: `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d78).` },
-            { id: "s2", est: 18, label: `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).` },
+            { id: "s2", est: 18, label: `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).`,
+              info: `<p>Two keys can hash to the same bucket; the two classic resolutions:</p>
+<ul>
+<li><b>Separate chaining</b> — each bucket holds a list (Java 8+ upgrades a long list to a balanced tree, so a degenerate bucket is <code>O(log n)</code> not <code>O(n)</code>). Simple, tolerates load factor &gt; 1.</li>
+<li><b>Open addressing</b> — on collision, probe for the next free slot in the array itself (linear / quadratic / double hashing). Better cache locality (no pointer chasing) but needs load factor <b>α &lt; 1</b> and tombstones on delete.</li>
+</ul>
+<p>Both keep average lookup near <code>O(1)</code> while α stays bounded — cross the threshold and the map doubles + rehashes (the same amortized trick as the dynamic array in d78).</p>` },
             { id: "s3", est: 17, label: `Modern layout: read Abseil's <a href="https://abseil.io/about/design/swisstables" target="_blank" rel="noopener">Swiss Tables</a> — open addressing + a parallel array of 1-byte control words, SIMD-scanned a group at a time (Go's built-in map adopted this in <a href="https://go.dev/blog/swisstable" target="_blank" rel="noopener">Go 1.24</a>).` },
           ],
           model: `"O(1)" is <b>expected / amortized</b>, not worst-case: adversarial or unlucky keys can pile into one bucket → O(n). That's exploitable — <b>hash-flooding DoS</b> feeds colliding keys to force O(n²); the fix is a keyed PRF hash, <b>SipHash</b>, seeded per-process so collisions are unpredictable (Python, Rust, Ruby default to it). Swiss/flat maps store entries inline (no per-node alloc) for cache locality; a SIMD compare on control bytes checks ~16 slots at once.`,
@@ -1968,7 +2040,13 @@ registerRoadmap({
         { id: "t1", obj: CORE, cat: "read", est: 55,
           lead: `<b>Internals ③</b> — the collectors under every managed runtime (contrast d81's V8, d49's Go).`,
           sub: [
-            { id: "s1", est: 20, label: `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).` },
+            { id: "s1", est: 20, label: `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).`,
+              info: `<p>Two fundamental ways a runtime reclaims memory:</p>
+<ul>
+<li><b>Tracing GC</b> (JVM, Go, C#, V8) — periodically start from the <b>roots</b> (stack, globals), mark everything reachable, reclaim the rest. Handles cycles naturally; the cost is pause time + tracing work.</li>
+<li><b>Reference counting</b> (CPython, Swift, <code>shared_ptr</code>) — each object counts its references and frees the instant the count hits 0. Prompt and incremental, but <b>can't reclaim cycles</b> (A→B→A never reach 0) — which is why CPython bolts on a backup <i>tracing</i> collector just for cycles.</li>
+</ul>
+<p>Neither is "the" GC — real runtimes mix them, and tracing collectors add generations (d82.s3) on top.</p>` },
             { id: "s2", est: 18, label: `Read the <a href="https://go.dev/doc/gc-guide" target="_blank" rel="noopener">Go GC guide</a> + Rick Hudson's <a href="https://go.dev/blog/ismmkeynote" target="_blank" rel="noopener">"Getting to Go"</a> for a real low-latency concurrent design.` },
             { id: "s3", est: 17, label: `The <b>generational hypothesis</b> ("most objects die young") + a <b>write barrier</b>/remembered set let you collect a small young gen often and the old gen rarely.` },
           ],
