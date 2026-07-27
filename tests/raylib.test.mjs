@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-07-25", "the journey starts on 2026-07-25 (start shifted to Saturday), not a week later");
+t.ok(rm.days[0].date === "2026-07-26", "the journey starts on 2026-07-26 (start shifted to Sunday), not a week later");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -98,13 +98,13 @@ for (const r of registry.getMainRoadmaps())
     const est = d.tasks.reduce((s, x) => s + (x.est || 0), 0);
     mainLoad.set(d.date, (mainLoad.get(d.date) || 0) + est);
   }
-// The light-day invariant is measured on raylib's STEADY STATE (from 2026-08-06).
-// The launch fortnight (Jul 25–Aug 5) deliberately overlaps: the owner asked all
-// three roadmaps to KICK OFF together on Sat Jul 25, so their heavy opening days
+// The light-day invariant is measured on raylib's STEADY STATE (from 2026-08-07).
+// The launch fortnight (Jul 26–Aug 6) deliberately overlaps: the owner asked all
+// three roadmaps to KICK OFF together on Sun Jul 26, so their heavy opening days
 // coincide with raylib's during that window. That overlap is accepted and transient
 // — raylib's Group-2 cadence re-plan (2–3 days/week) re-tunes placement across the
 // full range.
-const STEADY = "2026-08-06";
+const STEADY = "2026-08-07";
 let maxMainOnRaylibDay = 0, maxCombined = 0;
 for (const d of rm.days) {
   if (d.date < STEADY) continue;                 // skip the blessed shared-launch window
