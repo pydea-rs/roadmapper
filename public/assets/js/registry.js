@@ -87,6 +87,10 @@ function normalize(def) {
         // own material. They stay HIDDEN until the task is fully done, turning a
         // completed task into a spaced-recall deck (reinforced on the Today view).
         cards: cardsOf(t.cards),
+        // Optional deeper explanation (HTML): surfaced behind a small ⓘ affordance
+        // next to the label, opened in a modal. For concepts/jargon a one-liner
+        // can't carry — never required, never counts toward progress.
+        info: t.info || null,
         label: t.label || t.lead || "", optional: !!t.optional,
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,
@@ -110,6 +114,7 @@ function normalize(def) {
             lead: s.lead || null,
             refs: Array.isArray(s.refs) ? s.refs.map(String).filter(Boolean) : null,
             note: s.note || null, model: s.model || null,
+            info: s.info || null,
             cards: cardsOf(s.cards),
             label: s.label || s.lead || "", optional: !!t.optional,
             order: k,

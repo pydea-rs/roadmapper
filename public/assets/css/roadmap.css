@@ -389,6 +389,28 @@
 .task.done .t-label.rich { text-decoration: none; }
 .task.done .t-label.rich .t-lead { text-decoration: line-through; text-decoration-color: var(--text-3); }
 
+/* ---- Extra-Info ⓘ: a small inline affordance after a label; opens a modal
+ * with the author's deeper explanation. Muted until hovered so it never fights
+ * the label text, but always discoverable. Never struck through on completion. */
+.info-dot { display: inline-grid; place-items: center; vertical-align: text-bottom;
+  width: 17px; height: 17px; margin-left: 5px; padding: 0; border-radius: 50%;
+  color: var(--text-3); flex: none; line-height: 0; text-decoration: none;
+  transition: color var(--dur-fast), background var(--dur-fast), transform var(--dur-fast); }
+.info-dot:hover { color: var(--accent); background: var(--accent-soft); transform: scale(1.12); }
+.info-dot svg { display: block; }
+.task.done .info-dot { text-decoration: none; }
+/* the info modal body reuses reading rhythm; links + code match the task blocks */
+.info-modal-body { font-size: var(--t-sm); line-height: 1.6; color: var(--text-2); }
+.info-modal-body p { margin: 0 0 var(--s3); }
+.info-modal-body p:last-child { margin-bottom: 0; }
+.info-modal-body b, .info-modal-body strong { color: var(--text); }
+.info-modal-body code { background: var(--surface-3); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+.info-modal-body a { color: var(--accent-ink, var(--accent)); text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+.info-modal-body a:hover { border-bottom-color: var(--accent); }
+.info-modal-body ul, .info-modal-body ol { margin: 0 0 var(--s3) var(--s4); }
+.info-modal-body li { margin: 3px 0; }
+
 /* ---- Recall cards: unlocked only when a task is done. A foldable deck under
    the task; each card flips question → answer on tap. -------------------- */
 .t-recall { margin-top: 8px; }

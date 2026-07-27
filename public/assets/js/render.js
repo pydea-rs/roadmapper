@@ -420,7 +420,10 @@ function todayParentRow(rm, task, mount, curDay, overdue) {
     scb.onclick = e => { e && e.stopPropagation(); store.setTask(slug, sub.id, !store.isDone(slug, sub.id)); drawToday(mount); };
     srow.append(scb);
     const sbody = el("div.t-body");
-    sbody.append(el("div.t-label", { html: sub.label || sub.lead || "" }));
+    const slabel = el("div.t-label", { html: sub.label || sub.lead || "" });
+    const sdot = infoDot(sub, sub.label || sub.lead);
+    if (sdot) slabel.append(sdot);
+    sbody.append(slabel);
     if (sub.note) sbody.append(el("div.t-subnote", { html: sub.note }));
     const smeta = el("div.t-meta");
     if (sub.cat && sub.cat !== task.cat) smeta.append(catChip(sub.cat, rm));
@@ -1515,7 +1518,10 @@ function subRow(rm, parent, sub, hostId) {
   };
   row.append(cb);
   const bodyEl = el("div.t-body");
-  bodyEl.append(el("div.t-label", { html: sub.label || sub.lead || "" }));
+  const labelEl = el("div.t-label", { html: sub.label || sub.lead || "" });
+  const dot = infoDot(sub, sub.label || sub.lead);
+  if (dot) labelEl.append(dot);
+  bodyEl.append(labelEl);
   if (sub.note) bodyEl.append(el("div.t-subnote", { html: sub.note }));
   const meta = el("div.t-meta");
   if (sub.cat && sub.cat !== parent.cat) meta.append(catChip(sub.cat, rm));
@@ -1538,8 +1544,14 @@ function moveHandle(rm, slug, task, row) {
 /* Just the lead line (rich) of a task — used as a parent's collapsed summary; its
  * refs live in the sub-tasks and its takeaway (model) shows when expanded. */
 function leadBlock(task) {
-  if (task.lead) return el("div.t-label.rich", {}, el("div.t-lead", { html: task.lead }));
-  return el("div.t-label", { html: task.label || "" });
+  if (task.lead) {
+    const leadEl = el("div.t-lead", { html: task.lead });
+    const d = infoDot(task, task.lead); if (d) leadEl.append(d);
+    return el("div.t-label.rich", {}, leadEl);
+  }
+  const plain = el("div.t-label", { html: task.label || "" });
+  const d = infoDot(task, task.label); if (d) plain.append(d);
+  return plain;
 }
 
 function bonusTrack(rm, S, bonus) {
@@ -1667,10 +1679,17 @@ function extras(rm) {
  * reading/do items, and a highlighted takeaway. Otherwise it falls back to the
  * single-string `label` (how the older roadmaps are authored). */
 function taskLabelBlock(task) {
-  if (!(task.lead || (task.refs && task.refs.length) || task.model))
-    return el("div.t-label", { html: task.label });
+  if (!(task.lead || (task.refs && task.refs.length) || task.model)) {
+    const plain = el("div.t-label", { html: task.label });
+    const d0 = infoDot(task, task.label); if (d0) plain.append(d0);
+    return plain;
+  }
   const wrap = el("div.t-label.rich");
-  if (task.lead) wrap.append(el("div.t-lead", { html: task.lead }));
+  if (task.lead) {
+    const leadEl = el("div.t-lead", { html: task.lead });
+    const d1 = infoDot(task, task.lead); if (d1) leadEl.append(d1);
+    wrap.append(leadEl);
+  }
   if (task.refs && task.refs.length) {
     const ul = el("ul.t-refs");
     for (const r of task.refs) ul.append(el("li.t-ref", { html: r }));
@@ -1725,6 +1744,27 @@ function catChip(cat, rm) {
   const colorVar = `var(--cat-${cat}, var(--cat-alt))`;
   return el("span.chip", { text: cat, style: `--chip:${colorVar}` });
 }
+
+/* A small ⓘ affordance placed inline after a task/sub label. When the author
+ * supplied `info` (richer HTML explaining the concept / what's expected), this
+ * opens it in a modal. Returns null when there's nothing extra to show, so call
+ * sites can append unconditionally. `titleText` seeds the modal heading. */
+function infoDot(item, titleText) {
+  if (!item || !item.info) return null;
+  const b = el("button.info-dot", { type: "button", "aria-label": "More about this step",
+    title: "More about this step", html: infoIcon() });
+  b.onclick = e => {
+    e && e.stopPropagation();
+    openModal({
+      icon: "💡", wide: false,
+      title: "About this step",
+      subtitle: stripTags(titleText || item.lead || item.label || "").slice(0, 140),
+      body: `<div class="info-modal-body">${item.info}</div>`,
+    });
+  };
+  return b;
+}
+const stripTags = s => (s || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
 function iconBtn(title, svg, onClick) {
   const b = el("button.icon-btn", { title, "aria-label": title, html: svg }); b.onclick = onClick; return b;
 }
@@ -1732,6 +1772,7 @@ function iconBtn(title, svg, onClick) {
 /* icons */
 const caretIcon = () => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>`;
 const clockIcon = () => `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
+const infoIcon = () => `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="0.1"/></svg>`;
 const moveIcon = () => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4M3 12h18"/></svg>`;
 const starIcon = () => `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.8 5.2 21l1.5-7L1.5 9.3l7-.8z"/></svg>`;
 const exportIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>`;

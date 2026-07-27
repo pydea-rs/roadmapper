@@ -133,4 +133,30 @@ registry.registerRoadmap({ slug: "bad-dupsub", title: "x", objectives: [{ id: "o
 t.ok(registry.validateAll().some(p => p.includes("bad-dupsub") && /duplicate sub-task/.test(p)),
   "duplicate sub-task ids are flagged by validateAll");
 
+t.group("Extra-Info — the optional deeper-explanation field on tasks & leaves");
+// A sub carrying `info` is normalized onto the leaf as an HTML string; one without
+// it stays null. The renderer keys the ⓘ affordance off exactly this field.
+registry.registerRoadmap({ slug: "info-fix", title: "x", objectives: [{ id: "o" }],
+  weeks: [{ id: "w1", start: "2026-01-01" }],
+  days: [{ id: "d01", date: "2026-01-01", week: "w1", tasks: [
+    { id: "t1", obj: "o", est: 10, label: "parent", info: "<p>parent-level explainer</p>",
+      sub: [{ id: "s1", est: 5, label: "with", info: "<p>deeper <b>why</b></p>" },
+            { id: "s2", est: 5, label: "without" }] },
+  ] }] });
+const irm = registry.getRoadmap("info-fix");
+t.eq(irm.tasksById.get("d01.t1").info, "<p>parent-level explainer</p>", "task-level info is carried through");
+t.eq(irm.leavesById.get("d01.t1.s1").info, "<p>deeper <b>why</b></p>", "sub with info keeps it as an HTML string");
+t.eq(irm.leavesById.get("d01.t1.s2").info, null, "sub without info stays null (no ⓘ rendered)");
+t.ok(registry.validateAll().every(p => !p.includes("info-fix")), "an info field never trips validation");
+// hygiene across the real roadmaps: any info present is a non-empty string
+let infoCount = 0, infoBad = 0;
+for (const r of registry.getRoadmaps())
+  for (const d of r.days) for (const t2 of d.tasks)
+    for (const leaf of [t2, ...(t2.subs || [])]) {
+      if (leaf.info == null) continue;
+      infoCount++;
+      if (typeof leaf.info !== "string" || !leaf.info.trim()) infoBad++;
+    }
+t.eq(infoBad, 0, `every authored info field is a non-empty string (${infoCount} present)`);
+
 t.done();
