@@ -16,9 +16,18 @@
   <link rel="stylesheet" href="assets/css/roadmap.css">
   <link rel="stylesheet" href="assets/css/insights.css">
   <style>
-    /* inline critical: avoid any flash before theme.css loads */
-    html,body{margin:0;height:100%;background:#0e1017}
-    @media (prefers-color-scheme: light){html,body{background:#f4f5f8}}
+    /* inline critical: paint the right ground before theme.css resolves, and keep
+       agreeing with an explicit theme toggle (data-theme on <html>) afterwards.
+       Mirrors theme.css precedence — light default, dark only under OS-dark when
+       not forced light, and honoring an explicit data-theme in both directions.
+       (Without the data-theme cases this later-in-cascade rule would pin body to
+       the OS colour and ignore the in-app Light/Dark toggle.) */
+    html,body{margin:0;height:100%;background:#f4f5f8}
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme="light"]),:root:not([data-theme="light"]) body{background:#0e1017}
+    }
+    :root[data-theme="dark"],:root[data-theme="dark"] body{background:#0e1017}
+    :root[data-theme="light"],:root[data-theme="light"] body{background:#f4f5f8}
     #app[hidden],#lock[hidden]{display:none!important}
   </style>
 </head>
