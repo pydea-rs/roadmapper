@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-07-26", "the journey starts on 2026-07-26 (start shifted to Sunday), not a week later");
+t.ok(rm.days[0].date === "2026-07-27", "the journey starts on 2026-07-27 (start shifted to Monday), not a week later");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -52,7 +52,9 @@ t.group("thread SEQUENCING — the owner's ordering");
 // course (Udemy) drives early and TAPERS once section 6 ("Projects") is reached;
 // its last task is the audio/GUI capstone. (Denser 3/week re-pace → ends ~late Sept.)
 const courseDates = allTasks.filter(x => x.obj === "course").map(x => x.date);
-t.ok(Math.max(...courseDates.map(Date.parse)) <= Date.parse("2026-10-05"),
+// NOTE: this early-October bound tracks the schedule — bump it with each uniform
+// date-shift pass (like STEADY below), since the whole arc slides later each time.
+t.ok(Math.max(...courseDates.map(Date.parse)) <= Date.parse("2026-10-07"),
   "the course thread finishes by early October (then it's physics + project + shaders)");
 // the Big Bang PROJECT only begins in the second half, after the course is underway
 const projectDates = allTasks.filter(x => x.obj === "project").map(x => x.date);
@@ -98,13 +100,13 @@ for (const r of registry.getMainRoadmaps())
     const est = d.tasks.reduce((s, x) => s + (x.est || 0), 0);
     mainLoad.set(d.date, (mainLoad.get(d.date) || 0) + est);
   }
-// The light-day invariant is measured on raylib's STEADY STATE (from 2026-08-07).
-// The launch fortnight (Jul 26–Aug 6) deliberately overlaps: the owner asked all
-// three roadmaps to KICK OFF together on Sun Jul 26, so their heavy opening days
+// The light-day invariant is measured on raylib's STEADY STATE (from 2026-08-08).
+// The launch fortnight (Jul 27–Aug 7) deliberately overlaps: the owner asked all
+// three roadmaps to KICK OFF together on Mon Jul 27, so their heavy opening days
 // coincide with raylib's during that window. That overlap is accepted and transient
 // — raylib's Group-2 cadence re-plan (2–3 days/week) re-tunes placement across the
 // full range.
-const STEADY = "2026-08-07";
+const STEADY = "2026-08-08";
 let maxMainOnRaylibDay = 0, maxCombined = 0;
 for (const d of rm.days) {
   if (d.date < STEADY) continue;                 // skip the blessed shared-launch window

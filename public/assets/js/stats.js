@@ -268,7 +268,8 @@ function evalMilestone(rm, slug, m, weeks) {
 /* ---------- projection ---------- */
 function activeDaysPerWeek(rm) {
   const band = rm.cadence && rm.cadence.activeDaysPerWeek;
-  if (Array.isArray(band)) return (band[0] + band[1]) / 2;
+  // average the band, however many entries it has ([4] → 4, [3,4] → 3.5)
+  if (Array.isArray(band) && band.length) return band.reduce((a, b) => a + b, 0) / band.length;
   // else infer from the schedule: avg active days across weeks
   const perWeek = {};
   for (const d of rm.days) perWeek[d.week] = (perWeek[d.week] || 0) + 1;
