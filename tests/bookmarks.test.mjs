@@ -45,6 +45,13 @@ t.eq(bm.bookmarkCount(), 1, "count reflects state");
 bm.removeBookmark(R1.url);
 t.eq(bm.bookmarkCount(), 0, "removeBookmark clears it");
 t.eq(bm.toggleBookmark({}, {}), false, "toggling a url-less record is a safe no-op");
+// URL-scheme guard: only http(s) links are ever stored, so a hostile scheme can
+// never be persisted and later handed to window.open from the context menu.
+t.ok(!bm.addBookmark({ url: "javascript:alert(1)", title: "x" }), "a javascript: url is refused");
+t.ok(!bm.addBookmark({ url: "data:text/html,<script>1</script>", title: "x" }), "a data: url is refused");
+t.ok(!bm.isBookmarked("javascript:alert(1)"), "…and nothing was stored for it");
+t.ok(bm.addBookmark({ url: "http://plain.example/x", title: "ok" }), "a plain http url is accepted");
+bm.removeBookmark("http://plain.example/x");
 
 t.group("listBookmarks — newest first, corrupt cells skipped");
 store.resetAll();

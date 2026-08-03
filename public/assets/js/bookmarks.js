@@ -11,6 +11,11 @@ import { openContextMenu, toast } from "./ui.js";
 
 const SLUG = "bookmarks";
 
+// Only ever store/open http(s) links. Every URL here originates from the finder's
+// scrape pipeline (which is http-only), but guard at the boundary anyway so a
+// javascript:/data: URL can never be persisted or handed to window.open.
+const isHttp = u => /^https?:\/\//i.test(u || "");
+
 /** Stable, compact store-itemId for a URL (djb2 → base36) so the same link keys
  *  to the same cell — bookmarking is idempotent and toggling removes cleanly. */
 export function bmId(url) {
@@ -36,7 +41,7 @@ export function listBookmarks() {
 }
 
 export function addBookmark(r, { type = "video", topic = "" } = {}) {
-  if (!r || !r.url) return false;
+  if (!r || !isHttp(r.url)) return false;
   const rec = { url: r.url, title: r.title || "Untitled", thumb: r.thumb || null,
     source: r.source || "web", type, topic, ts: nowTs() };
   store.setCell(SLUG, bmId(r.url), "bookmark", JSON.stringify(rec));
@@ -110,7 +115,7 @@ function bookmarkCard(b, mount) {
   card.addEventListener("contextmenu", ev => {
     ev.preventDefault();
     const menu = [
-      { label: "Open in new tab", icon: "↗", onClick: () => { try { window.open(b.url, "_blank", "noopener"); } catch {} } },
+      { label: "Open in new tab", icon: "↗", onClick: () => { if (isHttp(b.url)) { try { window.open(b.url, "_blank", "noopener"); } catch {} } } },
       { label: "Copy link", icon: "⧉", onClick: () => copyLink(b.url) },
       { separator: true },
       { label: "Remove bookmark", icon: "🗑", danger: true,
