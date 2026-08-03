@@ -207,7 +207,7 @@ function drawToday(mount) {
     view.classList.add("has-finder");
     // autoRun only on a fresh open (renderToday); a tick-triggered redraw reuses
     // the already-found card instead of firing another search.
-    view.append(finderPanel({ groups: fgroups, autoRun: finderAuto }));
+    view.append(finderPanel({ groups: fgroups, autoRun: finderAuto, today }));
   }
 
   // Main track digest, then the Side track digest under its own divider. The two

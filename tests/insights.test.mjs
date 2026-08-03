@@ -47,10 +47,14 @@ function doneOnDate(slug, id, dateStr) {
   store.setCell(slug, `done_at:${id}`, "meta", new RealDate(y, m - 1, d, 12, 0, 0).toISOString());
 }
 
-// 4 finished on their scheduled day (on-time), 2 finished a week late.
+// 4 finished on their scheduled day (on-time), 2 finished late. The late pair is
+// stamped as completed TODAY — after their scheduled day (so still "late") but on
+// or before the frozen now, so they count as done-by-today. (Using a fixed +N-day
+// offset would drift PAST the frozen now as the roadmap start slides later with
+// each date-shift; anchoring to TODAY keeps the fixture valid across shifts.)
 store.resetAll();
 reqLeaves.slice(0, 4).forEach(l => doneOnDate(rm.slug, l.id, l.date));
-reqLeaves.slice(4, 6).forEach(l => doneOnDate(rm.slug, l.id, util.addDays(l.date, 7)));
+reqLeaves.slice(4, 6).forEach(l => doneOnDate(rm.slug, l.id, TODAY));
 
 t.group("summarize: on-time vs late vs overdue");
 const leaves = insights.collectLeaves(rm.slug);

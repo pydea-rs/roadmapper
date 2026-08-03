@@ -1,17 +1,24 @@
-// finder.js — "Watch / read next": a small, dependency-free discovery widget
-// for the Today view. It reads the text of today's (and overdue) tasks, distils
-// a search query from the concepts in them — with NO LLM, just weighted keyword
+// finder.js — "Watch / read next": a small, dependency-free discovery widget for
+// the Today view. It reads the text of today's (and recent) tasks, distils a
+// search query from the concepts in them — NO LLM, just weighted keyword
 // extraction — and asks the backend proxy (sync.search) for a related video or
-// article to surface. Each run picks ONE roadmap at random so the query stays
-// coherent (one topic, not a blend), and leans toward video over article.
+// article to surface.
 //
-// State is deliberately not persisted: it's a serendipity card, re-rolled on
-// every click and fired once (silently) when the Today view opens.
+// The backend scrape (YouTube / DuckDuckGo HTML) is best-effort and fails a fair
+// share of the time — a consent wall, changed markup, or an unparseable page all
+// come back as `fetched:false`. A single query therefore misses often, so this
+// module does NOT rely on one shot: each open runs a small PLAN of attempts —
+// two on-topic queries drawn (at random) from several strategies, then a couple
+// of high-reliability "fresh content" fallbacks (release notes / news / tips)
+// that almost always parse. The first attempt to return a real single result
+// wins immediately; only if the whole plan misses do we fall back to a
+// deep-link-to-results card (and we keep the FIRST, most on-topic one for that).
+// A few seconds across up to four tries is fine — the loading state covers it.
 
 import { el } from "./util.js";
 import * as sync from "./sync.js";
 
-/* ---------- query derivation (pure) ---------- */
+/* ---------- text → keyword pool (pure) ---------- */
 
 // Very small stopword set — enough to keep queries on-topic without a big list.
 const STOP = new Set((
@@ -22,6 +29,16 @@ const STOP = new Set((
 ).split(/\s+/));
 
 const stripTags = s => String(s).replace(/<[^>]+>/g, " ").replace(/&[a-z]+;|&#\d+;/gi, " ");
+const titleCase = s => String(s).replace(/\b[a-z]/g, c => c.toUpperCase());
+
+// Deterministic-shuffle in place (Fisher–Yates) using an injectable rng.
+function shuffle(arr, rng = Math.random) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 // Gather the visible text a task contributes: its lead, own label, and — for a
 // parent — every sub-task label and note. That's where the concepts live.
@@ -33,14 +50,23 @@ function taskText(task) {
   return parts.join(" ");
 }
 
-const titleCase = s => String(s).replace(/\b[a-z]/g, c => c.toUpperCase());
+// Non-optional tasks up to and including `today` (the cumulative concept pool);
+// falls back to the whole roadmap when no `today` is given or nothing has landed.
+function tasksUpTo(rm, today) {
+  const all = [], upto = [];
+  for (const d of rm.days || []) for (const t of d.tasks || []) {
+    if (t.optional) continue;
+    all.push(t);
+    if (today && d.date <= today) upto.push(t);
+  }
+  return upto.length ? upto : all;
+}
 
 /**
  * Build a rich, salience-ordered vocabulary from a set of tasks:
  *   codes    — <code> API/identifier names (highest signal),
  *   unigrams — single keywords by frequency,
  *   bigrams  — adjacent-word PHRASES ("smart pointers", "thread pool"), by freq.
- * This is the "wide list of words and phrases" the query sampler draws from.
  */
 export function buildPool(tasks) {
   const html = (tasks || []).map(taskText).join(" ");
@@ -68,27 +94,59 @@ export function buildPool(tasks) {
   return { codes, unigrams, bigrams };
 }
 
+/* ---------- query strategies (pure) ---------- */
+
+// The first meaningful slug token, the query's stable anchor ("rust", "raylib").
+const anchorOf = rm => (String(rm && rm.slug || "").split(/[-_]/).filter(w => w.length > 1))[0] || "";
+
+// A few slug tokens expand to the term people actually search for.
+const SLUG_EXPAND = {
+  go: "golang", interp: "interpreters", cpp: "c++", js: "javascript",
+  ts: "typescript", db: "databases", os: "operating systems",
+};
+
 /**
- * Distil a search query from a roadmap and a set of its due/overdue tasks.
- * Returns { q, type, topic }. Rather than always emitting the same top keywords,
- * it samples the pool (codes / keywords / phrases) through a randomly chosen
- * "recipe", so every shuffle yields a different — but still on-topic — query.
- * Always anchored in the roadmap's own tech. `type` is randomised (≈70% video).
+ * ROOT words for a roadmap: the primary, general tech terms — slug tokens (with a
+ * couple of expansions), objective titles, and the highest-signal codes/keywords
+ * mined across the WHOLE roadmap (this is what surfaces "Lox", "chi", "echo",
+ * "shaders", …). Used by the roots strategy and to anchor the fresh-content
+ * fallbacks. General on purpose: broad-but-related beats a dead search page.
+ */
+export function rootWords(rm) {
+  const roots = [];
+  const add = w => {
+    w = String(w == null ? "" : w).trim();
+    if (w.length > 1 && !roots.some(x => x.toLowerCase() === w.toLowerCase())) roots.push(w);
+  };
+  for (const tok of String(rm && rm.slug || "").split(/[-_]/)) {
+    if (tok.length > 1) { add(tok); if (SLUG_EXPAND[tok]) add(SLUG_EXPAND[tok]); }
+  }
+  for (const o of rm && rm.objectives || [])
+    for (const w of stripTags(o.title || "").split(/\s+/))
+      if (w.length > 2 && !STOP.has(w.toLowerCase())) add(w);
+  const pool = buildPool(tasksUpTo(rm, null));
+  pool.codes.slice(0, 6).forEach(add);
+  pool.unigrams.slice(0, 10).forEach(add);
+  return roots;
+}
+
+/**
+ * Distil a search query from a roadmap and a set of its tasks. Returns
+ * { q, type, topic }. Rather than always emitting the same top keywords, it
+ * samples the pool (codes / keywords / phrases) through a randomly chosen recipe,
+ * so every shuffle yields a different — but still on-topic — query. Always
+ * anchored in the roadmap's own tech. `type` is randomised (≈65% video).
  */
 export function deriveQuery(rm, tasks, { rng = Math.random } = {}) {
-  const anchor = String(rm.slug || "").split(/[-_]/).filter(w => w.length > 1).slice(0, 2);
   const { codes, unigrams, bigrams } = buildPool(tasks);
-  const anchorWord = anchor[0] || unigrams[0] || "";
+  const anchorWord = anchorOf(rm) || unigrams[0] || "";
 
-  // Sample one item from the top `window` of a list (variety without drifting
-  // off-topic — the salient terms sit at the front).
   const pick = (list, window = 4) => list.length
     ? list[Math.floor(rng() * Math.min(window, list.length))] : null;
 
   const parts = [];
   const push = w => { if (w && !parts.some(x => x.toLowerCase() === w.toLowerCase())) parts.push(w); };
 
-  // Six recipes of different shape/length; all keep the roadmap anchor in play.
   switch (Math.floor(rng() * 6)) {
     case 0: push(anchorWord); push(pick(bigrams)); break;
     case 1: push(anchorWord); push(pick(codes)); push(pick(unigrams)); break;
@@ -97,13 +155,86 @@ export function deriveQuery(rm, tasks, { rng = Math.random } = {}) {
     case 4: push(anchorWord); push(pick(bigrams)); push(pick(unigrams, 6)); break;
     default: push(anchorWord); push(pick(codes) || pick(bigrams)); push(pick(unigrams));
   }
-  // Guarantee at least two meaningful terms, filling from the frequency list.
   for (const u of [anchorWord, ...unigrams]) { if (parts.filter(Boolean).length >= 2) break; push(u); }
 
   const q = parts.filter(Boolean).join(" ").split(/\s+/).slice(0, 6).join(" ").trim();
-  const type = rng() < 0.7 ? "video" : "article";
-  const topic = titleCase(anchor[0] || bigrams[0] || unigrams[0] || "your roadmap");
-  return { q: q || anchorWord || String(rm.slug || "roadmap"), type, topic };
+  const type = rng() < 0.65 ? "video" : "article";
+  const topic = titleCase(anchorOf(rm) || bigrams[0] || unigrams[0] || "your roadmap");
+  return { q: q || anchorWord || String(rm && rm.slug || "roadmap"), type, topic };
+}
+
+/** Roots strategy: one or two primary tech words. Broad but reliably related. */
+export function rootQuery(rm, { rng = Math.random } = {}) {
+  const roots = rootWords(rm);
+  if (!roots.length) return deriveQuery(rm, [], { rng });
+  const pick = () => roots[Math.floor(rng() * Math.min(roots.length, 8))];
+  const a = pick(), b = pick();
+  const parts = [a];
+  if (b && b.toLowerCase() !== a.toLowerCase()) parts.push(b);
+  return { q: parts.join(" ").trim(), type: rng() < 0.5 ? "video" : "article", topic: titleCase(roots[0]) };
+}
+
+/** Multi-roadmap strategy: one salient term from each of two different roadmaps. */
+export function multiQuery(groups, { rng = Math.random } = {}) {
+  const gs = shuffle(groups.slice(), rng).slice(0, 2);
+  const terms = [];
+  for (const g of gs) {
+    const p = buildPool(g.tasks);
+    const cand = p.codes[0] || p.bigrams[0] || p.unigrams[0] || anchorOf(g.rm);
+    if (cand && !terms.some(x => x.toLowerCase() === cand.toLowerCase())) terms.push(cand);
+  }
+  const q = terms.join(" ").split(/\s+/).slice(0, 6).join(" ").trim();
+  const anchor = anchorOf((gs[0] || {}).rm || {});
+  return { q: q || anchor, type: rng() < 0.6 ? "video" : "article", topic: titleCase(anchor || terms[0] || "your roadmaps") };
+}
+
+/**
+ * Fresh-content FALLBACKS: common phrases that almost always return a parseable
+ * page (release notes, news, tips), anchored on the roadmap's primary tech where
+ * it helps. Less related to today's exact tasks, so they're used only after the
+ * on-topic strategies miss — but they beat a dead search-results link. Returned
+ * shuffled; `year` is passed in so the function stays pure/testable.
+ */
+export function freshQueries(rm, { rng = Math.random, year = "" } = {}) {
+  const tech = titleCase(anchorOf(rm) || "programming");
+  const y = String(year || "").trim();
+  const specs = [
+    { q: `latest ${tech} release features`, type: "article", topic: `${tech} releases` },
+    { q: `what's new in ${tech} ${y}`.trim(), type: "video", topic: `${tech} updates` },
+    { q: "programming news today", type: "article", topic: "Programming news" },
+    { q: "tech news today", type: "article", topic: "Tech news" },
+    { q: "software security news today", type: "article", topic: "Security news" },
+    { q: `${tech} tips and tricks`, type: "video", topic: `${tech} tips` },
+    { q: `${tech} project ideas ${y}`.trim(), type: "video", topic: `${tech} projects` },
+  ];
+  return shuffle(specs, rng);
+}
+
+/**
+ * Build the ordered attempt plan for one run: pick the primary roadmap (weighted
+ * by how much work it has due), then TWO on-topic queries drawn at random from
+ * the strategy set (today / cumulative / multi-roadmap / roots), followed by the
+ * fresh-content fallbacks. The caller tries them in order and stops at the first
+ * real result. Every element is a thunk so the rng is only spent when reached.
+ */
+export function buildPlan(groups, { today = null, year = "", rng = Math.random } = {}) {
+  // weight the primary pick by task load so shuffles draw across all of today.
+  const total = groups.reduce((s, x) => s + x.tasks.length, 0) || 1;
+  let r = rng() * total, primary = groups[groups.length - 1];
+  for (const g of groups) { r -= g.tasks.length; if (r <= 0) { primary = g; break; } }
+
+  const mains = [
+    () => deriveQuery(primary.rm, primary.tasks, { rng }),                 // today (most specific)
+    () => deriveQuery(primary.rm, tasksUpTo(primary.rm, today), { rng }),  // cumulative
+    () => rootQuery(primary.rm, { rng }),                                  // roots (broad)
+  ];
+  if (groups.length > 1) mains.push(() => multiQuery(groups, { rng }));    // cross-roadmap
+  shuffle(mains, rng);
+
+  const fallbacks = freshQueries(primary.rm, { rng, year }).map(spec => () => spec);
+  // two on-topic tries first (the second doubles as the search-page backup), then
+  // two high-reliability fallbacks — four tries total keeps it under a few seconds.
+  return { primary, attempts: [...mains.slice(0, 2), ...fallbacks.slice(0, 2)] };
 }
 
 /* ---------- result rendering (pure) ---------- */
@@ -122,9 +253,6 @@ export function pickResult(results, rng = Math.random) {
 /** Build the clickable result card. Titles/urls come from the scrape → set via
  *  text/href only (never innerHTML), so a hostile title can't inject markup. */
 export function resultCard(r, { topic, type = "video", isSearch = false } = {}) {
-  // Titles/urls come from an external scrape. Text/href-only already blocks markup
-  // injection, but href must also reject dangerous schemes (javascript:/data:) —
-  // only http(s) links are ever legitimate here. Same guard for the thumbnail src.
   const isHttp = u => /^https?:\/\//i.test(u || "");
   const href = isHttp(r.url) ? r.url : null;
   const a = el("a.finder-result" + (type === "article" ? ".article" : ".video"),
@@ -157,6 +285,42 @@ function stateNote(slot, cls, html) {
   slot.replaceChildren(el("div.finder-note." + cls, { html }));
 }
 
+const MAX_TRIES = 4;   // two on-topic + two fallbacks — a few seconds worst case
+
+/**
+ * Drive an attempt plan against a search function until one returns a real result.
+ * Pure & injectable (searchFn matches sync.search's contract) so the retry policy
+ * is testable without a network. Returns one of:
+ *   { kind:"result", pick }  — a real single video/article (preferred)
+ *   { kind:"search", pick }  — the FIRST on-topic deep-link, if every try missed
+ *   { kind:"none" }          — nothing at all (e.g. the proxy is down)
+ * Stops early after two consecutive hard failures (!ok) — that's the proxy being
+ * unreachable, and hammering it further just burns seconds.
+ */
+export async function runPlan(attempts, searchFn, { maxTries = MAX_TRIES } = {}) {
+  let backup = null, hardFails = 0;
+  for (let i = 0; i < Math.min(maxTries, attempts.length); i++) {
+    let spec;
+    try { spec = attempts[i](); } catch { continue; }
+    if (!spec || !spec.q) continue;
+    const { q, type, topic } = spec;
+
+    let res;
+    try { res = await searchFn(q, type); } catch { res = { ok: false }; }
+
+    if (res && res.ok && res.fetched && res.results && res.results.length)
+      return { kind: "result", pick: { r: pickResult(res.results), topic, type } };
+    if (!res || !res.ok) { if (++hardFails >= 2) break; continue; }
+    hardFails = 0;
+    if (!backup) backup = {
+      r: { title: q, url: searchUrl(q, type), thumb: null,
+        source: type === "article" ? "DuckDuckGo" : "YouTube" },
+      topic, type, isSearch: true,
+    };
+  }
+  return backup ? { kind: "search", pick: backup } : { kind: "none" };
+}
+
 // Module-level state so a search that started before a Today re-render still
 // resolves into the panel the user is actually looking at:
 //   lastShown — the most recent pick, re-shown on a re-render WITHOUT a new
@@ -184,8 +348,9 @@ function restorePick() {                       // back to the last good pick (or
  * Build the Today "Watch / read next" panel.
  *   groups  : [{ rm, tasks:[task,…] }] — roadmaps with due/overdue work today.
  *   autoRun : fire one silent search on open (only when the backend is online).
+ *   today   : today's ISO date (scopes the cumulative-keyword strategy).
  */
-export function finderPanel({ groups = [], autoRun = false } = {}) {
+export function finderPanel({ groups = [], autoRun = false, today = null } = {}) {
   const panel = el("section.finder-panel", { "aria-label": "Something to watch or read next" });
 
   const head = el("div.finder-head");
@@ -205,29 +370,17 @@ export function finderPanel({ groups = [], autoRun = false } = {}) {
   async function run({ manual }) {
     if (running || !groups.length) return;
     running = true;
-    // Both auto (on open) and manual (shuffle) show a progress state while
-    // querying, so opening Today gives feedback that it's finding something.
     livePanel.classList.add("loading");
     stateNote(liveSlot, "loading", `<span class="finder-spin"></span> Finding something good…`);
+
+    const year = (() => { try { return String(new Date().getFullYear()); } catch { return ""; } })();
+
     try {
-      // Weight the anchor pick by how much work each roadmap has due today, so
-      // successive shuffles draw across ALL of today's tasks (not one fixed
-      // roadmap) while each query stays coherent to its anchor roadmap.
-      const total = groups.reduce((s, x) => s + x.tasks.length, 0) || 1;
-      let r = Math.random() * total, g = groups[groups.length - 1];
-      for (const cand of groups) { r -= cand.tasks.length; if (r <= 0) { g = cand; break; } }
-      const { q, type, topic } = deriveQuery(g.rm, g.tasks);
-      let pick = null;
-      if (q) {
-        const res = await sync.search(q, type);
-        if (res.ok && res.fetched && res.results.length) pick = { r: pickResult(res.results), topic, type };
-        else if (res.ok && !res.fetched)                                 // outbound blocked upstream
-          pick = { r: { title: q, url: searchUrl(q, type), thumb: null,
-            source: type === "article" ? "DuckDuckGo" : "YouTube" }, topic, type, isSearch: true };
-      }
-      if (pick) showPick(pick);
+      const { attempts } = buildPlan(groups, { today, year, rng: Math.random });
+      const outcome = await runPlan(attempts, sync.search, { maxTries: MAX_TRIES });
+      if (outcome.kind !== "none") showPick(outcome.pick);          // real result, else the most on-topic search page
       else if (manual) stateNote(liveSlot, "fail", `Couldn't find anything this time — give it another tap.`);
-      else restorePick();                                                // auto stays silent on failure
+      else restorePick();
     } catch {
       if (manual) stateNote(liveSlot, "fail", `Couldn't reach the finder — give it another tap.`);
       else restorePick();
