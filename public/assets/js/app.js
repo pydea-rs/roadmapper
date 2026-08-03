@@ -10,6 +10,7 @@ import * as store from "./store.js";
 import * as sync from "./sync.js";
 import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest } from "./render.js";
 import { renderInsights } from "./insights.js";
+import { renderBookmarks } from "./bookmarks.js";
 import { sidebarStats } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
@@ -46,6 +47,9 @@ async function boot() {
   wireChrome();
 
   const st = await sync.status();
+  // Auth is now known — drop the neutral boot splash before revealing lock/app,
+  // so an authenticated reload goes splash → dashboard (never a login-box flash).
+  const bootEl = $("#boot"); if (bootEl) bootEl.hidden = true;
   if (!st.available) { lock.show(); showBackendRequired(); return; }  // no DB → can't run
   if (!st.authed) { lock.show(); return; }
   startApp();
@@ -152,6 +156,15 @@ function route() {
     activeSlug = null;
     sidebarExpandedSlug = null;
     swapView(() => { renderInsights($("#view")); updateSidebar(); scrollMainTop(); });
+    closeMobileSidebar();
+    return;
+  }
+
+  // Saved finder picks (#/bookmarks).
+  if (slug === "bookmarks" && !sub) {
+    activeSlug = null;
+    sidebarExpandedSlug = null;
+    swapView(() => { renderBookmarks($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
   }

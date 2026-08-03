@@ -90,6 +90,26 @@ t.ok(article.querySelector(".fr-kicker").textContent.startsWith("Search"),
 t.eq(finder.resultCard({ url: "https://x.dev/a" }, {}).querySelector(".fr-title").textContent, "Untitled",
   "a missing title degrades to 'Untitled', never blank/undefined");
 
+t.group("resultCard — bookmark toggle (optional, stops the card link)");
+t.ok(!finder.resultCard({ url: "https://x/1" }, {}).querySelector(".fr-bookmark"),
+  "no bookmark button unless a bookmark config is passed");
+let toggles = 0, on = false;
+const bmCard = finder.resultCard({ title: "V", url: "https://x/1", thumb: "https://i/x.jpg" },
+  { type: "video", topic: "T", bookmark: { active: false, onToggle: () => { toggles++; on = !on; return on; } } });
+const bmBtn = bmCard.querySelector(".fr-bookmark");
+t.ok(bmBtn, "a bookmark button renders when configured");
+t.eq(bmBtn.getAttribute("aria-pressed"), "false", "starts un-pressed when inactive");
+const clickEv = new dom.window.MouseEvent("click", { bubbles: true, cancelable: true });
+bmBtn.dispatchEvent(clickEv);
+t.eq(toggles, 1, "clicking invokes onToggle");
+t.ok(clickEv.defaultPrevented, "the click is prevented — it never follows the card's link");
+t.eq(bmBtn.getAttribute("aria-pressed"), "true", "the icon flips to pressed after toggling on");
+bmBtn.dispatchEvent(new dom.window.MouseEvent("click", { bubbles: true, cancelable: true }));
+t.eq(bmBtn.getAttribute("aria-pressed"), "false", "toggling again flips it back off");
+const bmActive = finder.resultCard({ title: "V", url: "https://x/2" },
+  { bookmark: { active: true, onToggle: () => true } }).querySelector(".fr-bookmark");
+t.ok(bmActive.classList.contains("active"), "an already-saved card renders its bookmark active");
+
 /* ---- the multi-strategy retry engine (added to cut the finder's failure rate) ---- */
 
 // a tiny roadmap whose task text carries distinctive terms + <code> identifiers

@@ -17,6 +17,8 @@
 
 import { el } from "./util.js";
 import * as sync from "./sync.js";
+import { toast } from "./ui.js";
+import { isBookmarked, toggleBookmark } from "./bookmarks.js";
 
 /* ---------- text → keyword pool (pure) ---------- */
 
@@ -242,6 +244,9 @@ export function buildPlan(groups, { today = null, year = "", rng = Math.random }
 const playIcon = () => `<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>`;
 const docIcon = () => `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>`;
 const shuffleIcon = () => `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>`;
+const bookmarkIcon = on => on
+  ? `<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>`
+  : `<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1z"/></svg>`;
 
 // Pick one of the top few results (uniform among the top 3 — variety without
 // caring about rank precision, which the scrape can't guarantee anyway).
@@ -251,8 +256,10 @@ export function pickResult(results, rng = Math.random) {
 }
 
 /** Build the clickable result card. Titles/urls come from the scrape → set via
- *  text/href only (never innerHTML), so a hostile title can't inject markup. */
-export function resultCard(r, { topic, type = "video", isSearch = false } = {}) {
+ *  text/href only (never innerHTML), so a hostile title can't inject markup.
+ *  Pass `bookmark:{active,onToggle}` to show a bookmark toggle; onToggle() runs
+ *  the side effect and returns the new active state (the icon flips to match). */
+export function resultCard(r, { topic, type = "video", isSearch = false, bookmark = null } = {}) {
   const isHttp = u => /^https?:\/\//i.test(u || "");
   const href = isHttp(r.url) ? r.url : null;
   const a = el("a.finder-result" + (type === "article" ? ".article" : ".video"),
@@ -273,6 +280,30 @@ export function resultCard(r, { topic, type = "video", isSearch = false } = {}) 
   body.append(el("span.fr-title", { text: r.title || "Untitled" }));
   if (topic) body.append(el("span.fr-topic", { text: `related to ${topic}` }));
   a.append(body);
+
+  // Bookmark toggle — a span[role=button] (valid inside <a>), stops the click from
+  // following the link. onToggle returns the new state; the icon flips to match.
+  if (bookmark) {
+    const on0 = !!bookmark.active;
+    const bm = el("span.fr-bookmark" + (on0 ? ".active" : ""), {
+      role: "button", tabindex: "0", "aria-pressed": on0 ? "true" : "false",
+      "aria-label": on0 ? "Remove bookmark" : "Bookmark this",
+      title: on0 ? "Remove bookmark" : "Bookmark this", html: bookmarkIcon(on0),
+    });
+    const fire = ev => {
+      ev.preventDefault(); ev.stopPropagation();
+      let next = !on0;
+      try { next = !!bookmark.onToggle(); } catch {}
+      bm.classList.toggle("active", next);
+      bm.innerHTML = bookmarkIcon(next);
+      bm.setAttribute("aria-pressed", next ? "true" : "false");
+      const lbl = next ? "Remove bookmark" : "Bookmark this";
+      bm.setAttribute("aria-label", lbl); bm.setAttribute("title", lbl);
+    };
+    bm.addEventListener("click", fire);
+    bm.addEventListener("keydown", ev => { if (ev.key === "Enter" || ev.key === " ") fire(ev); });
+    a.append(bm);
+  }
   return a;
 }
 
@@ -331,11 +362,28 @@ export async function runPlan(attempts, searchFn, { maxTries = MAX_TRIES } = {})
 //   running — module-level: at most one search in flight across panels.
 let lastShown = null, liveSlot = null, livePanel = null, running = false;
 
-function showPick(pick) {
+// `animate` plays the entrance only for a genuinely NEW pick (a fresh search or
+// first open) — NOT for the re-show that happens on every Today tick-rerender, so
+// ticking a task doesn't make the card flicker/replay its animation each time.
+function showPick(pick, { animate = false } = {}) {
   lastShown = pick;
   if (!liveSlot) return;
-  liveSlot.replaceChildren(resultCard(pick.r, pick));
+  const card = resultCard(pick.r, withBookmark(pick));
+  if (animate) card.classList.add("enter");
+  liveSlot.replaceChildren(card);
   if (livePanel) livePanel.classList.add("has-result");
+}
+// Attach a live bookmark toggle to a shown pick (Today's card is bookmarkable).
+function withBookmark(pick) {
+  const url = pick.r && pick.r.url;
+  return { ...pick, bookmark: {
+    active: isBookmarked(url),
+    onToggle: () => {
+      const on = toggleBookmark(pick.r, { type: pick.type, topic: pick.topic });
+      toast(on ? "Bookmarked" : "Bookmark removed", { type: "ok" });
+      return on;
+    },
+  } };
 }
 function restorePick() {                       // back to the last good pick (or empty) after a failed search
   if (lastShown) showPick(lastShown);
@@ -378,7 +426,7 @@ export function finderPanel({ groups = [], autoRun = false, today = null } = {})
     try {
       const { attempts } = buildPlan(groups, { today, year, rng: Math.random });
       const outcome = await runPlan(attempts, sync.search, { maxTries: MAX_TRIES });
-      if (outcome.kind !== "none") showPick(outcome.pick);          // real result, else the most on-topic search page
+      if (outcome.kind !== "none") showPick(outcome.pick, { animate: true });   // fresh pick → play entrance
       else if (manual) stateNote(liveSlot, "fail", `Couldn't find anything this time — give it another tap.`);
       else restorePick();
     } catch {

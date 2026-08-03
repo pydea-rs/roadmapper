@@ -163,6 +163,52 @@ export function inputModal({ title, subtitle = "", icon = "✏️", label = "", 
 }
 
 /* ================================================================== *
+ *  Context menu (right-click actions) — custom, never the native menu
+ * ================================================================== */
+let openMenuEl = null;
+function onCtxDocDown(e) { if (openMenuEl && !openMenuEl.contains(e.target)) closeContextMenu(); }
+function onCtxKey(e) { if (e.key === "Escape") { e.preventDefault(); closeContextMenu(); } }
+export function closeContextMenu() {
+  if (!openMenuEl) return;
+  const m = openMenuEl; openMenuEl = null;
+  m.classList.remove("open");
+  document.removeEventListener("pointerdown", onCtxDocDown, true);
+  document.removeEventListener("keydown", onCtxKey, true);
+  window.removeEventListener("blur", closeContextMenu);
+  setTimeout(() => m.remove(), 120);
+}
+
+/** Open a floating action menu at (x,y). items: [{label, icon?, danger?, onClick}]
+ *  or {separator:true}. Closes on Escape, outside click, blur, or item click. */
+export function openContextMenu(x, y, items) {
+  closeContextMenu();
+  const menu = el("div.ctx-menu", { role: "menu" });
+  for (const it of (items || [])) {
+    if (!it || it.separator) { menu.append(el("div.ctx-sep")); continue; }
+    const b = el("button.ctx-item" + (it.danger ? ".danger" : ""), { type: "button", role: "menuitem" });
+    if (it.icon) b.append(el("span.ctx-ico", { text: it.icon }));
+    b.append(el("span.ctx-label", { text: it.label }));
+    b.onclick = () => { closeContextMenu(); try { it.onClick && it.onClick(); } catch {} };
+    menu.append(b);
+  }
+  menu.style.visibility = "hidden";
+  document.body.append(menu);
+  const r = menu.getBoundingClientRect();
+  const vw = window.innerWidth || 1024, vh = window.innerHeight || 768;
+  menu.style.left = Math.max(8, Math.min(x, vw - r.width - 8)) + "px";
+  menu.style.top = Math.max(8, Math.min(y, vh - r.height - 8)) + "px";
+  menu.style.visibility = "";
+  openMenuEl = menu;
+  requestAnimationFrame(() => menu.classList.add("open"));
+  setTimeout(() => {
+    document.addEventListener("pointerdown", onCtxDocDown, true);
+    document.addEventListener("keydown", onCtxKey, true);
+    window.addEventListener("blur", closeContextMenu);
+  }, 0);
+  return { close: closeContextMenu };
+}
+
+/* ================================================================== *
  *  Lock gate
  * ================================================================== */
 export function initLock({ onLogin, onUnlock }) {
@@ -306,6 +352,14 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
   insightsLink.append(el("span.sb-ico", { text: "📊" }));
   insightsLink.append(el("span.sb-today-label", { text: "Insights · charts & stats" }));
   list.append(insightsLink);
+
+  // Saved finder picks (videos / articles bookmarked from Today).
+  const onBookmarks = location.hash.replace(/^#\/?/, "") === "bookmarks";
+  const bookmarksLink = el("a.sb-today.sb-bookmarks" + (onBookmarks ? ".active" : ""),
+    { href: "#/bookmarks", "aria-current": onBookmarks ? "true" : "false" });
+  bookmarksLink.append(el("span.sb-ico", { text: "🔖" }));
+  bookmarksLink.append(el("span.sb-today-label", { text: "Bookmarks · saved links" }));
+  list.append(bookmarksLink);
 
   // Render one roadmap's sidebar entry (+ its quick-jumps when expanded).
   const renderItem = rm => {

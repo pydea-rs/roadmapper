@@ -28,7 +28,15 @@
     }
     :root[data-theme="dark"],:root[data-theme="dark"] body{background:#0e1017}
     :root[data-theme="light"],:root[data-theme="light"] body{background:#f4f5f8}
-    #app[hidden],#lock[hidden]{display:none!important}
+    #app[hidden],#lock[hidden],#boot[hidden]{display:none!important}
+    /* Neutral boot splash — shown until auth is known, so an already-authed
+       reload never flashes the login box before the dashboard. */
+    #boot{position:fixed;inset:0;display:grid;place-items:center;z-index:50}
+    #boot .boot-spin{width:34px;height:34px;border-radius:50%;
+      border:3px solid rgba(128,128,140,.25);border-top-color:rgba(128,128,140,.85);
+      animation:boot-spin .7s linear infinite}
+    @media (prefers-reduced-motion:reduce){#boot .boot-spin{animation-duration:1.4s}}
+    @keyframes boot-spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
@@ -36,8 +44,12 @@
 <!-- Dev validation banner (hidden unless a roadmap fails validation) -->
 <pre id="dev-error"></pre>
 
+<!-- Boot splash: shown until auth status is known (avoids a login-box flash on
+     an authenticated reload). boot() hides it once it decides lock vs app. -->
+<div id="boot"><span class="boot-spin" aria-hidden="true"></span></div>
+
 <!-- ============ Lock gate ============ -->
-<div id="lock">
+<div id="lock" hidden>
   <div class="lock-card">
     <div class="lock-badge">🔒</div>
     <h1>Roadmaps</h1>

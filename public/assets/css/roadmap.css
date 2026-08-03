@@ -686,6 +686,41 @@
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .fr-topic { font-size: var(--t-xs); color: var(--text-3); }
 
+/* result-card entrance + subtle thumbnail zoom on hover (polish). The entrance
+   plays only on a fresh pick (.enter) or a bookmarks-grid card — never on the
+   re-show that a Today tick-rerender triggers. */
+.finder-result { position: relative; }
+.finder-result.enter, .bm-card { animation: fr-in .32s cubic-bezier(.22, .61, .36, 1); }
+@keyframes fr-in { from { opacity: 0; transform: translateY(6px) scale(.985); } to { opacity: 1; transform: none; } }
+.fr-img { transition: transform .35s ease; }
+.finder-result:hover .fr-img { transform: scale(1.05); }
+.finder-result:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* bookmark toggle — a legible chip that works over a photo thumb or a card body */
+.fr-bookmark { position: absolute; top: 6px; right: 6px; z-index: 2;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 27px; height: 27px; border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  color: var(--text-2); border: 1px solid var(--border);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  transition: color .16s, background .16s, border-color .16s, transform .12s; }
+.fr-bookmark:hover { color: var(--ontime); transform: scale(1.08); }
+.fr-bookmark:active { transform: scale(.94); }
+.fr-bookmark.active { color: var(--ontime);
+  border-color: color-mix(in srgb, var(--ontime) 55%, var(--border));
+  background: color-mix(in srgb, var(--ontime) 16%, var(--surface)); }
+.fr-bookmark:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- Bookmarks view ---------------------------------------------- */
+.bm-grid { display: grid; gap: var(--s3); margin-top: var(--s4);
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+.bm-grid .finder-result { flex-direction: column; height: 100%; }
+.bm-grid .fr-thumb { flex: 0 0 auto; width: 100%; }
+.bm-empty { text-align: center; padding: var(--s8) var(--s4); color: var(--text-3); }
+.bm-empty-ico { font-size: 42px; opacity: .8; }
+.bm-empty-title { font-size: var(--t-md); font-weight: 700; color: var(--text-2); margin: var(--s3) 0 4px; }
+.bm-empty-sub { font-size: var(--t-sm); max-width: 380px; margin: 0 auto; line-height: 1.5; }
+
 /* Desktop: float the finder into a sticky right rail beside the digest. */
 @media (min-width: 1080px) {
   .today-view.has-finder { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
@@ -699,6 +734,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .finder-panel.loading .finder-go, .finder-spin { animation: none; }
+  .finder-result, .bm-card { animation: none; }
+  .finder-result:hover .fr-img { transform: none; }
 }
 
 /* ---- Today · effort panel ------------------------------------------ */
