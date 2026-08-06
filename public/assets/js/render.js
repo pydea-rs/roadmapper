@@ -17,8 +17,8 @@ import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
 import {
-  $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay, dowOf,
-  monthLabel, daysBetween, addDays, pct,
+  $$, el, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay, dowOf,
+  monthLabel, daysBetween, addDays,
 } from "./util.js";
 
 let hooks = {};                        // { exportRoadmap, importRoadmap }
@@ -26,6 +26,7 @@ export function setRenderHooks(h) { hooks = h; }
 
 let cur = null;                        // { rm, mount }
 let lastToggled = null;
+let lastToggledHost = null;            // day the ticked row lives on (a moved task renders at BOTH ends → scope the pop to the clicked copy)
 let celebrateDay = null;               // dayId whose actual just hit 100% (fire confetti)
 let revealedDays = new Set();          // day ids already slid into view (this roadmap session)
 let dayRevealIO = null;                // live scroll-reveal observer; disconnected each paint
@@ -262,7 +263,7 @@ function recallReview(today, limit = 4) {
 
   // rotate the start index by a tiny hash of the date → a different slice daily
   let h = 0; for (let i = 0; i < today.length; i++) h = (h * 31 + today.charCodeAt(i)) >>> 0;
-  const start = pool.length ? h % pool.length : 0;
+  const start = h % pool.length;
   const pick = [];
   for (let i = 0; i < Math.min(limit, pool.length); i++) pick.push(pool[(start + i) % pool.length]);
 
@@ -674,11 +675,12 @@ function paint(rm, mount, open, animateIn = false) {
 
   // just-ticked checkbox: pop it (and a tiny sparkle when it became done)
   if (lastToggled) {
-    const row = mount.querySelector(`[data-task="${cssEsc(lastToggled)}"]`);
+    const scope = (lastToggledHost && mount.querySelector(`.day[data-day="${cssEsc(lastToggledHost)}"]`)) || mount;
+    const row = scope.querySelector(`[data-task="${cssEsc(lastToggled)}"]`);
     const cb = row && row.querySelector(".checkbox");
     if (cb) { cb.classList.add("pop"); cb.addEventListener("animationend", () => cb.classList.remove("pop"), { once: true });
       if (row.classList.contains("done") && motionOK()) sparkle(cb); }
-    lastToggled = null;
+    lastToggled = null; lastToggledHost = null;
   }
 
   // a day just reached 100% → pulse its ring + confetti + toast
@@ -782,7 +784,7 @@ function hero(rm, S) {
 
 function dualBlock(cap, figure, bonus, kind) {
   // kind: "actual" | "orig" | "ontime" — controls the bar colour + caption hint.
-  kind = kind === true ? "orig" : (kind || "actual");
+  kind = kind || "actual";
   figure = figure || { pct: 0, done: 0, total: 0 };   // never throw / print "undefined%"
   const hint = { actual: "Current progress after any moves.",
     orig: "Tasks done regardless of when.",
@@ -839,7 +841,7 @@ function statsStrip(rm, S) {
     const val = el("div.v", { text: v }); if (sub) val.append(el("small", { text: " " + sub })); c.append(val); return c; };
   strip.append(kpi("Actual", S.overall.actual.pct + "%"));
   strip.append(kpi("Original", S.overall.original.pct + "%"));
-  strip.append(kpi("On-time", (S.overall.ontime || {}).pct + "%"));
+  strip.append(kpi("On-time", ((S.overall.ontime || {}).pct || 0) + "%"));
   const wk = currentWeekFigure(rm, S);
   strip.append(kpi("This week", wk));
   strip.append(kpi("Streak", S.streak, S.streak === 1 ? "day" : "days"));
@@ -1425,10 +1427,10 @@ function leafTaskRow(rm, task, isMovedIn, hostId) {
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false",
     "aria-label": "Toggle task", html: checkIcon() });
   cb.onclick = () => {
-    lastToggled = task.id;
+    lastToggled = task.id; lastToggledHost = hostId;
     const willDo = !store.isDone(slug, task.id);
     store.setTask(slug, task.id, willDo);
-    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    if (willDo && currentDay(rm, slug, task) === hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
     rerender();
   };
   row.append(cb);
@@ -1464,10 +1466,10 @@ function parentTaskRow(rm, task, isMovedIn, hostId) {
     "aria-label": prog.complete ? "Clear all sub-tasks" : "Complete all sub-tasks", html: checkIcon() });
   cb.onclick = e => {
     e && e.stopPropagation();
-    lastToggled = task.id;
+    lastToggled = task.id; lastToggledHost = hostId;
     const willDo = !prog.complete;                 // complete → clear all; else → do all
     setAllSubs(slug, task, willDo);
-    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    if (willDo && currentDay(rm, slug, task) === hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
     rerender();
   };
   row.append(cb);
@@ -1525,10 +1527,10 @@ function subRow(rm, parent, sub, hostId) {
     "aria-label": "Toggle sub-task", html: checkIcon() });
   cb.onclick = e => {
     e && e.stopPropagation();
-    lastToggled = sub.id;
+    lastToggled = sub.id; lastToggledHost = hostId;
     const willDo = !store.isDone(slug, sub.id);
     store.setTask(slug, sub.id, willDo);
-    if (willDo && hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    if (willDo && currentDay(rm, slug, parent) === hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
     rerender();
   };
   row.append(cb);
@@ -1571,8 +1573,7 @@ function leadBlock(task) {
 
 function bonusTrack(rm, bonus, dayId) {
   const wrap = el("div.bonus-track");
-  // Persist the open/closed state across tick rerenders (which rebuild the DOM),
-  // matching how day cards, task takeaways and the milestone carousel are preserved.
+  // open/closed persists across tick rerenders (which rebuild the DOM)
   const key = taskKey(rm.slug, dayId);
   const isOpen = openBonus.has(key);
   const head = el("div.bonus-head", { html: `${starIcon()} Bonus · counts past 100%` });
@@ -1592,7 +1593,6 @@ function bonusTrack(rm, bonus, dayId) {
 function bonusRow(rm, task) {
   const slug = rm.slug;
   const done = store.isDone(slug, task.id);
-  const useFallback = false;
   const row = el("div.task.bonus" + (done ? ".done" : ""), { dataset: { task: task.id } });
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false", html: checkIcon() });
   cb.onclick = () => { lastToggled = task.id; store.setTask(slug, task.id, !store.isDone(slug, task.id)); rerender(); };

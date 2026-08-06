@@ -158,9 +158,9 @@ export function deriveQuery(rm, tasks, { rng = Math.random } = {}) {
     case 4: push(anchorWord); push(pick(bigrams)); push(pick(unigrams, 6)); break;
     default: push(anchorWord); push(pick(codes) || pick(bigrams)); push(pick(unigrams));
   }
-  for (const u of [anchorWord, ...unigrams]) { if (parts.filter(Boolean).length >= 2) break; push(u); }
+  for (const u of [anchorWord, ...unigrams]) { if (parts.length >= 2) break; push(u); }
 
-  const q = parts.filter(Boolean).join(" ").split(/\s+/).slice(0, 6).join(" ").trim();
+  const q = parts.join(" ").split(/\s+/).slice(0, 6).join(" ").trim();
   const type = rng() < 0.65 ? "video" : "article";
   const topic = titleCase(anchorOf(rm) || bigrams[0] || unigrams[0] || "your roadmap");
   return { q: q || anchorWord || String(rm && rm.slug || "roadmap"), type, topic };
@@ -369,7 +369,9 @@ let lastShown = null, liveSlot = null, livePanel = null, running = false;
 function showPick(pick, { animate = false } = {}) {
   lastShown = pick;
   if (!liveSlot) return;
-  const card = resultCard(pick.r, withBookmark(pick));
+  // A search-results-page fallback is not a concrete video/article, so it isn't
+  // bookmarkable (persisting a results URL would re-list mislabeled as a real pick).
+  const card = resultCard(pick.r, pick.isSearch ? pick : withBookmark(pick));
   if (animate) card.classList.add("enter");
   liveSlot.replaceChildren(card);
   if (livePanel) livePanel.classList.add("has-result");
@@ -422,11 +424,11 @@ export function finderPanel({ groups = [], autoRun = false, today = null } = {})
     livePanel.classList.add("loading");
     stateNote(liveSlot, "loading", `<span class="finder-spin"></span> Finding something good…`);
 
-    const year = (() => { try { return String(new Date().getFullYear()); } catch { return ""; } })();
+    const year = String(new Date().getFullYear());
 
     try {
       const { attempts } = buildPlan(groups, { today, year, rng: Math.random });
-      const outcome = await runPlan(attempts, sync.search, { maxTries: MAX_TRIES });
+      const outcome = await runPlan(attempts, sync.search);
       if (outcome.kind !== "none") showPick(outcome.pick, { animate: true });   // fresh pick → play entrance
       else if (manual) stateNote(liveSlot, "fail", `Couldn't find anything this time — give it another tap.`);
       else restorePick();

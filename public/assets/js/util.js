@@ -47,7 +47,6 @@ export function debounce(fn, ms) {
   return d;
 }
 export const sleep = ms => new Promise(r => setTimeout(r, ms));
-export const raf = () => new Promise(r => requestAnimationFrame(r));
 
 /* ---------- ids ---------- */
 const ULID_CHARS = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"; // Crockford base32
@@ -71,7 +70,6 @@ export const parseDate = s => { const [y, m, d] = s.split("-").map(Number); retu
 export const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 export const todayStr = () => fmtDate(new Date());
 export const dowOf = s => DOW[parseDate(s).getDay()];
-export const dayNum = s => parseDate(s).getDate();
 export const monthKey = s => s.slice(0, 7);
 export const monthLabel = s => { const d = parseDate(s); return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };
 

@@ -94,7 +94,13 @@ export function openModal({ title = "", subtitle = "", icon = "", body = null, a
   root.classList.add("open");
 
   const releaseTrap = focusTrap(modal);
-  function onKey(e) { if (e.key === "Escape" && dismissable) { e.preventDefault(); close(); } }
+  // Escape closes only the TOP modal — each stacked modal has its own document
+  // listener, so without this guard one press would dismiss every layer at once.
+  function onKey(e) {
+    if (e.key !== "Escape" || !dismissable) return;
+    if (modalStack[modalStack.length - 1] !== controller) return;
+    e.preventDefault(); close();
+  }
   document.addEventListener("keydown", onKey);
   modalStack.push(controller);
 
@@ -328,7 +334,6 @@ export function applySettings() {
   root.style.setProperty("--accent-h", h);
 }
 export function setSetting(key, value) { settings[key] = value; saveSettings(); applySettings(); }
-export { ACCENTS };
 
 /* ================================================================== *
  *  Sidebar
@@ -597,7 +602,6 @@ function buildDrawerBody() {
     html: "Roadmaps · v1 · self-hosted, single-owner" }));
   body.append(meta);
 }
-export function refreshDrawer() { buildDrawerBody(); }
 
 function settingRow(label, sub, control) {
   const row = el("div.set-row");
@@ -657,9 +661,9 @@ function rowButtons(btns) {
   }
   return row;
 }
-export function setDrawerSync(text, cls) {
+export function setDrawerSync(text) {
   const row = $("#drawer-sync-row"); if (!row) return;
-  const small = $(".lbl small", row); if (small) { small.textContent = text; }
+  const small = $(".lbl small", row); if (small) small.textContent = text;
 }
 
 /* ================================================================== *
@@ -707,4 +711,3 @@ export const checkIcon = () => `<svg viewBox="0 0 24 24" fill="none" stroke="cur
 const closeIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>`;
 const eyeIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`;
 const eyeOffIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l18 18M10.6 10.6a3 3 0 004.2 4.2M9.9 4.2A10.9 10.9 0 0112 4c6.5 0 10 7 10 7a17.8 17.8 0 01-3.2 4.2M6.6 6.6A17.8 17.8 0 002 11s3.5 7 10 7a10.9 10.9 0 003.1-.4"/></svg>`;
-export { closeIcon, eyeIcon, eyeOffIcon };

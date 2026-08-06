@@ -15,9 +15,9 @@ import { sidebarStats, dayDate } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
   initLock, loadSettings, initDrawer, initFab, initTutorials, renderSidebar,
-  toast, confirmModal, setDrawerSync, refreshDrawer, closeDrawer,
+  toast, confirmModal, setDrawerSync, closeDrawer,
 } from "./ui.js";
-import { $, debounce, downloadJSON, pickFile, readFileText, todayStr, daysBetween } from "./util.js";
+import { $, debounce, downloadJSON, pickFile, readFileText, todayStr } from "./util.js";
 
 let activeSlug = null;
 let sidebarExpandedSlug = null;         // which roadmap's sidebar quick-jumps are open (togglable)
@@ -137,34 +137,21 @@ function swapView(paint) {
   else paint(true);
 }
 
+// slug → renderer for the global (non-roadmap) views; their slugs are reserved.
+const GLOBAL_VIEWS = { today: renderToday, insights: renderInsights, bookmarks: renderBookmarks };
+
 function route() {
   const roadmaps = getRoadmaps();
   const hash = location.hash.replace(/^#\/?/, "");
   const [slug, sub] = hash.split("/");
 
-  // Global cross-roadmap "Today" digest (#/today).
-  if (slug === "today" && !sub) {
+  // Global cross-roadmap views: #/today digest, #/insights analytics, #/bookmarks.
+  // (These slugs are reserved — validateAll forbids a roadmap from claiming one.)
+  const globalView = GLOBAL_VIEWS[slug];
+  if (globalView && !sub) {
     activeSlug = null;
-    sidebarExpandedSlug = null;      // no roadmap quick-jumps expanded on the global view
-    swapView(() => { renderToday($("#view")); updateSidebar(); scrollMainTop(); });
-    closeMobileSidebar();
-    return;
-  }
-
-  // Global cross-roadmap analytics (#/insights).
-  if (slug === "insights" && !sub) {
-    activeSlug = null;
-    sidebarExpandedSlug = null;
-    swapView(() => { renderInsights($("#view")); updateSidebar(); scrollMainTop(); });
-    closeMobileSidebar();
-    return;
-  }
-
-  // Saved finder picks (#/bookmarks).
-  if (slug === "bookmarks" && !sub) {
-    activeSlug = null;
-    sidebarExpandedSlug = null;
-    swapView(() => { renderBookmarks($("#view")); updateSidebar(); scrollMainTop(); });
+    sidebarExpandedSlug = null;      // no roadmap quick-jumps expanded on a global view
+    swapView(() => { globalView($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
   }

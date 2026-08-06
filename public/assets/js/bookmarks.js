@@ -25,8 +25,6 @@ export function bmId(url) {
   return "bm_" + (h >>> 0).toString(36);
 }
 
-const nowTs = () => { try { return Date.now(); } catch { return 0; } };
-
 export function isBookmarked(url) { return !!(url && store.getCell(SLUG, bmId(url))); }
 
 /** All saved bookmarks, newest first. */
@@ -43,7 +41,7 @@ export function listBookmarks() {
 export function addBookmark(r, { type = "video", topic = "" } = {}) {
   if (!r || !isHttp(r.url)) return false;
   const rec = { url: r.url, title: r.title || "Untitled", thumb: r.thumb || null,
-    source: r.source || "web", type, topic, ts: nowTs() };
+    source: r.source || "web", type, topic, ts: Date.now() };
   store.setCell(SLUG, bmId(r.url), "bookmark", JSON.stringify(rec));
   return true;
 }

@@ -75,8 +75,9 @@ export function openMovePicker(rm, slug, task, onMoved) {
     const od = rm.daysById.get(task.day);
     list.append(moveOpt(od, "origin", true, () => close(task.day)));
   }
-  // candidate days: same roadmap, ordered by date, excluding current
-  const days = rm.days.filter(d => !d.off && d.id !== cur)
+  // candidate days: same roadmap, ordered by date, excluding current AND origin
+  // (origin, when the task is moved, is already pinned as the "↩ Origin" option above)
+  const days = rm.days.filter(d => !d.off && d.id !== cur && d.id !== task.day)
     .sort((a, b) => a.date < b.date ? -1 : 1);
   for (const d of days) list.append(moveOpt(d, relDay(dayDate(rm, slug, d)), false, () => close(d.id)));
 

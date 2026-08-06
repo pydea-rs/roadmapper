@@ -36,4 +36,18 @@ t.group("a clean roadmap trips none of these guards");
 registerRoadmap(base({ slug: "rsv-clean" }));
 t.ok(!validateAll().some(p => /\[rsv-clean\]/.test(p)), "well-formed roadmap yields no problems");
 
+t.group("reserved global-route slugs are rejected");
+// today/insights/bookmarks address the global views in the router — a roadmap
+// claiming one would be permanently unreachable.
+registerRoadmap(base({ slug: "today" }));
+t.ok(validateAll().some(p => /\[today\].*reserved route/.test(p)), "a roadmap on a reserved route slug is flagged");
+
+t.group("a derived week starts from its EARLIEST day, not the first-authored one");
+registerRoadmap({ slug: "wk-order", title: "T", objectives: OBJ, days: [
+  { id: "d01", date: "2026-09-03", week: "w1", tasks: [{ id: "t1", obj: "o1", label: "x" }], soft: [] },
+  { id: "d02", date: "2026-09-01", week: "w1", tasks: [{ id: "t1", obj: "o1", label: "y" }], soft: [] },
+]});
+const wk = registry.getRoadmap("wk-order").weeks.find(w => w.id === "w1");
+t.eq(wk.start, "2026-09-01", "week.start = earliest day's date despite out-of-order authoring");
+
 t.done();

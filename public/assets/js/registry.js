@@ -154,7 +154,9 @@ function normalize(def) {
   }));
   days.forEach(d => {
     if (d.week && !weeksById.has(d.week)) {
-      weeksById.set(d.week, { id: d.week, title: d.week, start: d.date, order: weeksById.size });
+      // start is filled below from the week's EARLIEST day (weekFirstDate), not this
+      // first-seen one, so out-of-order authoring can't skew the week's start/end.
+      weeksById.set(d.week, { id: d.week, title: d.week, start: null, order: weeksById.size });
     }
   });
   // order weeks by their earliest day date
@@ -205,6 +207,9 @@ export function validateAll() {
     slugs.add(rm.slug);
 
     if (!rm.objectives.length) P(`has no objectives`);
+    // these slugs address the global (non-roadmap) views in the router; a roadmap
+    // claiming one would be unreachable (the hash always renders the global view).
+    if (["today", "insights", "bookmarks"].includes(rm.slug)) P(`slug "${rm.slug}" is a reserved route`);
     const localIds = new Set();
     const tasksSeen = new Set();
     const softSeen = new Set();

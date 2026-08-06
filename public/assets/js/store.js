@@ -135,10 +135,6 @@ export function hydrateFromServer(flatMap) {
   emit(null, null);
 }
 
-export function isEmpty() {
-  return Object.values(state).every(b => !b || Object.keys(b).length === 0);
-}
-
 /* Flat map for whole-journey export/full-save: { "slug<SEP>item": {kind,value} } */
 export function toFlatMap(onlySlug = null) {
   const out = {};

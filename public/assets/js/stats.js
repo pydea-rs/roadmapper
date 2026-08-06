@@ -106,7 +106,7 @@ export function computeAll(rm) {
       // Every count / minute rolls up from LEAVES (a task's sub-tasks, or the task
       // itself when it has none). Objective, current-day, optional and tier are
       // parent-level; done-state and est are per-leaf.
-      for (const leaf of (task.subs || [task])) {
+      for (const leaf of leavesOf(task)) {
         const done = store.isDone(slug, leaf.id);
         // on-time is measured against this card's EFFECTIVE date (`originDate`),
         // so re-dating the card re-bases on-time for its own tasks; a task moved in
@@ -213,7 +213,7 @@ export function computeAll(rm) {
   const milestones = rm.milestones.map(m => evalMilestone(rm, slug, m, weeks));
 
   // ---- projection (primary) ----
-  const projection = project(rm, slug, remainingReqMins, overallReqDone, overallReqTotal, investedMins);
+  const projection = project(rm, remainingReqMins, overallReqDone, overallReqTotal);
   const secProjection = projectSecondary(rm, remainingSecMins);
 
   // ---- extra stats ----
@@ -233,7 +233,6 @@ export function computeAll(rm) {
     invested: investedMins, remaining: remainingReqMins, remainingSecondary: remainingSecMins,
     bonusInvested: bonusEstDone, bonusRemaining: bonusEstRemaining,
     softStats, streak, catDist,
-    hasSecondary: secObjs.length > 0,
   };
 }
 
@@ -303,10 +302,9 @@ function activeDaysPerWeek(rm) {
   return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 5;
 }
 
-function project(rm, slug, remainingMins, done, total, investedMins) {
+function project(rm, remainingMins, done, total) {
   const active = activeDaysPerWeek(rm);
   const perWeekMins = Math.max(1, active * PER_DAY_MINS * OVERLAP_TAX);
-  // rolling actual pace: mins completed over elapsed active days, if any signal
   const weeksNeeded = remainingMins / perWeekMins;
   const expectedFinish = addDays(todayStr(), Math.ceil(weeksNeeded * 7));
   const optimisticFinish = addDays(todayStr(), Math.ceil((remainingMins / (perWeekMins * 1.25)) * 7));

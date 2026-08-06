@@ -81,5 +81,9 @@ const latest = lists[lists.length - 1];
 t.ok(latest.querySelector(".move-opt.origin"), "once moved, the picker offers a 'back to origin' shortcut");
 const optDays = [...latest.querySelectorAll(".move-opt")].map(o => o.querySelector(".mo-title").textContent);
 t.ok(optDays.length >= 1, "candidate days are listed with their titles");
+// origin is pinned once as the "↩ Origin" shortcut and must NOT also reappear in the
+// dated candidate list (it's excluded alongside the current day).
+const expectedOpts = 1 + rm.days.filter(d => !d.off && d.id !== dest && d.id !== origin).length;
+t.eq(latest.querySelectorAll(".move-opt").length, expectedOpts, "origin appears once (pinned), not duplicated among dated candidates");
 
 t.done();

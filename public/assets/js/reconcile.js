@@ -27,7 +27,7 @@ export function reconcile(rm) {
   // 1. aliases: migrate an old task id's rows to a new id (rename), non-destructively.
   const aliases = rm.aliases || {};
   for (const [oldId, newId] of Object.entries(aliases)) {
-    for (const prefix of ["", "done_at:", "move:", "soft:", "flag:missed:", "flag:starred:"]) {
+    for (const prefix of ["", "done_at:", "move:", "soft:", "note:", "flag:missed:", "flag:starred:"]) {
       const from = prefix + oldId, to = prefix + newId;
       const cell = store.getCell(slug, from);
       if (cell && !store.getCell(slug, to)) {

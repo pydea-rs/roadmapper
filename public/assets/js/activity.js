@@ -102,6 +102,6 @@ export function tasksDoneOn(dateStr, kind) {
       out.push({ rm, task: leaf, at });
     }
   }
-  out.sort((a, b) => (a.at || "") < (b.at || "") ? -1 : 1);
+  out.sort((a, b) => { const x = a.at || "", y = b.at || ""; return x < y ? -1 : x > y ? 1 : 0; });
   return out;
 }

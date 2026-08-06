@@ -30,7 +30,6 @@ async function api(action, { method = "GET", body = null, query = "" } = {}) {
 }
 
 export const isServer = () => available;
-export const getMode = () => (available ? "server" : "offline");
 
 /* ---------- auth ---------- */
 export async function status() {
