@@ -6,7 +6,7 @@
 import * as store from "./store.js";
 import { openModal, toast } from "./ui.js";
 import { el, fmtDateHuman, relDay } from "./util.js";
-import { currentDay } from "./stats.js";
+import { currentDay, dayDate } from "./stats.js";
 
 let dragTaskId = null;                 // full task id being dragged
 
@@ -78,7 +78,7 @@ export function openMovePicker(rm, slug, task, onMoved) {
   // candidate days: same roadmap, ordered by date, excluding current
   const days = rm.days.filter(d => !d.off && d.id !== cur)
     .sort((a, b) => a.date < b.date ? -1 : 1);
-  for (const d of days) list.append(moveOpt(d, relDay(d.date), false, () => close(d.id)));
+  for (const d of days) list.append(moveOpt(d, relDay(dayDate(rm, slug, d)), false, () => close(d.id)));
 
   const ctrl = openModal({
     title: "Move task", icon: "⇄",

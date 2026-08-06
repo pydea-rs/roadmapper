@@ -140,6 +140,13 @@ function normalize(def) {
     return day;
   });
 
+  // nextDate: each day's chronologically-next card date (null for the last one).
+  // It's the exclusive ceiling for a day-card MOVE — the free calendar gap a card
+  // may be postponed into is (date, nextDate). Static (content-derived), so the
+  // move validity gate never depends on another card's own override.
+  const chrono = [...days].sort((a, b) => (a.date || "") < (b.date || "") ? -1 : 1);
+  chrono.forEach((d, i) => { d.nextDate = chrono[i + 1] ? chrono[i + 1].date : null; });
+
   // weeks: explicit list wins; else derive from the days' week ids.
   const weeksById = new Map();
   (def.weeks || []).forEach((w, i) => weeksById.set(w.id, {

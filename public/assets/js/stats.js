@@ -39,6 +39,21 @@ export function currentDay(rm, slug, task) {
   return task.day;                    // origin (also handles pruned/removed targets)
 }
 
+/** The EFFECTIVE calendar date of a day-CARD: its user-chosen override when one is
+ *  set and still valid, else the authored date. Valid = strictly after the card's
+ *  own base date and strictly before the next card's base (`day.nextDate`), i.e.
+ *  inside the free gap — a stale/out-of-range override (e.g. after a content shift)
+ *  is ignored so the card can never leapfrog or collide with a neighbour. This is
+ *  the on-time reference for the card's OWN tasks; a task VISITING via a move is
+ *  judged by ITS origin card, so this is always resolved on the origin day. */
+export function dayDate(rm, slug, day) {
+  const raw = store.getDayDate(slug, day.id);
+  if (!raw) return day.date;
+  const ceil = day.nextDate;                 // null on the last card → no gap → not movable
+  if (ceil && raw > day.date && raw < ceil) return raw;
+  return day.date;                           // no ceiling or out of the gap → ignore override
+}
+
 /** The leaves of a task: its sub-tasks if any, else the task itself (single leaf). */
 export const leavesOf = task => task.subs || [task];
 
@@ -79,6 +94,9 @@ export function computeAll(rm) {
     bonus: { done:0, total:0, estDone:0, estTot:0 } }; objAcc.set(id, v); } return v; };
 
   for (const day of rm.days) {
+    // on-time reference for THIS card's own tasks is its effective (possibly
+    // re-dated) calendar date; a day-card move re-bases it for native tasks only.
+    const originDate = dayDate(rm, slug, day);
     for (const task of day.tasks) {
       const obj = rm.objById.get(task.obj) || { tier: "primary", weight: 1 };
       const cur = currentDay(rm, slug, task);       // move state is parent-level
@@ -90,9 +108,10 @@ export function computeAll(rm) {
       // parent-level; done-state and est are per-leaf.
       for (const leaf of (task.subs || [task])) {
         const done = store.isDone(slug, leaf.id);
-        // on-time is measured against the ORIGINAL day's date (the loop's `day`),
-        // so a moved task is judged by when it was actually meant to be done.
-        const onTime = done && isOnTime(slug, leaf.id, day.date);
+        // on-time is measured against this card's EFFECTIVE date (`originDate`),
+        // so re-dating the card re-bases on-time for its own tasks; a task moved in
+        // from elsewhere is iterated under its own origin card, so it keeps that date.
+        const onTime = done && isOnTime(slug, leaf.id, originDate);
         const est = leaf.est || 0;
 
         if (task.optional) {
@@ -329,17 +348,20 @@ function computeSoft(rm, slug) {
   return { done, total };
 }
 function computeStreak(rm, slug, dayO) {
-  // consecutive past/today active days (by date desc) whose ORIGINAL required tasks are all done
-  const past = rm.days.filter(d => !d.off && d.date <= todayStr() && (dayO.get(d.id)?.total || 0) > 0)
-    .sort((a, b) => a.date < b.date ? 1 : -1);
-  let streak = 0;
+  // consecutive past/today active days (by EFFECTIVE date desc) whose ORIGINAL
+  // required tasks are all done. A re-dated card counts as past/today by its new
+  // date, so postponing a card also postpones when it can extend the streak.
   const today = todayStr();
+  const eff = d => dayDate(rm, slug, d);
+  const past = rm.days.filter(d => !d.off && eff(d) <= today && (dayO.get(d.id)?.total || 0) > 0)
+    .sort((a, b) => eff(a) < eff(b) ? 1 : -1);
+  let streak = 0;
   for (const d of past) {
     const o = dayO.get(d.id);
     if (o && o.done === o.total && o.total > 0) streak++;
     // Today is usually still in progress; an unfinished *today* shouldn't wipe a
     // real run of completed past days — skip it and keep counting backwards.
-    else if (d.date === today) continue;
+    else if (eff(d) === today) continue;
     else break;
   }
   return streak;

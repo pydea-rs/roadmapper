@@ -18,6 +18,7 @@
 import { el } from "./util.js";
 import * as sync from "./sync.js";
 import { toast } from "./ui.js";
+import { dayDate } from "./stats.js";
 import { isBookmarked, toggleBookmark } from "./bookmarks.js";
 
 /* ---------- text → keyword pool (pure) ---------- */
@@ -59,7 +60,7 @@ function tasksUpTo(rm, today) {
   for (const d of rm.days || []) for (const t of d.tasks || []) {
     if (t.optional) continue;
     all.push(t);
-    if (today && d.date <= today) upto.push(t);
+    if (today && dayDate(rm, rm.slug, d) <= today) upto.push(t);
   }
   return upto.length ? upto : all;
 }

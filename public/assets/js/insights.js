@@ -11,7 +11,7 @@
 import { getRoadmaps, getRoadmap } from "./registry.js";
 import * as store from "./store.js";
 import { localDate } from "./activity.js";
-import { computeAll } from "./stats.js";
+import { computeAll, dayDate } from "./stats.js";
 import { lineChart, barChart, donut, hbars } from "./charts.js";
 import {
   el, todayStr, parseDate, addDays, daysBetween, fmtDate, fmtMins,
@@ -34,10 +34,14 @@ function scopeRoadmaps(scope) {
 export function collectLeaves(scope) {
   const out = [];
   for (const rm of scopeRoadmaps(scope)) {
+    // a re-dated (moved) card shifts the ORIGINAL/scheduled date of its own leaves,
+    // so the burn-up + punctuality charts follow the move just like on-time does.
+    const effByDay = new Map();
+    for (const d of rm.days) effByDay.set(d.id, dayDate(rm, rm.slug, d));
     for (const leaf of rm.leaves) {
       const done = store.isDone(rm.slug, leaf.id);
       out.push({
-        slug: rm.slug, id: leaf.id, origDate: leaf.date, week: leaf.week,
+        slug: rm.slug, id: leaf.id, origDate: effByDay.get(leaf.day) || leaf.date, week: leaf.week,
         est: leaf.est || 0, cat: leaf.cat || "read", optional: !!leaf.optional,
         done, doneDate: done ? localDate(store.doneAt(rm.slug, leaf.id)) : null,
       });

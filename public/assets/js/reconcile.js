@@ -12,6 +12,7 @@ export function referentOf(item) {
   if (item.startsWith("move:")) return { kind: "task", id: item.slice(5) };
   if (item.startsWith("done_at:")) return { kind: "task", id: item.slice(8) };
   if (item.startsWith("flag:")) { const p = item.split(":"); return { kind: "task", id: p.slice(2).join(":") }; }
+  if (item.startsWith("daydate:")) return { kind: "day", id: item.slice(8) };   // a re-dated day card
   if (/^d\d+\..+/.test(item)) return { kind: "task", id: item };   // a bare task tick "d03.t2"
   return null;                                          // view/settings/other → keep
 }
@@ -41,10 +42,13 @@ export function reconcile(rm) {
   // Task-kind rows may key off a LEAF (a sub-task tick / done_at stamp) or a PARENT
   // (a move / flag), so a row survives if either map still holds its id.
   const tasks = rm.tasksById, softs = rm.softById, leaves = rm.leavesById || new Map();
+  const daysById = rm.daysById || new Map();
   for (const item of Object.keys(store.rawState()[slug] || {})) {
     const ref = referentOf(item);
     if (!ref) continue;                                 // notes/settings/unknown → keep
-    const exists = ref.kind === "soft" ? softs.has(ref.id) : (tasks.has(ref.id) || leaves.has(ref.id));
+    const exists = ref.kind === "soft" ? softs.has(ref.id)
+      : ref.kind === "day" ? daysById.has(ref.id)
+      : (tasks.has(ref.id) || leaves.has(ref.id));
     if (!exists) {
       const cell = store.getCell(slug, item);
       store.setCell(slug, item, cell ? cell.kind : "task", null);   // delete + queue null

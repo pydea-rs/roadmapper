@@ -75,6 +75,18 @@ export function setMove(slug, taskId, dayId) {
   setCell(slug, `move:${taskId}`, "move", dayId || null);
 }
 
+/* day-date override: the calendar date a day-CARD has been re-dated to (a user
+ * postponing a card into the free gap before the next planned day). Value is the
+ * new YYYY-MM-DD; null = back to the card's authored date (row deleted). Unlike a
+ * task `move:` this re-bases the card's ON-TIME reference for its OWN tasks — see
+ * stats.dayDate() for the validity gate. Keyed `daydate:<dayId>`. */
+export const getDayDate = (slug, dayId) => {
+  const c = getCell(slug, `daydate:${dayId}`); return c ? c.value : null;
+};
+export function setDayDate(slug, dayId, date) {
+  setCell(slug, `daydate:${dayId}`, "daydate", date || null);
+}
+
 /* soft ticks — stored, but never counted in real progress */
 export const isSoftDone = (slug, softId) => {
   const c = getCell(slug, `soft:${softId}`); return !!c && c.value === "true";

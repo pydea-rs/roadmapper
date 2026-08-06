@@ -11,7 +11,7 @@ import * as sync from "./sync.js";
 import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest } from "./render.js";
 import { renderInsights } from "./insights.js";
 import { renderBookmarks } from "./bookmarks.js";
-import { sidebarStats } from "./stats.js";
+import { sidebarStats, dayDate } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
   initLock, loadSettings, initDrawer, initFab, initTutorials, renderSidebar,
@@ -206,8 +206,9 @@ function repaintView() {
  * top when the card isn't found. */
 function scrollToCurrentDay(rm) {
   const today = todayStr();
-  const target = rm.days.find(d => d.date === today)
-    || rm.days.find(d => d.date >= today)
+  const eff = d => dayDate(rm, rm.slug, d);
+  const target = rm.days.find(d => eff(d) === today)
+    || rm.days.find(d => eff(d) >= today)
     || rm.days[rm.days.length - 1];
   const node = target && $(`.day[data-day="${cssEsc(target.id)}"]`);
   // Center the day in the viewport (a tall card that can't fit just sits with its
@@ -216,7 +217,8 @@ function scrollToCurrentDay(rm) {
 }
 function scrollToSub(rm, sub) {
   let targetDay = null;
-  if (sub === "today") targetDay = rm.days.find(d => d.date === todayStr()) || rm.days.find(d => d.date >= todayStr());
+  if (sub === "today") { const ts = todayStr(); const eff = d => dayDate(rm, rm.slug, d);
+    targetDay = rm.days.find(d => eff(d) === ts) || rm.days.find(d => eff(d) >= ts); }
   else { const wk = rm.weeksById.get(sub); if (wk) targetDay = rm.days.find(d => d.week === sub); }
   if (targetDay) {
     const node = $(`.day[data-day="${cssEsc(targetDay.id)}"]`);

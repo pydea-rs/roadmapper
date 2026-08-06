@@ -6,9 +6,10 @@
 // cards and scroll position are preserved, so it stays smooth and correct.
 
 import * as store from "./store.js";
-import { computeAll, currentDay, taskProgress, taskComplete } from "./stats.js";
+import { computeAll, currentDay, dayDate, taskProgress, taskComplete } from "./stats.js";
 import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
+import { openDayMenu } from "./daymenu.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal, openModal } from "./ui.js";
 import { finderPanel } from "./finder.js";
 import { interludesAfter, interludeUrl } from "./interludes.js";
@@ -16,7 +17,7 @@ import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
 import {
-  $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay,
+  $, $$, el, frag, escapeHtml, fmtMins, todayStr, fmtDateHuman, relDay, dowOf,
   monthLabel, daysBetween, addDays, pct,
 } from "./util.js";
 
@@ -103,8 +104,9 @@ export function renderRoadmap(rm, mount, { animate = true } = {}) {
   cur = { rm, mount };
   revealedDays = new Set();              // fresh entrance → cards may reveal again as you scroll
   let open = loadOpen(rm.slug);
-  if (!open) { open = new Set(); const t = rm.days.find(d => d.date === todayStr());
-    if (t) open.add(t.id); else { const up = rm.days.find(d => d.date >= todayStr()); if (up) open.add(up.id); } }
+  if (!open) { open = new Set(); const ts = todayStr();
+    const t = rm.days.find(d => dayDate(rm, rm.slug, d) === ts);
+    if (t) open.add(t.id); else { const up = rm.days.find(d => dayDate(rm, rm.slug, d) >= ts); if (up) open.add(up.id); } }
   paint(rm, mount, open, animate);       // full open → play the entrance cascade (unless a crossfade owns it)
 }
 
@@ -293,8 +295,9 @@ function finderGroups(today) {
       if (t.optional) continue;
       const cur = rm.daysById.get(currentDay(rm, rm.slug, t));
       if (!cur) continue;
+      const curDate = dayDate(rm, rm.slug, cur);
       const isDone = t.subs ? taskComplete(rm.slug, t) : store.isDone(rm.slug, t.id);
-      if (cur.date === today || (cur.date < today && !isDone)) tasks.push(t);
+      if (curDate === today || (curDate < today && !isDone)) tasks.push(t);
     }
     if (tasks.length) groups.push({ rm, tasks });
   }
@@ -311,10 +314,11 @@ function collectDue(roadmaps, today, mount) {
       if (t.optional) continue;
       const cur = rm.daysById.get(currentDay(rm, rm.slug, t));
       if (!cur) continue;
+      const curDate = dayDate(rm, rm.slug, cur);
       // a parent is "done" only when every sub-task is (it has no state of its own)
       const isDone = t.subs ? taskComplete(rm.slug, t) : store.isDone(rm.slug, t.id);
-      if (cur.date === today) { todayList.push({ t, cur }); due++; if (isDone) doneToday++; }
-      else if (cur.date < today && !isDone) { overdueList.push({ t, cur }); overdueN++; }
+      if (curDate === today) { todayList.push({ t, cur }); due++; if (isDone) doneToday++; }
+      else if (curDate < today && !isDone) { overdueList.push({ t, cur }); overdueN++; }
     }
     if (todayList.length || overdueList.length) cards.push(todayCard(rm, todayList, overdueList, mount));
   }
@@ -371,7 +375,7 @@ function todayLeafRow(rm, task, mount, curDay, overdue) {
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
-  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(curDay.date)}` }));
+  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(dayDate(rm, rm.slug, curDay))}` }));
   bodyEl.append(meta);
   const recall = taskRecall(rm, task);
   if (recall) bodyEl.append(recall);
@@ -408,7 +412,7 @@ function todayParentRow(rm, task, mount, curDay, overdue) {
   const meta = el("div.t-meta");
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
-  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(curDay.date)}` }));
+  if (overdue) meta.append(el("span.t-moved", { text: `from ${relDay(dayDate(rm, rm.slug, curDay))}` }));
   bodyEl.append(meta);
 
   const expand = el("div.t-expand");
@@ -1264,27 +1268,33 @@ function progRing(figure, { kind, label, full = false, big = false }) {
 
 function dayCard(rm, S, day, open) {
   const today = todayStr();
-  const isToday = day.date === today;
-  const isPast = day.date < today;
+  // effective date: a re-dated (moved) card lives on its override date everywhere a
+  // date is read — today/past highlight, the shown weekday & number, on-time.
+  const eff = dayDate(rm, rm.slug, day);
+  const isMoved = eff !== day.date;
+  const isToday = eff === today;
+  const isPast = eff < today;
   const isOpen = open.has(day.id);
   const df = S.days[day.id] || { actual: { pct: 0, done: 0, total: 0 },
     original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0, done: 0, total: 0 } };
 
   const isComplete = df.actual.total > 0 && df.actual.pct >= 100;
   const card = el("div.day" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (isOpen ? ".open" : "") +
-    (isComplete ? ".complete" : ""), { dataset: { day: day.id } });
+    (isComplete ? ".complete" : "") + (isMoved ? ".moved" : ""), { dataset: { day: day.id } });
 
   // header
   const head = el("div.day-head", { role: "button", tabindex: "0", "aria-expanded": isOpen ? "true" : "false" });
   head.append(el("span.day-caret", { html: caretIcon() }));
   const dateBox = el("div.day-date");
-  dateBox.append(el("div.dow", { text: day.dow }));
-  dateBox.append(el("div.dnum", { text: String(new Date(day.date.replace(/-/g, "/")).getDate()) }));
+  dateBox.append(el("div.dow", { text: dowOf(eff) }));
+  dateBox.append(el("div.dnum", { text: String(new Date(eff.replace(/-/g, "/")).getDate()) }));
   head.append(dateBox);
   const info = el("div.day-info");
   const titleRow = el("div.day-title");
   titleRow.append(document.createTextNode(day.title));
   if (isToday) titleRow.append(el("span.today-badge", { text: "Today" }));
+  if (isMoved) titleRow.append(el("span.t-moved", { text: `moved · was ${relDay(day.date)}`,
+    title: `Originally ${fmtDateHuman(day.date)}` }));
   info.append(titleRow);
   if (day.theme) info.append(el("div.day-theme", { text: day.theme }));
   head.append(info);
@@ -1350,6 +1360,10 @@ function dayCard(rm, S, day, open) {
   inner.append(pad); body.append(inner); card.append(body);
 
   installDayDrop(card, day.id, rm, rm.slug, rerender);
+  // Right-click anywhere on the card → the day menu (info modals + move). Bound on
+  // the header so a right-click on a task keeps its own affordances; the header is
+  // the card's identity strip and never a drop/drag target for tasks.
+  head.addEventListener("contextmenu", ev => openDayMenu(rm, day, ev, rerender));
   return card;
 }
 
@@ -1394,11 +1408,11 @@ function movedChip(rm, slug, task, isMovedIn) {
   const movedTo = store.getMove(slug, task.id);
   if (movedTo && movedTo !== task.day && !isMovedIn) {
     const dd = rm.daysById.get(movedTo);
-    return el("span.t-moved", { text: `→ moved to ${dd ? relDay(dd.date) : movedTo}` });
+    return el("span.t-moved", { text: `→ moved to ${dd ? relDay(dayDate(rm, slug, dd)) : movedTo}` });
   }
   if (isMovedIn) {
     const od = rm.daysById.get(task.day);
-    return el("span.t-moved", { text: `↩ from ${od ? relDay(od.date) : task.day}` });
+    return el("span.t-moved", { text: `↩ from ${od ? relDay(dayDate(rm, slug, od)) : task.day}` });
   }
   return null;
 }

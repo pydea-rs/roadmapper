@@ -178,17 +178,22 @@ export function closeContextMenu() {
   setTimeout(() => m.remove(), 120);
 }
 
-/** Open a floating action menu at (x,y). items: [{label, icon?, danger?, onClick}]
- *  or {separator:true}. Closes on Escape, outside click, blur, or item click. */
+/** Open a floating action menu at (x,y). items: [{label, icon?, danger?, disabled?,
+ *  hint?, onClick}] or {separator:true}. A disabled item is shown greyed and inert
+ *  (its `hint`, if any, becomes the tooltip). Closes on Escape, outside click, blur,
+ *  or item click. */
 export function openContextMenu(x, y, items) {
   closeContextMenu();
   const menu = el("div.ctx-menu", { role: "menu" });
   for (const it of (items || [])) {
     if (!it || it.separator) { menu.append(el("div.ctx-sep")); continue; }
-    const b = el("button.ctx-item" + (it.danger ? ".danger" : ""), { type: "button", role: "menuitem" });
+    const b = el("button.ctx-item" + (it.danger ? ".danger" : "") + (it.disabled ? ".disabled" : ""),
+      { type: "button", role: "menuitem" });
+    if (it.disabled) { b.disabled = true; b.setAttribute("aria-disabled", "true"); if (it.hint) b.title = it.hint; }
     if (it.icon) b.append(el("span.ctx-ico", { text: it.icon }));
     b.append(el("span.ctx-label", { text: it.label }));
-    b.onclick = () => { closeContextMenu(); try { it.onClick && it.onClick(); } catch {} };
+    if (!it.disabled)
+      b.onclick = () => { closeContextMenu(); try { it.onClick && it.onClick(); } catch {} };
     menu.append(b);
   }
   menu.style.visibility = "hidden";

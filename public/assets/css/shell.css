@@ -420,9 +420,43 @@
 .ctx-item:hover, .ctx-item:focus-visible { background: var(--surface-2); outline: none; }
 .ctx-item.danger { color: var(--warn); }
 .ctx-item.danger:hover { background: color-mix(in srgb, var(--warn) 14%, transparent); }
+.ctx-item.disabled, .ctx-item:disabled { color: var(--text-3); cursor: default; opacity: .6; }
+.ctx-item.disabled:hover, .ctx-item:disabled:hover { background: transparent; }
 .ctx-ico { width: 18px; text-align: center; opacity: .85; flex: none; }
 .ctx-sep { height: 1px; background: var(--border); margin: 4px 2px; }
 @media (prefers-reduced-motion: reduce) { .ctx-menu { transition: none; } }
+
+/* Day menu modals (completion / time / references / move) — a compact key→value
+ * sheet, category chips, link list, and the move date picker. */
+.day-modal { display: flex; flex-direction: column; gap: 2px; }
+.day-modal .dm-sec { margin-top: var(--s3); margin-bottom: 2px; font-size: var(--t-xs);
+  text-transform: uppercase; letter-spacing: .06em; color: var(--text-3); font-weight: 700; }
+.day-modal .dm-sec:first-child { margin-top: 0; }
+.dm-row { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s3);
+  padding: 5px 0; border-bottom: 1px solid var(--border); }
+.dm-row:last-child { border-bottom: 0; }
+.dm-k { color: var(--text-2); }
+.dm-v { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dm-row.ontime .dm-v { color: var(--ontime); }
+.dm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.dm-chip { padding: 2px 8px; border-radius: 999px; background: var(--surface-2);
+  border: 1px solid var(--border); font-size: var(--t-xs); color: var(--text-2); }
+.dm-note { color: var(--text-2); font-size: var(--t-xs); line-height: 1.5; margin-bottom: var(--s3); }
+.dm-empty { color: var(--text-3); padding: var(--s4) 0; text-align: center; }
+.dm-links { display: flex; flex-direction: column; gap: 4px; }
+.dm-link { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: var(--r1);
+  color: var(--accent); text-decoration: none; background: var(--surface-2); border: 1px solid var(--border); }
+.dm-link:hover { background: var(--surface-3); }
+.dm-link-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dm-dateopts { display: flex; flex-direction: column; gap: 4px; }
+.dm-dateopt { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 11px;
+  border: 1px solid var(--border); border-radius: var(--r1); background: var(--surface);
+  color: var(--text); font: inherit; text-align: left; cursor: pointer; }
+.dm-dateopt:hover { background: var(--surface-2); }
+.dm-dateopt.active { border-color: var(--accent); background: var(--accent-soft); }
+.dm-dow { width: 34px; color: var(--text-3); font-weight: 700; font-size: var(--t-xs); text-transform: uppercase; }
+.dm-date { flex: 1; font-weight: 600; }
+.dm-tag { font-size: var(--t-xs); color: var(--text-3); text-transform: uppercase; letter-spacing: .05em; }
 
 /* ------------------------------------------------------------------ *
  *  Toasts

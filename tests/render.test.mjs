@@ -307,4 +307,23 @@ if (cb) {
   t.ok(true, "no outstanding Today rows to tick (still a clean render)");
 }
 
+t.group("a re-dated (moved) day card renders on its new date");
+const daymenu = await import(new URL("daymenu.js", base).href);
+const igo = reg.getRoadmap("interp-go");
+const movable = igo.days.find(d => daymenu.freeDatesFor(d).length > 0);
+t.ok(movable, "interp-go has a day with a free gap to move into");
+const newDate = daymenu.freeDatesFor(movable)[0];
+store.setDayDate(igo.slug, movable.id, newDate);
+render.renderRoadmap(igo, view);
+const movedCard = view.querySelector(`.day[data-day="${movable.id}"]`);
+t.ok(movedCard, "the moved day card still renders");
+t.ok(movedCard.classList.contains("moved"), "…and is flagged .moved");
+t.ok(movedCard.querySelector(".day-title .t-moved"), "…with a 'moved · was …' chip in its title");
+t.eq(movedCard.querySelector(".day-date .dnum").textContent, String(Number(newDate.slice(8, 10))),
+  "…and its date number is the NEW date, not the authored one");
+store.setDayDate(igo.slug, movable.id, null);          // reset so state stays clean
+render.renderRoadmap(igo, view);
+t.ok(!view.querySelector(`.day[data-day="${movable.id}"]`).classList.contains("moved"),
+  "resetting the override drops the .moved flag");
+
 t.done();
