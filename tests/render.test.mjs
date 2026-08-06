@@ -259,8 +259,25 @@ reIl.querySelector(".il-seen").onclick();
 t.ok(!store.isSeen("raylib", ilId), "ticking again clears 'seen'");
 store.resetRoadmap("raylib");
 
+t.group("bonus disclosure survives a tick rerender (persisted open state)");
+render.renderRoadmap(reg.getRoadmap("rust-fastapi"), view);   // rust-fastapi has optional/bonus tasks
+const bTrack = view.querySelector(".bonus-track");
+t.ok(bTrack, "a day with optional work renders a bonus track");
+const bBox = bTrack.querySelector(".bonus-head").nextElementSibling;
+t.eq(bBox.style.display, "none", "the bonus list starts collapsed");
+bTrack.querySelector(".bonus-head").onclick();
+t.eq(bBox.style.display, "flex", "clicking the header expands the bonus list");
+render.rerender();                                            // a tick rerender rebuilds the DOM
+t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.display, "flex",
+  "the bonus list is STILL expanded after a rerender (open state persisted, like day/task disclosures)");
+view.querySelector(".bonus-track .bonus-head").onclick();     // collapse again
+render.rerender();
+t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.display, "none",
+  "collapsing it and rerendering keeps it collapsed too");
+render.renderToday(view);                                     // restore the Today view for the next group
+
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-08-04) is OVERDUE. A
+// "now" is frozen at 2026-08-10, so raylib d01.t1 (2026-08-06) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id

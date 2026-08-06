@@ -86,6 +86,10 @@ registerRoadmap({
   milestones: [
     { id: "w1.m1", week: "w1", title: "Ship the mini project", rule: { type: "tasks", require: ["d03.t1"] } },
     { id: "w1.m2", week: "w1", title: "≥ 70% of week 1 (original)", rule: { type: "weekPct", min: 70 } },
+    // Rounding-boundary probe: with 6 primary tasks in w1, 4/6 = 66.67% which pct()
+    // ROUNDS to 67 — a weekPct milestone at min 67 must judge the EXACT ratio and
+    // stay unmet at 4/6, only meeting at 5/6 (83%). Guards the milestone off-by-round.
+    { id: "w1.m3", week: "w1", title: "≥ 67% of week 1 (exact, not rounded)", rule: { type: "weekPct", min: 67 } },
     { id: "w2.m1", week: "w2", title: "Finish chapter 3", rule: { type: "tasks", require: ["d04.t1", "d04.t2"] } },
   ],
 

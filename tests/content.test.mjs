@@ -5,7 +5,7 @@
 import { readFileSync } from "node:fs";
 import { suite } from "./_harness.mjs";
 import { registry, util, reconcile, loadRoadmap } from "./_load.mjs";
-import { getInterludes, interludeUrl } from "../public/assets/js/interludes.js";
+import { getInterludes, interludeUrl, interludesAfter } from "../public/assets/js/interludes.js";
 
 const t = suite("content");
 await loadRoadmap("rust-fastapi.js");
@@ -41,6 +41,37 @@ for (const rm of roadmaps) {
 t.ok(interludeTotal >= 15, `all four roadmaps carry a spread of interludes (${interludeTotal})`);
 // fixtures / any other roadmap without curated interludes must simply yield none
 t.deep(getInterludes("does-not-exist"), [], "an unknown slug yields no interludes");
+
+t.group("interludeUrl fallback (no direct url) + interludesAfter lookup");
+// Every REAL interlude carries a direct url (asserted above), so the search-page
+// fallback only fires for a hypothetical url-less card — but it must still be safe
+// and correctly typed: DuckDuckGo for articles, YouTube results for videos.
+t.eq(interludeUrl({ kind: "article", query: "b-tree vs lsm tree" }),
+  "https://duckduckgo.com/?q=" + encodeURIComponent("b-tree vs lsm tree"),
+  "a url-less article falls back to a DuckDuckGo results page");
+t.eq(interludeUrl({ kind: "video", query: "raylib shaders intro" }),
+  "https://www.youtube.com/results?search_query=" + encodeURIComponent("raylib shaders intro"),
+  "a url-less video falls back to a YouTube results page");
+t.ok(interludeUrl({ kind: "article", query: "a b/c&d" }).includes(encodeURIComponent("a b/c&d")),
+  "the fallback query is URL-encoded (no raw spaces/&/ leaking into the href)");
+t.eq(interludeUrl({ query: "no kind here" }),
+  "https://www.youtube.com/results?search_query=" + encodeURIComponent("no kind here"),
+  "a non-article kind defaults to the YouTube results fallback");
+// interludesAfter returns exactly the interludes anchored to one day id.
+for (const rm of roadmaps) {
+  const list = getInterludes(rm.slug);
+  if (!list.length) continue;
+  const sample = list[0];
+  const after = interludesAfter(rm.slug, sample.afterDay);
+  t.ok(after.some(i => i.id === sample.id),
+    `${rm.slug}: interludesAfter("${sample.afterDay}") includes the interlude anchored there`);
+  t.ok(after.every(i => i.afterDay === sample.afterDay),
+    `${rm.slug}: interludesAfter returns only that day's interludes`);
+}
+t.deep(interludesAfter("rust-fastapi", "d-does-not-exist"), [],
+  "interludesAfter yields none for a day with no interlude");
+t.deep(interludesAfter("does-not-exist", "d01"), [],
+  "interludesAfter yields none for an unknown slug");
 
 t.group("side track wiring");
 const bedrock = registry.getRoadmap("bedrock");

@@ -113,9 +113,14 @@ reset();
 for (const id of ["d01.t1", "d01.t2", "d01.t3", "d02.t1"]) store.setTask(S, id, true);  // 4/6 = 67%
 s = compute();
 t.eq(s.milestones.find(m => m.id === "w1.m2").met, false, "w1.m2 not met at 67% (4/6)");
+// Rounding-boundary: w1.m3 (min 67) must NOT be met at 4/6 = 66.67% even though
+// pct() rounds that to 67 — the milestone judges the exact ratio, not the display %.
+t.eq(s.milestones.find(m => m.id === "w1.m3").met, false,
+  "w1.m3 (min 67) not met at 4/6 = 66.67% despite the rounded 67% display");
 store.setTask(S, "d02.t2", true);                                                        // 5/6 = 83%
 s = compute();
 t.eq(s.milestones.find(m => m.id === "w1.m2").met, true, "w1.m2 met at 83% (5/6)");
+t.eq(s.milestones.find(m => m.id === "w1.m3").met, true, "w1.m3 (min 67) met once actually past it at 83% (5/6)");
 
 t.group("projection: done flips true only when all required primary is complete");
 reset();

@@ -237,8 +237,13 @@ function evalMilestone(rm, slug, m, weeks) {
     const done = req.filter(idDone).length;
     met = done === req.length && req.length > 0; progress = done; target = req.length;
   } else if (r.type === "weekPct") {
-    const w = weeks[m.week]; const p = w ? w.original.pct : 0;   // by ORIGINAL so moves don't cheese it
-    met = p >= (r.min || 80); progress = p; target = r.min || 80;
+    const w = weeks[m.week];                                     // by ORIGINAL so moves don't cheese it
+    const min = r.min || 80;
+    // Compare the EXACT ratio, not w.original.pct — that value is rounded (pct()
+    // does Math.round), so 79.6% would round to 80 and flip the milestone "met"
+    // up to ~half a task early. Display still uses the rounded percent.
+    const exact = w && w.original.total > 0 ? (w.original.done / w.original.total) * 100 : 0;
+    met = exact >= min; progress = w ? w.original.pct : 0; target = min;
   } else if (r.type === "count") {
     const from = r.from || []; const done = from.filter(idDone).length;
     met = done >= (r.min || 1); progress = done; target = r.min || 1;
@@ -270,9 +275,11 @@ function activeDaysPerWeek(rm) {
   const band = rm.cadence && rm.cadence.activeDaysPerWeek;
   // average the band, however many entries it has ([4] → 4, [3,4] → 3.5)
   if (Array.isArray(band) && band.length) return band.reduce((a, b) => a + b, 0) / band.length;
-  // else infer from the schedule: avg active days across weeks
+  // else infer from the schedule: avg active days across weeks. A rest day (d.off)
+  // is not an active day, so it must not inflate the average (that would shrink the
+  // projected per-week load and over-optimistically pull the finish date in).
   const perWeek = {};
-  for (const d of rm.days) perWeek[d.week] = (perWeek[d.week] || 0) + 1;
+  for (const d of rm.days) { if (d.off) continue; perWeek[d.week] = (perWeek[d.week] || 0) + 1; }
   const vals = Object.values(perWeek);
   return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 5;
 }

@@ -499,7 +499,12 @@ export function initDrawer(hooks = {}) {
   $("#fab").addEventListener("click", openDrawer);
   $("#drawer-close").onclick = closeDrawer;
   $(".drawer-scrim", root).onclick = closeDrawer;
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && root.classList.contains("open")) closeDrawer(); });
+  // Escape closes the drawer — but NOT when a modal is open on top of it (a
+  // confirm/input dialog owns Escape first). Without this guard, one Escape closes
+  // both the dialog and the drawer under it (every drawer import/reset flow hits this).
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && root.classList.contains("open") && !modalStack.length) closeDrawer();
+  });
   buildDrawerBody();
 }
 export function openDrawer() { buildDrawerBody(); $("#drawer-root").classList.add("open"); }
@@ -670,8 +675,16 @@ export function initFab() {
   fab.addEventListener("pointerup", e => {
     if (!dragging) return;
     dragging = false; fab.classList.remove("dragging");
-    if (moved) { localStorage.setItem(KEY, fab.style.top); const stop = ev => ev.stopPropagation();
-      fab.addEventListener("click", stop, { capture: true, once: true }); }
+    if (moved) {
+      localStorage.setItem(KEY, fab.style.top);
+      // Swallow the click the drag synthesizes so it doesn't open the drawer. Bound
+      // the one-shot suppressor with a timeout: some browsers skip the post-drag
+      // click entirely, and a lingering {once} listener would then eat the user's
+      // NEXT genuine click on the FAB. Remove it after a tick if no click arrived.
+      const stop = ev => ev.stopPropagation();
+      fab.addEventListener("click", stop, { capture: true, once: true });
+      setTimeout(() => fab.removeEventListener("click", stop, { capture: true }), 350);
+    }
   });
 }
 

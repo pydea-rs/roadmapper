@@ -38,6 +38,7 @@ let msResizeHandler = null;            // the milestone slideshow's live resize 
 const expandedTasks = new Set();
 const taskKey = (slug, id) => `${slug}\x00${id}`;
 const msIndex = new Map();              // slug → active milestone-carousel index; survives tick rerenders
+const openBonus = new Set();            // "slug\x00dayId" keys whose bonus disclosure is expanded; survives tick rerenders
 
 /** Tick (or clear) every leaf of a parent task at once. */
 function setAllSubs(slug, task, done) {
@@ -1338,7 +1339,7 @@ function dayCard(rm, S, day, open) {
     pad.append(el("div.sec-title", { style: "margin-top:var(--s2)", text: "Moved in" }));
     renderTaskList(pad, rm, S, movedIn, true, day.id);
   }
-  if (bonus.length) pad.append(bonusTrack(rm, S, bonus));
+  if (bonus.length) pad.append(bonusTrack(rm, bonus, day.id));
   for (const s of day.soft) pad.append(softItem(rm, s));
 
   if (!required.length && !bonus.length && !day.soft.length)
@@ -1554,11 +1555,19 @@ function leadBlock(task) {
   return plain;
 }
 
-function bonusTrack(rm, S, bonus) {
+function bonusTrack(rm, bonus, dayId) {
   const wrap = el("div.bonus-track");
+  // Persist the open/closed state across tick rerenders (which rebuild the DOM),
+  // matching how day cards, task takeaways and the milestone carousel are preserved.
+  const key = taskKey(rm.slug, dayId);
+  const isOpen = openBonus.has(key);
   const head = el("div.bonus-head", { html: `${starIcon()} Bonus · counts past 100%` });
-  const box = el("div", { style: "display:none;flex-direction:column;gap:2px" });
-  head.onclick = () => { const shown = box.style.display !== "none"; box.style.display = shown ? "none" : "flex"; };
+  const box = el("div", { style: `display:${isOpen ? "flex" : "none"};flex-direction:column;gap:2px` });
+  head.onclick = () => {
+    const shown = box.style.display !== "none";
+    box.style.display = shown ? "none" : "flex";
+    if (shown) openBonus.delete(key); else openBonus.add(key);
+  };
   for (const t of bonus) {
     const row = bonusRow(rm, t);
     box.append(row);
