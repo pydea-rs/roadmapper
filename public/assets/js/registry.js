@@ -208,14 +208,23 @@ export function validateAll() {
     const localIds = new Set();
     const tasksSeen = new Set();
     const softSeen = new Set();
+    // Journey state is a flat KV where bare task ticks share the id namespace with
+    // prefixed families (move:/soft:/seen:/flag:/note:/done_at:/daydate:). An
+    // authored id beginning with one of these would collide with that family's cell
+    // and be misclassified by reconcile.referentOf → a false-positive prune or a
+    // missed orphan. Forbid the overlap up front.
+    const RESERVED = ["move:", "soft:", "seen:", "flag:", "note:", "done_at:", "daydate:"];
+    const reserved = id => RESERVED.some(p => String(id).startsWith(p));
     for (const d of rm.days) {
       if (localIds.has(d.id)) P(`duplicate day id "${d.id}"`);
       localIds.add(d.id);
+      if (reserved(d.id)) P(`day id "${d.id}" uses a reserved state-key prefix`);
       if (!d.date || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) P(`day "${d.id}" has invalid date "${d.date}"`);
       else if (fmtDate(parseDate(d.date)) !== d.date) P(`day "${d.id}" date "${d.date}" is not a real calendar date`);
       for (const t of d.tasks) {
         if (tasksSeen.has(t.id)) P(`duplicate task id "${t.id}"`);
         tasksSeen.add(t.id);
+        if (reserved(t.localId)) P(`task id "${t.id}" uses a reserved state-key prefix`);
         if (!t.obj) P(`task "${t.id}" has no objective`);
         else if (!rm.objById.has(t.obj)) P(`task "${t.id}" references unknown objective "${t.obj}"`);
         // sub-tasks (leaves) must be namespaced under their parent and unique
@@ -234,6 +243,7 @@ export function validateAll() {
       for (const s of d.soft) {
         if (softSeen.has(s.id)) P(`duplicate soft id "${s.id}"`);
         softSeen.add(s.id);
+        if (reserved(s.localId)) P(`soft id "${s.id}" uses a reserved state-key prefix`);
       }
     }
     for (const m of rm.milestones) {

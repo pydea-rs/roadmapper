@@ -47,16 +47,19 @@ const syn = {
   title: "Links", tasks: [
     { link: "https://direct.test/x",
       label: 'See <a href="https://a.test/1">A1</a> and <a href="https://a.test/2">A2</a>.',
-      subs: [{ label: 'sub <a href="https://a.test/3">A3</a>', refs: ['ref <a href="https://a.test/4">A4</a>'] }] },
+      model: 'takeaway <a href="https://a.test/7">A7</a>',
+      subs: [{ label: 'sub <a href="https://a.test/3">A3</a>',
+        note: 'note <a href="https://a.test/8">A8</a>',
+        refs: ['ref <a href="https://a.test/4">A4</a>'] }] },
     { label: 'dup <a href="https://a.test/1">again</a>', info: '<a href="https://a.test/5">A5</a>' },
   ],
   soft: [{ label: 'soft <a href="https://a.test/6">A6</a>' }],
 };
 const links = daymenu.dayLinks(syn);
 const hrefs = links.map(l => l.href);
-t.deep(hrefs, ["https://direct.test/x", "https://a.test/1", "https://a.test/2", "https://a.test/3",
-  "https://a.test/4", "https://a.test/5", "https://a.test/6"],
-  "links harvested in document order across link/label/info/refs/subs/soft, deduped");
+t.deep(hrefs, ["https://direct.test/x", "https://a.test/1", "https://a.test/2", "https://a.test/7",
+  "https://a.test/3", "https://a.test/8", "https://a.test/4", "https://a.test/5", "https://a.test/6"],
+  "links harvested in document order across link/label/info/model/refs/subs(note)/soft, deduped");
 t.eq(links.find(l => l.href === "https://a.test/1").text, "A1", "anchor text is captured");
 t.deep(daymenu.dayLinks({ tasks: [{ label: "no links here" }], soft: [] }), [], "a day with no anchors → empty");
 

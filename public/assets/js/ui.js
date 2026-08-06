@@ -167,7 +167,9 @@ export function inputModal({ title, subtitle = "", icon = "✏️", label = "", 
  * ================================================================== */
 let openMenuEl = null;
 function onCtxDocDown(e) { if (openMenuEl && !openMenuEl.contains(e.target)) closeContextMenu(); }
-function onCtxKey(e) { if (e.key === "Escape") { e.preventDefault(); closeContextMenu(); } }
+// Escape closes the menu and MUST NOT also reach an underlying modal's Escape
+// handler (stopPropagation, not just preventDefault) when a menu is layered over one.
+function onCtxKey(e) { if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); closeContextMenu(); } }
 export function closeContextMenu() {
   if (!openMenuEl) return;
   const m = openMenuEl; openMenuEl = null;
@@ -175,6 +177,7 @@ export function closeContextMenu() {
   document.removeEventListener("pointerdown", onCtxDocDown, true);
   document.removeEventListener("keydown", onCtxKey, true);
   window.removeEventListener("blur", closeContextMenu);
+  window.removeEventListener("hashchange", closeContextMenu);
   setTimeout(() => m.remove(), 120);
 }
 
@@ -209,6 +212,10 @@ export function openContextMenu(x, y, items) {
     document.addEventListener("pointerdown", onCtxDocDown, true);
     document.addEventListener("keydown", onCtxKey, true);
     window.addEventListener("blur", closeContextMenu);
+    // A route change (Back button / keyboard nav) can swap #view out from under an
+    // open menu whose action re-renders it — dismiss the menu so it can't act on a
+    // view that's no longer there.
+    window.addEventListener("hashchange", closeContextMenu);
   }, 0);
   return { close: closeContextMenu };
 }

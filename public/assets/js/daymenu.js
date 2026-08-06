@@ -89,7 +89,10 @@ export function dayLinks(day) {
   const scanItem = it => {
     if (!it) return;
     if (it.link) push(it.link, it.label || it.lead || it.link);
+    // every HTML-rendered field that can carry an <a>: label/lead/info, the refs
+    // list, plus a sub-task note and a model takeaway (both rendered as HTML).
     scanHtml(it.label); scanHtml(it.lead); scanHtml(it.info);
+    scanHtml(it.note); scanHtml(it.model);
     if (Array.isArray(it.refs)) it.refs.forEach(scanHtml);
   };
   for (const t of day.tasks) { scanItem(t); (t.subs || []).forEach(scanItem); }

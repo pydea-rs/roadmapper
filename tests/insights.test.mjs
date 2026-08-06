@@ -97,6 +97,18 @@ t.ok(bu2.ontimeNow <= bu2.originalNow + 1e-9, "On-time never exceeds Original at
 t.ok(bu2.ontime.every((p, i) => p.y <= bu2.original[i].y + 1e-9), "On-time ⊆ Original at every day");
 store.setTask(rm.slug, future.id, false);   // undo so later assertions see the original 6 done
 
+t.group("burnup: a completion dated before the first scheduled day is still counted");
+// Working ahead on day one (or ticking while the whole roadmap is still in the
+// future) yields a doneDate earlier than min(origDate); the cumulative Actual line
+// must extend its low end to reach it, not silently drop it.
+const early = [
+  { optional: false, origDate: "2026-09-01", done: true, doneDate: "2026-08-30", est: 0 },
+  { optional: false, origDate: "2026-09-01", done: false, doneDate: null, est: 0 },
+];
+const be = insights.burnup(early, "2026-09-05");
+t.ok(be.first <= "2026-08-30", "window start extends back to the early completion date");
+t.ok(Math.abs(be.actualNow - 50) < 1e-6, "the pre-schedule completion is included (1/2 = 50%)");
+
 t.group("Total scope aggregates every roadmap's required work");
 const allLeaves = insights.collectLeaves("__all__");
 let expected = 0;

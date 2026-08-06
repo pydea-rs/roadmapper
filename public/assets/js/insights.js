@@ -86,9 +86,11 @@ export function burnup(leaves, today) {
   }
   if (today > last) last = today;
   if (today < first) first = today;
-  // late completions can land after `last` (e.g. done today for a past-due task
-  // whose schedule ended earlier) — extend so the actual line reaches them.
-  for (const d of doneBy.keys()) if (d > last) last = d;
+  // completions can fall OUTSIDE the scheduled span at either end and must still be
+  // reached by the cumulative Actual line: late ones after `last` (done today for a
+  // past-due task) and early ones before `first` (worked ahead of the first
+  // scheduled day, or ticked while the whole roadmap is still in the future).
+  for (const d of doneBy.keys()) { if (d > last) last = d; if (d < first) first = d; }
   const N = Math.max(0, daysBetween(first, last));
   const todayIdx = clamp(daysBetween(first, today), 0, N);
 
@@ -266,7 +268,7 @@ function buildBody(scope) {
   readout.append(el("span.ir-dot"));
   readout.append(el("span", { html:
     `<b>${sum.pct}%</b> complete — you're <b>${paceWord} schedule</b>`
-    + (paceDelta ? ` by ${Math.abs(paceDelta)} pts` : "")
+    + (paceCls !== "on" ? ` by ${Math.abs(paceDelta)} pt${Math.abs(paceDelta) === 1 ? "" : "s"}` : "")
     + `. <b>${sum.puncRate}%</b> of completed work was done on time`
     + (sum.overdue ? `, and <b class="warn-ink">${sum.overdue}</b> ${sum.overdue === 1 ? "task is" : "tasks are"} overdue.` : ".") }));
   out.push(readout);

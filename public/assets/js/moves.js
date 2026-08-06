@@ -54,7 +54,7 @@ export function doMove(rm, slug, taskId, destDayId, onMoved) {
 
   const destDay = rm.daysById.get(destDayId);
   const label = backToOrigin ? "back to its origin day"
-    : `to ${destDay ? fmtDateHuman(destDay.date) : destDayId}`;
+    : `to ${destDay ? fmtDateHuman(dayDate(rm, slug, destDay)) : destDayId}`;
   toast(`Moved ${label}`, {
     type: "ok",
     undo: { label: "Undo", action: () => {
@@ -91,7 +91,9 @@ export function openMovePicker(rm, slug, task, onMoved) {
 
   function moveOpt(day, badge, isOrigin, onClick) {
     const opt = el("button.move-opt" + (isOrigin ? ".origin" : ""));
-    opt.append(el("span.mo-date", { text: day ? fmtDateHuman(day.date).replace(/^\w+ /, "") : "?" }));
+    // effective date (resolver) so this headline agrees with the relDay badge and
+    // the persistent timeline chip when the destination card has been re-dated.
+    opt.append(el("span.mo-date", { text: day ? fmtDateHuman(dayDate(rm, slug, day)).replace(/^\w+ /, "") : "?" }));
     opt.append(el("span.mo-title", { text: (isOrigin ? "↩ Origin — " : "") + (day ? day.title : "") }));
     opt.append(el("span.mo-load", { text: day ? `${day.tasks.length} tasks · ${badge}` : badge }));
     opt.onclick = onClick;

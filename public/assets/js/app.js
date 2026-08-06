@@ -365,7 +365,7 @@ async function importAllIO() {
   const full = doc.scope === "all" ? doc.state : (doc.scope === "roadmap" && doc.slug ? { [doc.slug]: doc.items } : null);
   if (!full) { toast("Unrecognized journey file", { type: "bad" }); return; }
   const ok = await confirmModal({ title: "Import whole journey?", icon: "⬇️", danger: true,
-    body: "This replaces ALL progress across every roadmap. A safety copy is stashed on the server first.",
+    body: "This replaces ALL progress and saved bookmarks across every roadmap. A safety copy is stashed on the server first.",
     confirmLabel: "Replace everything", });
   if (!ok) return;
   store.importAll(full);
@@ -375,7 +375,7 @@ async function importAllIO() {
 
 async function resetAllIO() {
   const ok = await confirmModal({ title: "Reset everything?", icon: "🗑️", danger: true,
-    body: "Clears all ticks, moves and notes across every roadmap. A stash is kept on the server. This can't be undone locally.",
+    body: "Clears all ticks, moves, notes and saved bookmarks across every roadmap. A stash is kept on the server. This can't be undone locally.",
     confirmLabel: "Reset all", });
   if (!ok) return;
   const snapshot = store.rawState();

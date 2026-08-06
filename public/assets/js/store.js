@@ -165,16 +165,20 @@ export function exportAll() {
  *  caller via sync.saveRoadmapFull(). */
 export function importRoadmap(slug, items) {
   state[slug] = {};
-  for (const [item, cell] of Object.entries(items || {}))
-    state[slug][item] = { kind: cell.kind || "task", value: String(cell.value) };
+  for (const [item, cell] of Object.entries(items || {})) {
+    if (!cell || typeof cell.value !== "string") continue;   // skip malformed (mirrors server normalize_full)
+    state[slug][item] = { kind: cell.kind || "task", value: cell.value };
+  }
   emit(slug, null);
 }
 export function importAll(fullState) {
   state = {};
   for (const [slug, bucket] of Object.entries(fullState || {})) {
     state[slug] = {};
-    for (const [item, cell] of Object.entries(bucket || {}))
-      state[slug][item] = { kind: cell.kind || "task", value: String(cell.value) };
+    for (const [item, cell] of Object.entries(bucket || {})) {
+      if (!cell || typeof cell.value !== "string") continue;
+      state[slug][item] = { kind: cell.kind || "task", value: cell.value };
+    }
   }
   emit(null, null);
 }

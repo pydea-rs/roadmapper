@@ -72,6 +72,11 @@ export async function search(q, type = "video") {
 
 /* ---------- load ---------- */
 export async function loadAndReconcile() {
+  // Adopt the DB wholesale — so first drain any queued/in-flight writes through the
+  // flush chain, otherwise hydrateFromServer could replace `state` before those
+  // saves land and the DB we read back would be stale. (Empty queue → resolves at
+  // once, so boot pays nothing.)
+  try { await flush(); } catch {}
   try {
     const { data } = await api("load");
     if (!data.ok) { setStatus("error"); return { error: data.error }; }

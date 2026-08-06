@@ -457,7 +457,7 @@ switch ($action) {
                 if (!array_key_exists("value", $ch) || $ch["value"] === null) {
                     $del->execute([$scope, $item]);
                 } else {
-                    $kind  = isset($ch["kind"]) && is_string($ch["kind"]) ? $ch["kind"] : "task";
+                    $kind  = isset($ch["kind"]) && is_string($ch["kind"]) ? substr($ch["kind"], 0, 64) : "task";
                     $value = is_string($ch["value"]) ? $ch["value"]
                            : json_encode($ch["value"], JSON_UNESCAPED_SLASHES);
                     $up->execute([$scope, $item, $kind, $value, $now]);
@@ -656,7 +656,7 @@ function normalize_full($full): array {
         [$slug, $item] = explode(KEY_SEP, $rowKey, 2);
         if (!valid_slug($slug) || $item === "" || strlen($item) > 256) continue;
         if (!is_array($cell)) continue;
-        $kind  = isset($cell["kind"]) && is_string($cell["kind"]) ? $cell["kind"] : "task";
+        $kind  = isset($cell["kind"]) && is_string($cell["kind"]) ? substr($cell["kind"], 0, 64) : "task";
         if (!array_key_exists("value", $cell) || $cell["value"] === null) continue;
         $value = is_string($cell["value"]) ? $cell["value"]
                : json_encode($cell["value"], JSON_UNESCAPED_SLASHES);
