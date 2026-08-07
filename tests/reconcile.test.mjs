@@ -62,4 +62,32 @@ const r3 = reconcile.reconcile(rm);
 t.eq(r3.pruned, 0, "no further prunes");
 t.eq(r3.aliased, 0, "no further aliases");
 
+t.group("aliases cascade to sub-task leaves — a renamed SUBBED task keeps its ticks");
+// a task WITH sub-tasks stores its progress on the LEAVES (tp.s1, done_at:tp.s1),
+// so the alias must carry those descendants too — else the prune step would wipe
+// them as orphans of the now-gone old parent id.
+registry.registerRoadmap({
+  slug: "rc2", title: "Reconcile subs",
+  objectives: [{ id: "o", title: "O" }],
+  aliases: { "d01.tp": "d01.tpnew" },
+  days: [{ id: "d01", date: "2026-07-13", tasks: [
+    { id: "tpnew", obj: "o", label: "renamed parent", sub: [
+      { id: "s1", est: 10, label: "leaf one" },
+      { id: "s2", est: 15, label: "leaf two" },
+    ] },
+  ], soft: [] }],
+});
+const rm2 = registry.getRoadmap("rc2");
+store.resetAll();
+store.setCell("rc2", "d01.tp.s1", "task", "true");        // old leaf ticks + stamp
+store.setCell("rc2", "done_at:d01.tp.s1", "meta", new Date(2026, 6, 13, 12).toISOString());
+store.setCell("rc2", "d01.tp.s2", "task", "true");
+const ra = reconcile.reconcile(rm2);
+t.ok(ra.aliased >= 3, `sub-leaf ticks + stamp all aliased (got ${ra.aliased})`);
+t.eq(ra.pruned, 0, "nothing pruned — the ticks migrated instead of orphaning");
+t.eq(store.isDone("rc2", "d01.tpnew.s1"), true, "leaf s1 tick moved to the new parent id");
+t.eq(store.isDone("rc2", "d01.tpnew.s2"), true, "leaf s2 tick moved to the new parent id");
+t.ok(store.doneAt("rc2", "d01.tpnew.s1") !== null, "leaf s1 done_at moved too");
+t.eq(store.isDone("rc2", "d01.tp.s1"), false, "old leaf id cleared");
+
 t.done();

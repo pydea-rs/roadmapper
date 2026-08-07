@@ -221,6 +221,7 @@ export function freshQueries(rm, { rng = Math.random, year = "" } = {}) {
  * real result. Every element is a thunk so the rng is only spent when reached.
  */
 export function buildPlan(groups, { today = null, year = "", rng = Math.random } = {}) {
+  if (!groups.length) return { primary: null, attempts: [] };   // no due work → empty plan
   // weight the primary pick by task load so shuffles draw across all of today.
   const total = groups.reduce((s, x) => s + x.tasks.length, 0) || 1;
   let r = rng() * total, primary = groups[groups.length - 1];

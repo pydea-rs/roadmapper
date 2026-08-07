@@ -1409,8 +1409,10 @@ function taskRow(rm, S, task, isMovedIn = false, hostId = null) {
 function movedChip(rm, slug, task, isMovedIn) {
   const movedTo = store.getMove(slug, task.id);
   if (movedTo && movedTo !== task.day && !isMovedIn) {
+    // only chip a move that currentDay() actually honours (target day exists); a
+    // dangling target falls back to origin there, so it must show no chip here.
     const dd = rm.daysById.get(movedTo);
-    return el("span.t-moved", { text: `→ moved to ${dd ? relDay(dayDate(rm, slug, dd)) : movedTo}` });
+    if (dd) return el("span.t-moved", { text: `→ moved to ${relDay(dayDate(rm, slug, dd))}` });
   }
   if (isMovedIn) {
     const od = rm.daysById.get(task.day);

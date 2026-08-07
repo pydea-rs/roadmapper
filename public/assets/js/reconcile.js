@@ -26,14 +26,21 @@ export function reconcile(rm) {
 
   // 1. aliases: migrate an old task id's rows to a new id (rename), non-destructively.
   const aliases = rm.aliases || {};
+  const keys = Object.keys(bucket);                     // snapshot before we mutate
   for (const [oldId, newId] of Object.entries(aliases)) {
     for (const prefix of ["", "done_at:", "move:", "soft:", "note:", "flag:missed:", "flag:starred:"]) {
-      const from = prefix + oldId, to = prefix + newId;
-      const cell = store.getCell(slug, from);
-      if (cell && !store.getCell(slug, to)) {
-        store.setCell(slug, to, cell.kind, cell.value);
-        store.setCell(slug, from, cell.kind, null);
-        aliased++;
+      const base = prefix + oldId;
+      // migrate the id itself AND any sub-leaf descendant (oldId.s1 → newId.s1) —
+      // else renaming a task WITH sub-tasks would lose its leaf ticks to the prune.
+      for (const from of keys) {
+        if (from !== base && !from.startsWith(base + ".")) continue;
+        const to = prefix + newId + from.slice(base.length);
+        const cell = store.getCell(slug, from);
+        if (cell && !store.getCell(slug, to)) {
+          store.setCell(slug, to, cell.kind, cell.value);
+          store.setCell(slug, from, cell.kind, null);
+          aliased++;
+        }
       }
     }
   }

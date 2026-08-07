@@ -309,9 +309,12 @@ function project(rm, remainingMins, done, total) {
   const expectedFinish = addDays(todayStr(), Math.ceil(weeksNeeded * 7));
   const optimisticFinish = addDays(todayStr(), Math.ceil((remainingMins / (perWeekMins * 1.25)) * 7));
 
-  // on-track: compare completion ratio vs elapsed schedule ratio
-  const firstDate = rm.days[0] ? rm.days[0].date : todayStr();
-  const lastDate = rm.days[rm.days.length - 1] ? rm.days[rm.days.length - 1].date : todayStr();
+  // on-track: completion ratio vs elapsed schedule ratio. Use the true
+  // chronological endpoints — days may be authored out of order (registry sorts a
+  // chrono copy for the same reason), so days[0]/days[-1] aren't reliably first/last.
+  const dated = rm.days.map(d => d.date).filter(Boolean);
+  const firstDate = dated.length ? dated.reduce((a, b) => (a < b ? a : b)) : todayStr();
+  const lastDate = dated.length ? dated.reduce((a, b) => (a > b ? a : b)) : todayStr();
   const span = Math.max(1, daysBetween(firstDate, lastDate));
   const elapsed = clamp(daysBetween(firstDate, todayStr()) / span, 0, 1);
   const compRatio = total ? done / total : 0;
