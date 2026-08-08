@@ -58,6 +58,14 @@ function isBypassed(url) {
   return /(?:^|\/)(?:sync|api)\.php$/.test(url.pathname) || url.pathname.includes("/roadmapper");
 }
 
+// Fail CLOSED: only genuinely-static asset types are ever stored. Anything else —
+// crucially, any dynamic endpoint added later (e.g. a future export.php reached by
+// GET) — falls through to the network untouched, so a per-user response can never
+// be served stale from cache. Extension is read from the pathname, so a query
+// string (?v=2) never changes the verdict.
+const STATIC_RE = /\.(?:js|mjs|css|png|svg|webp|gif|ico|json|webmanifest|woff2?|ttf|otf|html?)$/i;
+function isCacheable(url) { return STATIC_RE.test(url.pathname); }
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;                       // writes go straight to the network
@@ -80,6 +88,8 @@ self.addEventListener("fetch", (e) => {
   }
 
   // Static assets (css / js modules / icons / roadmap data): stale-while-revalidate.
+  // Unknown/dynamic GETs are not cached — pass them straight to the network.
+  if (!isCacheable(url)) return;
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const hit = await cache.match(req);

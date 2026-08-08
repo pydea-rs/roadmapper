@@ -68,6 +68,63 @@ const preList = (sw.match(/"([^"]+\.(?:css|js|png|webmanifest))"/g) || []).map((
 t.ok(preList.length >= 5, `precache references several real assets (found ${preList.length})`);
 for (const p of preList) t.ok(existsSync(pub(p)), `precached asset exists: ${p}`);
 
+t.group("service worker — fetch routing actually runs (not just string-matched)");
+// Execute sw.js in a sandbox with mocked worker globals, capture its event
+// listeners, and dispatch synthetic fetch events to assert real ROUTING behavior:
+// which requests get intercepted (respondWith) vs left to the network. This is the
+// coverage the string checks above can't give — an inverted bypass or a cache that
+// stopped failing-closed would go red here.
+const vm = await import("node:vm");
+const listeners = {};
+const cacheObj = { match: async () => undefined, put: async () => {}, add: async () => {} };
+const sandbox = {
+  self: {
+    location: { origin: "https://host" },
+    registration: { scope: "https://host/" },
+    addEventListener: (type, fn) => { listeners[type] = fn; },
+    skipWaiting: async () => {}, clients: { claim: async () => {} },
+  },
+  caches: { open: async () => cacheObj, keys: async () => [], match: async () => undefined, delete: async () => true },
+  fetch: async () => ({ ok: true, type: "basic", clone() { return this; } }),
+  Response: { error: () => ({ error: true }) },
+  Request: function (u) { this.url = u; },
+  URL, Promise, console, setTimeout,
+};
+vm.createContext(sandbox);
+vm.runInContext(sw, sandbox, { filename: "sw.js" });
+t.ok(typeof listeners.install === "function", "registers an install listener (executed, not grepped)");
+t.ok(typeof listeners.activate === "function", "registers an activate listener");
+t.ok(typeof listeners.fetch === "function", "registers a fetch listener");
+t.ok(typeof listeners.message === "function", "registers a message listener");
+
+// dispatch a synthetic fetch event; return whether the worker intercepted it.
+function intercepts(url, { method = "GET", mode = "cors" } = {}) {
+  let responded = false;
+  listeners.fetch({
+    request: { method, url, mode },
+    respondWith(p) { responded = true; if (p && p.catch) p.catch(() => {}); },
+  });
+  return responded;
+}
+// THE safety invariant: the auth-gated backend is never intercepted → always network.
+t.ok(!intercepts("https://host/sync.php?action=load"), "GET sync.php is NOT cached (network passthrough)");
+t.ok(!intercepts("https://host/sync.php?action=save", { method: "POST" }), "POST sync.php is left to the network");
+t.ok(!intercepts("https://host/api.php?action=status"), "GET api.php is NOT cached");
+t.ok(!intercepts("https://host/roadmapper/api.php"), "the private /roadmapper path is NOT cached");
+// fail-CLOSED: a hypothetical future dynamic endpoint must NOT be silently cached.
+t.ok(!intercepts("https://host/export.php"), "an unknown dynamic .php GET is NOT cached (fail-closed)");
+t.ok(!intercepts("https://host/data/feed"), "an extensionless dynamic GET is NOT cached (fail-closed)");
+// cross-origin and non-GET are never touched.
+t.ok(!intercepts("https://other-cdn.example/lib.js"), "cross-origin requests are never intercepted");
+t.ok(!intercepts("https://host/assets/js/app.js", { method: "POST" }), "non-GET static requests are not intercepted");
+// genuine static assets ARE served through the cache (so offline launch works)…
+t.ok(intercepts("https://host/assets/js/registry.js"), "a static JS module is served via the cache");
+t.ok(intercepts("https://host/assets/css/theme.css"), "a static stylesheet is served via the cache");
+t.ok(intercepts("https://host/assets/icons/icon-192.png"), "a static icon is served via the cache");
+t.ok(intercepts("https://host/assets/js/app.js?v=2"), "a query string doesn't defeat static caching");
+// …and page navigations take the (network-first) shell path.
+t.ok(intercepts("https://host/", { mode: "navigate" }), "a page navigation is handled (network-first shell)");
+
 t.group("index.php — links the manifest, theme colour, and Apple bits");
 const html = read("index.php");
 t.ok(/<link[^>]+rel=["']manifest["'][^>]+href=["']manifest\.webmanifest["']/.test(html),

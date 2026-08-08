@@ -19,6 +19,27 @@ t.ok(roadmaps.length >= 4, `all real roadmaps registered (${roadmaps.length})`);
 t.deep(registry.registryErrors(), [], "no registry errors");
 t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 
+// Start/finish date ANCHORS — the tripwire for date shifts. content.test's other
+// date checks are loose (>=) boundaries that a *uniform* whole-roadmap shift always
+// still satisfies, so an ASYMMETRIC shift (one roadmap missed, wrong direction, or
+// a truncated/extended arc that didn't move its start) would stay green. These
+// equality anchors go red on any such mistake. THEY ARE INTENTIONALLY SHIFT-
+// SENSITIVE: bump each pair by the same +N as the roadmaps on every uniform date
+// shift (exactly like the frozen-now anchors in render.test / insights.test).
+t.group("roadmap date anchors (a bad or asymmetric shift must fail here)");
+const ANCHORS = {
+  "rust-fastapi": { first: "2026-08-09", last: "2027-05-14" },
+  "interp-go":    { first: "2026-08-10", last: "2027-01-09" },
+  "bedrock":      { first: "2026-08-11", last: "2027-03-20" },
+  "raylib":       { first: "2026-08-09", last: "2026-12-13" },
+};
+for (const [slug, a] of Object.entries(ANCHORS)) {
+  const rm = registry.getRoadmap(slug);
+  t.ok(!!rm, `${slug} is registered`);
+  t.eq(rm.days[0].date, a.first, `${slug} starts on its anchor date ${a.first}`);
+  t.eq(rm.days[rm.days.length - 1].date, a.last, `${slug} ends on its anchor date ${a.last}`);
+}
+
 t.group("between-days interludes are well-formed and anchored to real days");
 let interludeTotal = 0;
 for (const rm of roadmaps) {
@@ -100,12 +121,12 @@ t.ok(bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "internals").lengt
 t.ok(bedrock.days.length >= 97, "Extension III lands (>= 97 days)");
 t.ok(bedrock.objById.has("compilers"), "Extension III adds a Compilers & interpreters objective");
 t.ok(bedrock.weeksById.has("w32"), "Extension III reaches week 32");
-t.ok(bedrock.days.some(d => d.date >= "2027-02-10"), "Extension III days are dated after Extension II");
+t.ok(bedrock.days.some(d => d.date >= "2027-02-11"), "Extension III days are dated after Extension II");
 const compTasks = bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "compilers");
 t.ok(compTasks.length >= 8, "the compilers thread has its full run of tasks (appended + woven)");
 // the woven "Compiler lens" seeds live on EARLIER days as a 2nd task, so they must
 // never sit at tasks[0] (that would perturb the interleaving invariant).
-const wovenComp = bedrock.days.filter(d => d.date < "2027-02-10" && d.tasks.some(x => x.obj === "compilers"));
+const wovenComp = bedrock.days.filter(d => d.date < "2027-02-11" && d.tasks.some(x => x.obj === "compilers"));
 t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 earlier second-half days");
 t.ok(wovenComp.every(d => d.tasks[0].obj !== "compilers"),
   "woven compiler tasks are additive (never the day's first/anchor task)");

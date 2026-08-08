@@ -32,6 +32,13 @@
  * origin / unset". A newly authored roadmap needs zero rows (DESIGN.md §7).
  */
 
+// Never render PHP notices/warnings into the response body: on a host that ships
+// display_errors=On, a stray warning would leak an absolute path ahead of the JSON
+// (and corrupt the payload). Log them instead. Defense-in-depth alongside the
+// input validation below.
+ini_set("display_errors", "0");
+error_reporting(E_ALL);
+
 header("Content-Type: application/json");
 header("Cache-Control: no-cache, no-store, must-revalidate");
 
@@ -293,6 +300,12 @@ function valid_slug(string $s): bool {
 /* ------------------------------------------------------------------ *
  *  Dispatch
  * ------------------------------------------------------------------ */
+
+// A test harness may `require` this file purely for its pure helpers (valid_slug,
+// normalize_full, throttle_*) without ever running a request or opening the real
+// database — it defines this constant first, and we stop here. Never defined in
+// production, so the dispatch below always runs normally when served.
+if (defined("ROADMAPS_TEST_HARNESS")) return;
 
 $action = $_GET["action"] ?? "";
 $method = $_SERVER["REQUEST_METHOD"] ?? "GET";
