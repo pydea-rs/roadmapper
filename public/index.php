@@ -11,6 +11,18 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Roadmaps</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗺️</text></svg>">
+
+  <!-- PWA: installable, offline app-shell (see sw.js + manifest.webmanifest). -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="theme-color" content="#f4f5f8" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1017" media="(prefers-color-scheme: dark)">
+  <meta name="application-name" content="Roadmaps">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Roadmaps">
+  <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
+
   <link rel="stylesheet" href="assets/css/theme.css">
   <link rel="stylesheet" href="assets/css/shell.css">
   <link rel="stylesheet" href="assets/css/roadmap.css">

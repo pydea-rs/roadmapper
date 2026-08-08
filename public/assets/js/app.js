@@ -26,6 +26,16 @@ let routeWired = false;                 // hashchange listener registered once (
 
 document.addEventListener("DOMContentLoaded", boot);
 
+// PWA: register the service worker (installability + offline app-shell). It only
+// caches the static shell — journey data still flows through the auth-gated
+// backend. Resolved from this module's URL so it works under any base path, and
+// deferred to window `load` so it never competes with the initial render.
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register(new URL("../../sw.js", import.meta.url).href).catch(() => {});
+  });
+}
+
 async function boot() {
   loadSettings();
   initFab();

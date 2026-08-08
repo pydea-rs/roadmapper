@@ -33,6 +33,21 @@ DirectoryIndex index.php
   Header set Referrer-Policy "no-referrer"
 </IfModule>
 
+# --- PWA: correct MIME for the web app manifest (some hosts don't map it). ----
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
+</IfModule>
+
+# --- PWA: let the service worker control the whole origin and never go stale. --
+# A cached-forever sw.js would strand users on an old worker, so always revalidate
+# it; Service-Worker-Allowed keeps its scope at the web root.
+<IfModule mod_headers.c>
+  <FilesMatch "^sw\.js$">
+    Header set Service-Worker-Allowed "/"
+    Header set Cache-Control "no-cache, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
 # --- Block the private app dir outright, if it ever gets uploaded in here. ---
 <IfModule mod_rewrite.c>
   RewriteEngine On
