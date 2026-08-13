@@ -71,12 +71,16 @@ export async function search(q, type = "video") {
 
 /* ---------- load ---------- */
 export async function loadAndReconcile() {
-  // Adopt the DB wholesale — so first drain any queued/in-flight writes through the
-  // flush chain, otherwise hydrateFromServer could replace `state` before those
-  // saves land and the DB we read back would be stale. (Empty queue → resolves at
-  // once, so boot pays nothing.)
-  try { await flush(); } catch {}
+  // Capture any local changes made while this load is in flight, so a tick the user
+  // makes mid-load isn't visually reverted when we adopt the DB copy (it's replayed
+  // on top after hydrate — the change is still queued for the DB independently).
+  store.beginLoadCapture();
   try {
+    // Adopt the DB wholesale — so first drain any queued/in-flight writes through the
+    // flush chain, otherwise hydrateFromServer could replace `state` before those
+    // saves land and the DB we read back would be stale. (Empty queue → resolves at
+    // once, so boot pays nothing.)
+    try { await flush(); } catch {}
     const { data } = await api("load");
     if (!data.ok) { setStatus("error"); return { error: data.error }; }
     available = true;
@@ -87,6 +91,8 @@ export async function loadAndReconcile() {
     available = false;
     setStatus("offline");
     return { error: String(e) };
+  } finally {
+    store.replayAndEndCapture();                 // re-apply anything ticked during the load
   }
 }
 

@@ -21,6 +21,12 @@ let sink = null;                      // (slug, change) => void  — for DB writ
 
 let state = {};
 
+// While a server load is in flight, journal every local change so a tick the user
+// makes DURING the load isn't visually reverted when hydrateFromServer replaces the
+// state wholesale (the change is still independently queued for the DB by the sink —
+// this only keeps the in-memory/UI copy in sync so the tick never flickers back).
+let loadJournal = null;
+
 export function setSink(fn) { sink = fn; }
 export function onChange(fn) { listeners.add(fn); return () => listeners.delete(fn); }
 function emit(slug, itemId) { for (const fn of listeners) fn(slug, itemId); }
@@ -45,8 +51,20 @@ export function setCell(slug, itemId, kind, value, { silent = false } = {}) {
     if (before && before.value === v && before.kind === kind) return;
     bucket[itemId] = { kind, value: v };
   }
+  if (loadJournal) loadJournal.push({ slug, id: itemId, kind, value: value === null ? null : bucket[itemId].value });
   if (sink && !silent) sink(slug, { id: itemId, kind, value: value === null ? null : bucket[itemId].value });
   emit(slug, itemId);
+}
+
+/* ---------- load-window change capture (see loadJournal above) ---------- */
+export function beginLoadCapture() { loadJournal = []; }
+/** Replay any changes journaled during the load over the freshly-hydrated state,
+ *  then end the capture. Silent (no re-sink — they are already queued). Idempotent:
+ *  a no-op if capture never began or already ended. */
+export function replayAndEndCapture() {
+  const j = loadJournal; loadJournal = null;
+  if (!j) return;
+  for (const c of j) setCell(c.slug, c.id, c.kind, c.value, { silent: true });
 }
 
 /* ---------- typed accessors ---------- */

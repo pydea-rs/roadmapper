@@ -85,6 +85,28 @@ t.eq(store.isDone(S, "d03.t1"), true, "tick restored after hydrate");
 t.eq(store.getMove(S, "d03.t2"), "d04", "move restored after hydrate");
 t.eq(store.getNote(S, "d03"), "kept across reload", "note restored after hydrate");
 
+t.group("load-window capture: a tick made mid-load survives the wholesale hydrate");
+// Reproduces the race the capture guards: the DB copy adopted by hydrateFromServer
+// predates a tick the user made while the load was in flight. Without the journal,
+// hydrate would visually revert that tick; with it, the tick is replayed on top.
+store.resetAll();
+const stale = store.toFlatMap();                 // empty DB snapshot (pre-tick)
+store.beginLoadCapture();
+store.setTask(S, "d09.t1", true);                // user ticks DURING the load
+store.hydrateFromServer(stale);                  // adopt DB wholesale → drops the tick
+t.eq(store.isDone(S, "d09.t1"), false, "hydrate alone reverts the mid-load tick");
+store.replayAndEndCapture();                     // …then the journal restores it
+t.eq(store.isDone(S, "d09.t1"), true, "the mid-load tick is replayed back on top of the DB copy");
+t.ok(store.doneAt(S, "d09.t1"), "its done_at stamp is replayed too");
+// a change made BEFORE capture began is the DB's job, not the journal's
+store.beginLoadCapture();
+store.hydrateFromServer(stale);
+store.replayAndEndCapture();
+t.eq(store.isDone(S, "d09.t1"), false, "nothing journaled → hydrate wins (no phantom replay)");
+let replayThrew = false;
+try { store.replayAndEndCapture(); } catch { replayThrew = true; }
+t.ok(!replayThrew, "replay with no active capture is a harmless no-op");
+
 t.group("per-roadmap isolation");
 store.resetAll();
 store.setTask("aaa", "d01.t1", true);
