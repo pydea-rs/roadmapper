@@ -23,10 +23,10 @@ global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slid
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-08-15 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-08-19 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 7, 15, 12, 0, 0); }
-  static now() { return new RealDate(2026, 7, 15, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 7, 19, 12, 0, 0); }
+  static now() { return new RealDate(2026, 7, 19, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
 
@@ -277,7 +277,7 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
 render.renderToday(view);                                     // restore the Today view for the next group
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-08-15, so raylib d01.t1 (2026-08-13) is OVERDUE. A
+// "now" is frozen at 2026-08-19, so raylib d01.t1 (2026-08-17) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
