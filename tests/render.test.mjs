@@ -23,9 +23,9 @@ global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slid
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-08-19 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-08-30 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 7, 19, 12, 0, 0); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 7, 30, 12, 0, 0); }
   static now() { return new RealDate(2026, 7, 19, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
@@ -56,7 +56,7 @@ t.ok(view.querySelector(".day-ring.ontime"), "the On-time ring renders on reache
 t.ok(view.querySelector(".ring-cell .ring-cap"), "each ring carries a caption");
 
 t.group("a week straddling a month boundary renders its header/figures only once");
-render.renderRoadmap(reg.getRoadmap("interp-go"), view);   // interp-go has weeks crossing Jul→Aug, Sep→Oct
+render.renderRoadmap(reg.getRoadmap("interp-go"), view);   // interp-go has weeks crossing Aug→Sep, Dec→Jan
 const totalWeekGroups = view.querySelectorAll(".week-group").length;
 const contGroups = view.querySelectorAll(".week-group.cont").length;
 t.ok(contGroups > 0, "continuation slices exist (some weeks span two calendar months)");
@@ -277,7 +277,7 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
 render.renderToday(view);                                     // restore the Today view for the next group
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-08-19, so raylib d01.t1 (2026-08-17) is OVERDUE. A
+// "now" is frozen at 2026-08-30, so raylib d01.t1 (2026-08-28) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
