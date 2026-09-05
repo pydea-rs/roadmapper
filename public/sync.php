@@ -10,5 +10,9 @@
  * six-line forwarder.
  */
 
+// Defense-in-depth: never echo a PHP error/path from the forwarder itself, in case
+// a fatal fires during these includes before api.php sets this (api.php sets it too).
+ini_set('display_errors', '0');
+
 $app = require __DIR__ . '/app-path.php';   // returns the roadmapper/ path (or 500s + exits)
 require $app . '/api.php';                    // handles the request and exits

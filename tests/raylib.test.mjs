@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-08-28", "the journey starts on 2026-08-28 (start shifted to Friday), not a week later");
+t.ok(rm.days[0].date === "2026-09-04", "the journey starts on 2026-09-04 (start shifted to Friday), not a week later");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -50,24 +50,24 @@ t.ok(allTasks.every(x => !x.subs || x.subs.every(l => l.obj === x.obj && l.optio
 
 t.group("thread SEQUENCING — the owner's ordering");
 // course (Udemy) drives early and TAPERS once section 6 ("Projects") is reached;
-// its last task is the audio/GUI capstone. (Denser 3/week re-pace → ends ~early Nov.)
+// its last task is the audio/GUI capstone. (Denser 3/week re-pace → ends ~mid-Nov.)
 const courseDates = allTasks.filter(x => x.obj === "course").map(x => x.date);
-// NOTE: this early-November bound tracks the schedule — bump it with each uniform
+// NOTE: this mid-November bound tracks the schedule — bump it with each uniform
 // date-shift pass (like STEADY below), since the whole arc slides later each time.
-t.ok(Math.max(...courseDates.map(Date.parse)) <= Date.parse("2026-11-08"),
-  "the course thread finishes by early November (then it's physics + project + shaders)");
+t.ok(Math.max(...courseDates.map(Date.parse)) <= Date.parse("2026-11-15"),
+  "the course thread finishes by mid-November (then it's physics + project + shaders)");
 // the Big Bang PROJECT only begins in the second half, after the course is underway
 const projectDates = allTasks.filter(x => x.obj === "project").map(x => x.date);
-t.ok(Math.min(...projectDates.map(Date.parse)) >= Date.parse("2026-10-16"),
+t.ok(Math.min(...projectDates.map(Date.parse)) >= Date.parse("2026-10-23"),
   "the simulation project starts only in the second half (after the course, once physics exists)");
 // SHADERS (Book of Shaders) start only once Nature of Code is ~70-80% read — late
 const shaderDates = allTasks.filter(x => x.obj === "shaders").map(x => x.date);
-t.ok(Math.min(...shaderDates.map(Date.parse)) >= Date.parse("2026-11-27"),
+t.ok(Math.min(...shaderDates.map(Date.parse)) >= Date.parse("2026-12-04"),
   "shaders begin only in the final third (after Nature of Code is ~70-80% done)");
 // physics (noc) spans the whole journey (it's the through-line)
 const nocDates = allTasks.filter(x => x.obj === "noc").map(x => x.date);
-t.ok(Math.min(...nocDates.map(Date.parse)) <= Date.parse("2026-09-02") &&
-     Math.max(...nocDates.map(Date.parse)) >= Date.parse("2026-12-17"),
+t.ok(Math.min(...nocDates.map(Date.parse)) <= Date.parse("2026-09-09") &&
+     Math.max(...nocDates.map(Date.parse)) >= Date.parse("2026-12-24"),
   "the Nature-of-Code physics thread runs as the through-line, start to late");
 
 t.group("threads stay interleaved");
@@ -100,13 +100,13 @@ for (const r of registry.getMainRoadmaps())
     const est = d.tasks.reduce((s, x) => s + (x.est || 0), 0);
     mainLoad.set(d.date, (mainLoad.get(d.date) || 0) + est);
   }
-// The light-day invariant is measured on raylib's STEADY STATE (from 2026-09-09).
-// The launch fortnight (Aug 28–Sep 8) deliberately overlaps: the owner asked all
-// three roadmaps to KICK OFF together on Fri Aug 28, so their heavy opening days
+// The light-day invariant is measured on raylib's STEADY STATE (from 2026-09-16).
+// The launch fortnight (Sep 4–Sep 15) deliberately overlaps: the owner asked all
+// three roadmaps to KICK OFF together on Fri Sep 4, so their heavy opening days
 // coincide with raylib's during that window. That overlap is accepted and transient
 // — raylib's Group-2 cadence re-plan (2–3 days/week) re-tunes placement across the
 // full range.
-const STEADY = "2026-09-09";
+const STEADY = "2026-09-16";
 let maxMainOnRaylibDay = 0, maxCombined = 0;
 for (const d of rm.days) {
   if (d.date < STEADY) continue;                 // skip the blessed shared-launch window

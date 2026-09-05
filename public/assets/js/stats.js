@@ -355,7 +355,7 @@ function computeStreak(rm, slug, dayO) {
   const today = todayStr();
   const eff = d => dayDate(rm, slug, d);
   const past = rm.days.filter(d => !d.off && eff(d) <= today && (dayO.get(d.id)?.total || 0) > 0)
-    .sort((a, b) => eff(a) < eff(b) ? 1 : -1);
+    .sort((a, b) => eff(a) < eff(b) ? 1 : eff(a) > eff(b) ? -1 : 0);   // total order (0 on equal dates)
   let streak = 0;
   for (const d of past) {
     const o = dayO.get(d.id);

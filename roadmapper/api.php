@@ -45,6 +45,7 @@ header("Cache-Control: no-cache, no-store, must-revalidate");
 const DB_FILE          = __DIR__ . "/journey.sqlite";
 const SESSION_NAME     = "roadmaps_sid";
 const MAX_BODY_BYTES   = 8 * 1024 * 1024;
+const MAX_VALUE_BYTES  = 256 * 1024;   // per-cell cap — generous for notes/bookmarks, blocks 8MB single-value bloat
 const STASH_KEEP       = 20;
 const THROTTLE_WINDOW  = 5;          // wrong attempts before a lock kicks in
 const THROTTLE_UNIT    = 60;         // seconds per strike (strike 1 => 60s, strike 2 => 120s, ...)
@@ -318,6 +319,7 @@ $SESSION_LIFETIME = $EXPIRY_DAYS * 86400;
 
 switch ($action) {
     case "status":
+        if ($method !== "GET") fail(405, "status is GET-only");
         session_boot(false, $SESSION_LIFETIME);
         echo json_encode(["ok" => true, "authed" => is_authed(), "expiresInDays" => $EXPIRY_DAYS]);
         break;
@@ -473,6 +475,7 @@ switch ($action) {
                     $kind  = isset($ch["kind"]) && is_string($ch["kind"]) ? substr($ch["kind"], 0, 64) : "task";
                     $value = is_string($ch["value"]) ? $ch["value"]
                            : json_encode($ch["value"], JSON_UNESCAPED_SLASHES);
+                    if (strlen($value) > MAX_VALUE_BYTES) continue;   // skip oversized (only reachable by abuse)
                     $up->execute([$scope, $item, $kind, $value, $now]);
                 }
                 $applied++;
@@ -673,6 +676,7 @@ function normalize_full($full): array {
         if (!array_key_exists("value", $cell) || $cell["value"] === null) continue;
         $value = is_string($cell["value"]) ? $cell["value"]
                : json_encode($cell["value"], JSON_UNESCAPED_SLASHES);
+        if (strlen($value) > MAX_VALUE_BYTES) continue;   // skip oversized (only reachable by abuse)
         $out[$slug . KEY_SEP . $item] = ["kind" => $kind, "value" => $value];
     }
     return $out;

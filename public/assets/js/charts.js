@@ -149,6 +149,10 @@ export function lineChart(opts) {
   overlay.addEventListener("pointermove", move);
   overlay.addEventListener("pointerdown", move);
   overlay.addEventListener("pointerleave", hide);
+  // touch fires no pointerleave after a tap — hide on lift/cancel so the crosshair
+  // + tooltip don't stay stuck painted over the chart.
+  overlay.addEventListener("pointerup", hide);
+  overlay.addEventListener("pointercancel", hide);
 
   const out = el("div.chart-line");
   out.append(wrap);
