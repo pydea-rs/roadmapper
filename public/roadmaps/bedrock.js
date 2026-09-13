@@ -10,8 +10,8 @@
 // most important backend/blockchain foundations, with Networking + DevOps from
 // week 1; deeper "under the hood" material continues in a later extension.
 //
-// Cadence: 2–3 focused side-days per week (weekdays set by the shared working-day
-// grid — see the 2026-09-13 note below the imports), one ~60–125 min task
+// Cadence: 2–3 focused side-days per week (a few weeks take 4), on weekdays that
+// change from week to week — see the 2026-09-13 re-plan note — one ~60–125 min task
 // each, alongside the main roadmaps. Progress/effort stay OFF the main track's
 // totals (kind:"side") — only the Today panel's "Main + Side" line combines them.
 //
@@ -30,19 +30,22 @@
 // chapters x1.75, docs/articles x1.55, and the inline "hold this idea" notes — which
 // the app renders with an ⓘ explainer and which cost far less — x1.45. Required work
 // 84.7h → 132.3h. Days, threads and interleaving are unchanged; the dates were then
-// re-laid by the consolidation note below (finish 2027-04-15 → 2027-04-14).
+// re-laid by the re-plan note below.
 
-// SHARED WORKING-DAY CONSOLIDATION (2026-09-13 — "Option B" of RESCHEDULE-4-6H.md).
-// The owner's 4–6h/day budget is COMBINED across all roadmaps, never per roadmap.
-// The calendar used to spread four roadmaps across nearly every date, so a day
-// averaged only ~2.5h. All four are now STACKED onto one shared weekly grid of
-// working days (roadmap week i <-> grid week i, anchored Fri 2026-09-04), the grid
-// sized per week so the combined day lands in the band: 480h now falls on 123
-// working days averaging ~3.9h (weeks 1-18 sit at 4.5-5.3h), with 100 genuinely
-// free rest days — 45% of the calendar — and no day over 6h. ONLY `date:` and week
-// `start:` moved: day/task ids, content, order, each day's `week:` and every
-// day/week COUNT are untouched, so no milestone or interlude needed re-anchoring.
-// Still 97 days / 32 weeks; finishes 2027-04-14 (was 04-15).
+// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's
+// clarified rules. (It replaces an earlier same-day pass that misread the 4–6h figure
+// as a daily TARGET and stacked every roadmap onto a few shared "working days" with
+// rest days in between — the owner did not want fixed active days at all.)
+//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks
+//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,
+//    7h only rarely. A light day stays light — nothing is padded to reach a number.
+//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.
+//    Every week keeps its authored side-day count but picks fresh weekdays,
+//    deliberately different from the week before, so the plan doesn't settle into a rut.
+// ONLY `date:` (and the 9 inline `dow:` labels, d89–d97) moved: day/task ids, content,
+// order, each day's `week:`, every week's `start:` and every day/week COUNT are
+// untouched, so no milestone needed re-anchoring. Still 97 days / 32 weeks; finishes
+// 2027-04-12 (authored 2027-04-15).
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -196,7 +199,7 @@ registerRoadmap({
 
     /* ==================== WEEK 2 ==================== */
     {
-      id: "d04", date: "2026-09-12", week: "w2", title: "IP addressing, subnets & CIDR",
+      id: "d04", date: "2026-09-11", week: "w2", title: "IP addressing, subnets & CIDR",
       theme: "Networking · part 2 — stop CIDR from being magic.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 65,
@@ -225,7 +228,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-09-14", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
+      id: "d05", date: "2026-09-12", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
       theme: "DevOps · part 2 — an image is a manifest + content-addressed layers.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -246,7 +249,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d06", date: "2026-09-17", week: "w2", title: "The B-tree index: how it works, when it hurts",
+      id: "d06", date: "2026-09-13", week: "w2", title: "The B-tree index: how it works, when it hurts",
       theme: "Databases · part 1 — an index is a second, sorted copy kept balanced.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -305,7 +308,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-09-19", week: "w3", title: "Kubernetes: the reconciliation loop + core objects",
+      id: "d08", date: "2026-09-21", week: "w3", title: "Kubernetes: the reconciliation loop + core objects",
       theme: "DevOps · part 3 — everything in k8s is a controller driving current → desired.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 95,
@@ -326,7 +329,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-09-21", week: "w3", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
+      id: "d09", date: "2026-09-22", week: "w3", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
       theme: "Systems · part 2 — cache lines, page tables, and why a warm read never hits disk.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 100,
@@ -351,7 +354,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d10", date: "2026-09-22", week: "w3", title: "EXPLAIN: reading the query planner's mind",
+      id: "d10", date: "2026-09-24", week: "w3", title: "EXPLAIN: reading the query planner's mind",
       theme: "Databases · part 2 — estimated vs actual rows is the #1 diagnostic.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 85,
@@ -406,7 +409,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-09-28", week: "w4", title: "k8s scheduling, probes, requests/limits & HPA",
+      id: "d12", date: "2026-09-27", week: "w4", title: "k8s scheduling, probes, requests/limits & HPA",
       theme: "DevOps · part 4 — the operational levers you get asked about.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -428,7 +431,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d13", date: "2026-10-01", week: "w4", title: "Security foundations: OWASP 2025 + authn vs authz",
+      id: "d13", date: "2026-09-30", week: "w4", title: "Security foundations: OWASP 2025 + authn vs authz",
       theme: "Security · part 1 — the vocabulary you're measured against.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 80,
@@ -524,7 +527,7 @@ registerRoadmap({
 
     /* ==================== WEEK 6 (4 side-days) ==================== */
     {
-      id: "d17", date: "2026-10-09", week: "w6", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
+      id: "d17", date: "2026-10-10", week: "w6", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
       theme: "Blockchain · part 1 — get the three-way distinction exactly right.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 100,
@@ -545,7 +548,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d18", date: "2026-10-10", week: "w6", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
+      id: "d18", date: "2026-10-11", week: "w6", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
       theme: "Networking · part 6 — each version fixes the last one's bottleneck.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 85,
@@ -566,7 +569,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-10-13", week: "w6", title: "Redis internals: why single-threaded is fast",
+      id: "d19", date: "2026-10-12", week: "w6", title: "Redis internals: why single-threaded is fast",
       theme: "Caching · part 1 — one event loop, atomic commands, no locks.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 75,
@@ -591,7 +594,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d20", date: "2026-10-15", week: "w6", title: "Isolation levels & the anomalies they prevent",
+      id: "d20", date: "2026-10-14", week: "w6", title: "Isolation levels & the anomalies they prevent",
       theme: "Databases · part 4 — and the one everyone misses: write skew.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 100,
@@ -637,7 +640,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d22", date: "2026-10-20", week: "w7", title: "Inside the EVM: stack machine, storage, gas",
+      id: "d22", date: "2026-10-18", week: "w7", title: "Inside the EVM: stack machine, storage, gas",
       theme: "Blockchain · part 2 — what your Solidity actually compiles down to.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 100,
@@ -689,7 +692,7 @@ registerRoadmap({
 
     /* ==================== WEEK 8 ==================== */
     {
-      id: "d24", date: "2026-10-25", week: "w8", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
+      id: "d24", date: "2026-10-24", week: "w8", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
       theme: "Networking · part 7 — what nginx and your ALB really do.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 70,
@@ -739,7 +742,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d26", date: "2026-10-29", week: "w8", title: "Locking, deadlocks & the write-ahead log",
+      id: "d26", date: "2026-10-28", week: "w8", title: "Locking, deadlocks & the write-ahead log",
       theme: "Databases · part 5 — log the change before you touch the page.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -762,7 +765,7 @@ registerRoadmap({
 
     /* ==================== WEEK 9 ==================== */
     {
-      id: "d27", date: "2026-11-01", week: "w9", title: "Solana's account model — everything is an account",
+      id: "d27", date: "2026-10-30", week: "w9", title: "Solana's account model — everything is an account",
       theme: "Blockchain · part 3 — stateless programs + separate data accounts.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -784,7 +787,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d28", date: "2026-11-03", week: "w9", title: "SLIs, SLOs, error budgets & tracing",
+      id: "d28", date: "2026-11-02", week: "w9", title: "SLIs, SLOs, error budgets & tracing",
       theme: "DevOps · part 7 — turn reliability into a number you can spend.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 80,
@@ -836,7 +839,7 @@ registerRoadmap({
 
     /* ==================== WEEK 10 ==================== */
     {
-      id: "d30", date: "2026-11-06", week: "w10", title: "A transaction's life & EIP-1559 fees",
+      id: "d30", date: "2026-11-08", week: "w10", title: "A transaction's life & EIP-1559 fees",
       theme: "Blockchain · part 4 — base fee burned, tip to the proposer.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -880,7 +883,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2026-11-12", week: "w10", title: "Review: Rust ownership & the borrow checker",
+      id: "d32", date: "2026-11-11", week: "w10", title: "Review: Rust ownership & the borrow checker",
       theme: "Review · a deliberate re-grounding in a hard model you already use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -933,7 +936,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d34", date: "2026-11-17", week: "w11", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
+      id: "d34", date: "2026-11-14", week: "w11", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
       theme: "Blockchain · part 5 — why declaring accounts up front buys parallelism.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 80,
@@ -979,7 +982,7 @@ registerRoadmap({
 
     /* ==================== WEEK 12 ==================== */
     {
-      id: "d36", date: "2026-11-20", week: "w12", title: "Consensus: PoW, longest chain & what 'finality' means",
+      id: "d36", date: "2026-11-22", week: "w12", title: "Consensus: PoW, longest chain & what 'finality' means",
       theme: "Blockchain · part 6 — agreement without a coordinator.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 95,
@@ -1000,7 +1003,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d37", date: "2026-11-22", week: "w12", title: "Password hashing, sessions vs tokens & TLS recap",
+      id: "d37", date: "2026-11-23", week: "w12", title: "Password hashing, sessions vs tokens & TLS recap",
       theme: "Security · part 3 — store secrets like they'll be stolen.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 65,
@@ -1028,7 +1031,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2026-11-26", week: "w12", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
+      id: "d38", date: "2026-11-25", week: "w12", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
       theme: "Security · part 4 — the two bug classes that drain DeFi, in your domain.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 90,
@@ -1066,12 +1069,12 @@ registerRoadmap({
      *  starts here. Same interleaving rule: consecutive side-days switch
      *  topics; a thread advances when it reappears. References verified
      *  2026-07-18 with status flags for fast-moving items (chains, Kafka,
-     *  Python free-threading). Dates 2026-11-27 → 2027-02-24.
+     *  Python free-threading). Dates 2026-11-28 → 2027-02-25.
      * ================================================================== */
 
     /* ==================== WEEK 13 ==================== */
     {
-      id: "d39", date: "2026-11-27", week: "w13", title: "Consensus I: Raft — leader election & log replication",
+      id: "d39", date: "2026-11-28", week: "w13", title: "Consensus I: Raft — leader election & log replication",
       theme: "Distributed systems · part 1 — one strong leader makes agreement tractable.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 90,
@@ -1093,7 +1096,7 @@ registerRoadmap({
       note: "Extension begins — the same 2–3 days/week rhythm, now going under the hood. Threads resume where the core left them.",
     },
     {
-      id: "d40", date: "2026-11-29", week: "w13", title: "VACUUM, autovacuum & the xmin horizon",
+      id: "d40", date: "2026-12-01", week: "w13", title: "VACUUM, autovacuum & the xmin horizon",
       theme: "Databases · part 6 — why one idle transaction can bloat the whole cluster.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -1114,7 +1117,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2026-12-01", week: "w13", title: "Virtual memory: page tables & the TLB",
+      id: "d41", date: "2026-12-03", week: "w13", title: "Virtual memory: page tables & the TLB",
       theme: "Systems · part 4 — every memory access is secretly two accesses.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 100,
@@ -1158,7 +1161,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d43", date: "2026-12-06", week: "w14", title: "BGP & Anycast: how the internet actually routes",
+      id: "d43", date: "2026-12-07", week: "w14", title: "BGP & Anycast: how the internet actually routes",
       theme: "Networking · part 8 — routing is policy and assertion, not shortest path.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 95,
@@ -1179,7 +1182,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d44", date: "2026-12-10", week: "w14", title: "Kafka exactly-once: idempotent producer + transactions",
+      id: "d44", date: "2026-12-09", week: "w14", title: "Kafka exactly-once: idempotent producer + transactions",
       theme: "Messaging · part 3 — 'exactly-once' is at-least-once + dedupe, done right.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 90,
@@ -1202,7 +1205,7 @@ registerRoadmap({
 
     /* ==================== WEEK 15 ==================== */
     {
-      id: "d45", date: "2026-12-11", week: "w15", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
+      id: "d45", date: "2026-12-12", week: "w15", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
       theme: "Distributed systems · part 2 — from 'nodes crash' to 'nodes lie'.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 100,
@@ -1309,7 +1312,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2026-12-24", week: "w16", title: "Redis Cluster & consistent hashing",
+      id: "d50", date: "2026-12-23", week: "w16", title: "Redis Cluster & consistent hashing",
       theme: "Caching · part 3 — 16384 slots, and moving keys without moving all of them.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 85,
@@ -1332,7 +1335,7 @@ registerRoadmap({
 
     /* ==================== WEEK 17 ==================== */
     {
-      id: "d51", date: "2026-12-25", week: "w17", title: "CAP done right — and PACELC",
+      id: "d51", date: "2026-12-27", week: "w17", title: "CAP done right — and PACELC",
       theme: "Distributed systems · part 3 — you don't 'choose' partition tolerance.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 85,
@@ -1353,7 +1356,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d52", date: "2026-12-27", week: "w17", title: "Join algorithms & how the planner picks",
+      id: "d52", date: "2026-12-28", week: "w17", title: "Join algorithms & how the planner picks",
       theme: "Databases · part 8 — nested loop, hash, merge — and why it chose that.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -1418,7 +1421,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d55", date: "2027-01-03", week: "w18", title: "Kafka consumer rebalances & log compaction",
+      id: "d55", date: "2027-01-06", week: "w18", title: "Kafka consumer rebalances & log compaction",
       theme: "Messaging · part 4 — don't stop the world to add one consumer.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1462,7 +1465,7 @@ registerRoadmap({
 
     /* ==================== WEEK 19 ==================== */
     {
-      id: "d57", date: "2027-01-08", week: "w19", title: "Logical clocks: Lamport timestamps & vector clocks",
+      id: "d57", date: "2027-01-09", week: "w19", title: "Logical clocks: Lamport timestamps & vector clocks",
       theme: "Distributed systems · part 4 — ordering events with no shared clock.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 75,
@@ -1504,7 +1507,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d59", date: "2027-01-14", week: "w19", title: "QUIC internals beyond HTTP/3",
+      id: "d59", date: "2027-01-11", week: "w19", title: "QUIC internals beyond HTTP/3",
       theme: "Networking · part 9 — connection IDs, streams, per-space loss recovery.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 85,
@@ -1548,7 +1551,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d61", date: "2027-01-19", week: "w20", title: "Review: the Python GIL & free-threading (3.14)",
+      id: "d61", date: "2027-01-20", week: "w20", title: "Review: the Python GIL & free-threading (3.14)",
       theme: "Review · what the lock protects, and the no-GIL build that's now supported.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -1613,7 +1616,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d64", date: "2027-01-24", week: "w21", title: "Replication: physical vs logical, sync vs async",
+      id: "d64", date: "2027-01-23", week: "w21", title: "Replication: physical vs logical, sync vs async",
       theme: "Databases · part 10 — replication lag is your failover data-loss window.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -1633,7 +1636,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d65", date: "2027-01-28", week: "w21", title: "CDC & the transactional outbox",
+      id: "d65", date: "2027-01-26", week: "w21", title: "CDC & the transactional outbox",
       theme: "Messaging · part 5 — kill the dual-write with one local transaction.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1655,7 +1658,7 @@ registerRoadmap({
 
     /* ==================== WEEK 22 ==================== */
     {
-      id: "d66", date: "2027-01-29", week: "w22", title: "ZK proofs: SNARKs vs STARKs (intuition)",
+      id: "d66", date: "2027-02-01", week: "w22", title: "ZK proofs: SNARKs vs STARKs (intuition)",
       theme: "Blockchain · part 11 — prove you ran the computation, reveal nothing.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 105,
@@ -1676,7 +1679,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d67", date: "2027-02-02", week: "w22", title: "Distributed locks & the Redlock debate",
+      id: "d67", date: "2027-02-03", week: "w22", title: "Distributed locks & the Redlock debate",
       theme: "Caching · part 4 — a lock without a fencing token isn't safe.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 75,
@@ -1738,7 +1741,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d70", date: "2027-02-08", week: "w23", title: "B-tree vs LSM-tree storage engines",
+      id: "d70", date: "2027-02-07", week: "w23", title: "B-tree vs LSM-tree storage engines",
       theme: "Databases · part 11 — write-optimized vs read-optimized, and amplification.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 85,
@@ -1759,7 +1762,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d71", date: "2027-02-10", week: "w23", title: "eBPF & XDP: programmable packets in the kernel",
+      id: "d71", date: "2027-02-09", week: "w23", title: "eBPF & XDP: programmable packets in the kernel",
       theme: "Networking · part 10 — run verified code before the packet even becomes an skb.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 75,
@@ -1792,7 +1795,7 @@ registerRoadmap({
 
     /* ==================== WEEK 24 ==================== */
     {
-      id: "d72", date: "2027-02-12", week: "w24", title: "Solana under the hood: Firedancer & Alpenglow",
+      id: "d72", date: "2027-02-13", week: "w24", title: "Solana under the hood: Firedancer & Alpenglow",
       theme: "Blockchain · part 12 — client diversity and a faster consensus.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 75,
@@ -1866,7 +1869,7 @@ registerRoadmap({
 
     /* ==================== WEEK 25 ==================== */
     {
-      id: "d75", date: "2027-02-19", week: "w25", title: "Performance analysis: perf, flame graphs & eBPF",
+      id: "d75", date: "2027-02-21", week: "w25", title: "Performance analysis: perf, flame graphs & eBPF",
       theme: "DevOps · part 11 — find where time actually goes, not where you guess.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75,
@@ -1886,7 +1889,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d76", date: "2027-02-22", week: "w25", title: "Signature replay & EIP-712 typed signing",
+      id: "d76", date: "2027-02-23", week: "w25", title: "Signature replay & EIP-712 typed signing",
       theme: "Security · part 6 — a signature must be bound to one chain, one contract, once.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 75,
@@ -1906,7 +1909,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d77", date: "2027-02-24", week: "w25", title: "🎓 Review: Rust async — Future, Pin & the state machine",
+      id: "d77", date: "2027-02-25", week: "w25", title: "🎓 Review: Rust async — Future, Pin & the state machine",
       theme: "Review · why async fn desugars to a self-referential state machine.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
@@ -1935,7 +1938,7 @@ registerRoadmap({
      *  and language Review days (same rule: consecutive days switch topics).
      *  References verified 2026-07-18, status-flagged for fast-moving items
      *  (Go maps→Swiss tables in 1.24, Go's GC, V8's pipeline, Unicode 17).
-     *  Dates 2027-02-26 → 2027-03-24.
+     *  Dates 2027-02-26 → 2027-03-21.
      * ================================================================== */
 
     /* ==================== WEEK 26 ==================== */
@@ -1964,7 +1967,7 @@ registerRoadmap({
       note: "Extension II begins — the 'cool internals': the data structures and runtime machinery under the code you write daily.",
     },
     {
-      id: "d79", date: "2027-03-01", week: "w26", title: "NUMA, cache coherence (MESI) & false sharing",
+      id: "d79", date: "2027-02-27", week: "w26", title: "NUMA, cache coherence (MESI) & false sharing",
       theme: "Systems · part 7 — you never own a variable, you own its 64-byte cache line.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 85,
@@ -1995,7 +1998,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d80", date: "2027-03-03", week: "w26", title: "Hash maps: why O(1), collisions & Swiss tables",
+      id: "d80", date: "2027-03-01", week: "w26", title: "Hash maps: why O(1), collisions & Swiss tables",
       theme: "Data-structure internals · part 2 — expected O(1), and how it degrades to O(n).",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2060,7 +2063,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d82", date: "2027-03-08", week: "w27", title: "Garbage collection: tracing, generational & tri-color",
+      id: "d82", date: "2027-03-07", week: "w27", title: "Garbage collection: tracing, generational & tri-color",
       theme: "Data-structure internals · part 3 — reclaim the unreachable without stopping the world.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 85,
@@ -2113,7 +2116,7 @@ registerRoadmap({
 
     /* ==================== WEEK 28 ==================== */
     {
-      id: "d84", date: "2027-03-12", week: "w28", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
+      id: "d84", date: "2027-03-13", week: "w28", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
       theme: "Data-structure internals · part 4 — floats are exact binary fractions, just not the ones you typed.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 70,
@@ -2157,7 +2160,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d86", date: "2027-03-17", week: "w28", title: "Unicode, UTF-8 & grapheme clusters",
+      id: "d86", date: "2027-03-18", week: "w28", title: "Unicode, UTF-8 & grapheme clusters",
       theme: "Data-structure internals · part 5 — 'length' has four different answers.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 75,
@@ -2181,7 +2184,7 @@ registerRoadmap({
 
     /* ==================== WEEK 29 ==================== */
     {
-      id: "d87", date: "2027-03-22", week: "w29", title: "Branch prediction & speculative execution (Spectre)",
+      id: "d87", date: "2027-03-19", week: "w29", title: "Branch prediction & speculative execution (Spectre)",
       theme: "Systems · part 9 — the CPU guesses your branches, and Spectre is the bill.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
@@ -2203,7 +2206,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d88", date: "2027-03-24", week: "w29", title: "🎓 Bloom filters & probabilistic data structures",
+      id: "d88", date: "2027-03-21", week: "w29", title: "🎓 Bloom filters & probabilistic data structures",
       theme: "Data-structure internals · part 6 — trade a little accuracy for enormous space savings.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 75,
@@ -2281,7 +2284,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d91", date: "2027-03-31", week: "w30", dow: "Wed", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
+      id: "d91", date: "2027-03-30", week: "w30", dow: "Tue", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
       theme: "Compilers · part 2 — turning flat text into a tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
@@ -2303,7 +2306,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d92", date: "2027-04-02", week: "w31", dow: "Fri", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
+      id: "d92", date: "2027-04-03", week: "w31", dow: "Sat", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
       theme: "Review · the toolchain that builds everything you ship in Go.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 60,
@@ -2324,7 +2327,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d93", date: "2027-04-05", week: "w31", dow: "Mon", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
+      id: "d93", date: "2027-04-07", week: "w31", dow: "Wed", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
       theme: "Compilers · part 3 — the simplest way to actually run the tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
@@ -2346,7 +2349,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d94", date: "2027-04-07", week: "w31", dow: "Wed", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
+      id: "d94", date: "2027-04-08", week: "w31", dow: "Thu", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
       theme: "Review · the other great managed runtime, next to V8.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 60,
@@ -2390,7 +2393,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d96", date: "2027-04-12", week: "w32", dow: "Mon", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
+      id: "d96", date: "2027-04-11", week: "w32", dow: "Sun", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
       theme: "Review · the compiler infrastructure under half the languages you use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
@@ -2412,7 +2415,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d97", date: "2027-04-14", week: "w32", dow: "Wed", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
+      id: "d97", date: "2027-04-12", week: "w32", dow: "Mon", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
       theme: "Compilers · part 5 (capstone) — the back end that makes it fast, and the rule that lets it.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,

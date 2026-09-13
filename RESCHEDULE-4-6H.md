@@ -1,6 +1,19 @@
-# Re-schedule to a 4–6 h combined day — ✅ DONE (Option B, 2026-09-13)
+# Re-schedule to a 4–6 h combined day — ⛔ SUPERSEDED (2026-09-13)
 
-> **STATUS: executed.** The owner chose **Option B**. All four roadmaps were re-dated onto a shared
+> **⛔ Do not follow this document.** Both options below rest on a misreading of the owner's rule:
+> the 4–6 h figure is a daily **MAXIMUM** on the sum of all roadmaps' required tasks on a date
+> (~4 h when 1–2 roadmaps share it, up to 6 h when 3+ do, 7 h rarely) — **not** a target to fill.
+> The owner also wants **no fixed active days / rest days**: a roadmap's rule is how many days it
+> gets per week, and the weekdays should *vary* week to week.
+>
+> The Option-B stacking described below was **reverted the same day**. The calendar was re-planned
+> by `scratchpad/replan.mjs` (varied weekdays, per-date ceilings); the rules are asserted in
+> `tests/schedule.test.mjs`, and each roadmap file carries a "RE-PLAN (2026-09-13)" header note.
+> This file is kept only as a record of what not to do.
+
+---
+
+> **(historical) STATUS: executed, then reverted.** The owner chose **Option B**. All four roadmaps were re-dated onto a shared
 > working-day grid; `scratchpad/consolidate.mjs` is the layout engine that did it and can be re-run.
 >
 > **Result: 480 h now falls on 123 working days in a 223-day span — 3.90 h per working day, 100 free

@@ -36,7 +36,19 @@ function isOnTime(slug, leafId, originDate) {
 // implied a 12h day, so every roadmap projected a finish far earlier than its own
 // authored calendar.) A roadmap's slice of that block is proportional to how often
 // it runs, and it earns its slice on each of its own active days.
-const DAILY_BUDGET_MINS = 300;        // ~5h/day across ALL roadmaps (the 4–6h band)
+//
+// The block is the owner's daily CEILING, not a target, and it depends on how many
+// roadmaps share the date: ~4h when one or two do, up to 6h when three or more do.
+// (7h is allowed only as a rare, hand-placed exception — never assumed here.)
+const BUDGET_FEW_MINS = 240;          // a date shared by 1–2 roadmaps
+const BUDGET_MANY_MINS = 360;         // a date shared by 3+ roadmaps
+/** The day's ceiling when `c` roadmaps typically share it. `c` is an average, so a
+ *  fractional value between 2 and 3 blends linearly between the two ceilings. */
+function dailyBudget(c) {
+  if (c <= 2) return BUDGET_FEW_MINS;
+  if (c >= 3) return BUDGET_MANY_MINS;
+  return BUDGET_FEW_MINS + (c - 2) * (BUDGET_MANY_MINS - BUDGET_FEW_MINS);
+}
 // Residual context-switching cost only. This used to be 0.85 to stand in for "several
 // roadmaps are competing for the day" — but dayConcurrency() now models exactly that,
 // explicitly and from the real calendar, so keeping 0.85 taxed the same effect twice
@@ -333,8 +345,8 @@ function hasRequiredWorkLeft(rm) {
  *  spread over 6 dates that is 2 roadmaps per day, but stacked onto 3 dates it is
  *  4 — same work, a very different day. Deriving the divisor from the REAL dates
  *  (rather than assuming one roadmap per day, or assuming perfect stacking) keeps
- *  the projection honest through a re-pace: consolidate the calendar and this rises
- *  on its own. Never returns < 1, so a lone roadmap simply gets the whole budget. */
+ *  the projection honest through a re-plan: however the days get re-arranged, this
+ *  follows on its own. Never returns < 1, so a lone roadmap gets the whole budget. */
 function dayConcurrency(rm) {
   let roadmapDays = 0;
   const dates = new Set();
@@ -359,7 +371,8 @@ function project(rm, remainingMins, done, total) {
   const active = activeDaysPerWeek(rm);
   // On a day the owner works, the budget splits between whichever roadmaps run that
   // day; this roadmap earns its slice on each of its own active days.
-  const perDayMins = DAILY_BUDGET_MINS / dayConcurrency(rm);
+  const c = dayConcurrency(rm);
+  const perDayMins = dailyBudget(c) / c;
   const perWeekMins = Math.max(1, active * perDayMins * OVERLAP_TAX);
   const weeksNeeded = remainingMins / perWeekMins;
   const expectedFinish = addDays(todayStr(), Math.ceil(weeksNeeded * 7));
@@ -391,7 +404,8 @@ function project(rm, remainingMins, done, total) {
 function projectSecondary(rm, remainingMins) {
   if (remainingMins <= 0) return null;
   const active = 1.2;                  // secondary gets little time
-  const perWeekMins = Math.max(1, active * (DAILY_BUDGET_MINS / dayConcurrency(rm)) * OVERLAP_TAX);
+  const c = dayConcurrency(rm);
+  const perWeekMins = Math.max(1, active * (dailyBudget(c) / c) * OVERLAP_TAX);
   const finish = addDays(todayStr(), Math.ceil((remainingMins / perWeekMins) * 7));
   return { remainingMins, finish };
 }

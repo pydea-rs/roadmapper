@@ -1,5 +1,5 @@
-// rust-fastapi.js — Roadmap 1 (priority HIGH, 3–5 active days/week: 4–5 through the
-// two-book core in w1–w7, a steady 3 across the RWP arc in w8–w29).
+// rust-fastapi.js — Roadmap 1 (priority HIGH, 2–5 active days/week: 4–5 through the
+// two-book core in w1–w7, then 2 across the RWP arc — 3 in the lighter weeks).
 // Two PRIMARY objectives: `rust` (The Rust Programming Language, resume at Ch15
 // Smart Pointers) and `fastapi` (Mastering FastAPI, resume Ch4 — brief book,
 // supplemented heavily with official docs). Rust references point at the live
@@ -26,12 +26,10 @@
 // continuation of the Book's async/web-server chapters: one to-do app grown into
 // a nanoservices stack (async Hyper server → React frontend → Rust/WASM →
 // PostgreSQL/SQLx → JWT auth server → inter-server comms → Redis cache → actor
-// logging), the EPUB's 13 chapters. Added as weeks w8–w21 / days d33–d74 at
-// 3 sessions/week, starting 2026-10-23 and finishing 2027-01-28 (~3 months). The
-// original 32 days (d01–d32) are UNCHANGED — this is a pure append. Since the
-// 2026-09-13 consolidation it SHARES dates with the other roadmaps by design (see
-// the note below the imports): the working day is stacked on purpose so the
-// combined load reaches the owner's 4–6h band. The EPUB has no per-section
+// logging), the EPUB's 13 chapters. Added as weeks w8–w26 / days d33–d74 at a
+// gentle 2 sessions/week (3 in the lighter weeks — see the 2026-09-13 re-plan note
+// below), starting 2026-10-26 and finishing 2027-02-26 (~4 months). The original
+// 32 days (d01–d32) are UNCHANGED — this is a pure append. The EPUB has no per-section
 // URLs, so RWP tasks cite chapter + section NAME; official docs appear only as
 // optional "go deeper" supplements.
 //
@@ -41,46 +39,42 @@
 // 3rd-ed spine and are skipped): Ch9 Testing, Ch10 Deploy/AWS, Ch11 HTTPS+NGINX,
 // Ch13 Clean-repo/CI, Ch12 Rocket, then Part 6 low-level async/protocols
 // (Ch14 Tokio, Ch15 TCP, Ch16 protocol framing, Ch17 Hyper actors, Ch18 Redis
-// queue). Appended as weeks w22–w29 / days d75–d98, same 3/week,
-// 2027-01-31 → 2027-03-24. Ordered by lifecycle: build (3rd-ed) → test → deploy →
-// secure → automate → flex (Rocket) → understand (Part 6). Part B overlaps only the
-// last week of interp-go (which ends 2027-02-04) and raylib is already done
-// (2027-01-12), so from February it runs alongside the bedrock side-track alone —
-// and a side-track never constrains a main roadmap's schedule. The 2nd-ed stack
+// queue). Appended as weeks w26–w34 / days d75–d98 at 3/week,
+// 2027-02-28 → 2027-04-24. Ordered by lifecycle: build (3rd-ed) → test → deploy →
+// secure → automate → flex (Rocket) → understand (Part 6). By the time Part B starts,
+// interp-go (ends 2027-02-03) and raylib (2027-01-08) are done and only the bedrock
+// side-track runs alongside it — that lighter calendar is exactly why the tail takes
+// a 3rd session each week. The 2nd-ed stack
 // (Actix/Diesel) differs from the app's (Hyper/SQLx) — tasks apply the CONCEPTS to
 // the learner's app and flag the differences; Part 6 chapters are standalone.
 // (The 1st-ed PDF is a strict subset of the 2nd ed — unused.)
 
-// REALISTIC RE-ESTIMATE + TAIL RE-PACE (2026-09-13). Two changes, in that order.
-//
-// 1. Every `est` was re-priced from "how long the material is" to "how long the
-//    session actually takes" — you pause, re-read, go look up what didn't land, and
-//    type the listings out. The factor is by KIND, not flat: specs/papers x1.85,
-//    book chapters with code x1.75, docs/articles x1.55, inline concept notes x1.45,
-//    code/build x1.35, challenges x1.50. Required work 97.5h → 136.1h. No content
-//    was added, removed or re-ordered here — only the price of each leaf.
-//
-// 2. That exposed the real scheduling problem: w8–w40 sat at exactly 2 days/week
-//    for 33 straight weeks (~150 min/week), which both violated this roadmap's own
-//    declared 4–5/week cadence and left the shared calendar half empty. The RWP tail
-//    (d33–d98) is now a steady 3 days/week, so 33 weeks collapse into
-//    22: w8–w40 → w8–w29, finishing 2027-03-23 instead of 2027-06-09 (the
-//    consolidation below then nudged it to 2027-03-24). Day ids and
-//    all content are UNCHANGED (d01–d98); only `date`/`week` moved, and the 12 RWP
-//    milestones were re-anchored to the new week that contains their last required
-//    task (w14.m1/w15.m1 both land in w12, so they became w12.m1/w12.m2).
+// REALISTIC RE-ESTIMATE (2026-09-13). Every `est` was re-priced from "how long the
+// material is" to "how long the session actually takes" — you pause, re-read, go
+// look up what didn't land, and type the listings out. The factor is by KIND, not
+// flat: specs/papers x1.85, book chapters with code x1.75, docs/articles x1.55,
+// inline concept notes x1.45, code/build x1.35, challenges x1.50. Required work
+// 97.5h → 136.1h. No content was added, removed or re-ordered — only the price of
+// each leaf.
 
-// SHARED WORKING-DAY CONSOLIDATION (2026-09-13 — "Option B" of RESCHEDULE-4-6H.md).
-// The owner's 4–6h/day budget is COMBINED across all roadmaps, never per roadmap.
-// The calendar used to spread four roadmaps across nearly every date, so a day
-// averaged only ~2.5h. All four are now STACKED onto one shared weekly grid of
-// working days (roadmap week i <-> grid week i, anchored Fri 2026-09-04), the grid
-// sized per week so the combined day lands in the band: 480h now falls on 123
-// working days averaging ~3.9h (weeks 1-18 sit at 4.5-5.3h), with 100 genuinely
-// free rest days — 45% of the calendar — and no day over 6h. ONLY `date:` and week
-// `start:` moved: day/task ids, content, order, each day's `week:` and every
-// day/week COUNT are untouched, so no milestone or interlude needed re-anchoring.
-// Still 98 days / 29 weeks; finishes 2027-03-24 (was 03-23).
+// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's
+// clarified rules. (It replaces two earlier same-day passes that misread the 4–6h
+// figure as a daily TARGET to fill: one packed this tail to 3/week, the next stacked
+// every roadmap onto a few shared "working days" with rest days in between.)
+//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks
+//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,
+//    7h only rarely. A light day stays light — nothing is padded to reach a number.
+//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.
+//    Every week keeps its authored day count but picks fresh weekdays, deliberately
+//    different from the week before, so the plan doesn't settle into a rut.
+//  - This tail is back to its authored 2 sessions/week, taking a 3rd only in weeks
+//    when the other three roadmaps are light (under 600 min combined — the January
+//    dips, and every week once interp-go ends).
+// For this file: w8–w40 → w8–w34, finishing 2027-04-24 (authored 2027-06-09). Day
+// ids and all content are UNCHANGED; only `date`/`week` moved. Weeks 8–18 keep their
+// original two-day grouping; w19+ titles were re-derived from the days each week now
+// holds, and the 12 RWP milestones re-anchored to the week holding their last
+// required task.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -93,7 +87,10 @@ registerRoadmap({
   subtitle: "The Rust Programming Language (Ch15→21) + Mastering FastAPI (Ch4→), then a complete Rust Web Programming reference (3rd + 2nd eds) — build, deploy & go low-level.",
   accent: "#f0803c",
   schemaVersion: 1,
-  cadence: { activeDaysPerWeek: [3, 5] },
+  // The literal range is 2–5 (5 in w1–w4, 4 in w5–w7, then 2–3 for the long RWP arc),
+  // but the band's MIDPOINT drives the projection, and that long arc dominates: the
+  // real rate is ~2.9 days/week, so [2,4] (midpoint 3) keeps the projection honest.
+  cadence: { activeDaysPerWeek: [2, 4] },
 
   objectives: [
     { id: R, title: "Rust — The Book", tier: "primary", weight: 1 },
@@ -109,29 +106,35 @@ registerRoadmap({
     { id: "w5", title: "Week 5 — Capstone & checkpoint", start: "2026-10-02" },
     { id: "w6", title: "Week 6 — Async Rust (Ch17) & real deployment", start: "2026-10-09" },
     { id: "w7", title: "Week 7 — Integration capstone & retro", start: "2026-10-16" },
-    /* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 8–28 ---- */
+    /* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 8–25 ---- */
     { id: "w8", title: "Week 8 — RWP: setup & the Ch1 Rust review (Ch1)", start: "2026-10-23" },
-    { id: "w9", title: "Week 9 — RWP: traits, macros & Cargo (Ch2–3)", start: "2026-10-30" },
-    { id: "w10", title: "Week 10 — RWP: nanoservices, the DAL & foundations checkpoint (Ch3)", start: "2026-11-06" },
-    { id: "w11", title: "Week 11 — RWP: async, tokio/Hyper & serving HTTP (Ch4–5)", start: "2026-11-13" },
-    { id: "w12", title: "Week 12 — RWP: processing requests → full CRUD (Ch5–6)", start: "2026-11-20" },
-    { id: "w13", title: "Week 13 — RWP: backend checkpoint & a browser frontend (Ch6–7)", start: "2026-11-27" },
-    { id: "w14", title: "Week 14 — RWP: styling & Rust-in-WASM (Ch7–8)", start: "2026-12-04" },
-    { id: "w15", title: "Week 15 — RWP: the WASM client & full-stack checkpoint (Ch8–9)", start: "2026-12-11" },
-    { id: "w16", title: "Week 16 — RWP: SQLx, migrations & the persistence checkpoint (Ch9)", start: "2026-12-18" },
-    { id: "w17", title: "Week 17 — RWP: the auth server, users, JWT & login (Ch10)", start: "2026-12-25" },
-    { id: "w18", title: "Week 18 — RWP: server-to-server comms & caching (Ch11–12)", start: "2027-01-01" },
-    { id: "w19", title: "Week 19 — RWP: the Redis cache kernel & logging (Ch12–13)", start: "2027-01-08" },
-    { id: "w20", title: "Week 20 — RWP: logging actor, stack checkpoint & capstone (Ch13)", start: "2027-01-15" },
-    { id: "w21", title: "Week 21 — RWP: capstone — run, harden & retro", start: "2027-01-22" },
-    { id: "w22", title: "Week 22 — RWP Part B — testing & a test pipeline (2nd-ed Ch9)", start: "2027-01-29" },
-    { id: "w23", title: "Week 23 — RWP Part B — Deploy on AWS (Ch10)", start: "2027-02-05" },
-    { id: "w24", title: "Week 24 — RWP Part B — HTTPS locally & on AWS, then a checkpoint (Ch11)", start: "2027-02-12" },
-    { id: "w25", title: "Week 25 — RWP Part B — clean repo, CI & Rocket (Ch13, Ch12)", start: "2027-02-19" },
-    { id: "w26", title: "Week 26 — RWP Part B — Rocket, Tokio & actors (Ch12, Ch14)", start: "2027-02-26" },
-    { id: "w27", title: "Week 27 — RWP Part B — TCP, actors over TCP & protocols (Ch15–16)", start: "2027-03-05" },
-    { id: "w28", title: "Week 28 — RWP Part B — framing & Hyper actors (Ch16–17)", start: "2027-03-12" },
-    { id: "w29", title: "Week 29 — RWP Part B — the Redis task queue & the two-book capstone (Ch18)", start: "2027-03-19" },
+    { id: "w9", title: "Week 9 — RWP: finishing the Ch1 review, then traits & macros (Ch1–2)", start: "2026-10-30" },
+    { id: "w10", title: "Week 10 — RWP: app design & Cargo (Ch2–3)", start: "2026-11-06" },
+    { id: "w11", title: "Week 11 — RWP: nanoservices & the DAL (Ch3)", start: "2026-11-13" },
+    { id: "w12", title: "Week 12 — RWP: foundations checkpoint + Async (Ch4)", start: "2026-11-20" },
+    { id: "w13", title: "Week 13 — RWP: tokio/Hyper & serving HTTP (Ch4–5)", start: "2026-11-27" },
+    { id: "w14", title: "Week 14 — RWP: processing requests (Ch5–6)", start: "2026-12-04" },
+    { id: "w15", title: "Week 15 — RWP: full CRUD + backend checkpoint (Ch6)", start: "2026-12-11" },
+    { id: "w16", title: "Week 16 — RWP: a browser frontend (Ch7)", start: "2026-12-18" },
+    { id: "w17", title: "Week 17 — RWP: styling & Rust-in-WASM (Ch7–8)", start: "2026-12-25" },
+    { id: "w18", title: "Week 18 — RWP: WASM kernel & client (Ch8)", start: "2027-01-01" },
+    { id: "w19", title: "Week 19 — RWP: full-stack checkpoint, PostgreSQL & SQLx (Ch9)", start: "2027-01-08" },
+    { id: "w20", title: "Week 20 — RWP: migrations & the persistence checkpoint (Ch9)", start: "2027-01-15" },
+    { id: "w21", title: "Week 21 — RWP: the auth server, users, JWT & login (Ch10)", start: "2027-01-22" },
+    { id: "w22", title: "Week 22 — RWP: server-to-server comms (Ch11)", start: "2027-01-29" },
+    { id: "w23", title: "Week 23 — RWP: caching with Redis & the cache kernel (Ch12)", start: "2027-02-05" },
+    { id: "w24", title: "Week 24 — RWP: logging, the logging actor & the stack checkpoint (Ch13)", start: "2027-02-12" },
+    { id: "w25", title: "Week 25 — RWP: capstone — run, harden & retro", start: "2027-02-19" },
+    /* ---- RWP Part B (2nd-ed Ch9–18) — weeks 26–34 (w26 opens on the 3rd-ed buffer day) ---- */
+    { id: "w26", title: "Week 26 — RWP: buffer, then Part B — unit & web-request tests (2nd-ed Ch9)", start: "2027-02-26" },
+    { id: "w27", title: "Week 27 — RWP Part B — a test pipeline, Docker & Terraform (Ch9–10)", start: "2027-03-05" },
+    { id: "w28", title: "Week 28 — RWP Part B — deploy on AWS & HTTPS (Ch10–11)", start: "2027-03-12" },
+    { id: "w29", title: "Week 29 — RWP Part B — deploy checkpoint, clean repo & CI (Ch13)", start: "2027-03-19" },
+    { id: "w30", title: "Week 30 — RWP Part B — Rocket & Tokio (Ch12, Ch14)", start: "2027-03-26" },
+    { id: "w31", title: "Week 31 — RWP Part B — actors & TCP (Ch14–15)", start: "2027-04-02" },
+    { id: "w32", title: "Week 32 — RWP Part B — protocols, framing & Hyper actors (Ch16–17)", start: "2027-04-09" },
+    { id: "w33", title: "Week 33 — RWP Part B — the Hyper server & a Redis task queue (Ch17–18)", start: "2027-04-16" },
+    { id: "w34", title: "Week 34 — RWP Part B — the two-book capstone & retro", start: "2027-04-23" },
   ],
 
   days: [
@@ -187,7 +190,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d03", date: "2026-09-07", week: "w1", title: "FastAPI databases",
+      id: "d03", date: "2026-09-06", week: "w1", title: "FastAPI databases",
       theme: "Switch objective — SQLAlchemy models, CRUD, sessions.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 40, group: "g1",
@@ -233,7 +236,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-09-10", week: "w1", title: "FastAPI project structure",
+      id: "d05", date: "2026-09-09", week: "w1", title: "FastAPI project structure",
       theme: "Split the app with APIRouter — book §5.1 + official docs.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 35, group: "g1",
@@ -255,7 +258,7 @@ registerRoadmap({
 
     /* ---------------- Week 2 ---------------- */
     {
-      id: "d06", date: "2026-09-11", week: "w2", title: "OOP in Rust",
+      id: "d06", date: "2026-09-13", week: "w2", title: "OOP in Rust",
       theme: "Trait objects & the State pattern — Ch18 (example-rich).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 65, group: "g1",
@@ -278,7 +281,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d07", date: "2026-09-12", week: "w2", title: "FastAPI security (JWT)",
+      id: "d07", date: "2026-09-14", week: "w2", title: "FastAPI security (JWT)",
       theme: "The book's §5.2 is thin (9pp) — supplement heavily with official auth docs.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 35, group: "g1",
@@ -297,7 +300,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-09-14", week: "w2", title: "Patterns & matching",
+      id: "d08", date: "2026-09-15", week: "w2", title: "Patterns & matching",
       theme: "Ch19 is reference-y — so we build one thing that uses it all.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 60, group: "g1",
@@ -319,7 +322,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-09-15", week: "w2", title: "FastAPI dependencies",
+      id: "d09", date: "2026-09-16", week: "w2", title: "FastAPI dependencies",
       theme: "Depends done properly — DI, sub-dependencies, yield teardown.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 45, group: "g1",
@@ -409,7 +412,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d13", date: "2026-09-21", week: "w3", title: "Web server I — single-threaded",
+      id: "d13", date: "2026-09-20", week: "w3", title: "Web server I — single-threaded",
       theme: "Ch21 begins. It IS the tryout — one continuous project.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
@@ -431,7 +434,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d14", date: "2026-09-22", week: "w3", title: "Web server II — the thread pool",
+      id: "d14", date: "2026-09-23", week: "w3", title: "Web server II — the thread pool",
       theme: "The heavy section: design a ThreadPool API from scratch — Ch21.2.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 40, group: "g1",
@@ -499,7 +502,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-09-26", week: "w4", title: "FastAPI deploy",
+      id: "d17", date: "2026-09-28", week: "w4", title: "FastAPI deploy",
       theme: "Ch7 is thin on code — supplement with a real Docker deploy.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 35, group: "g1",
@@ -521,7 +524,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d18", date: "2026-09-28", week: "w4", title: "Lifespan & Pydantic v2",
+      id: "d18", date: "2026-09-29", week: "w4", title: "Lifespan & Pydantic v2",
       theme: "Modernize the app — kill deprecated patterns.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 40, group: "g1",
@@ -543,7 +546,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d19", date: "2026-09-29", week: "w4", title: "Rust macros & reference appendices",
+      id: "d19", date: "2026-09-30", week: "w4", title: "Rust macros & reference appendices",
       theme: "The last Advanced-Features section, macros — plus the reference appendices (light).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 35,
@@ -598,7 +601,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d22", date: "2026-10-04", week: "w5", title: "Async SQLAlchemy 2.0",
+      id: "d22", date: "2026-10-03", week: "w5", title: "Async SQLAlchemy 2.0",
       theme: "The async DB pattern the book skipped.",
       tasks: [
         { id: "t1", obj: F, cat: "read", est: 35, group: "g1",
@@ -620,7 +623,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d23", date: "2026-10-06", week: "w5", title: "Rust consolidation",
+      id: "d23", date: "2026-10-04", week: "w5", title: "Rust consolidation",
       theme: "Cement the advanced material with one integrative exercise.",
       tasks: [
         { id: "t1", obj: R, cat: "project", est: 80, group: "g1",
@@ -664,7 +667,7 @@ registerRoadmap({
      *  this is your buffer.)
      * ================================================================ */
     {
-      id: "d25", date: "2026-10-09", week: "w6", title: "Async Rust I — the Book's Ch17 (futures & async)",
+      id: "d25", date: "2026-10-12", week: "w6", title: "Async Rust I — the Book's Ch17 (futures & async)",
       theme: "The Book's newest chapter: async, await & futures — the other half of Rust concurrency.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 60, group: "g1",
@@ -686,7 +689,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d26", date: "2026-10-10", week: "w6", title: "FastAPI — ship the capstone",
+      id: "d26", date: "2026-10-13", week: "w6", title: "FastAPI — ship the capstone",
       theme: "Take the Week-4/5 capstone from 'runs locally' to 'deployed'.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 65, group: "g1",
@@ -710,7 +713,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d27", date: "2026-10-12", week: "w6", title: "Async Rust II — an async web server",
+      id: "d27", date: "2026-10-14", week: "w6", title: "Async Rust II — an async web server",
       theme: "Rebuild the Ch21 server the async way — the payoff of d25.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
@@ -731,7 +734,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d28", date: "2026-10-13", week: "w6", title: "Buffer / catch-up",
+      id: "d28", date: "2026-10-15", week: "w6", title: "Buffer / catch-up",
       theme: "Deliberate slack. Use it — don't invent work.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 25, optional: true,
@@ -770,7 +773,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d30", date: "2026-10-18", week: "w7", title: "Integration capstone II — wire it up",
+      id: "d30", date: "2026-10-17", week: "w7", title: "Integration capstone II — wire it up",
       theme: "One end-to-end request path across both services.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 90, group: "g1",
@@ -786,7 +789,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d31", date: "2026-10-20", week: "w7", title: "Polish & tests",
+      id: "d31", date: "2026-10-18", week: "w7", title: "Polish & tests",
       theme: "Make the capstone something you'd show.",
       tasks: [
         { id: "t1", obj: F, cat: "code", est: 50, group: "g1",
@@ -803,7 +806,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2026-10-22", week: "w7", title: "Grand retro & next-project plan",
+      id: "d32", date: "2026-10-20", week: "w7", title: "Grand retro & next-project plan",
       theme: "Close the journey; capture what you learned and where you go next.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 50, group: "g1",
@@ -825,7 +828,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d33", date: "2026-10-23", week: "w8", title: "New book: Rust Web Programming (3rd ed.)",
+      id: "d33", date: "2026-10-26", week: "w8", title: "New book: Rust Web Programming (3rd ed.)",
       theme: "A new arc begins — the Rust Book's web/async ideas, applied end-to-end. Set up, then meet the book's plan.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 60,
@@ -845,10 +848,10 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `📖 This book is a local EPUB — tasks reference it by <b>chapter &amp; section name</b>, not URL. Official-doc links are added only as optional "go deeper" supplements.` },
         { id: "s2", type: "hint", label: `💡 You already finished The Rust Book — Ch1 here is a fast review. Don't grind it; confirm what's rusty and move on.` },
       ],
-      note: "Very light kickoff — the pace settles at a steady 3 sessions/week from here to the capstone.",
+      note: "Very light kickoff — the pace stays gentle (2 sessions/week) until mid-January, then picks up to 3 as the other roadmaps wind down.",
     },
     {
-      id: "d34", date: "2026-10-25", week: "w8", title: "Ch1 review — types, collections, errors",
+      id: "d34", date: "2026-10-29", week: "w8", title: "Ch1 review — types, collections, errors",
       theme: "Fast confirm-only pass over the fundamentals, framed for web code.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -869,7 +872,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d35", date: "2026-10-29", week: "w8", title: "Ch1 review — ownership, lifetimes, structs",
+      id: "d35", date: "2026-10-31", week: "w9", title: "Ch1 review — ownership, lifetimes, structs",
       theme: "The borrow-checker half of the review — the part that matters most for the server.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -890,7 +893,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d36", date: "2026-10-30", week: "w9", title: "Ch2 — traits & macros for the web",
+      id: "d36", date: "2026-11-04", week: "w9", title: "Ch2 — traits & macros for the web",
       theme: "Patterns the whole book leans on: trait-based verification and macro metaprogramming.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -911,7 +914,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d37", date: "2026-11-01", week: "w9", title: "Ch2 — messages, config traits, typed state",
+      id: "d37", date: "2026-11-06", week: "w10", title: "Ch2 — messages, config traits, typed state",
       theme: "Finish the patterns: macro-mapped messages and compiler-enforced struct state.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -932,7 +935,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2026-11-03", week: "w9", title: "Ch3 — Cargo, deeper",
+      id: "d38", date: "2026-11-09", week: "w10", title: "Ch3 — Cargo, deeper",
       theme: "Managing a real multi-crate project with Cargo — the toolbox for everything ahead.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -953,7 +956,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d39", date: "2026-11-08", week: "w10", title: "Ch3 — nanoservices structure",
+      id: "d39", date: "2026-11-15", week: "w11", title: "Ch3 — nanoservices structure",
       theme: "The book's architecture: splitting the app into small, sharply-scoped services.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -974,7 +977,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d40", date: "2026-11-10", week: "w10", title: "Ch3 — the Data Access Layer",
+      id: "d40", date: "2026-11-17", week: "w11", title: "Ch3 — the Data Access Layer",
       theme: "A storage boundary the rest of the app talks to — swappable later for SQLx.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -995,7 +998,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2026-11-12", week: "w10", title: "Checkpoint — foundations solid",
+      id: "d41", date: "2026-11-20", week: "w12", title: "Checkpoint — foundations solid",
       theme: "Catch up and make sure the scaffolding is real before the async server lands.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 40,
@@ -1013,7 +1016,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d42", date: "2026-11-13", week: "w11", title: "Ch4 — Async Rust, the book's way",
+      id: "d42", date: "2026-11-26", week: "w12", title: "Ch4 — Async Rust, the book's way",
       theme: "You met async in The Book; here it's applied to build a task queue and a server.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1034,7 +1037,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d43", date: "2026-11-15", week: "w11", title: "Ch4 — tokio & a Hyper server",
+      id: "d43", date: "2026-11-30", week: "w13", title: "Ch4 — tokio & a Hyper server",
       theme: "From hand-rolled futures to a real async runtime and a raw HTTP server.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1055,7 +1058,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d44", date: "2026-11-17", week: "w11", title: "Ch5 — serving the to-do core",
+      id: "d44", date: "2026-12-01", week: "w13", title: "Ch5 — serving the to-do core",
       theme: "Wire the async server to the to-do core: a real API surface starts to form.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -1076,7 +1079,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d45", date: "2026-11-20", week: "w12", title: "Ch5 — serving items & error handling",
+      id: "d45", date: "2026-12-06", week: "w14", title: "Ch5 — serving items & error handling",
       theme: "Refactor to-do items into the response and give endpoints real error handling.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1097,7 +1100,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d46", date: "2026-11-24", week: "w12", title: "Ch6 — params & POST bodies",
+      id: "d46", date: "2026-12-10", week: "w14", title: "Ch6 — params & POST bodies",
       theme: "Read data out of requests: URL params and JSON bodies.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -1118,7 +1121,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d47", date: "2026-11-26", week: "w12", title: "Ch6 — PUT, DELETE & headers",
+      id: "d47", date: "2026-12-12", week: "w15", title: "Ch6 — PUT, DELETE & headers",
       theme: "Round out the verbs and read request headers (the seam auth uses later).",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -1139,7 +1142,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d48", date: "2026-11-29", week: "w13", title: "Checkpoint — the backend API",
+      id: "d48", date: "2026-12-15", week: "w15", title: "Checkpoint — the backend API",
       theme: "Prove the whole backend with curl before turning to the browser.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 40,
@@ -1157,7 +1160,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d49", date: "2026-12-01", week: "w13", title: "Ch7 — serving a frontend from Rust",
+      id: "d49", date: "2026-12-18", week: "w16", title: "Ch7 — serving a frontend from Rust",
       theme: "The app grows a browser face: dev setup and serving static assets from Rust.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1178,7 +1181,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2026-12-03", week: "w13", title: "Ch7 — React components on the API",
+      id: "d50", date: "2026-12-20", week: "w16", title: "Ch7 — React components on the API",
       theme: "A real component UI talking to the Rust backend.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1199,7 +1202,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d51", date: "2026-12-06", week: "w14", title: "Ch7 — styling the app",
+      id: "d51", date: "2026-12-26", week: "w17", title: "Ch7 — styling the app",
       theme: "Make it presentable, then close out the frontend chapter.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -1220,7 +1223,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d52", date: "2026-12-08", week: "w14", title: "Ch8 — Rust in the browser (WASM) I",
+      id: "d52", date: "2026-12-28", week: "w17", title: "Ch8 — Rust in the browser (WASM) I",
       theme: "The hard, fun chapter: compile Rust to WebAssembly and run it in the page.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1241,7 +1244,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d53", date: "2026-12-10", week: "w14", title: "Ch8 — WASM kernel & library",
+      id: "d53", date: "2027-01-01", week: "w18", title: "Ch8 — WASM kernel & library",
       theme: "Grow the WASM from toy to a real, reusable module.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1262,7 +1265,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d54", date: "2026-12-11", week: "w15", title: "Ch8 — the WASM client",
+      id: "d54", date: "2027-01-05", week: "w18", title: "Ch8 — the WASM client",
       theme: "Tie the WASM into a proper client layer the app uses.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 30,
@@ -1283,7 +1286,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d55", date: "2026-12-13", week: "w15", title: "Checkpoint — the full-stack app",
+      id: "d55", date: "2027-01-11", week: "w19", title: "Checkpoint — the full-stack app",
       theme: "Step back: the whole app runs, browser to backend. Catch up before Postgres.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 40,
@@ -1301,7 +1304,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d56", date: "2026-12-15", week: "w15", title: "Ch9 — PostgreSQL in Docker",
+      id: "d56", date: "2027-01-13", week: "w19", title: "Ch9 — PostgreSQL in Docker",
       theme: "Real persistence begins: a database, containerised, wired to routing.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1322,7 +1325,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d57", date: "2026-12-20", week: "w16", title: "Ch9 — SQLx & database transactions",
+      id: "d57", date: "2027-01-14", week: "w19", title: "Ch9 — SQLx & database transactions",
       theme: "Swap the JSON DAL for real SQL behind the same trait.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1343,7 +1346,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d58", date: "2026-12-22", week: "w16", title: "Ch9 — migrations & frontend refactor",
+      id: "d58", date: "2027-01-19", week: "w20", title: "Ch9 — migrations & frontend refactor",
       theme: "Version the schema and reconnect the browser to the persistent backend.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1364,7 +1367,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d59", date: "2026-12-24", week: "w16", title: "Checkpoint — it persists",
+      id: "d59", date: "2027-01-21", week: "w20", title: "Checkpoint — it persists",
       theme: "Confirm the persistence layer is solid before authentication complicates things.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 35,
@@ -1382,7 +1385,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d60", date: "2026-12-25", week: "w17", title: "Ch10 — the auth server & passwords",
+      id: "d60", date: "2027-01-23", week: "w21", title: "Ch10 — the auth server & passwords",
       theme: "A second nanoservice appears: authentication, starting with safe password storage.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1403,7 +1406,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d61", date: "2026-12-29", week: "w17", title: "Ch10 — users & JWT",
+      id: "d61", date: "2027-01-25", week: "w21", title: "Ch10 — users & JWT",
       theme: "Create users, then build the JWT machinery that proves who they are.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1424,7 +1427,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d62", date: "2026-12-31", week: "w17", title: "Ch10 — login & frontend auth",
+      id: "d62", date: "2027-01-27", week: "w21", title: "Ch10 — login & frontend auth",
       theme: "Close the loop: a login API and a browser flow that carries the token.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1445,7 +1448,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d63", date: "2027-01-01", week: "w18", title: "Ch11 — servers talking to servers",
+      id: "d63", date: "2027-01-31", week: "w22", title: "Ch11 — servers talking to servers",
       theme: "The to-do service asks the auth service who a user is — real inter-service calls.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1466,7 +1469,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d64", date: "2027-01-03", week: "w18", title: "Ch11 — tethering users to items",
+      id: "d64", date: "2027-02-02", week: "w22", title: "Ch11 — tethering users to items",
       theme: "Ownership: to-do items belong to users, threaded through every layer.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1487,7 +1490,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d65", date: "2027-01-05", week: "w18", title: "Ch12 — caching with Redis",
+      id: "d65", date: "2027-02-06", week: "w23", title: "Ch12 — caching with Redis",
       theme: "Stop hitting the auth server every request: cache sessions in Redis.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1508,7 +1511,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d66", date: "2027-01-08", week: "w19", title: "Ch12 — session lifecycle & client",
+      id: "d66", date: "2027-02-08", week: "w23", title: "Ch12 — session lifecycle & client",
       theme: "Login/logout/update flows through the cache, behind a clean client.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1529,7 +1532,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d67", date: "2027-01-10", week: "w19", title: "Ch12 — the cache kernel",
+      id: "d67", date: "2027-02-11", week: "w23", title: "Ch12 — the cache kernel",
       theme: "A shared cache boundary both servers call — the caching capstone.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1550,7 +1553,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d68", date: "2027-01-14", week: "w19", title: "Ch13 — logging & middleware",
+      id: "d68", date: "2027-02-12", week: "w24", title: "Ch13 — logging & middleware",
       theme: "The last chapter: see what the system is doing, via structured logging.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1571,7 +1574,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d69", date: "2027-01-15", week: "w20", title: "Ch13 — the logging actor & DB",
+      id: "d69", date: "2027-02-14", week: "w24", title: "Ch13 — the logging actor & DB",
       theme: "Logging to a database via an actor — concurrency you now understand.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1592,7 +1595,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d70", date: "2027-01-19", week: "w20", title: "Checkpoint — the whole nanoservices stack",
+      id: "d70", date: "2027-02-16", week: "w24", title: "Checkpoint — the whole nanoservices stack",
       theme: "Everything running together: to-do, auth, cache, logs, browser.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 45,
@@ -1613,7 +1616,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d71", date: "2027-01-21", week: "w20", title: "Capstone I — run it like it's real",
+      id: "d71", date: "2027-02-20", week: "w25", title: "Capstone I — run it like it's real",
       theme: "Treat the stack as a product: one-command boot, a clean demo path.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "project", est: 55,
@@ -1633,7 +1636,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d72", date: "2027-01-24", week: "w21", title: "Capstone II — harden & document",
+      id: "d72", date: "2027-02-22", week: "w25", title: "Capstone II — harden & document",
       theme: "Tests where they matter and a README that lets someone else run it.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "project", est: 55,
@@ -1648,7 +1651,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d73", date: "2027-01-26", week: "w21", title: "Retro & what's beyond this EPUB",
+      id: "d73", date: "2027-02-24", week: "w25", title: "Retro & what's beyond this EPUB",
       theme: "Close the arc; map the ground the print edition covers next.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 35,
@@ -1669,7 +1672,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d74", date: "2027-01-28", week: "w21", title: "Buffer / overflow",
+      id: "d74", date: "2027-02-26", week: "w26", title: "Buffer / overflow",
       theme: "Deliberate slack — the shock absorber for the 5-month run.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 25, optional: true,
@@ -1681,7 +1684,7 @@ registerRoadmap({
       note: "Pure buffer day — required load is near zero on purpose.",
     },
     {
-      id: "d75", date: "2027-01-31", week: "w22", title: "2nd-ed Ch9 — unit & JWT tests",
+      id: "d75", date: "2027-02-28", week: "w26", title: "2nd-ed Ch9 — unit & JWT tests",
       theme: "Part B begins: the 2nd edition (2023) covers everything the 3rd-ed EPUB stopped short of. First — testing what you built.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1703,7 +1706,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d76", date: "2027-02-02", week: "w22", title: "2nd-ed Ch9 — web-request tests & Postman",
+      id: "d76", date: "2027-03-04", week: "w26", title: "2nd-ed Ch9 — web-request tests & Postman",
       theme: "Test the HTTP surface, then drive it from Postman.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1724,7 +1727,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d77", date: "2027-02-04", week: "w22", title: "2nd-ed Ch9 — Newman & a test pipeline",
+      id: "d77", date: "2027-03-06", week: "w27", title: "2nd-ed Ch9 — Newman & a test pipeline",
       theme: "Automate the whole test run — the first taste of CI.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1745,7 +1748,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d78", date: "2027-02-05", week: "w23", title: "2nd-ed Ch10 — Docker images",
+      id: "d78", date: "2027-03-08", week: "w27", title: "2nd-ed Ch10 — Docker images",
       theme: "Package the app into containers — the unit of deployment.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1766,7 +1769,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d79", date: "2027-02-08", week: "w23", title: "2nd-ed Ch10 — Terraform & build scripts",
+      id: "d79", date: "2027-03-09", week: "w27", title: "2nd-ed Ch10 — Terraform & build scripts",
       theme: "Infrastructure-as-code and repeatable build orchestration.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1787,7 +1790,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d80", date: "2027-02-10", week: "w23", title: "2nd-ed Ch10 — deploy to AWS",
+      id: "d80", date: "2027-03-12", week: "w28", title: "2nd-ed Ch10 — deploy to AWS",
       theme: "Push the images and run the app on real infrastructure.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1808,7 +1811,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d81", date: "2027-02-12", week: "w24", title: "2nd-ed Ch11 — HTTPS, locally",
+      id: "d81", date: "2027-03-14", week: "w28", title: "2nd-ed Ch11 — HTTPS, locally",
       theme: "Understand TLS/HTTP-2, then terminate HTTPS in front of the app.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1829,7 +1832,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d82", date: "2027-02-15", week: "w24", title: "2nd-ed Ch11 — HTTPS on AWS",
+      id: "d82", date: "2027-03-17", week: "w28", title: "2nd-ed Ch11 — HTTPS on AWS",
       theme: "A real domain, real certificates, and a load balancer.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1850,7 +1853,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d83", date: "2027-02-17", week: "w24", title: "Checkpoint — tested, deployed, secured",
+      id: "d83", date: "2027-03-22", week: "w29", title: "Checkpoint — tested, deployed, secured",
       theme: "The app is real, public, and safe. Catch up before professionalising the repo.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 35,
@@ -1868,7 +1871,7 @@ registerRoadmap({
       note: "Light checkpoint day.",
     },
     {
-      id: "d84", date: "2027-02-19", week: "w25", title: "2nd-ed Ch13 — a clean repository",
+      id: "d84", date: "2027-03-23", week: "w29", title: "2nd-ed Ch13 — a clean repository",
       theme: "Structure the repo and its config the way a professional project is laid out.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1889,7 +1892,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d85", date: "2027-02-22", week: "w25", title: "2nd-ed Ch13 — distroless images & GitHub Actions CI",
+      id: "d85", date: "2027-03-25", week: "w29", title: "2nd-ed Ch13 — distroless images & GitHub Actions CI",
       theme: "Tiny secure images and a pipeline that runs on every push.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1910,7 +1913,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d86", date: "2027-02-24", week: "w25", title: "2nd-ed Ch12 — Rocket: setup & modules",
+      id: "d86", date: "2027-03-27", week: "w30", title: "2nd-ed Ch12 — Rocket: setup & modules",
       theme: "Framework flexibility: stand the app up on a different web framework.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 40,
@@ -1931,7 +1934,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d87", date: "2027-02-26", week: "w26", title: "2nd-ed Ch12 — Rocket: views, JSON & tests",
+      id: "d87", date: "2027-03-28", week: "w30", title: "2nd-ed Ch12 — Rocket: views, JSON & tests",
       theme: "Port the routes and confirm the same tests still pass.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1952,7 +1955,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d88", date: "2027-03-01", week: "w26", title: "2nd-ed Ch14 — the Tokio framework",
+      id: "d88", date: "2027-03-31", week: "w30", title: "2nd-ed Ch14 — the Tokio framework",
       theme: "Part 6 (standalone async/systems track): go under the hood of async Rust.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1973,7 +1976,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d89", date: "2027-03-03", week: "w26", title: "2nd-ed Ch14 — the actor model",
+      id: "d89", date: "2027-04-02", week: "w31", title: "2nd-ed Ch14 — the actor model",
       theme: "Actors and channels — the concurrency pattern the 3rd-ed logging used.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -1994,7 +1997,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d90", date: "2027-03-05", week: "w27", title: "2nd-ed Ch15 — accepting TCP with Tokio",
+      id: "d90", date: "2027-04-05", week: "w31", title: "2nd-ed Ch15 — accepting TCP with Tokio",
       theme: "Below HTTP: raw TCP sockets and byte processing.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2015,7 +2018,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d91", date: "2027-03-08", week: "w27", title: "2nd-ed Ch15 — actors over TCP",
+      id: "d91", date: "2027-04-06", week: "w31", title: "2nd-ed Ch15 — actors over TCP",
       theme: "Coordinate state across a TCP server using chained actors.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2036,7 +2039,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d92", date: "2027-03-10", week: "w27", title: "2nd-ed Ch16 — protocols on TCP",
+      id: "d92", date: "2027-04-10", week: "w32", title: "2nd-ed Ch16 — protocols on TCP",
       theme: "Structured messages over a byte stream — the framing problem.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2057,7 +2060,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d93", date: "2027-03-12", week: "w28", title: "2nd-ed Ch16 — framing & an HTTP frame",
+      id: "d93", date: "2027-04-14", week: "w32", title: "2nd-ed Ch16 — framing & an HTTP frame",
       theme: "Length-framing messages, then rebuild HTTP from scratch.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2078,7 +2081,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d94", date: "2027-03-15", week: "w28", title: "2nd-ed Ch17 — actors with Hyper",
+      id: "d94", date: "2027-04-15", week: "w32", title: "2nd-ed Ch17 — actors with Hyper",
       theme: "Bring actors and Hyper together into one async service.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2099,7 +2102,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d95", date: "2027-03-17", week: "w28", title: "2nd-ed Ch17 — the Hyper server",
+      id: "d95", date: "2027-04-18", week: "w33", title: "2nd-ed Ch17 — the Hyper server",
       theme: "Serve HTTP over the actor system you just built.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2120,7 +2123,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d96", date: "2027-03-19", week: "w29", title: "2nd-ed Ch18 — a Redis task queue",
+      id: "d96", date: "2027-04-19", week: "w33", title: "2nd-ed Ch18 — a Redis task queue",
       theme: "The finale project: offload work to background workers via Redis.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2141,7 +2144,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d97", date: "2027-03-22", week: "w29", title: "2nd-ed Ch18 — tasks, messages & Docker",
+      id: "d97", date: "2027-04-20", week: "w33", title: "2nd-ed Ch18 — tasks, messages & Docker",
       theme: "Finish the queue: typed tasks/messages, routing, and containerised.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "read", est: 35,
@@ -2162,7 +2165,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d98", date: "2027-03-24", week: "w29", title: "Two-book capstone & retro",
+      id: "d98", date: "2027-04-24", week: "w34", title: "Two-book capstone & retro",
       theme: "Close the complete Rust-web reference — both editions, one map.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 35,
@@ -2207,30 +2210,30 @@ registerRoadmap({
     { id: "w7.m1", week: "w7", title: "🏁 Integration capstone (Rust + FastAPI)",
       rule: { type: "tasks", require: ["d29.t2", "d30.t1"] } },
     /* ---- RWP extension milestones (Ch2 → capstone) ---- */
-    { id: "w10.m1", week: "w10", title: "RWP — Rust patterns & app design (Ch2–3)",
+    { id: "w11.m1", week: "w11", title: "RWP — Rust patterns & app design (Ch2–3)",
       rule: { type: "tasks", require: ["d37.t2","d40.t2"] } },
-    { id: "w12.m1", week: "w12", title: "RWP — async backend serving HTTP (Ch4–5)",
+    { id: "w14.m1", week: "w14", title: "RWP — async backend serving HTTP (Ch4–5)",
       rule: { type: "tasks", require: ["d43.t2","d45.t2"] } },
-    { id: "w12.m2", week: "w12", title: "🏁 RWP backend API — full CRUD (Ch6)",
+    { id: "w15.m1", week: "w15", title: "🏁 RWP backend API — full CRUD (Ch6)",
       rule: { type: "tasks", require: ["d47.t2"] } },
-    { id: "w15.m1", week: "w15", title: "RWP — React + WASM frontend (Ch7–8)",
+    { id: "w18.m1", week: "w18", title: "RWP — React + WASM frontend (Ch7–8)",
       rule: { type: "tasks", require: ["d51.t2","d54.t2"] } },
-    { id: "w16.m1", week: "w16", title: "RWP — persistence on PostgreSQL (Ch9)",
+    { id: "w20.m1", week: "w20", title: "RWP — persistence on PostgreSQL (Ch9)",
       rule: { type: "tasks", require: ["d58.t2"] } },
-    { id: "w18.m1", week: "w18", title: "RWP — auth & multi-server (Ch10–11)",
+    { id: "w22.m1", week: "w22", title: "RWP — auth & multi-server (Ch10–11)",
       rule: { type: "tasks", require: ["d62.t2","d64.t2"] } },
-    { id: "w19.m1", week: "w19", title: "RWP — Redis-cached sessions (Ch12)",
+    { id: "w23.m1", week: "w23", title: "RWP — Redis-cached sessions (Ch12)",
       rule: { type: "tasks", require: ["d67.t2"] } },
-    { id: "w21.m1", week: "w21", title: "🎓 RWP complete — the nanoservices stack",
+    { id: "w25.m1", week: "w25", title: "🎓 RWP complete — the nanoservices stack",
       rule: { type: "tasks", require: ["d69.t2","d72.t1"] } },
     /* ---- RWP Part B milestones (Ch9 → capstone) ---- */
-    { id: "w22.m1", week: "w22", title: "RWP — application tested (2nd-ed Ch9)",
+    { id: "w27.m1", week: "w27", title: "RWP — application tested (2nd-ed Ch9)",
       rule: { type: "tasks", require: ["d77.t2"] } },
-    { id: "w24.m1", week: "w24", title: "🏁 RWP — deployed on AWS over HTTPS (Ch10–11)",
+    { id: "w28.m1", week: "w28", title: "🏁 RWP — deployed on AWS over HTTPS (Ch10–11)",
       rule: { type: "tasks", require: ["d80.t2","d82.t2"] } },
-    { id: "w26.m1", week: "w26", title: "RWP — production repo, CI & Rocket (Ch12–13)",
+    { id: "w30.m1", week: "w30", title: "RWP — production repo, CI & Rocket (Ch12–13)",
       rule: { type: "tasks", require: ["d85.t2","d87.t2"] } },
-    { id: "w29.m1", week: "w29", title: "🎓 RWP — complete two-book reference (Part 6)",
+    { id: "w34.m1", week: "w34", title: "🎓 RWP — complete two-book reference (Part 6)",
       rule: { type: "tasks", require: ["d96.t2","d98.t1"] } },
   ],
 

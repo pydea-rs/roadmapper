@@ -1,9 +1,9 @@
 // raylib.test.mjs — invariants specific to the second side-track roadmap,
 // "Big Bang" (slug "raylib"): the interleaved-thread design, the course→physics→
 // project→shaders SEQUENCING the owner specified, milestone placement, recall
-// cards, and — since the 2026-09-13 consolidation — the promise that the SHARED
-// working day stays inside the owner's band. Structural basics (id/date ordering,
-// week windows, referentOf) are covered for every roadmap by content.test.mjs.
+// cards and its weekly side-day count. Structural basics (id/date ordering, week
+// windows, referentOf) are covered for every roadmap by content.test.mjs; the
+// cross-roadmap daily caps and week-to-week weekday variety by schedule.test.mjs.
 import { suite } from "./_harness.mjs";
 import { registry, loadRoadmap } from "./_load.mjs";
 
@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-09-05", "the journey starts on 2026-09-05 (its slot in the shared working week)");
+t.ok(rm.days[0].date === "2026-09-05", "the journey starts on 2026-09-05, its first day in week 1");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -92,29 +92,22 @@ t.ok(rm.milestones.some(m => m.week === "w6"),
 t.ok(rm.milestones.some(m => m.week === "w19"),
   "the capstone milestone lands at the final week (19)");
 
-t.group("scheduling — the SHARED working day stays inside the owner's band");
-// RETIRED (2026-09-13) — this group used to assert that raylib landed only on LIGHT
-// main-roadmap days (main <= 160, combined <= 240). That framing assumed each roadmap
-// got its own slice of the calendar, so a side track had to dodge the mains. The
-// Option-B consolidation inverts it: all four roadmaps are now deliberately STACKED
-// onto shared working days precisely so the COMBINED day reaches the owner's 4–6h
-// target, with real rest days in between. "Keep the side track off busy days" is
-// therefore no longer the promise — the promise is that the combined day never blows
-// past the band, and that a side day stays small ON ITS OWN so it can be stacked.
+t.group("scheduling — never piles onto a heavy day");
+// The old "lands on LIGHT main days" framing pinned the mains to fixed weekdays so the
+// side track could dodge them. Since the 2026-09-13 re-plan no roadmap has fixed
+// weekdays, so the promise is stated directly on the whole day: any date raylib
+// shares stays inside the owner's ~4h ceiling for a lightly-shared day.
 const combined = new Map();
 for (const r of registry.getRoadmaps())
   for (const d of r.days) {
     const est = d.tasks.reduce((s, x) => s + (x.optional ? 0 : x.est || 0), 0);
     combined.set(d.date, (combined.get(d.date) || 0) + est);
   }
-const loads = [...combined.values()];
-const peak = Math.max(...loads);
-t.ok(peak <= 420, `no calendar date passes the 7h hard ceiling (worst ${peak} min)`);
-t.ok(loads.filter(v => v > 360).length <= 3,
-  `only rarely may a day pass 6h (found ${loads.filter(v => v > 360).length})`);
-// A side-track day must stay a single small block, or stacking it would be impossible.
+const worstShared = Math.max(...rm.days.map(d => combined.get(d.date)));
+t.ok(worstShared <= 270, `every raylib date stays a light combined day (worst ${worstShared} min, ceiling ~4h)`);
+// A side-track day is a single focused block on its own.
 const selfMax = Math.max(...rm.days.map(d => d.tasks.reduce((s, x) => s + (x.optional ? 0 : x.est || 0), 0)));
-t.ok(selfMax <= 130, `a raylib day stays small on its own (worst ${selfMax} min)`);
+t.ok(selfMax <= 130, `a raylib day stays one focused block (worst ${selfMax} min)`);
 // unique dates (the effort/digest views key off date)
 const dates = rm.days.map(d => d.date);
 t.eq(new Set(dates).size, dates.length, "raylib day dates are unique (no self-collisions)");

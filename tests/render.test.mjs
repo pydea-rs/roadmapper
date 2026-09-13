@@ -283,9 +283,8 @@ t.group("Today digest: a completed parent drops off the outstanding list");
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
 // "d01.t1" in the cross-roadmap digest.
 //
-// Since the 2026-09-13 consolidation raylib's next day is 09-08, not the frozen
-// "today", so d01.t1 is the ONLY raylib item outstanding — finishing it empties the
-// whole card. Assert on the TASK being gone (optional-chaining the card), not on the
+// raylib's next day (d02) is not the frozen "today", so d01.t1 is the ONLY raylib
+// item outstanding — finishing it empties the whole card. Assert on the TASK being gone (optional-chaining the card), not on the
 // card surviving: an absent card satisfies the invariant just as well as an empty one.
 const railCard = () => view.querySelector('.today-card a[href="#/raylib/today"]')?.closest(".today-card");
 render.renderToday(view);
