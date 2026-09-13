@@ -11,7 +11,7 @@ See [DESIGN.md](DESIGN.md) for the full design and [TASKS.md](TASKS.md) for the 
 
 ## Running it
 
-Requires **PHP 8+** (uses PDO SQLite, bundled with PHP). No build step, no npm.
+Requires **PHP 8+** with PDO SQLite (**SQLite 3.24+**, which every PHP 8 build bundles). No build step, no npm.
 
 ```bash
 # 1. Create your .env from the template and set the secret's bcrypt hash:
@@ -27,8 +27,11 @@ php -S localhost:8000 -t public
 ```
 
 The default secret for this project is **`whatevertheFx`** (change it by regenerating the hash).
-A successful unlock lasts `SESSION_EXPIRY_DAYS` (default 7). Five wrong tries → a 1-minute lockout,
-five more → 2 minutes, and so on (server-side, per client).
+A successful unlock lasts `SESSION_EXPIRY_DAYS` (default 7) from login; when it runs out while the app is
+open, the lock screen comes back and unsaved changes are kept and saved after you sign in again. Five wrong
+tries → a 1-minute lockout, five more → 2 minutes, and so on, capped at 30 minutes; a quiet day forgives old
+strikes (server-side, per client). All writes must be same-origin JSON requests, so a form or page on another
+site — including a sibling subdomain — can't change your data.
 
 `roadmapper/journey.sqlite` is created automatically on first save. The whole `roadmapper/` dir —
 `.env`, the DB, `.sessions/` — lives outside the web root and is gitignored; nothing in it is
@@ -43,6 +46,9 @@ The layout is a **docroot split** so it's safe on hosts where `router.php` never
    as its sibling. `public/sync.php` finds it automatically at `../roadmapper`.
 3. `cp roadmapper/.env.example roadmapper/.env` and set `JOURNEY_PASSWORD_HASH`.
 4. Make sure `roadmapper/` is writable by PHP (for the SQLite DB and sessions).
+5. On shared hosting, keep the secrets private to your account: `chmod 600 roadmapper/.env` (and the
+   `journey.sqlite*` files once created), unless PHP runs as a different user than you and needs to read
+   them — in that case keep them readable by that user only.
 
 Because `roadmapper/` sits outside `public_html`, no URL can reach your secret or database — that's
 the primary protection. `public/.htaccess` adds defense in depth: it disables directory listing and

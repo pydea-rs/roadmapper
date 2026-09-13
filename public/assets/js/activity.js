@@ -9,15 +9,11 @@
 
 import * as store from "./store.js";
 import { getRoadmaps } from "./registry.js";
-import { fmtDate, addDays } from "./util.js";
+import { fmtDate, addDays, stampDate } from "./util.js";
 
-/** Local calendar date (YYYY-MM-DD) for an ISO timestamp, or null if unparseable.
- *  Uses local components (via fmtDate) to match todayStr(). */
-export function localDate(iso) {
-  if (!iso) return null;
-  const d = new Date(iso);
-  return isNaN(d.getTime()) ? null : fmtDate(d);
-}
+/** Calendar date (YYYY-MM-DD) of a completion stamp, or null if unparseable — the day
+ *  it was ticked on, as seen by the ticking device (see util.stampDate). */
+export const localDate = stampDate;
 
 function blankDay() {
   return { tasks: 0, mins: 0, reqTasks: 0, reqMins: 0, bonusTasks: 0, bonusMins: 0, roadmaps: new Set() };

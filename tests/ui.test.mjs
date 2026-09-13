@@ -197,4 +197,57 @@ release();
 t.ok(true, "releasing the trap detaches its listener without error");
 boxEl.remove();
 
+/* ---------------- lock gate ---------------- */
+t.group("initLock — an unreachable server never leaves the form spinning");
+document.body.insertAdjacentHTML("beforeend", `<div id="lock" hidden><div class="lock-card">
+  <form id="lock-form"><input id="lock-secret" type="password"><button type="button" id="lock-peek"></button>
+  <div id="lock-err"></div><button type="submit" id="lock-submit">Unlock</button></form></div></div>`);
+let unlocked = 0, loginImpl = async () => { throw new TypeError("Failed to fetch"); };
+const lock = ui.initLock({ onLogin: pw => loginImpl(pw), onUnlock: () => { unlocked++; } });
+lock.show();
+const secret = document.getElementById("lock-secret"), submit = document.getElementById("lock-submit");
+const lockErr = document.getElementById("lock-err");
+const submitForm = () => document.getElementById("lock-form").dispatchEvent(new dom.window.Event("submit", { cancelable: true }));
+secret.value = "pw";
+submitForm();
+await wait(10);
+t.eq(submit.disabled, false, "a THROWING login re-enables the button");
+t.eq(submit.textContent, "Unlock", "…restores its label (no endless spinner)");
+t.ok(/reach the server/i.test(lockErr.textContent), `…and says the server is unreachable ("${lockErr.textContent}")`);
+loginImpl = async () => ({ ok: false, status: 0, error: "unreachable" });
+submitForm(); await wait(10);
+t.ok(/reach the server/i.test(lockErr.textContent), "a resolved {status:0} reads the same");
+loginImpl = async () => ({ ok: false, status: 401, remaining: 3 });
+submitForm(); await wait(10);
+t.ok(/3 tries left/.test(lockErr.textContent), "a wrong secret still reports the remaining tries");
+lock.show("Your session expired — sign in again.");
+t.ok(/session expired/.test(lockErr.textContent), "show(message) explains why the gate is back");
+t.eq(unlocked, 0, "nothing unlocked on failures");
+
+/* ---------------- closeAllModals / refreshDrawer ---------------- */
+t.group("closeAllModals — a route change dismisses every stacked dialog");
+let confirmed = null;
+ui.confirmModal({ title: "Reset?" }).then(v => { confirmed = v; });
+ui.openModal({ title: "on top" });
+t.eq(document.querySelectorAll("#modal-root .modal-layer").length, 2, "two dialogs are open");
+ui.closeAllModals();
+await wait(230);
+t.eq(document.querySelectorAll("#modal-root .modal-layer").length, 0, "both are gone");
+t.eq(confirmed, false, "a pending confirm resolves as NOT confirmed (the action never runs on a stale view)");
+
+t.group("refreshDrawer — the open settings drawer follows the current roadmap");
+let activeTitle = "Rust + FastAPI";
+ui.initDrawer({ activeTitle: () => activeTitle });
+const drawerRootEl = document.getElementById("drawer-root");
+ui.openDrawer();
+t.ok(document.getElementById("drawer-body").textContent.includes("Rust + FastAPI"), "the drawer names the roadmap being viewed");
+activeTitle = null;                                    // navigated to a global view
+ui.refreshDrawer();
+t.ok(!document.getElementById("drawer-body").textContent.includes("Current roadmap"), "after navigating away the per-roadmap section is gone");
+ui.closeDrawer();
+activeTitle = "Interpreters & Go";
+ui.refreshDrawer();
+t.ok(!document.getElementById("drawer-body").textContent.includes("Interpreters"), "a CLOSED drawer is left alone (rebuilt on open)");
+t.ok(!drawerRootEl.classList.contains("open"), "…and stays closed");
+
 t.done();

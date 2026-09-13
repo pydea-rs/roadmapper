@@ -38,6 +38,15 @@ DirectoryIndex index.php
   AddType application/manifest+json .webmanifest
 </IfModule>
 
+# --- App code & styles: always revalidate (a cheap 304 when unchanged). ---------
+# Without an explicit rule a host's heuristic/long Expires caching can keep serving
+# last deploy's JS/CSS for days — or a mix of old and new ES modules — after an update.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|mjs|css|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
 # --- PWA: let the service worker control the whole origin and never go stale. --
 # A cached-forever sw.js would strand users on an old worker, so always revalidate
 # it; Service-Worker-Allowed keeps its scope at the web root.

@@ -139,8 +139,6 @@ registerRoadmap({
       ],
       note: "The journey starts with an empty black window — which is, fittingly, exactly how the universe starts here.",
     },
-
-    /* ==================== WEEK 2 ==================== */
     {
       id: "d02", date: "2026-09-09", week: "w1", title: "Randomness & Perlin noise — how to seed a universe",
       theme: "Nature of Code · thread part 1 — believable randomness isn't flat.",
@@ -181,7 +179,7 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 3 ==================== */
+    /* ==================== WEEK 2 ==================== */
     {
       id: "d04", date: "2026-09-11", week: "w2", title: "Vectors I: the substrate of everything that moves",
       theme: "Nature of Code · thread part 2 — position, velocity, acceleration are all one type.",
@@ -217,8 +215,6 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ==================== WEEK 4 ==================== */
     {
       id: "d06", date: "2026-09-15", week: "w2", title: "Vectors II: velocity, acceleration & a mover",
       theme: "Nature of Code · thread part 3 — the integration step that never changes.",
@@ -237,6 +233,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 3 ==================== */
     {
       id: "d07", date: "2026-09-20", week: "w3", title: "Orientation: the examples gallery & a 20-minute setup",
       theme: "Examples · thread part 1 — your API dictionary is 140 runnable programs.",
@@ -258,7 +255,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 5 ==================== */
     {
       id: "d08", date: "2026-09-23", week: "w3", title: "Shapes III: triangles, bezier curves & wrapping up drawing",
       theme: "raylib course · thread part 4 — you now have every 2D primitive.",
@@ -297,7 +293,7 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 6 ==================== */
+    /* ==================== WEEK 4 ==================== */
     {
       id: "d10", date: "2026-09-26", week: "w4", title: "Input: keyboard & mouse",
       theme: "raylib course · thread part 5 — held vs pressed, the #1 input bug.",
@@ -335,8 +331,6 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ==================== WEEK 7 ==================== */
     {
       id: "d12", date: "2026-09-29", week: "w4", title: "The update loop & delta-time, done right",
       theme: "raylib course · thread part 6 — split update from draw, scale by dt.",
@@ -355,6 +349,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 5 ==================== */
     {
       id: "d13", date: "2026-10-04", week: "w5", title: "Forces III: gravitational attraction — the N-body kernel ⚛️",
       theme: "Nature of Code · thread part 6 — this one formula IS the simulation engine.",
@@ -379,7 +374,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 8 ==================== */
     {
       id: "d14", date: "2026-10-07", week: "w5", title: "Collision detection",
       theme: "raylib course · thread part 7 — cheap test first, precise test only if it passes.",
@@ -397,6 +391,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 6 ==================== */
     {
       id: "d15", date: "2026-10-09", week: "w6", title: "Port-along #1: Basics → Movement → Input (Clear Code)",
       theme: "Examples · thread part 2 — the API is the same in Python and C++.",
@@ -417,7 +412,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 9 ==================== */
     {
       id: "d16", date: "2026-10-13", week: "w6", title: "Oscillation I: angles, trig & polar coordinates",
       theme: "Nature of Code · thread part 7 — the natural language of an explosion.",
@@ -460,7 +454,7 @@ registerRoadmap({
       note: "Half the raylib basics owned. Course load now drops; the physics (Nature of Code) and the port-alongs step up.",
     },
 
-    /* ==================== WEEK 10 ==================== */
+    /* ==================== WEEK 7 ==================== */
     {
       id: "d18", date: "2026-10-17", week: "w7", title: "Oscillation II: waves, pendulums & springs",
       theme: "Nature of Code · thread part 8 — restoring forces for soft structure.",
@@ -498,8 +492,6 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ==================== WEEK 11 ==================== */
     {
       id: "d20", date: "2026-10-21", week: "w7", title: "Projects I: a guided build (course tapering)",
       theme: "raylib course · thread part 9 — the shape every finished program shares.",
@@ -518,6 +510,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 8 ==================== */
     {
       id: "d21", date: "2026-10-25", week: "w8", title: "Particle systems I: one particle → a system",
       theme: "Nature of Code · thread part 9 — std::vector is the ArrayList, erase the dead.",
@@ -538,7 +531,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 12 ==================== */
     {
       id: "d22", date: "2026-10-27", week: "w8", title: "Particle systems II: forces & repellers",
       theme: "Nature of Code · thread part 10 — one step from N-body already.",
@@ -576,7 +568,7 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 13 ==================== */
+    /* ==================== WEEK 9 ==================== */
     {
       id: "d24", date: "2026-10-30", week: "w9", title: "🌌 The simulation begins: one particle in the void",
       theme: "Big Bang · v0 — nail the loop before scale can hide bugs.",
@@ -617,8 +609,6 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ==================== WEEK 14 ==================== */
     {
       id: "d26", date: "2026-11-02", week: "w9", title: "Big Bang v1: the burst 💥",
       theme: "Big Bang · v1 — seed the universe with polar velocities.",
@@ -637,6 +627,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 10 ==================== */
     {
       id: "d27", date: "2026-11-08", week: "w10", title: "Music & GUI I: buttons, sliders & a control panel",
       theme: "raylib course · thread part 11 — immediate-mode widgets for the sim.",
@@ -674,7 +665,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 15 ==================== */
     {
       id: "d29", date: "2026-11-11", week: "w10", title: "Big Bang v2: gravity switches on — real N-body",
       theme: "Big Bang · v2 — structure emerges from one formula.",
@@ -699,6 +689,7 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `📈 Nature of Code's physics core (vectors → forces → particle systems, Intro–Ch.4) is done and the Udemy course is nearly complete. Milestone: the physics engine is real and running.` },
       ],
     },
+    /* ==================== WEEK 11 ==================== */
     {
       id: "d30", date: "2026-11-13", week: "w11", title: "Music & GUI II: audio — the course capstone 🎓",
       theme: "raylib course · thread part 12 — the whole library, end to end.",
@@ -737,7 +728,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 16 ==================== */
     {
       id: "d32", date: "2026-11-19", week: "w11", title: "Big Bang v3: thousands of particles",
       theme: "Big Bang · v3 — scale is a data-layout problem.",
@@ -756,6 +746,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 12 ==================== */
     {
       id: "d33", date: "2026-11-23", week: "w12", title: "Draw-count & blending study",
       theme: "Examples · thread part 5 — why particles become textured/instanced.",
@@ -796,7 +787,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 17 ==================== */
     {
       id: "d35", date: "2026-11-25", week: "w12", title: "Big Bang v5: camera, trails & time controls",
       theme: "Big Bang · v5 — from demo to something you can explore.",
@@ -815,6 +805,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 13 ==================== */
     {
       id: "d36", date: "2026-11-28", week: "w13", title: "Optimization: why O(n²) hurts & spatial ideas",
       theme: "Nature of Code · thread part 13 — the last physics chapter that matters here.",
@@ -852,7 +843,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 18 ==================== */
     {
       id: "d38", date: "2026-12-03", week: "w13", title: "Into 3D: cameras, point clouds & billboards",
       theme: "Examples · thread part 6 — same loop, one more axis.",
@@ -871,6 +861,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 14 ==================== */
     {
       id: "d39", date: "2026-12-04", week: "w14", title: "Big Bang v7: the third dimension",
       theme: "Big Bang · v7 — the physics is dimension-agnostic.",
@@ -908,7 +899,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 19 ==================== */
     {
       id: "d41", date: "2026-12-09", week: "w14", title: "Big Bang v8: 3D N-body & orbit cinematics",
       theme: "Big Bang · v8 — filaments in space you can fly through.",
@@ -927,6 +917,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 15 ==================== */
     {
       id: "d42", date: "2026-12-13", week: "w15", title: "Consolidate the physics (Nature of Code ~70–80%)",
       theme: "Nature of Code · thread part 14 — correctness is invariants, not vibes.",
@@ -968,7 +959,6 @@ registerRoadmap({
       note: "Nature of Code is ~70–80% done; the simulation is 3D. Everything from here is the GPU-side look — glow, nebula, bloom — folded straight into the sim.",
     },
 
-    /* ==================== WEEK 20 ==================== */
     {
       id: "d44", date: "2026-12-17", week: "w15", title: "Book of Shaders II: shaping functions & colour",
       theme: "Shaders · thread part 2 — smoothstep + mix are 80% of pretty.",
@@ -987,6 +977,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 16 ==================== */
     {
       id: "d45", date: "2026-12-22", week: "w16", title: "Book of Shaders III: distance fields → a glowing particle",
       theme: "Shaders · thread part 3 — one shader draws a perfect glowing dot.",
@@ -1024,7 +1015,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 21 ==================== */
     {
       id: "d47", date: "2026-12-24", week: "w16", title: "Book of Shaders IV: noise",
       theme: "Shaders · thread part 4 — GPU 'random' is a deterministic hash.",
@@ -1043,6 +1033,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 17 ==================== */
     {
       id: "d48", date: "2026-12-25", week: "w17", title: "Book of Shaders V: fBm → a nebula",
       theme: "Shaders · thread part 5 — octaves of noise = clouds.",
@@ -1080,7 +1071,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 22 ==================== */
     {
       id: "d50", date: "2026-12-27", week: "w17", title: "Book of Shaders VI: blur & blend → bloom",
       theme: "Shaders · thread part 6 — the recipe for light bleed.",
@@ -1099,6 +1089,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 18 ==================== */
     {
       id: "d51", date: "2027-01-02", week: "w18", title: "Big Bang v11: bloom post-process",
       theme: "Big Bang · v11 — bright cores bleed light.",
@@ -1136,7 +1127,6 @@ registerRoadmap({
       ],
     },
 
-    /* ==================== WEEK 23 ==================== */
     {
       id: "d53", date: "2027-01-07", week: "w18", title: "Big Bang v12: time, colour & cinematics",
       theme: "Big Bang · v12 — the last 10% that makes it an instrument.",
@@ -1155,6 +1145,7 @@ registerRoadmap({
           ] },
       ],
     },
+    /* ==================== WEEK 19 ==================== */
     {
       id: "d54", date: "2027-01-08", week: "w19", title: "🎓 Capstone: the Big Bang, from void to cosmos",
       theme: "Big Bang · capstone — the whole pipeline, and what you actually built.",

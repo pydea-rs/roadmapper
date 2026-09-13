@@ -51,6 +51,7 @@ t.ok(entries.filter(([, e]) => e.mins > MANY).length <= 3, "only rarely may any 
 
 t.group("rule 2 — every roadmap shares one Friday-anchored week frame");
 // "the same week" across roadmaps must mean the same 7 dates, or rule 3 is meaningless
+// ⚠️ SHIFT-SENSITIVE: bump by +N with every uniform date shift (like content.test's ANCHORS).
 const FRAME = "2026-09-04";
 for (const rm of roadmaps)
   t.ok(rm.weeks.every((w, i) => w.start === util.addDays(FRAME, 7 * i)),

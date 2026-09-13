@@ -76,25 +76,25 @@ registerRoadmap({
     { id: "w1", title: `Week 1 — CI Ch9; Go: Templates (videos 27–36)`, start: "2026-09-04" },
     { id: "w2", title: `Week 2 — CI Ch10; CI Ch11`, start: "2026-09-11" },
     { id: "w3", title: `Week 3 — Go: Code Org & MVC (videos 37–54); CI Ch12`, start: "2026-09-18" },
-    { id: "w4", title: `Week 4 — Let's Go: read chunk 1 + starter; CI Ch13`, start: "2026-09-25" },
+    { id: "w4", title: `Week 4 — Let's Go: read chunk 1 + starter; CI Ch13; Go: Signup & REST (videos 55–62)`, start: "2026-09-25" },
     { id: "w5", title: `Week 5 — CI Ch14; CI Ch15`, start: "2026-10-02" },
     { id: "w6", title: `Week 6 — Go: Databases (videos 63–89); CI Ch16`, start: "2026-10-09" },
     { id: "w7", title: `Week 7 — CI Ch17; CI Ch18`, start: "2026-10-16" },
-    { id: "w8", title: `Week 8 — CI Ch19; Let's Go: read chunk 2 + Go forms `, start: "2026-10-23" },
-    { id: "w9", title: `Week 9 — Go: Passwords & bcrypt (videos 90–; CI Ch20`, start: "2026-10-30" },
-    { id: "w10", title: `Week 10 — CI Ch21; Go: SQL relations & migrations (vi`, start: "2026-11-06" },
-    { id: "w11", title: `Week 11 — CI Ch22; CI Ch23`, start: "2026-11-13" },
-    { id: "w12", title: `Week 12 — Go: Cookies, Sessions & CSRF (vide; CI Ch24`, start: "2026-11-20" },
-    { id: "w13", title: `Week 13 — CI Ch25; CI Ch26`, start: "2026-11-27" },
+    { id: "w8", title: `Week 8 — CI Ch19; Let's Go: read chunk 2 + Go forms tryout; Calhoun Ch11–12 review`, start: "2026-10-23" },
+    { id: "w9", title: `Week 9 — Go: Passwords & bcrypt (videos 90–106); CI Ch20; CI Ch21 begins`, start: "2026-10-30" },
+    { id: "w10", title: `Week 10 — CI Ch21; Go: SQL relations & migrations (videos 138–155); CI Ch22 begins`, start: "2026-11-06" },
+    { id: "w11", title: `Week 11 — CI Ch22; CI Ch23; Go: Cookies, Sessions & CSRF (videos 107–137)`, start: "2026-11-13" },
+    { id: "w12", title: `Week 12 — Go: Cookies, Sessions & CSRF (videos 107–137); CI Ch24`, start: "2026-11-20" },
+    { id: "w13", title: `Week 13 — CI Ch25; CI Ch26 begins`, start: "2026-11-27" },
     { id: "w14", title: `Week 14 — CI Ch26; CI Ch27`, start: "2026-12-04" },
-    { id: "w15", title: `Week 15 — CI Ch28; Go: Password reset & email (videos`, start: "2026-12-11" },
+    { id: "w15", title: `Week 15 — CI Ch28; Go: Password reset & email (videos 165–194)`, start: "2026-12-11" },
     { id: "w16", title: `Week 16 — CI Ch29; CI Ch30`, start: "2026-12-18" },
-    { id: "w17", title: `Week 17 — Monkey Ch1 — Lexing (secondary); Go: Galleries CRUD (videos 195–217`, start: "2026-12-25" },
-    { id: "w18", title: `Week 18 — Monkey Ch2 — Parsing (secondary, P; Let's Go: read chunk 4 (auth + tes`, start: "2027-01-01" },
-    { id: "w19", title: `Week 19 — Monkey Ch3 — Evaluation (secondary; Go: Deployment (videos 249–263)`, start: "2027-01-08" },
-    { id: "w20", title: `Week 20 — Go: OAuth & finish → 🎉 course DON; Monkey Ch4 — Extending (secondary)`, start: "2027-01-15" },
-    { id: "w21", title: `Week 21 — Checkpoint — everything shipped; clox challenge catch-up + review`, start: "2027-01-22" },
-    { id: "w22", title: `Week 22 — Go: production hardening (pick one; Capstone I — a Monkey web playgrou`, start: "2027-01-29" },
+    { id: "w17", title: `Week 17 — Monkey Ch1 — Lexing (secondary); Go: Galleries CRUD (videos 195–217); Monkey Ch2 begins`, start: "2026-12-25" },
+    { id: "w18", title: `Week 18 — Monkey Ch2 — Parsing (secondary); Let's Go: read chunk 4 (auth + testing); Go: Images & config (videos 218–248)`, start: "2027-01-01" },
+    { id: "w19", title: `Week 19 — Monkey Ch3 — Evaluation (secondary); Go: Deployment (videos 249–263)`, start: "2027-01-08" },
+    { id: "w20", title: `Week 20 — Go: OAuth & finish → 🎉 course DONE; Monkey Ch4 + extend it (secondary); Let's Go exercises`, start: "2027-01-15" },
+    { id: "w21", title: `Week 21 — Checkpoint; clox challenge catch-up; Writing a Compiler in Go — the bridge (secondary)`, start: "2027-01-22" },
+    { id: "w22", title: `Week 22 — Go: production hardening; Capstone — a Monkey web playground; grand retro`, start: "2027-01-29" },
   ],
 
   days: [
@@ -295,7 +295,7 @@ registerRoadmap({
     },
     {
       id: "d13", date: "2026-09-25", week: "w4", title: `Let's Go — read chunk 1 + starter`,
-      theme: `Biweekly mandatory read; SnippetBox skeleton.`,
+      theme: `Mandatory read; SnippetBox skeleton.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 100, label: `<b>Mandatory read — <a href="https://lets-go.alexedwards.net/" target="_blank" rel="noopener"><i>Let's Go</i></a> pp 11–85</b> (Ch2 Foundations + Ch3 config/logging/DI/error handling): build the runnable SnippetBox skeleton.`,
           sub: [
@@ -584,7 +584,7 @@ registerRoadmap({
     },
     {
       id: "d31", date: "2026-10-25", week: "w8", title: `Let's Go — read chunk 2 + Go forms tryout (1/2)`,
-      theme: `Biweekly mandatory read; DB + dynamic templates.`,
+      theme: `Mandatory read; DB + dynamic templates.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 110, label: `<b>Mandatory read — <i>Let's Go</i> pp 86–161</b> (Ch4 DB layer + Ch5 dynamic templates): SnippetBox now reads/writes MySQL and renders live data safely.`,
           sub: [
@@ -695,7 +695,7 @@ registerRoadmap({
             { id: "s7", est: 10, label: `Embedding migrations.` },
           ] },
       ],
-      note: `Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d24; this week jumps to the SQL cluster to balance load — reorder freely.`,
+      note: `Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d44–d45 (weeks 11–12); this week jumps to the SQL cluster to balance load — reorder freely.`,
     },
     {
       id: "d39", date: "2026-11-09", week: "w10", title: `Go — SQL relations & migrations (videos 138–155) (2/2)`,
@@ -782,7 +782,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 “Why 32 bytes for session tokens?” (v124) is a great security aside — enough entropy that guessing is infeasible. Same reasoning behind the Roadmaps app's own session id.` },
       ],
-      note: `The heaviest video day — no CI block. Part 2 continues on d45.`,
+      note: `A heavy video day — no CI block. Part 2 continues on d45.`,
     },
     {
       id: "d45", date: "2026-11-20", week: "w12", title: `Go — Cookies, Sessions & CSRF (videos 107–137) (2/2)`,
@@ -833,7 +833,7 @@ registerRoadmap({
             { id: "s4", est: 10, label: `The call-depth guard.` },
           ] },
       ],
-      note: `Continuation of the heavy Ch24 — call frames yesterday, the tricky call/return glue today.`,
+      note: `Continuation of the heavy Ch24 — call frames last session (d46), the tricky call/return glue today.`,
     },
     {
       id: "d48", date: "2026-11-26", week: "w12", title: `CI Ch24 — Calls II: natives + challenges (clox) (2/2)`,
@@ -867,7 +867,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 Upvalues are the clox answer to the closure problem jlox solved with the resolver (Ch11). Same problem — a captured variable outliving its scope — two very different machines.` },
       ],
-      note: `Split day 1 of the longest chapter — capture today, closing-over-the-stack tomorrow.`,
+      note: `Split day 1 of the longest chapter — capture today, closing-over-the-stack next session (d50).`,
     },
     {
       id: "d50", date: "2026-11-29", week: "w13", title: `CI Ch25 — Closures II: closing upvalues + challenges (1/2)`,
@@ -917,7 +917,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "callout", label: `🔗 Background — <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection" target="_blank" rel="noopener">tracing GC</a> (tricolor, generational) situates clox's collector in the wider family.` },
       ],
-      note: `Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs tomorrow.`,
+      note: `Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs next session (d53).`,
     },
     {
       id: "d53", date: "2026-12-05", week: "w14", title: `CI Ch26 — GC II: sweep + challenges (clox) (1/2)`,
@@ -1184,7 +1184,7 @@ registerRoadmap({
     },
     {
       id: "d70", date: "2027-01-03", week: "w18", title: `Let's Go — read chunk 4 (auth + testing)`,
-      theme: `Biweekly mandatory read; user accounts + full test suite.`,
+      theme: `Mandatory read; user accounts + full test suite.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 120, label: `<b>Mandatory read — <i>Let's Go</i> pp 260–388</b> (Ch11 Auth+CSRF, Ch12 request context, Ch13 embed/generics, Ch14 Testing): SnippetBox gets accounts and a real test suite.`,
           sub: [
@@ -1292,7 +1292,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Both primaries are now finished. What remains is the <b>secondary</b> Monkey tail (Phase C) — on its own meter, at your own pace.` },
+        { id: "s1", type: "hint", label: `💡 Both primary courses are done. Next: the <b>secondary</b> Monkey tail (Phase C, on its own meter), then the checkpoint, catch-up and capstone weeks that use everything.` },
       ],
     },
     {
@@ -1365,7 +1365,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 You finished two interpreters and a production-shaped Go web app — with two weeks still on the plan. Weeks 15–16 spend that runway on the natural sequel (a compiler) and a capstone that fuses the interpreter with the web stack.` },
+        { id: "s1", type: "hint", label: `💡 You finished two interpreters and a production-shaped Go web app — with two weeks still on the plan. Weeks 21–22 spend that runway on the natural sequel (a compiler) and a capstone that fuses the interpreter with the web stack.` },
       ],
     },
     {
@@ -1444,11 +1444,11 @@ registerRoadmap({
       id: "d87", date: "2027-01-31", week: "w22", title: `Capstone II — ship the playground`,
       theme: `Deploy it with the course's deployment skills.`,
       tasks: [
-        { id: "t1", obj: GO, cat: "project", est: 75, group: "g1", label: `Deploy the playground: build it, put it behind Caddy/HTTPS on a droplet (or a container host), and load it from a real URL — reuse the bare-git / post-receive deploy from d39.`,
+        { id: "t1", obj: GO, cat: "project", est: 75, group: "g1", label: `Deploy the playground: build it, put it behind Caddy/HTTPS on a droplet (or a container host), and load it from a real URL — reuse the bare-git / post-receive deploy from d75.`,
           sub: [
             { id: "s1", est: 25, label: `Deploy the playground: build it.` },
             { id: "s2", est: 25, label: `Put it behind Caddy/HTTPS on a droplet (or a container host).` },
-            { id: "s3", est: 25, label: `Load it from a real URL — reuse the bare-git / post-receive deploy from d39.` },
+            { id: "s3", est: 25, label: `Load it from a real URL — reuse the bare-git / post-receive deploy from d75.` },
           ] },
         { id: "t2", obj: GO, cat: "project", est: 40, optional: true, label: `<b>Bonus:</b> add a couple of Monkey example snippets as one-click buttons and a short "how it works" page linking the interpreter internals.` },
       ],
@@ -1488,7 +1488,7 @@ registerRoadmap({
       rule: { type: "weekPct", min: 70 } },
     { id: "w7.m1", week: "w7", title: `Pratt compiler + values`,
       rule: { type: "tasks", require: ["d25.t2", "d27.t2"] } },
-    { id: "w10.m1", week: "w10", title: `clox local variables`,
+    { id: "w10.m1", week: "w10", title: `Globals done; SQL relations + locals started`,
       rule: { type: "weekPct", min: 70 } },
     { id: "w12.m1", week: "w12", title: `clox calls & functions`,
       rule: { type: "tasks", require: ["d46.t2"] } },

@@ -111,8 +111,17 @@ export function renderRoadmap(rm, mount, { animate = true } = {}) {
   paint(rm, mount, open, animate);       // full open → play the entrance cascade (unless a crossfade owns it)
 }
 
+/** A global view (Today / Insights / Bookmarks) is taking over the shared mount:
+ *  forget the roadmap that was drawn there, and drop its identity colour from the
+ *  mount. Otherwise a late rerender() (a toast's Undo, a move dialog finishing) would
+ *  paint that roadmap over the global view, and its accent would tint the global view. */
+export function releaseView(mount) {
+  cur = null;
+  if (mount && mount.style) for (const p of ["--accent", "--accent-soft", "--accent-ink"]) mount.style.removeProperty(p);
+}
+
 function rerender() {
-  if (!cur) return;
+  if (!cur || !cur.mount.isConnected) return;
   const open = new Set($$open());
   paint(cur.rm, cur.mount, open, false); // in-place update → no cascade (stable on ticks)
 }
@@ -178,6 +187,7 @@ function revealCard(card) {
  *  here writes through to the DB just like the timeline does.
  * ================================================================== */
 export function renderToday(mount) {
+  releaseView(mount);
   effortDate = todayStr();                 // opening the tab always starts on today
   finderAutoOnce = true;                   // a fresh open earns one silent auto-search
   drawToday(mount);
@@ -207,11 +217,13 @@ function drawToday(mount) {
   const fgroups = finderGroups(today);
   const finderAuto = finderAutoOnce;   // consume the one-shot regardless of whether
   finderAutoOnce = false;              // a finder renders this pass (can't stay armed)
+  let finderEl = null;
   if (fgroups.length) {
     view.classList.add("has-finder");
     // autoRun only on a fresh open (renderToday); a tick-triggered redraw reuses
     // the already-found card instead of firing another search.
-    view.append(finderPanel({ groups: fgroups, autoRun: finderAuto, today }));
+    finderEl = finderPanel({ groups: fgroups, autoRun: finderAuto, today });
+    view.append(finderEl);
   }
 
   // Main track digest, then the Side track digest under its own divider. The two
@@ -240,6 +252,14 @@ function drawToday(mount) {
   // completed, so earlier reading resurfaces while you work today's new topic.
   const recall = recallReview(today);
   if (recall) view.append(recall);
+
+  // Desktop rail: the finder spans exactly the rows the left column uses. (A huge
+  // fixed span like `span 999` creates hundreds of empty implicit rows, and with a
+  // row gap each one adds its height — ~15,000px of blank scroll under the digest.)
+  if (finderEl) {
+    const leftRows = [...view.children].filter(c => c !== finderEl && !c.classList.contains("today-hero")).length;
+    finderEl.style.gridRow = `2 / span ${Math.max(1, leftRows)}`;
+  }
 
   mount.append(view);
 }
@@ -479,8 +499,9 @@ function effortPanel(mount) {
   const prev = dayEffort(addDays(date, -1), map);
   const avg7 = trailingAvg(date, 7, map);
   const wk = weekDelta(date, map);
-  const journeyStart = getRoadmaps().reduce((m, rm) => {
-    const f = rm.days[0] && rm.days[0].date; return f && (!m || f < m) ? f : m; }, null);
+  // earliest dated day across roadmaps (not days[0]: days may be authored out of order)
+  const journeyStart = getRoadmaps().reduce((m, rm) => rm.days.reduce((mm, d) =>
+    d.date && (!mm || d.date < mm) ? d.date : mm, m), null);
 
   const panel = el("div.effort");
 
@@ -1061,7 +1082,9 @@ function milestoneRule(rm, m) {
     tasks = rm.days.flatMap(d => d.tasks).filter(t => !t.optional && t.phase === rule.phase);
     note = `Complete every task in the “${rule.phase}” phase.`;
   } else if (rule.type === "weekPct") {
-    tasks = rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks).filter(t => !t.optional);
+    // primary-tier only — the same set evalMilestone's week percentage counts
+    tasks = rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks)
+      .filter(t => !t.optional && (rm.objById.get(t.obj) || {}).tier !== "secondary");
     note = `Reach ${rule.min || 80}% of this week's planned work — the tasks below drive that percentage.`;
     partialCounts = false;   // no discrete "required set"; it's a threshold
   } else {

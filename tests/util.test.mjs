@@ -60,4 +60,43 @@ t.eq(clamp(-1, 0, 10), 0, "below floor");
 t.eq(clamp(11, 0, 10), 10, "above ceiling");
 t.eq(clamp(0.5, 0, 1), 0.5, "fractional inside");
 
+t.group("isoWeekKey — ISO-8601 weeks across year boundaries");
+t.eq(util.isoWeekKey("2026-12-31"), "2026-W53", "2026-12-31 is in 2026-W53");
+t.eq(util.isoWeekKey("2027-01-04"), "2027-W01", "2027-01-04 starts 2027-W01");
+t.eq(util.isoWeekKey("2021-01-03"), "2020-W53", "2021-01-03 still belongs to 2020-W53");
+t.eq(util.isoWeekKey("2026-09-07"), "2026-W37", "a mid-year Monday");
+
+t.group("completion stamps keep the calendar day they were ticked on");
+const stamp = util.localStamp(new Date(2026, 8, 13, 23, 30, 5, 7));
+t.ok(/^2026-09-13T23:30:05\.007[+-]\d{2}:\d{2}$/.test(stamp), `localStamp writes local wall time + offset (${stamp})`);
+t.ok(!isNaN(new Date(stamp).getTime()), "…and is a valid ISO timestamp for any Date parser");
+t.eq(new Date(stamp).getTime(), new Date(2026, 8, 13, 23, 30, 5, 7).getTime(), "…naming the exact same instant");
+t.eq(util.stampDate(stamp), "2026-09-13", "stampDate reads back the ticking device's day");
+t.eq(util.stampDate("2026-09-13T23:30:00-04:00"), "2026-09-13", "an offset stamp keeps its own date whatever this device's timezone");
+t.eq(util.stampDate("2026-09-14T03:30:00+14:00"), "2026-09-14", "…including far-east offsets");
+t.eq(util.stampDate(new Date(2026, 6, 13, 12).toISOString()), "2026-07-13", "an older UTC 'Z' stamp falls back to this device's local date");
+t.eq(util.stampDate(null), null, "null → null");
+t.eq(util.stampDate("garbage"), null, "garbage → null");
+
+t.group("…verified in other timezones (a separate process per TZ)");
+{
+  const { execFileSync } = await import("node:child_process");
+  const utilUrl = new URL("../public/assets/js/util.js", import.meta.url).href;
+  const script = `const u = await import(${JSON.stringify(utilUrl)});
+    const s = u.localStamp(new Date(2026, 8, 13, 23, 30));
+    const noon = u.localStamp(new Date(2026, 2, 8, 0, 30));
+    console.log(JSON.stringify({ s, sd: u.stampDate(s), noon, nd: u.stampDate(noon),
+      add: u.addDays("2026-03-07", 2), wk: u.isoWeekKey("2026-10-25"), between: u.daysBetween("2026-03-01", "2026-04-01") }));`;
+  const written = {};
+  for (const tz of ["America/Santiago", "Asia/Tehran", "Pacific/Kiritimati", "America/New_York", "UTC"]) {
+    let r = null;
+    try { r = JSON.parse(execFileSync(process.execPath, ["--input-type=module", "-e", script], { env: { ...process.env, TZ: tz }, encoding: "utf8" })); } catch {}
+    t.ok(r && r.sd === "2026-09-13" && r.nd === "2026-03-08", `${tz}: a late-evening / just-after-midnight stamp reads back its own local day`);
+    t.ok(r && r.add === "2026-03-09" && r.between === 31 && r.wk === "2026-W43", `${tz}: date arithmetic is DST-safe`);
+    if (r) written[tz] = r.s;
+  }
+  // a stamp written in one zone, read in this process (whatever its TZ): same calendar day
+  t.ok(Object.values(written).every(s => util.stampDate(s) === "2026-09-13"), "a stamp from ANY zone reads back as the day it was ticked on, here");
+}
+
 t.done();

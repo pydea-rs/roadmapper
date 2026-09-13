@@ -27,6 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
+// ⚠️ SHIFT-SENSITIVE: bump with every uniform date shift (like content.test's ANCHORS).
 t.ok(rm.days[0].date === "2026-09-05", "the journey starts on 2026-09-05, its first day in week 1");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
@@ -51,24 +52,21 @@ t.ok(allTasks.every(x => !x.subs || x.subs.every(l => l.obj === x.obj && l.optio
 t.group("thread SEQUENCING — the owner's ordering");
 // course (Udemy) drives early and TAPERS once section 6 ("Projects") is reached;
 // its last task is the audio/GUI capstone. (Denser 3/week re-pace → ends ~mid-Nov.)
-const courseDates = allTasks.filter(x => x.obj === "course").map(x => x.date);
-// NOTE: this mid-November bound tracks the schedule — bump it with each uniform
-// date-shift pass (like STEADY below), since the whole arc slides later each time.
-t.ok(Math.max(...courseDates.map(Date.parse)) <= Date.parse("2026-11-15"),
-  "the course thread finishes by mid-November (then it's physics + project + shaders)");
+// Bounds are by WEEK NUMBER (of 19), not calendar dates, so a uniform date shift never
+// needs to touch them; each keeps the same strictness the old date bounds had.
+const weekNo = x => rm.weeksById.get(rm.daysById.get(x.day).week).index + 1;
+const weeksOf = obj => allTasks.filter(x => x.obj === obj).map(weekNo);
+t.ok(Math.max(...weeksOf("course")) <= 11,
+  "the course thread finishes by week 11 (then it's physics + project + shaders)");
 // the Big Bang PROJECT only begins in the second half, after the course is underway
-const projectDates = allTasks.filter(x => x.obj === "project").map(x => x.date);
-t.ok(Math.min(...projectDates.map(Date.parse)) >= Date.parse("2026-10-23"),
-  "the simulation project starts only in the second half (after the course, once physics exists)");
+t.ok(Math.min(...weeksOf("project")) >= 8,
+  "the simulation project starts no earlier than week 8 (after the course, once physics exists)");
 // SHADERS (Book of Shaders) start only once Nature of Code is ~70-80% read — late
-const shaderDates = allTasks.filter(x => x.obj === "shaders").map(x => x.date);
-t.ok(Math.min(...shaderDates.map(Date.parse)) >= Date.parse("2026-12-04"),
-  "shaders begin only in the final third (after Nature of Code is ~70-80% done)");
+t.ok(Math.min(...weeksOf("shaders")) >= 14,
+  "shaders begin only in the final third (week 14+, after Nature of Code is ~70-80% done)");
 // physics (noc) spans the whole journey (it's the through-line)
-const nocDates = allTasks.filter(x => x.obj === "noc").map(x => x.date);
-t.ok(Math.min(...nocDates.map(Date.parse)) <= Date.parse("2026-09-09") &&
-     Math.max(...nocDates.map(Date.parse)) >= Date.parse("2026-12-24"),
-  "the Nature-of-Code physics thread runs as the through-line, start to late");
+t.ok(Math.min(...weeksOf("noc")) === 1 && Math.max(...weeksOf("noc")) >= 16,
+  "the Nature-of-Code physics thread runs as the through-line, week 1 to week 16+");
 
 t.group("threads stay interleaved");
 // consecutive side-days should mostly switch focus; the late shader/project phase

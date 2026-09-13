@@ -69,6 +69,26 @@ export const MONTHS = ["January","February","March","April","May","June","July",
 export const parseDate = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 export const fmtDate = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
 export const todayStr = () => fmtDate(new Date());
+
+/** An ISO timestamp carrying the device's LOCAL offset, e.g. 2026-09-13T23:30:00.000-04:00.
+ *  Completion stamps are written this way so the calendar day a task was ticked on is
+ *  preserved exactly — a device in another timezone must not move it to another day. */
+export function localStamp(d = new Date()) {
+  const pad = (n, w = 2) => String(Math.abs(n)).padStart(w, "0");
+  const off = -d.getTimezoneOffset();                     // minutes east of UTC
+  return `${fmtDate(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`
+    + `${off >= 0 ? "+" : "-"}${pad(Math.trunc(off / 60))}:${pad(off % 60)}`;
+}
+/** The calendar date (YYYY-MM-DD) a completion stamp belongs to, or null. A stamp with
+ *  an explicit offset keeps the date it was written with (the ticking device's local
+ *  day); a UTC "Z" stamp (older data) falls back to this device's local date. */
+export function stampDate(iso) {
+  if (!iso || typeof iso !== "string") return null;
+  const m = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?[+-]\d{2}:\d{2}$/.exec(iso);
+  if (m) return m[1];
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? null : fmtDate(d);
+}
 export const dowOf = s => DOW[parseDate(s).getDay()];
 export const monthKey = s => s.slice(0, 7);
 export const monthLabel = s => { const d = parseDate(s); return `${MONTHS[d.getMonth()]} ${d.getFullYear()}`; };

@@ -330,4 +330,29 @@ render.renderRoadmap(igo, view);
 t.ok(!view.querySelector(`.day[data-day="${movable.id}"]`).classList.contains("moved"),
   "resetting the override drops the .moved flag");
 
+t.group("a global view releases the roadmap that was drawn in the shared mount");
+render.renderRoadmap(reg.getRoadmap("rust-fastapi"), view);
+t.ok(view.style.getPropertyValue("--accent"), "a roadmap view paints its identity colour on the mount");
+render.renderToday(view);
+t.eq(view.style.getPropertyValue("--accent"), "", "Today drops that colour (it must not tint the global view)");
+render.rerender();                                     // e.g. a toast's Undo firing after navigation
+t.ok(view.querySelector(".today-view") && !view.querySelector(".timeline"),
+  "a late rerender() does NOT paint the old roadmap over the Today view");
+render.renderRoadmap(reg.getRoadmap("rust-fastapi"), view);
+render.releaseView(view);
+t.eq(view.style.getPropertyValue("--accent"), "", "releaseView clears the accent for Insights/Bookmarks too");
+
+t.group("Today's desktop rail spans exactly the rows it needs (no 999 empty grid rows)");
+{
+  const { readFileSync } = await import("node:fs");
+  const css = readFileSync(new URL("../public/assets/css/roadmap.css", import.meta.url), "utf8");
+  t.ok(!/span\s+\d{3,}/.test(css), "no huge fixed `span N` in the stylesheet (each implicit row adds a row gap)");
+  render.renderToday(view);
+  const tv = view.querySelector(".today-view"), fp = tv && tv.querySelector(".finder-panel");
+  if (fp) {
+    const leftRows = [...tv.children].filter(c => c !== fp && !c.classList.contains("today-hero")).length;
+    t.eq(fp.style.gridRow, `2 / span ${leftRows}`, `the finder spans the left column's ${leftRows} rows`);
+  } else t.ok(true, "(no finder on this frozen day — the span check is covered when one renders)");
+}
+
 t.done();

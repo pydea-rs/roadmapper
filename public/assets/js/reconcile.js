@@ -1,7 +1,16 @@
 // reconcile.js — reconcile stored journey state against current roadmap content
 // at load time (DESIGN §7.4): apply id aliases (deliberate renames), then prune
-// rows whose referent task/soft no longer exists so counts stay truthful and the
-// DB doesn't drift. Notes and settings are never auto-pruned. No DOM deps.
+// rows whose referent task/soft/day no longer exists so counts stay truthful.
+// Notes and settings are never pruned. No DOM deps.
+//
+// ⚠️ Pruning is IN-MEMORY ONLY — the database rows are never deleted by it. The
+// content a client runs can be OLDER than the data (a phone whose service worker
+// still holds last week's roadmap files, a tab left open across a content deploy,
+// or a typo'd id in a fresh edit). Deleting "unknown" rows server-side would then
+// permanently destroy progress the newer content created. Orphans cost nothing in
+// the DB, every view looks cells up by content id, and the rows come back into
+// play as soon as the client runs content that knows them again. (A reset or a
+// whole-journey import clears them server-side explicitly.)
 
 import * as store from "./store.js";
 
@@ -53,12 +62,19 @@ export function reconcile(rm) {
   for (const item of Object.keys(store.rawState()[slug] || {})) {
     const ref = referentOf(item);
     if (!ref) continue;                                 // notes/settings/unknown → keep
-    const exists = ref.kind === "soft" ? softs.has(ref.id)
+    let exists = ref.kind === "soft" ? softs.has(ref.id)
       : ref.kind === "day" ? daysById.has(ref.id)
       : (tasks.has(ref.id) || leaves.has(ref.id));
+    // A move is only meaningful while its DESTINATION day exists too; otherwise the
+    // task already shows on its origin, and a stale row would (a) block moving it
+    // "back" (it looks like a no-op) and (b) snap it onto a future day re-using that id.
+    if (exists && item.startsWith("move:")) {
+      const cell = store.getCell(slug, item);
+      exists = !!cell && daysById.has(cell.value);
+    }
     if (!exists) {
       const cell = store.getCell(slug, item);
-      store.setCell(slug, item, cell ? cell.kind : "task", null);   // delete + queue null
+      store.setCell(slug, item, cell ? cell.kind : "task", null, { silent: true });   // memory only — see header
       pruned++;
     }
   }

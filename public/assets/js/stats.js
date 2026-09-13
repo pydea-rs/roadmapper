@@ -13,15 +13,12 @@
 
 import * as store from "./store.js";
 import { getRoadmaps } from "./registry.js";
-import { pct, pct1, daysBetween, todayStr, addDays, clamp, fmtDate } from "./util.js";
+import { pct, pct1, daysBetween, todayStr, addDays, clamp, stampDate } from "./util.js";
 
 /** Local calendar date (YYYY-MM-DD) of a done_at ISO stamp, or null. Matches
  *  todayStr()/activity.js (local components), so comparisons line up. */
 function doneLocalDate(slug, leafId) {
-  const iso = store.doneAt(slug, leafId);
-  if (!iso) return null;
-  const d = new Date(iso);
-  return isNaN(d.getTime()) ? null : fmtDate(d);
+  return stampDate(store.doneAt(slug, leafId));
 }
 /** Was this (done) leaf completed on or before its original day's date? A done
  *  leaf with no timestamp can't be proven on-time, so it counts as late. */
@@ -110,6 +107,8 @@ export function computeAll(rm) {
   let bonusDone = 0, bonusTotal = 0, bonusEstDone = 0, bonusEstRemaining = 0;
   let remainingReqMins = 0, investedMins = 0;
   let remainingSecMins = 0;
+  let plannedByToday = 0;              // required primary leaves scheduled on/before today
+  const today = todayStr();
 
   const get = (m, k) => { let v = m.get(k); if (!v) { v = blank(); m.set(k, v); } return v; };
   const incT = (m, k) => m.set(k, (m.get(k) || 0) + 1);   // on-time done tally
@@ -164,6 +163,7 @@ export function computeAll(rm) {
         // primary required leaf — drives the headline numbers
         overallReqTotal++; if (done) overallReqDone++;
         if (onTime) overallReqTimely++;
+        if (originDate <= today) plannedByToday++;
         if (done) investedMins += est; else remainingReqMins += est;
 
         // actual (current)
@@ -236,7 +236,7 @@ export function computeAll(rm) {
   const milestones = rm.milestones.map(m => evalMilestone(rm, slug, m, weeks));
 
   // ---- projection (primary) ----
-  const projection = project(rm, remainingReqMins, overallReqDone, overallReqTotal);
+  const projection = project(rm, remainingReqMins, overallReqDone, overallReqTotal, plannedByToday);
   const secProjection = projectSecondary(rm, remainingSecMins);
 
   // ---- extra stats ----
@@ -266,6 +266,18 @@ function sumOrig(dayO) {
 }
 
 /* ---------- milestones ---------- */
+/** The tasks a milestone's rule is judged on (the same sets evalMilestone counts). */
+function milestoneGatingTasks(rm, m) {
+  const r = m.rule || {};
+  const byIds = ids => (ids || []).map(id => rm.tasksById.get(id)).filter(Boolean);
+  const inWeek = () => rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks).filter(t => !t.optional);
+  if (r.type === "tasks") return byIds(r.require);
+  if (r.type === "count") return byIds(r.from);
+  if (r.type === "category") return inWeek().filter(t => t.cat === r.cat);
+  if (r.type === "phase") return rm.days.flatMap(d => d.tasks).filter(t => !t.optional && t.phase === r.phase);
+  return inWeek();                                   // weekPct
+}
+
 function evalMilestone(rm, slug, m, weeks) {
   const r = m.rule || {};
   let met = false, progress = 0, target = 0;
@@ -299,13 +311,20 @@ function evalMilestone(rm, slug, m, weeks) {
     met = tasks.length > 0 && done === tasks.length; progress = done; target = tasks.length;
   }
 
-  // status: met / at-risk / missed, using the week end date
+  // status: met / at-risk / missed. The deadline is the milestone week's end — or
+  // later, when a card holding one of its gating tasks was legitimately re-dated past
+  // that end (a day-card move re-bases its own tasks' plan date). Task MOVES never
+  // extend it, so dragging work away can't postpone a milestone.
   const week = rm.weeksById.get(m.week);
   let status = met ? "met" : "risk";
   if (!met && week && week.start) {
-    const weekEnd = addDays(week.start, 6);
-    if (todayStr() > weekEnd) status = "missed";
-    else status = "risk";
+    let deadline = addDays(week.start, 6);
+    for (const t of milestoneGatingTasks(rm, m)) {
+      const card = rm.daysById.get(t.day);
+      const eff = card ? dayDate(rm, slug, card) : null;
+      if (eff && eff > deadline) deadline = eff;
+    }
+    status = todayStr() > deadline ? "missed" : "risk";
   }
   return { id: m.id, week: m.week, title: m.title, met, status, progress, target,
     ratio: target ? clamp(progress / target, 0, 1) : (met ? 1 : 0) };
@@ -367,7 +386,11 @@ function dayConcurrency(rm) {
   return Math.max(1, roadmapDays / datesPerWeek);
 }
 
-function project(rm, remainingMins, done, total) {
+/** Ahead / behind tolerance in percentage points of the roadmap. Shared with the
+ *  Insights pace readout so both always call the same state. */
+export const PACE_TOLERANCE_PTS = 5;
+
+function project(rm, remainingMins, done, total, plannedByToday = 0) {
   const active = activeDaysPerWeek(rm);
   // On a day the owner works, the budget splits between whichever roadmaps run that
   // day; this roadmap earns its slice on each of its own active days.
@@ -378,18 +401,16 @@ function project(rm, remainingMins, done, total) {
   const expectedFinish = addDays(todayStr(), Math.ceil(weeksNeeded * 7));
   const optimisticFinish = addDays(todayStr(), Math.ceil((remainingMins / (perWeekMins * 1.25)) * 7));
 
-  // on-track: completion ratio vs elapsed schedule ratio. Use the true
-  // chronological endpoints — days may be authored out of order (registry sorts a
-  // chrono copy for the same reason), so days[0]/days[-1] aren't reliably first/last.
-  const dated = rm.days.map(d => d.date).filter(Boolean);
-  const firstDate = dated.length ? dated.reduce((a, b) => (a < b ? a : b)) : todayStr();
-  const lastDate = dated.length ? dated.reduce((a, b) => (a > b ? a : b)) : todayStr();
-  const span = Math.max(1, daysBetween(firstDate, lastDate));
-  const elapsed = clamp(daysBetween(firstDate, todayStr()) / span, 0, 1);
+  // on-track: completion vs the PLAN'S OWN curve — the share of required work
+  // scheduled on or before today (by each card's effective date). A straight line from
+  // first to last day is wrong for real plans, which are front-loaded: keeping exactly
+  // to schedule used to read "Ahead" for months.
   const compRatio = total ? done / total : 0;
+  const plannedRatio = total ? plannedByToday / total : 0;
+  const tol = PACE_TOLERANCE_PTS / 100;
   let track = "on";
-  if (compRatio > elapsed + 0.08) track = "ahead";
-  else if (compRatio < elapsed - 0.08) track = "behind";
+  if (compRatio > plannedRatio + tol) track = "ahead";
+  else if (compRatio < plannedRatio - tol) track = "behind";
 
   return {
     pctDone: pct(done, total),

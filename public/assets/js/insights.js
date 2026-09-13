@@ -11,7 +11,7 @@
 import { getRoadmaps, getRoadmap } from "./registry.js";
 import * as store from "./store.js";
 import { localDate } from "./activity.js";
-import { computeAll, dayDate } from "./stats.js";
+import { computeAll, dayDate, currentDay, PACE_TOLERANCE_PTS } from "./stats.js";
 import { lineChart, barChart, donut, hbars } from "./charts.js";
 import {
   el, todayStr, parseDate, addDays, daysBetween, fmtDate, fmtMins,
@@ -40,16 +40,27 @@ export function collectLeaves(scope) {
     for (const d of rm.days) effByDay.set(d.id, dayDate(rm, rm.slug, d));
     for (const leaf of rm.leaves) {
       const done = store.isDone(rm.slug, leaf.id);
+      const taskId = leaf.parent || leaf.id;
+      const task = rm.tasksById.get(taskId);
+      // where the work sits NOW (a moved task counts as due on its destination day) —
+      // the same rule the Today digest uses for "overdue"
+      const curDay = task ? currentDay(rm, rm.slug, task) : leaf.day;
       out.push({
-        slug: rm.slug, id: leaf.id, origDate: effByDay.get(leaf.day) || leaf.date, week: leaf.week,
+        slug: rm.slug, id: leaf.id, task: taskId,
+        origDate: effByDay.get(leaf.day) || leaf.date, curDate: effByDay.get(curDay) || leaf.date,
+        week: leaf.week,
         est: leaf.est || 0, cat: leaf.cat || "read", optional: !!leaf.optional,
+        // secondary-tier work has its own meter and never counts toward headline progress
+        secondary: (rm.objById.get(leaf.obj) || {}).tier === "secondary",
         done, doneDate: done ? localDate(store.doneAt(rm.slug, leaf.id)) : null,
       });
     }
   }
   return out;
 }
-const required = leaves => leaves.filter(l => !l.optional);
+// Headline progress = required PRIMARY work, exactly what stats.computeAll counts, so
+// Insights and the hero/sidebar percentages can never disagree.
+const required = leaves => leaves.filter(l => !l.optional && !l.secondary);
 
 const CAT_COLOR = {
   read: "var(--cat-read)", watch: "var(--cat-watch)", code: "var(--cat-code)",
@@ -140,11 +151,16 @@ export function summarize(leaves, today) {
     if (l.done) {
       done++; invested += l.est;
       if (l.doneDate && l.doneDate <= l.origDate) ontime++; else lateDone++;
-    } else if (l.origDate < today) overdue++;
+    } else if ((l.curDate || l.origDate) < today) overdue++;    // due where it sits now
     else pending++;
   }
+  // Overdue TASKS, counted the way the Today digest counts them: parent tasks (not
+  // their sub-task leaves), non-optional incl. secondary work, by their current day.
+  const overdueTaskIds = new Set();
+  for (const l of leaves)
+    if (!l.optional && !l.done && (l.curDate || l.origDate) < today) overdueTaskIds.add(l.task || l.id);
   return {
-    total, done, ontime, lateDone, overdue, pending, invested,
+    total, done, ontime, lateDone, overdue, pending, invested, overdueTasks: overdueTaskIds.size,
     // Shared pct(): never rounds an incomplete scope up to 100% (199/200 → 99%),
     // keeping the KPI/donut/readout in step with the count-based rings elsewhere.
     pct: pct(done, total),
@@ -262,7 +278,7 @@ function buildBody(scope) {
 
   // ---- pace readout (are you ahead of / behind the plan today?) ----
   const paceDelta = Math.round(bu.actualNow - bu.plannedNow);
-  const paceCls = paceDelta > 2 ? "ahead" : paceDelta < -2 ? "behind" : "on";
+  const paceCls = paceDelta > PACE_TOLERANCE_PTS ? "ahead" : paceDelta < -PACE_TOLERANCE_PTS ? "behind" : "on";
   const paceWord = paceCls === "ahead" ? "ahead of" : paceCls === "behind" ? "behind" : "on";
   const readout = el("div.ins-readout." + paceCls);
   readout.append(el("span.ir-dot"));
@@ -270,7 +286,7 @@ function buildBody(scope) {
     `<b>${sum.pct}%</b> complete — you're <b>${paceWord} schedule</b>`
     + (paceCls !== "on" ? ` by ${Math.abs(paceDelta)} pt${Math.abs(paceDelta) === 1 ? "" : "s"}` : "")
     + `. <b>${sum.puncRate}%</b> of completed work was done on time`
-    + (sum.overdue ? `, and <b class="warn-ink">${sum.overdue}</b> ${sum.overdue === 1 ? "task is" : "tasks are"} overdue.` : ".") }));
+    + (sum.overdueTasks ? `, and <b class="warn-ink">${sum.overdueTasks}</b> ${sum.overdueTasks === 1 ? "task is" : "tasks are"} overdue.` : ".") }));
   out.push(readout);
 
   // ---- KPI strip ----
@@ -282,7 +298,7 @@ function buildBody(scope) {
     kpi("Complete", `${sum.pct}%`, `${sum.done}/${sum.total} tasks`),
     kpi("On-time rate", `${sum.puncRate}%`, `${sum.ontime} of ${sum.done} done`, sum.puncRate >= 70 ? "good" : sum.puncRate >= 40 ? "warn" : "bad"),
     kpi("Streak", `${streak}`, streak === 1 ? "day" : "days", streak > 0 ? "good" : null),
-    kpi("Overdue", `${sum.overdue}`, "tasks", sum.overdue ? "bad" : "good"),
+    kpi("Overdue", `${sum.overdueTasks}`, "tasks", sum.overdueTasks ? "bad" : "good"),
     kpi("Invested", fmtMins(sum.invested), "of effort"),
     kpi("This week", fmtMins(thisW), momentumSub(delta), delta > 0 ? "good" : delta < 0 ? "warn" : null),
   );
@@ -467,16 +483,21 @@ function dailyEffortChart(effort, today, days = 45) {
     });
   }
   const avg = sum / days;
-  const c = barChart({ bars, avg, height: 240, barLabelEvery: 1, yFmt: v => v >= 60 ? Math.round(v / 60) + "h" : v + "m" });
+  const c = barChart({ bars, avg, height: 240, barLabelEvery: 1, yFmt: axisMins });
   c.append(miniLegend([{ name: "Required", color: "var(--accent)" }, { name: "Bonus", color: "var(--ok)" }]));
   return c;
 }
 
+/** Minute axis labels: exact and readable (90 → "1h 30m", 150 → "2h 30m"), never the
+ *  lossy whole-hour rounding (150 → "3h") or fractional minutes ("11.3m"). */
+const axisMins = v => fmtMins(Math.max(0, Math.round(v)));
+
 function punctualityChart(rl, today, maxWeeks = 20) {
   const byWeek = new Map();      // monday → {due, ontime}
   for (const l of rl) {
-    if (l.origDate > today) continue;   // not due yet — can't count for/against on-time,
-                                        // so it must not deflate the current week's rate
+    // not due yet — can't count for/against on-time, so it must not deflate the current
+    // week's rate. Work due TODAY only counts once it is done: the day isn't over yet.
+    if (l.origDate > today || (l.origDate === today && !l.done)) continue;
     const wk = mondayOf(l.origDate);
     let e = byWeek.get(wk); if (!e) { e = { due: 0, ontime: 0 }; byWeek.set(wk, e); }
     e.due++; if (l.done && l.doneDate && l.doneDate <= l.origDate) e.ontime++;
@@ -509,7 +530,7 @@ function weekdayChart(leaves) {
     title: `${lb}: ${fmtMins(mins[i])} across ${cnt[i]} task${cnt[i] === 1 ? "" : "s"}`,
   }));
   if (!mins.some(m => m > 0)) return emptyChart("No completed work yet.");
-  return barChart({ bars, height: 240, barLabelEvery: 1, yFmt: v => v >= 60 ? Math.round(v / 60) + "h" : v + "m" });
+  return barChart({ bars, height: 240, barLabelEvery: 1, yFmt: axisMins });
 }
 
 function categoryChart(rl) {

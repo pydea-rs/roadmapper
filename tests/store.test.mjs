@@ -112,4 +112,43 @@ store.resetAll();
 store.setTask("aaa", "d01.t1", true);
 t.eq(store.isDone("bbb", "d01.t1"), false, "same item id in another roadmap is independent");
 
+t.group("exports are portable snapshots, detached from the live journey");
+store.resetAll();
+store.setTask(S, "d01.t1", true);
+const ex1 = store.exportRoadmap(S);
+t.eq(ex1.format, "roadmaps.journey", "per-roadmap export has the journey format tag");
+t.eq(ex1.scope, "roadmap", "…scope roadmap");
+t.eq(ex1.items["d01.t1"].value, "true", "…and the roadmap's cells");
+ex1.items["d01.t1"].value = "tampered";
+t.eq(store.isDone(S, "d01.t1"), true, "mutating an export never reaches the live state");
+const exAll = store.exportAll();
+t.eq(exAll.scope, "all", "whole-journey export has scope all");
+t.ok(exAll.state[S] && exAll.state[S]["d01.t1"], "…and every roadmap's cells");
+
+t.group("done_at is written with the device's local offset (the tick's own calendar day)");
+store.resetAll();
+store.setTask(S, "d09.t1", true);
+t.ok(/[+-]\d{2}:\d{2}$/.test(store.doneAt(S, "d09.t1")), `the stamp carries an explicit offset (${store.doneAt(S, "d09.t1")})`);
+
+t.group("imports skip malformed cells (mirrors the server's normalize_full)");
+store.resetAll();
+store.importRoadmap(S, { "d01.t1": { kind: "task", value: "true" }, "d01.t2": { value: "true" },
+  "bad1": null, "bad2": { kind: "task", value: 5 }, "bad3": "scalar" });
+t.eq(store.isDone(S, "d01.t1"), true, "a well-formed cell is imported");
+t.eq(store.getCell(S, "d01.t2").kind, "task", "a missing kind defaults to task");
+t.deep(Object.keys(store.rawState()[S]).sort(), ["d01.t1", "d01.t2"], "null / non-string / scalar cells are skipped");
+store.importAll({ [S]: { "d02.t1": { kind: "task", value: "true" }, "x": { value: null } }, other: null });
+t.deep(Object.keys(store.rawState()[S]), ["d02.t1"], "importAll replaces everything and skips bad cells too");
+
+t.group("setCell: non-string values are stringified; silent writes skip the sink but still notify");
+store.resetAll();
+const sunk = [], heard = [];
+store.setSink((slug, ch) => sunk.push(ch.id));
+const off = store.onChange((slug, id) => heard.push(id));
+store.setCell(S, "meta:x", "meta", { a: 1 });
+t.eq(store.getCell(S, "meta:x").value, '{"a":1}', "an object value is JSON-stringified");
+store.setCell(S, "meta:y", "meta", "v", { silent: true });
+t.ok(!sunk.includes("meta:y") && heard.includes("meta:y"), "silent: no DB write, but listeners still re-render");
+off(); store.setSink(null);
+
 t.done();

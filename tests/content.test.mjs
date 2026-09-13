@@ -40,6 +40,66 @@ for (const [slug, a] of Object.entries(ANCHORS)) {
   t.eq(rm.days[rm.days.length - 1].date, a.last, `${slug} ends on its anchor date ${a.last}`);
 }
 
+t.group("milestones sit where their work is");
+for (const rm of roadmaps) {
+  const wIdx = id => rm.weeksById.get(id).index;
+  for (const m of rm.milestones) {
+    const r = m.rule || {};
+    if (r.type === "tasks") {
+      const latest = Math.max(...(r.require || []).map(id => wIdx(rm.daysById.get(id.split(".")[0]).week)));
+      t.ok(latest <= wIdx(m.week), `${rm.slug}/${m.id}: its last required task is in or before its week (a re-week must re-anchor it)`);
+    } else if (r.type === "weekPct") {
+      const primary = rm.days.filter(d => d.week === m.week).flatMap(d => d.tasks)
+        .filter(x => !x.optional && (rm.objById.get(x.obj) || {}).tier !== "secondary");
+      t.ok(primary.length > 0, `${rm.slug}/${m.id}: a weekPct milestone's week has primary work to measure`);
+    }
+  }
+}
+
+t.group("authored prose stays true to the data (titles, cross-references, links, markup)");
+// Everything a reader sees, gathered per roadmap. These checks caught real rot after
+// re-dating passes: truncated week titles, "part 2 is on d24" pointing at the wrong
+// day, "tomorrow" on days that are no longer consecutive, http links, unbalanced tags.
+const HTTP_OK = ["pmg.csail.mit.edu"];          // hosts verified to have no https endpoint
+for (const rm of roadmaps) {
+  const texts = [];
+  for (const w of rm.weeks) texts.push([`${w.id} title`, w.title, "week"]);
+  for (const m of rm.milestones) texts.push([`${m.id} title`, m.title]);
+  for (const d of rm.days) {
+    for (const k of ["title", "theme", "note"]) if (d[k]) texts.push([`${d.id}.${k}`, d[k]]);
+    for (const x of d.tasks) {
+      for (const k of ["label", "lead", "model", "info"]) if (x[k]) texts.push([`${x.id}.${k}`, x[k]]);
+      for (const ref of x.refs || []) texts.push([`${x.id}.ref`, ref]);
+      for (const sb of x.subs || []) for (const k of ["label", "lead", "model", "info", "note"]) if (sb[k]) texts.push([`${sb.id}.${k}`, sb[k]]);
+    }
+    for (const so of d.soft) texts.push([`${so.id}`, so.label]);
+  }
+  for (const il of getInterludes(rm.slug)) for (const k of ["title", "note"]) if (il[k]) texts.push([`${il.id}.${k}`, il[k]]);
+  const bad = { dayref: [], relday: [], http: [], noopener: [], tags: [], title: [] };
+  for (const [where, s, kind] of texts) {
+    for (const m of String(s).matchAll(/\bd(\d{2})\b/g)) if (!rm.daysById.has("d" + m[1])) bad.dayref.push(`${where}→d${m[1]}`);
+    const rel = /\b(yesterday|tomorrow|tonight|this weekend|next weekend)\b/i.exec(s);
+    if (rel) bad.relday.push(`${where}: "${rel[0]}"`);
+    for (const m of String(s).matchAll(/href="http:\/\/([^/"]+)[^"]*"/g)) if (!HTTP_OK.includes(m[1])) bad.http.push(`${where}: ${m[1]}`);
+    for (const m of String(s).matchAll(/<a\s[^>]*>/g)) if (/target="_blank"/.test(m[0]) && !/rel="[^"]*noopener/.test(m[0])) bad.noopener.push(where);
+    for (const tag of ["b", "i", "code", "a", "p", "li", "ul", "ol", "em", "strong"]) {
+      const open = (String(s).match(new RegExp(`<${tag}(\\s[^>]*)?>`, "g")) || []).length;
+      const close = (String(s).match(new RegExp(`</${tag}>`, "g")) || []).length;
+      if (open !== close) bad.tags.push(`${where}: <${tag}> ${open} open / ${close} closed`);
+    }
+    if (kind === "week" && ((s.match(/\(/g) || []).length !== (s.match(/\)/g) || []).length || /\d–(?!\d)/.test(s) || /\s$/.test(s)))
+      bad.title.push(`${where}: "${s}"`);
+  }
+  t.deep(bad.dayref, [], `${rm.slug}: every "dNN" mentioned in prose is a real day of this roadmap`);
+  t.deep(bad.relday, [], `${rm.slug}: no "yesterday/tomorrow/this weekend" — weekdays vary, so name the day (e.g. "next session (d50)")`);
+  t.deep(bad.title, [], `${rm.slug}: week titles are complete (balanced brackets, no dangling "90–", no trailing space)`);
+  t.deep(bad.http, [], `${rm.slug}: links use https`);
+  t.deep(bad.noopener, [], `${rm.slug}: every target=_blank link carries rel="noopener"`);
+  t.deep(bad.tags, [], `${rm.slug}: inline HTML tags are balanced`);
+  t.ok(rm.leaves.filter(l => !l.optional).every(l => Number.isFinite(l.est) && l.est > 0),
+    `${rm.slug}: every required leaf carries a positive estimate (a 0 would vanish from every daily load)`);
+}
+
 t.group("between-days interludes are well-formed and anchored to real days");
 let interludeTotal = 0;
 for (const rm of roadmaps) {
@@ -110,8 +170,17 @@ t.ok(bedrock.days.length >= 88, "bedrock has core + both extensions (>= 88 days)
 t.ok(bedrock.objById.has("dist"), "Extension I adds a Distributed-systems objective");
 t.ok(bedrock.objById.has("internals"), "Extension II adds a Data-structure & runtime internals objective");
 t.ok(bedrock.weeksById.has("w29"), "Extension II reaches week 29");
-t.ok(bedrock.days.some(d => d.date >= "2026-11-07"), "Extension I days are dated after the core");
-t.ok(bedrock.days.some(d => d.date >= "2027-02-06"), "Extension II days are dated after Extension I");
+// Block order by WEEK, not date literals, so a uniform date shift never touches these:
+// every day of a later block is dated after every day of the block before it.
+const bWeek = d => bedrock.weeksById.get(d.week).index + 1;
+const bSpan = (lo, hi) => { const ds = bedrock.days.filter(d => bWeek(d) >= lo && bWeek(d) <= hi).map(d => d.date).sort();
+  return { first: ds[0], last: ds[ds.length - 1], n: ds.length }; };
+const CORE = bSpan(1, 12), EXT1 = bSpan(13, 25), EXT2 = bSpan(26, 29), EXT3 = bSpan(30, 32);
+t.ok(CORE.n && EXT1.n && EXT2.n && EXT3.n, "core (w1–12), Ext I (w13–25), Ext II (w26–29) and Ext III (w30–32) all hold days");
+t.ok(EXT1.first > CORE.last, `Extension I starts after the core ends (${EXT1.first} > ${CORE.last})`);
+t.ok(EXT2.first > EXT1.last, `Extension II starts after Extension I ends (${EXT2.first} > ${EXT1.last})`);
+t.ok(bedrock.days.filter(d => d.tasks.some(x => x.obj === "dist")).every(d => bWeek(d) >= 13), "the Distributed-systems thread only appears from Extension I on");
+t.ok(bedrock.days.filter(d => d.tasks.some(x => x.obj === "internals")).every(d => bWeek(d) >= 26), "the internals thread only appears from Extension II on");
 t.ok(bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "internals").length >= 6,
   "the internals thread has its full run of tasks");
 
@@ -121,12 +190,12 @@ t.ok(bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "internals").lengt
 t.ok(bedrock.days.length >= 97, "Extension III lands (>= 97 days)");
 t.ok(bedrock.objById.has("compilers"), "Extension III adds a Compilers & interpreters objective");
 t.ok(bedrock.weeksById.has("w32"), "Extension III reaches week 32");
-t.ok(bedrock.days.some(d => d.date >= "2027-03-09"), "Extension III days are dated after Extension II");
+t.ok(EXT3.first > EXT2.last, `Extension III starts after Extension II ends (${EXT3.first} > ${EXT2.last})`);
 const compTasks = bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "compilers");
 t.ok(compTasks.length >= 8, "the compilers thread has its full run of tasks (appended + woven)");
 // the woven "Compiler lens" seeds live on EARLIER days as a 2nd task, so they must
 // never sit at tasks[0] (that would perturb the interleaving invariant).
-const wovenComp = bedrock.days.filter(d => d.date < "2027-03-09" && d.tasks.some(x => x.obj === "compilers"));
+const wovenComp = bedrock.days.filter(d => bWeek(d) < 30 && d.tasks.some(x => x.obj === "compilers"));
 t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 earlier second-half days");
 t.ok(wovenComp.every(d => d.tasks[0].obj !== "compilers"),
   "woven compiler tasks are additive (never the day's first/anchor task)");

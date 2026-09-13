@@ -3,8 +3,9 @@
 //     just present numbers already derived by stats.js / the content, and
 //   • the "move day" action: re-date a card into the free calendar gap before the
 //     next planned day. A move re-bases the card's ON-TIME reference for its OWN
-//     tasks (see stats.dayDate) — it never touches completion counts, week/month
-//     rollups or milestones, which are keyed by id, not by date.
+//     tasks (see stats.dayDate) — it never touches completion counts or week/month
+//     rollups, which are keyed by id, not by date; a milestone gated on the card
+//     simply waits for the card's new date before it can read "missed".
 //
 // Everything here reads live state on open (a fresh computeAll), so it always
 // reflects the current journey; nothing is cached across renders.
@@ -12,19 +13,21 @@
 import * as store from "./store.js";
 import { computeAll, dayDate, leavesOf } from "./stats.js";
 import { openContextMenu, openModal, toast } from "./ui.js";
-import { el, fmtMins, fmtDateHuman, relDay, addDays, dowOf } from "./util.js";
+import { el, fmtMins, fmtDateHuman, relDay, addDays, dowOf, todayStr } from "./util.js";
 
 /* ---------------------------------------------------------------- *
  *  Gap math
  * ---------------------------------------------------------------- */
 /** The free calendar dates a card may be postponed into: strictly between its own
- *  authored date and the next card's date (exclusive). Empty for the last card or
- *  when the next card is the very next calendar day (no room). */
-export function freeDatesFor(day) {
+ *  authored date and the next card's date (exclusive), and never in the past — moving
+ *  a card to a day that has already gone by would re-base the on-time reference AFTER
+ *  the fact and turn late ticks into "on time". Empty for the last card, when the next
+ *  card is the very next calendar day, or when the whole gap is already behind us. */
+export function freeDatesFor(day, today = todayStr()) {
   const out = [];
   if (!day || !day.date || !day.nextDate) return out;   // last card → no ceiling → no move
   let d = addDays(day.date, 1);
-  while (d < day.nextDate) { out.push(d); d = addDays(d, 1); }
+  while (d < day.nextDate) { if (d >= today) out.push(d); d = addDays(d, 1); }
   return out;
 }
 
@@ -120,8 +123,11 @@ function completionModal(rm, day) {
   body.append(figLine("Original", df.original));
   body.append(figLine("On-time", df.ontime, "ontime"));
 
-  body.append(section("Required time"));
-  body.append(row("Tasks done", `${f.reqDoneN}/${f.reqN}`));
+  // (Progress above follows tasks CURRENTLY on this card, moved-in ones included; the
+  // rows below describe the card's own planned tasks — labelled so the two never read
+  // as contradicting each other.)
+  body.append(section("Required time · planned on this card"));
+  body.append(row("Own tasks done", `${f.reqDoneN}/${f.reqN}`));
   body.append(row("Invested", fmtMins(f.reqDoneEst)));
   body.append(row("Remaining", fmtMins(Math.max(0, f.reqEst - f.reqDoneEst))));
 
@@ -193,7 +199,8 @@ function moveModal(rm, day, free, rerender) {
   const body = el("div.day-modal");
   body.append(el("div.dm-note", { text:
     "Postpone this card to a free day before the next planned day. This only re-bases " +
-    "its on-time date for the card's own tasks — completion, weeks and milestones are unchanged." }));
+    "its on-time date for the card's own tasks — completion and weeks are unchanged, and a " +
+    "milestone waiting on this card gives it until the new date." }));
 
   const apply = (date, label) => {
     store.setDayDate(slug, day.id, date);              // date=null resets to original
@@ -247,8 +254,9 @@ export function openDayMenu(rm, day, ev, rerender) {
       onClick: () => moveModal(rm, day, free, rerender) });
   } else {
     items.push({ label: "Move day — no free day", icon: "📆", disabled: true,
-      hint: day.nextDate ? "The next planned day is the very next date — no room to move."
-                         : "This is the last day — nothing after it to move before." });
+      hint: !day.nextDate ? "This is the last day — nothing after it to move before."
+          : addDays(day.date, 1) >= day.nextDate ? "The next planned day is the very next date — no room to move."
+          : "The free days before the next planned day are already in the past." });
   }
   if (isMoved) items.push({ label: `Reset to original (${relDay(day.date)})`, icon: "↩️", danger: true,
     onClick: () => { store.setDayDate(rm.slug, day.id, null); toast("Day reset to its original date", { type: "ok" }); rerender && rerender(); } });

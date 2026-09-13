@@ -96,6 +96,60 @@ $out["throttle"] = [
     "escalate_retry"      => $escalate["retryAfter"],    // expect 120 (strike 2 * 60)
 ];
 
+/* ---- throttle: lock cap, strike decay, atomic reservation --------------- */
+$pdo->prepare("INSERT INTO login_throttle (id, fails, strikes, locked_until, updated_at)
+               VALUES ('capped', 4, 99, NULL, ?)")->execute([now_iso()]);
+$capped = throttle_fail($pdo, "capped");                  // strike 100 would be 6000s
+$pdo->prepare("INSERT INTO login_throttle (id, fails, strikes, locked_until, updated_at)
+               VALUES ('quiet', 3, 4, NULL, ?)")->execute([gmdate("c", time() - 2 * 86400)]);
+$quietCheck = throttle_check($pdo, "quiet");              // 2 quiet days → history forgiven
+$quietFail  = throttle_fail($pdo, "quiet");
+$quietRow   = $pdo->query("SELECT fails, strikes FROM login_throttle WHERE id='quiet'")->fetch(PDO::FETCH_ASSOC);
+$pdo->prepare("INSERT INTO login_throttle (id, fails, strikes, locked_until, updated_at)
+               VALUES ('stillLocked', 0, 4, ?, ?)")->execute([time() + 600, gmdate("c", time() - 2 * 86400)]);
+$lockedOld = throttle_check($pdo, "stillLocked");         // an ACTIVE lock is never forgiven early
+$reserveLog = [];
+for ($i = 0; $i < 7; $i++) { $r = throttle_reserve($pdo, "res"); $reserveLog[] = $r["locked"] ? "L" : (($r["lockedAfter"] ?? false) ? "5" : "ok"); }
+$pdo->prepare("INSERT INTO login_throttle (id, fails, strikes, locked_until, updated_at)
+               VALUES ('ancient', 1, 0, NULL, ?)")->execute([gmdate("c", time() - 40 * 86400)]);
+throttle_prune($pdo);
+$ancientGone = (int)$pdo->query("SELECT COUNT(*) FROM login_throttle WHERE id='ancient'")->fetchColumn() === 0;
+$lockedKept  = (int)$pdo->query("SELECT COUNT(*) FROM login_throttle WHERE id='stillLocked'")->fetchColumn() === 1;
+$out["throttle2"] = [
+    "cap_retry"         => $capped["retryAfter"],          // expect THROTTLE_MAX_LOCK (1800)
+    "quiet_remaining"   => $quietCheck["remaining"],       // expect 5
+    "quiet_after_fail"  => $quietRow,                      // expect fails 1, strikes 0
+    "old_lock_locked"   => $lockedOld["locked"],           // expect true
+    "reserve_log"       => $reserveLog,                    // expect ok,ok,ok,ok,5,L,L
+    "prune_ancient"     => $ancientGone,
+    "prune_keeps_locked"=> $lockedKept,
+];
+
+/* ---- clip_bytes: never splits a UTF-8 character ------------------------- */
+$clipped = clip_bytes("a" . str_repeat("é", 40), 64);     // "é" is 2 bytes; 64 would split one
+$out["clip"] = [
+    "len_ok"     => strlen($clipped) <= 64,
+    "valid_utf8" => preg_match('//u', $clipped) === 1,
+    "kept_chars" => mb_strlen($clipped, "UTF-8"),          // "a" + 31 × "é" = 32
+    "short_same" => clip_bytes("task", 64) === "task",
+    "json_ok"    => json_encode(["k" => $clipped]) !== false,
+];
+
+/* ---- insert_stash: identical snapshots are not duplicated --------------- */
+$pdo->exec("CREATE TABLE journey_stash (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, reason TEXT, data_json TEXT NOT NULL);");
+$snapA = ["rust-fastapi{$SEP}d01.t1" => ["kind" => "task", "value" => "true"]];
+insert_stash($pdo, $snapA, "one");
+insert_stash($pdo, $snapA, "same again");
+insert_stash($pdo, ["x{$SEP}y" => ["kind" => "task", "value" => "true"]], "different");
+insert_stash($pdo, [], "empty");
+$out["stash"] = [
+    "rows" => (int)$pdo->query("SELECT COUNT(*) FROM journey_stash")->fetchColumn(),   // expect 2
+    "long_reason_clipped" => (function () use ($pdo) {
+        insert_stash($pdo, ["z{$SEP}q" => ["kind" => "task", "value" => "1"]], str_repeat("r", 200));
+        return strlen((string)$pdo->query("SELECT reason FROM journey_stash ORDER BY id DESC LIMIT 1")->fetchColumn());
+    })(),                                                                             // expect 64
+];
+
 /* ---- empty-overwrite guard (reconstruct the dispatch condition) ---------- */
 // The dispatch guards a full-journey replacement with:
 //   count(normalize_full(full)) === 0 && count_state(pdo, null) > 0  ->  BLOCK

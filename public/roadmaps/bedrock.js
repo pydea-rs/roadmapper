@@ -815,7 +815,7 @@ registerRoadmap({
         { id: "t1", obj: SYS, cat: "read", est: 75,
           lead: `<b>Systems ③</b> — the I/O model that scales past thread-per-connection.`,
           sub: [
-            { id: "s1", est: 40, label: `Read Dan Kegel's <a href="http://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered).` },
+            { id: "s1", est: 40, label: `Read Dan Kegel's <a href="https://www.kegel.com/c10k.html" target="_blank" rel="noopener">The C10K problem</a> for the model (thread-per-connection vs <code>select</code>/<code>poll</code> vs <b>epoll</b>, edge- vs level-triggered).` },
             { id: "s2", est: 35, label: `The modern pattern: a few event-loop threads each call <code>epoll_wait()</code> for ready fds, then do <b>non-blocking</b> <code>accept</code>/<code>read</code>/<code>write</code>.`,
               info: `<p>One OS thread per connection costs ~1–8&nbsp;MB of stack each and drowns the scheduler around 10k clients. The event loop flips control around:</p>
 <ul>
@@ -1081,7 +1081,7 @@ registerRoadmap({
           lead: `<b>Distributed systems ①</b> — how a cluster agrees on one log despite crashes.`,
           sub: [
             { id: "s1", est: 60, label: `Read the Raft paper (Extended Version) <a href="https://raft.github.io/raft.pdf" target="_blank" rel="noopener">"In Search of an Understandable Consensus Algorithm"</a> (Ongaro & Ousterhout) — §5 leader election + log replication.` },
-            { id: "s2", cat: "watch", est: 30, label: `Watch it happen: <a href="http://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">The Secret Lives of Data</a> animates election + replication step by step.` },
+            { id: "s2", cat: "watch", est: 30, label: `Watch it happen: <a href="https://thesecretlivesofdata.com/raft/" target="_blank" rel="noopener">The Secret Lives of Data</a> animates election + replication step by step.` },
           ],
           model: `A single elected <b>leader</b> forces all entries to flow leader→followers, so there are never conflicting logs to reconcile. Raft tolerates <b>crash</b> (fail-stop) faults only and needs <b>2f+1</b> nodes to survive f failures.`,
           cards: [
@@ -1156,7 +1156,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d30: rollups post compressed data to L1 — exactly what the next day (blobs / EIP-4844) made cheap.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d30: rollups post compressed data to L1 — exactly what the next Blockchain day (d48, blobs / EIP-4844) made cheap.` },
         { id: "s2", type: "hint", label: `💡 "Validity" (proven up front) vs "fraud" (disproven later) proofs — that one word is the whole distinction interviewers probe.` },
       ],
     },
@@ -1342,7 +1342,7 @@ registerRoadmap({
           lead: `<b>Distributed systems ③</b> — the theorem, minus the 'pick 2 of 3' myth.`,
           sub: [
             { id: "s1", est: 50, label: `Read Gilbert & Lynch, <a href="https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf" target="_blank" rel="noopener">"Perspectives on the CAP Theorem"</a> (2012) — CAP as a safety-vs-liveness trade, with the proof sketch.` },
-            { id: "s2", est: 35, label: `Then Abadi, <a href="http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" target="_blank" rel="noopener">"Consistency Tradeoffs… (PACELC)"</a> — the everyday latency dimension CAP omits.` },
+            { id: "s2", est: 35, label: `Then Abadi, <a href="https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf" target="_blank" rel="noopener">"Consistency Tradeoffs… (PACELC)"</a> — the everyday latency dimension CAP omits.` },
           ],
           model: `CAP constrains behaviour <i>only during a partition</i>, and partition tolerance isn't optional on a real network — so the honest statement is C-vs-A <b>when partitioned</b>. <b>PACELC</b>: if <b>P</b>artition → <b>A</b> or <b>C</b>; <b>E</b>lse (normal ops) → <b>L</b>atency or <b>C</b>onsistency.`,
           cards: [
@@ -1602,7 +1602,7 @@ registerRoadmap({
           lead: `<b>Distributed systems ⑤</b> — how (and whether) to commit across nodes.`,
           sub: [
             { id: "s1", est: 40, label: `Read the free MIT 6.824 notes on <a href="https://timilearning.com/posts/mit-6.824/lecture-12-distributed-transactions/" target="_blank" rel="noopener">distributed transactions</a> (2PC: PREPARE → vote → COMMIT/ABORT, and blocking).` },
-            { id: "s2", est: 40, label: `Then the Saga original: Garcia-Molina & Salem, <a href="http://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf" target="_blank" rel="noopener">"Sagas"</a> (1987), + <a href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener">microservices.io Saga</a>.` },
+            { id: "s2", est: 40, label: `Then the Saga original: Garcia-Molina & Salem, <a href="https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf" target="_blank" rel="noopener">"Sagas"</a> (1987), + <a href="https://microservices.io/patterns/data/saga.html" target="_blank" rel="noopener">microservices.io Saga</a>.` },
           ],
           model: `<b>2PC</b> gives atomic commit but is <b>blocking</b> — a prepared participant can't decide alone, so a coordinator crash at the wrong moment holds locks until recovery. <b>Saga</b> splits a long transaction into local steps each with a <b>compensating</b> action — trading ACID isolation for availability ("all committed or all compensated"; intermediate states are visible).`,
           cards: [
@@ -2109,7 +2109,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d41/d83: brk/mmap hand you virtual pages; the allocator sub-divides them. "Out of memory" from fragmentation isn't a leak — the bytes are free, just not contiguous.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d41/d53: brk/mmap hand you virtual pages; the allocator sub-divides them. "Out of memory" from fragmentation isn't a leak — the bytes are free, just not contiguous.` },
         { id: "s2", type: "callout", label: `🔬 This is why long-running services swap in jemalloc/tcmalloc: better fragmentation behavior and per-CPU caching under many-thread load than default glibc ptmalloc.` },
       ],
     },
@@ -2293,7 +2293,7 @@ registerRoadmap({
             `Read Crafting Interpreters <a href="https://craftinginterpreters.com/scanning.html" target="_blank" rel="noopener">"Scanning"</a> (regular tokens) + <a href="https://craftinginterpreters.com/parsing-expressions.html" target="_blank" rel="noopener">"Parsing Expressions"</a> (recursive descent).`,
             `Then Bob Nystrom's <a href="https://journal.stuffwithstuff.com/2011/03/19/pratt-parsers-expression-parsing-made-easy/" target="_blank" rel="noopener">"Pratt Parsers: Expression Parsing Made Easy"</a> for operator precedence done cleanly.`,
           ],
-          model: `The <b>lexer/scanner</b> turns a character stream into <b>tokens</b> (<code>IDENT("x")</code>, <code>NUMBER(12)</code>, <code>PLUS</code>) — token shapes are a <b>regular</b> language, so a lexer is essentially a DFA (d92-adjacent: regexes compile to DFAs). The <b>parser</b> turns tokens into an <b>AST</b> per a <b>context-free grammar</b>. <b>Recursive descent</b> writes one function per grammar rule (top-down, LL) — readable, and what gcc/Clang/V8 actually use. Precedence is the hard part: pure recursive descent needs one level of function per precedence tier, while <b>Pratt parsing</b> (top-down operator precedence) attaches a <i>binding power</i> to each operator token and folds precedence into one compact loop — the trick most handwritten parsers reach for.`,
+          model: `The <b>lexer/scanner</b> turns a character stream into <b>tokens</b> (<code>IDENT("x")</code>, <code>NUMBER(12)</code>, <code>PLUS</code>) — token shapes are a <b>regular</b> language, so a lexer is essentially a DFA (regexes compile to DFAs too). The <b>parser</b> turns tokens into an <b>AST</b> per a <b>context-free grammar</b>. <b>Recursive descent</b> writes one function per grammar rule (top-down, LL) — readable, and what gcc/Clang/V8 actually use. Precedence is the hard part: pure recursive descent needs one level of function per precedence tier, while <b>Pratt parsing</b> (top-down operator precedence) attaches a <i>binding power</i> to each operator token and folds precedence into one compact loop — the trick most handwritten parsers reach for.`,
           cards: [
             { q: `Why is a lexer basically a state machine / DFA?`, a: `Token shapes (identifiers, numbers, operators) form a <b>regular</b> language, so recognizing them is exactly what a finite automaton does — the same reason regexes compile to DFAs.` },
             { q: `What is recursive-descent parsing?`, a: `A top-down (LL) parser with <b>one function per grammar rule</b> that calls itself to match nested structure, producing an AST. Readable and widely used in production (Clang, V8).` },
@@ -2323,7 +2323,7 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🧭 Callback to d49 (Go's scheduler) and d89: this is the AOT-with-its-own-backend point on the spectrum — no JIT, but a full SSA optimizer.` },
-        { id: "s2", type: "hint", label: `💡 SSA (next-day-adjacent, d94/d97) is what makes those optimization passes tractable — each value is assigned once, so "where did this come from?" has a single answer.` },
+        { id: "s2", type: "hint", label: `💡 SSA (ahead at d96/d97) is what makes those optimization passes tractable — each value is assigned once, so "where did this come from?" has a single answer.` },
       ],
     },
     {
@@ -2449,7 +2449,7 @@ registerRoadmap({
     // ---- Extension milestones ----
     { id: "w17.m2", week: "w17", title: "Extension I — distributed systems & storage internals underway",
       rule: { type: "tasks", require: ["d39.t1", "d40.t1", "d42.t1", "d45.t1", "d51.t1"] } },
-    { id: "w21.m2", week: "w21", title: "Extension II — chains deep, replication & sagas",
+    { id: "w21.m2", week: "w21", title: "Extension I (halfway) — chains deep, replication & sagas",
       rule: { type: "tasks", require: ["d54.t1", "d57.t1", "d60.t1", "d63.t1", "d64.t1"] } },
     { id: "w25.m2", week: "w25", title: "🎓 Extension I complete — distributed systems & internals",
       rule: { type: "tasks", require: ["d69.t1", "d72.t1", "d74.t1", "d77.t1"] } },

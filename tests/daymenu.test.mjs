@@ -7,6 +7,15 @@ import { store, loadFixture } from "./_load.mjs";
 
 const t = suite("daymenu");
 
+// Freeze "now" BEFORE the fixture's July-2026 days: the move picker never offers a
+// date that has already gone by, so an unfrozen clock would empty every gap.
+const RealDate = Date;
+class FakeDate extends RealDate {
+  constructor(...a) { if (a.length) super(...a); else super(2026, 6, 10, 12, 0, 0); }
+  static now() { return new RealDate(2026, 6, 10, 12, 0, 0).getTime(); }
+}
+global.Date = FakeDate;
+
 let JSDOM;
 try { ({ JSDOM } = await import("jsdom")); }
 catch { t.skip("jsdom not installed (run: npm --prefix tests install)"); }
@@ -40,6 +49,12 @@ t.deep(daymenu.freeDatesFor(day("d01")), [], "d01→d02 are consecutive → no r
 t.deep(daymenu.freeDatesFor(day("d02")), ["2026-07-15"], "d02→d03 leaves exactly 07-15");
 t.deep(daymenu.freeDatesFor(day("d03")), ["2026-07-17", "2026-07-18", "2026-07-19"], "d03→d04 leaves three days");
 t.deep(daymenu.freeDatesFor(day("d05")), [], "the last card has no ceiling → no room");
+
+t.group("freeDatesFor — never offers a date that has already gone by");
+// moving a card onto a past date would re-base on-time AFTER the fact (late ticks → on time)
+t.deep(daymenu.freeDatesFor(day("d03"), "2026-07-18"), ["2026-07-18", "2026-07-19"], "dates before today are dropped, today stays");
+t.deep(daymenu.freeDatesFor(day("d03"), "2026-07-20"), [], "a gap entirely in the past offers nothing");
+t.deep(daymenu.freeDatesFor(day("d03"), "2026-07-01"), ["2026-07-17", "2026-07-18", "2026-07-19"], "a future gap is offered in full");
 
 /* ---------------- dayLinks ---------------- */
 t.group("dayLinks — harvest & de-duplicate every outbound link on a day");
@@ -120,6 +135,25 @@ daymenu.openDayMenu(rm, day("d02"), fakeEv(), () => { repainted++; });
 click(menuItems().find(b => /Reset to original/.test(b.textContent)));
 t.eq(store.getDayDate(S, "d02"), null, "Reset clears the override cell");
 t.ok(repainted > 0, "…and repaints");
+store.resetAll();
+
+/* ---------------- the three read-only info modals ---------------- */
+t.group("info modals — Completion / Time / References open with consistent numbers");
+store.resetAll();
+store.setTask(S, "d02.t1", true);                         // one of d02's two required tasks
+store.setMove(S, "d01.t1", "d02");                         // a task moved IN from d01
+const openItem = re => { daymenu.openDayMenu(rm, day("d02"), fakeEv(), () => {}); click(menuItems().find(b => re.test(b.textContent))); return curModal(); };
+const comp = openItem(/Completion details/);
+t.ok(comp && /Completion/.test(comp.textContent), "the Completion modal opens");
+const compRows = [...comp.querySelectorAll(".dm-row")].map(r => r.textContent);
+t.ok(compRows.some(r => /^Actual/.test(r)) && compRows.some(r => /^On-time/.test(r)), "it lists the Actual / Original / On-time rings");
+t.ok(compRows.some(r => /^Own tasks done1\/2$/.test(r)), `own planned tasks are labelled as such (${compRows.find(r => /tasks done/.test(r))})`);
+t.ok(/planned on this card/.test(comp.textContent), "…under a heading that says which set it counts (no contradiction with Actual)");
+const time = openItem(/Time on tasks/);
+t.ok(time && /Required/.test(time.textContent) && /Invested so far/.test(time.textContent), "the Time modal shows required time and invested so far");
+const refs = openItem(/References/);
+t.ok(refs && /No links or references on this day|dm-link/.test(refs.innerHTML), "the References modal opens (links or an empty note)");
+ui.closeAllModals();
 store.resetAll();
 
 /* ---------------- ui.openContextMenu disabled support ---------------- */

@@ -144,7 +144,10 @@ function normalize(def) {
   // It's the exclusive ceiling for a day-card MOVE — the free calendar gap a card
   // may be postponed into is (date, nextDate). Static (content-derived), so the
   // move validity gate never depends on another card's own override.
-  const chrono = [...days].sort((a, b) => (a.date || "") < (b.date || "") ? -1 : 1);
+  // A real comparator (0 on ties): sort is stable, so two cards sharing a date keep
+  // their authored order instead of an engine-dependent one.
+  const byStr = (x, y) => (x < y ? -1 : x > y ? 1 : 0);
+  const chrono = [...days].sort((a, b) => byStr(a.date || "", b.date || ""));
   chrono.forEach((d, i) => { d.nextDate = chrono[i + 1] ? chrono[i + 1].date : null; });
 
   // weeks: explicit list wins; else derive from the days' week ids.
@@ -166,7 +169,7 @@ function normalize(def) {
     if (!cur || d.date < cur) weekFirstDate.set(d.week, d.date);
   }});
   const weeks = [...weeksById.values()].sort((a, b) =>
-    (weekFirstDate.get(a.id) || a.start || "") < (weekFirstDate.get(b.id) || b.start || "") ? -1 : 1);
+    byStr(weekFirstDate.get(a.id) || a.start || "", weekFirstDate.get(b.id) || b.start || ""));
   weeks.forEach((w, i) => { w.index = i; w.start = w.start || weekFirstDate.get(w.id) || null; });
 
   // months derived
@@ -220,16 +223,23 @@ export function validateAll() {
     // missed orphan. Forbid the overlap up front.
     const RESERVED = ["move:", "soft:", "seen:", "flag:", "note:", "done_at:", "daydate:"];
     const reserved = id => RESERVED.some(p => String(id).startsWith(p));
+    // Id SHAPES the state layer depends on: reconcile recognises a bare task tick by
+    // "d<digits>.<task>", and a dot/colon inside a local id would break the
+    // day.task.sub namespacing. A missing id would register as "d01.undefined".
+    const LOCAL_ID = /^[A-Za-z0-9_-]+$/;
+    const badLocal = id => typeof id !== "string" || !LOCAL_ID.test(id);
     for (const d of rm.days) {
       if (localIds.has(d.id)) P(`duplicate day id "${d.id}"`);
       localIds.add(d.id);
       if (reserved(d.id)) P(`day id "${d.id}" uses a reserved state-key prefix`);
+      if (typeof d.id !== "string" || !/^d\d+$/.test(d.id)) P(`day id "${d.id}" must look like "d01"`);
       if (!d.date || !/^\d{4}-\d{2}-\d{2}$/.test(d.date)) P(`day "${d.id}" has invalid date "${d.date}"`);
       else if (fmtDate(parseDate(d.date)) !== d.date) P(`day "${d.id}" date "${d.date}" is not a real calendar date`);
       for (const t of d.tasks) {
         if (tasksSeen.has(t.id)) P(`duplicate task id "${t.id}"`);
         tasksSeen.add(t.id);
         if (reserved(t.localId)) P(`task id "${t.id}" uses a reserved state-key prefix`);
+        if (badLocal(t.localId)) P(`task id "${t.id}" must be letters, digits, "_" or "-"`);
         if (!t.obj) P(`task "${t.id}" has no objective`);
         else if (!rm.objById.has(t.obj)) P(`task "${t.id}" references unknown objective "${t.obj}"`);
         // sub-tasks (leaves) must be namespaced under their parent and unique
@@ -241,6 +251,7 @@ export function validateAll() {
             if (tasksSeen.has(s.id)) P(`duplicate sub-task id "${s.id}"`);
             tasksSeen.add(s.id);
             if (!s.id.startsWith(t.id + ".")) P(`sub-task "${s.id}" is not namespaced under its parent "${t.id}"`);
+            if (badLocal(s.localId)) P(`sub-task id "${s.id}" must be letters, digits, "_" or "-"`);
             if (!s.label && !s.lead) P(`sub-task "${s.id}" has no label`);
           }
         }
@@ -249,6 +260,7 @@ export function validateAll() {
         if (softSeen.has(s.id)) P(`duplicate soft id "${s.id}"`);
         softSeen.add(s.id);
         if (reserved(s.localId)) P(`soft id "${s.id}" uses a reserved state-key prefix`);
+        if (badLocal(s.localId)) P(`soft id "${s.id}" must be letters, digits, "_" or "-"`);
       }
     }
     for (const m of rm.milestones) {

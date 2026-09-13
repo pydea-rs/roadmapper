@@ -252,7 +252,7 @@ const INTERLUDES = {
     { id: "il2", afterDay: "d14", kind: "video",
       title: "TLS 1.2 & 1.3, Explained by Example",
       source: "Hussein Nasser",
-      note: "You just did TLS 1.3 and crypto primitives — watch the handshake and certificate exchange assemble packet by packet.",
+      note: "You just did the TLS 1.3 handshake & PKI — watch the handshake and certificate exchange assemble packet by packet.",
       url: "https://www.youtube.com/watch?v=AlE5X1NlHgg",
       query: "tls 1.3 handshake pki certificates explained" },
     { id: "il3", afterDay: "d20", kind: "video",

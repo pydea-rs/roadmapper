@@ -59,6 +59,29 @@ if (php) {
     t.eq(th.after_clear_remaining, 5, "a correct login (throttle_clear) resets the window");
     t.eq(th.escalate_retry, 120, "strike 2 escalates the lock to 120s");
 
+    t.group("throttle — lock cap, strike decay, atomic reservation, pruning");
+    const t2 = data.throttle2;
+    t.eq(t2.cap_retry, 1800, "a lock never exceeds 30 min, however many strikes (a shared IP can't be locked for hours)");
+    t.eq(t2.quiet_remaining, 5, "a quiet day forgives old fails/strikes");
+    t.deep(t2.quiet_after_fail, { fails: 1, strikes: 0 }, "…so the next wrong attempt starts a fresh window at strike 0");
+    t.eq(t2.old_lock_locked, true, "an ACTIVE lock is never forgiven early");
+    t.deep(t2.reserve_log, ["ok", "ok", "ok", "ok", "5", "L", "L"],
+      "reservations count attempts 1–5 (the 5th is still evaluated, and sets the lock), then refuse");
+    t.eq(t2.prune_ancient, true, "rows untouched for a month are pruned");
+    t.eq(t2.prune_keeps_locked, true, "…but a currently-locked row is kept");
+
+    t.group("clip_bytes — byte caps never split a UTF-8 character");
+    const c = data.clip;
+    t.ok(c.len_ok, "stays within the byte cap");
+    t.ok(c.valid_utf8, "the result is valid UTF-8 (a split é would break json_encode on every later load)");
+    t.eq(c.kept_chars, 32, "keeps every whole character that fits");
+    t.ok(c.short_same, "a short value is returned unchanged");
+    t.ok(c.json_ok, "the clipped value JSON-encodes");
+
+    t.group("insert_stash — no duplicate snapshots crowding real backups out");
+    t.eq(data.stash.rows, 2, "an identical snapshot is not stored twice; an empty one not at all");
+    t.eq(data.stash.long_reason_clipped, 64, "a long reason is clipped to 64 bytes");
+
     t.group("empty-overwrite guard — a blank import can NEVER wipe a populated journey");
     const g = data.guard;
     t.eq(g.populated_count, 2, "the journey has rows to protect");

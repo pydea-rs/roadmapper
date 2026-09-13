@@ -106,7 +106,7 @@ registerRoadmap({
     { id: "w5", title: "Week 5 — Capstone & checkpoint", start: "2026-10-02" },
     { id: "w6", title: "Week 6 — Async Rust (Ch17) & real deployment", start: "2026-10-09" },
     { id: "w7", title: "Week 7 — Integration capstone & retro", start: "2026-10-16" },
-    /* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 8–25 ---- */
+    /* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 8–26 ---- */
     { id: "w8", title: "Week 8 — RWP: setup & the Ch1 Rust review (Ch1)", start: "2026-10-23" },
     { id: "w9", title: "Week 9 — RWP: finishing the Ch1 review, then traits & macros (Ch1–2)", start: "2026-10-30" },
     { id: "w10", title: "Week 10 — RWP: app design & Cargo (Ch2–3)", start: "2026-11-06" },
@@ -342,7 +342,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 A <code>yield</code> dependency is FastAPI's answer to context managers — code before <code>yield</code> runs on entry, code after runs on exit even if the route raised.` },
       ],
-      note: "Lighter FastAPI day — a likely Roadmap-2 overlap date.",
+      note: "Lighter FastAPI day — room for whatever else is on today.",
     },
     {
       id: "d10", date: "2026-09-17", week: "w2", title: "Advanced Rust I",
@@ -454,7 +454,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 Everything from your Ch16 worker-pool tryout pays off here — same <code>mpsc</code> + <code>Arc&lt;Mutex&gt;</code> shape, now behind a clean API with <code>FnOnce</code> boxed jobs.` },
       ],
-      note: "Heaviest Rust day of the roadmap — no FastAPI block.",
+      note: "One of the heaviest Rust days — no FastAPI block.",
     },
     {
       id: "d15", date: "2026-09-24", week: "w3", title: "FastAPI microservices (light)",
@@ -473,7 +473,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "callout", label: `⚠️ The book's microservices chapter is light on real code. Treat it as a map, not a tutorial — real implementation would lean on message queues + the deploy docs next week.` },
       ],
-      note: "Deliberately light — Roadmap-2 overlap day.",
+      note: "Deliberately light — room for whatever else is on today.",
     },
 
     /* ---------------- Week 4 ---------------- */
@@ -655,7 +655,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The core is finished a full two weeks before the plan ends — that slack is intentional. Weeks 6–7 read the Book's async chapter (Ch17) for real and build the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
+        { id: "s1", type: "hint", label: `💡 The books are finished a full two weeks before the two-book core closes (d32) — that slack is intentional. Weeks 6–7 read the Book's async chapter (Ch17) for real and build the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
       ],
       note: "Milestone checkpoint — the core is done; weeks 6–7 are deepening + buffer.",
     },
@@ -817,10 +817,10 @@ registerRoadmap({
             { id: "s3", est: 15, label: `Note the 2–3 you'd re-read first.` },
           ] },
         { id: "t2", obj: F, cat: "review", est: 35, group: "g1",
-          label: `Pick the <b>one</b> next real project (a service you actually want) and write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.`,
+          label: `Pick the <b>one</b> next real project (a service you actually want) and write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 The two-book core is complete.`,
           sub: [
             { id: "s1", est: 20, label: `Pick the <b>one</b> next real project (a service you actually want).` },
-            { id: "s2", est: 15, label: `write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 Roadmap complete.` },
+            { id: "s2", est: 15, label: `write its first three tasks while the momentum is hot. Momentum beats a clean stop. 🎉 The two-book core is complete.` },
           ] },
       ],
       soft: [
@@ -848,7 +848,7 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `📖 This book is a local EPUB — tasks reference it by <b>chapter &amp; section name</b>, not URL. Official-doc links are added only as optional "go deeper" supplements.` },
         { id: "s2", type: "hint", label: `💡 You already finished The Rust Book — Ch1 here is a fast review. Don't grind it; confirm what's rusty and move on.` },
       ],
-      note: "Very light kickoff — the pace stays gentle (2 sessions/week) until mid-January, then picks up to 3 as the other roadmaps wind down.",
+      note: "Kickoff — the pace stays gentle (2 sessions/week), taking a 3rd session in lighter weeks: a couple in January, then every week once interp-go ends in February.",
     },
     {
       id: "d34", date: "2026-10-29", week: "w8", title: "Ch1 review — types, collections, errors",
@@ -1011,7 +1011,7 @@ registerRoadmap({
           label: `<b>If caught up:</b> add a couple of unit tests around the core API (create then get returns it). Optional.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 Nothing new today by design — a light week keeps the 5-month pace sustainable.` },
+        { id: "s1", type: "callout", label: `🔗 Nothing new today by design — a light week keeps the 4-month pace sustainable.` },
       ],
       note: "Light checkpoint day.",
     },
@@ -1486,7 +1486,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `💡 Multi-user + multi-server now works. Two milestones from the finish: caching (Ch12) and observability (Ch13).` },
+        { id: "s1", type: "callout", label: `💡 Multi-user + multi-server now works. Two chapters left in the 3rd-ed EPUB: caching (Ch12) and observability (Ch13).` },
       ],
     },
     {
@@ -1673,13 +1673,13 @@ registerRoadmap({
     },
     {
       id: "d74", date: "2027-02-26", week: "w26", title: "Buffer / overflow",
-      theme: "Deliberate slack — the shock absorber for the 5-month run.",
+      theme: "Deliberate slack — the shock absorber for the 4-month run.",
       tasks: [
         { id: "t1", obj: "rwp", cat: "review", est: 25, optional: true,
           label: `<b>Pure buffer:</b> if any chapter's build slipped — a listing that didn't compile, a feature you stubbed, notes you meant to write — this is the day to close it, guilt-free.` },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 A plan with zero slack breaks on the first bad week. Nothing is required today by design. 🎉 Rust Web Programming complete.` },
+        { id: "s1", type: "callout", label: `🔗 A plan with zero slack breaks on the first bad week. Nothing is required today by design. 🎉 The 3rd-edition EPUB is complete.` },
       ],
       note: "Pure buffer day — required load is near zero on purpose.",
     },
@@ -1701,7 +1701,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `📖 PART B (2026-07-20 plan): these chapters come from the <b>2nd edition</b> EPUB — the 3rd-ed EPUB ends at Ch13 (observability). Where its Actix/Diesel stack differs from your Hyper/SQLx app, it's flagged; Part 6 (Ch14–18) are standalone.` },
+        { id: "s1", type: "callout", label: `📖 PART B (2026-07-21 plan): these chapters come from the <b>2nd edition</b> EPUB — the 3rd-ed EPUB ends at Ch13 (observability). Where its Actix/Diesel stack differs from your Hyper/SQLx app, it's flagged; Part 6 (Ch14–18) are standalone.` },
         { id: "s2", type: "hint", label: `💡 Test the <b>core</b> nanoservice in isolation (no HTTP) first — pure functions are the easiest, highest-value tests.` },
       ],
     },

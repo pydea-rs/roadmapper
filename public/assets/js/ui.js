@@ -127,6 +127,12 @@ export function openModal({ title = "", subtitle = "", icon = "", body = null, a
   return controller;
 }
 
+/** Close every open modal (top first). Used when the route changes underneath them:
+ *  a dialog opened for the previous view must not act on a view that is gone. */
+export function closeAllModals() {
+  for (const c of [...modalStack].reverse()) c.close();
+}
+
 export function confirmModal({ title, subtitle = "", icon = "❓", body = "", confirmLabel = "Confirm",
                                cancelLabel = "Cancel", danger = false } = {}) {
   return new Promise(resolve => {
@@ -276,7 +282,10 @@ export function initLock({ onLogin, onUnlock }) {
     const pw = input.value;
     if (!pw) { shake(); setError("Enter the secret"); return; }
     submit.disabled = true; submit.innerHTML = '<span class="spinner"></span>';
-    const r = await onLogin(pw);
+    let r;
+    try { r = await onLogin(pw); }
+    catch { r = { ok: false, status: 0, error: "unreachable" }; }
+    r = r || { ok: false, status: 0, error: "unreachable" };
     submit.innerHTML = "Unlock";
     if (r.ok) {
       lock.classList.add("leaving");
@@ -290,6 +299,8 @@ export function initLock({ onLogin, onUnlock }) {
     shake(); input.select();
     if (r.status === 429 || r.locked) {
       startCountdown(r.retryAfter || 60);
+    } else if (r.status === 0 || r.error === "unreachable") {
+      setError("Can't reach the server. Check your connection and try again.", true);
     } else if (typeof r.remaining === "number") {
       setError(r.remaining > 0
         ? `Incorrect. ${r.remaining} ${r.remaining === 1 ? "try" : "tries"} left before lockout.`
@@ -300,7 +311,13 @@ export function initLock({ onLogin, onUnlock }) {
   };
 
   return {
-    show() { lock.hidden = false; lock.classList.remove("leaving"); requestAnimationFrame(() => input.focus()); },
+    /** Show the gate; an optional message explains why (e.g. the session expired). */
+    show(message = "") {
+      lock.hidden = false; lock.classList.remove("leaving");
+      input.disabled = submit.disabled = false; submit.innerHTML = "Unlock";
+      if (message) setError(message, true);
+      requestAnimationFrame(() => input.focus());
+    },
     hide() { lock.hidden = true; },
   };
 }
@@ -525,6 +542,12 @@ export function initDrawer(hooks = {}) {
   buildDrawerBody();
 }
 export function openDrawer() { buildDrawerBody(); $("#drawer-root").classList.add("open"); }
+/** Rebuild the settings drawer if it is open — its "Current roadmap" section names the
+ *  roadmap being viewed, so it must follow a route change made while it is open. */
+export function refreshDrawer() {
+  const root = $("#drawer-root");
+  if (root && root.classList.contains("open")) buildDrawerBody();
+}
 export function closeDrawer() { $("#drawer-root").classList.remove("open"); }
 
 function buildDrawerBody() {
@@ -635,7 +658,8 @@ function accentSwatches() {
       s.setAttribute("aria-pressed", "true");
       settings.accentHue = h; setSetting("accent", name);
       const sl = $(".hue-slider"); if (sl) sl.value = String(h);
-      drawerHooks.repaint && drawerHooks.repaint(); };
+      // no repaint: the accent is a CSS custom property, so every view follows it live
+    };
     wrap.append(s);
   }
   return wrap;
@@ -649,7 +673,7 @@ function hueSlider() {
     settings.accent = "custom"; settings.accentHue = Number(input.value);
     saveSettings(); applySettings();
     $$(".swatch").forEach(x => x.setAttribute("aria-pressed", "false"));
-    drawerHooks.repaint && drawerHooks.repaint();
+    // no repaint per input event: the accent is a CSS custom property (applySettings)
   };
   return input;
 }

@@ -86,4 +86,36 @@ t.ok(optDays.length >= 1, "candidate days are listed with their titles");
 const expectedOpts = 1 + rm.days.filter(d => !d.off && d.id !== dest && d.id !== origin).length;
 t.eq(latest.querySelectorAll(".move-opt").length, expectedOpts, "origin appears once (pinned), not duplicated among dated candidates");
 
+t.group("drag and drop — a dragged task lands on the drop target; foreign drops are inert");
+store.resetAll();
+{
+  const handle = document.createElement("span"), row = document.createElement("div"), target = document.createElement("div");
+  document.body.append(row, target);
+  let landed = 0;
+  moves.makeDraggable(handle, row, task);
+  moves.installDayDrop(target, dest, rm, "fixture", () => landed++);
+  const dt = { data: {}, setData(k, v) { this.data[k] = v; }, getData(k) { return this.data[k] || ""; } };
+  const ev = (type, extra = {}) => Object.assign(new dom.window.Event(type, { bubbles: true, cancelable: true }), { dataTransfer: dt }, extra);
+  t.eq(handle.getAttribute("draggable"), "true", "the handle is draggable");
+  handle.dispatchEvent(ev("dragstart"));
+  t.ok(row.classList.contains("moving"), "dragstart marks the row as moving");
+  const over = ev("dragover");
+  target.dispatchEvent(over);
+  t.ok(over.defaultPrevented && target.classList.contains("dragover"), "dragging over a day accepts the drop and highlights it");
+  target.dispatchEvent(ev("drop"));
+  t.eq(store.getMove("fixture", task.id), dest, "dropping moves the task onto that day");
+  t.ok(landed > 0 && !target.classList.contains("dragover"), "…repaints and clears the highlight");
+  handle.dispatchEvent(ev("dragend"));
+  t.ok(!row.classList.contains("moving"), "dragend clears the moving state");
+  // a drop from OUTSIDE the app (e.g. text dragged from another window)
+  store.resetAll();
+  const foreign = { getData: () => "definitely-not-a-task" };
+  target.dispatchEvent(Object.assign(new dom.window.Event("drop", { bubbles: true, cancelable: true }), { dataTransfer: foreign }));
+  t.eq(Object.keys(store.rawState().fixture || {}).length, 0, "an unknown dropped id writes nothing");
+  const idle = ev("dragover");
+  target.dispatchEvent(idle);
+  t.ok(!idle.defaultPrevented, "with no task being dragged, dragover does not accept");
+  row.remove(); target.remove();
+}
+
 t.done();

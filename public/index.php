@@ -49,6 +49,8 @@
       animation:boot-spin .7s linear infinite}
     @media (prefers-reduced-motion:reduce){#boot .boot-spin{animation-duration:1.4s}}
     @keyframes boot-spin{to{transform:rotate(360deg)}}
+    #boot .boot-fail{text-align:center;color:inherit;font:14px/1.5 system-ui,sans-serif;padding:16px}
+    #boot .boot-fail button{margin-top:10px;font:inherit;padding:6px 14px;border-radius:8px;cursor:pointer}
   </style>
 </head>
 <body>
@@ -139,5 +141,17 @@
 <div id="toast-root"></div>
 
 <script type="module" src="assets/js/app.js"></script>
+<script>
+  // If the app's modules never start (a failed or half-updated deploy, a dropped
+  // connection mid-load), boot() never runs and the splash would spin forever.
+  // app.js sets __roadmapsBooted as the first thing boot() does.
+  setTimeout(function () {
+    if (window.__roadmapsBooted) return;
+    var b = document.getElementById("boot");
+    if (!b || b.hidden) return;
+    b.innerHTML = '<div class="boot-fail">The app didn\u2019t start.<br>' +
+      '<button type="button" onclick="location.reload()">Reload</button></div>';
+  }, 15000);
+</script>
 </body>
 </html>

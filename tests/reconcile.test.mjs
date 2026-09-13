@@ -90,4 +90,40 @@ t.eq(store.isDone("rc2", "d01.tpnew.s2"), true, "leaf s2 tick moved to the new p
 t.ok(store.doneAt("rc2", "d01.tpnew.s1") !== null, "leaf s1 done_at moved too");
 t.eq(store.isDone("rc2", "d01.tp.s1"), false, "old leaf id cleared");
 
+t.group("pruning is IN-MEMORY ONLY — the database is never told to delete an orphan");
+// A client can run content OLDER than the data (a cached service worker, a tab left
+// open across a deploy): rows it doesn't recognise may belong to newer content, so
+// deleting them server-side would destroy real progress.
+{
+  const sent = [];
+  store.setSink((slug, change) => sent.push({ slug, ...change }));
+  store.resetAll();
+  store.setCell(S, "d01.t2", "task", "true", { silent: true });
+  store.setCell(S, "d77.t1", "task", "true", { silent: true });          // "newer content" row
+  store.setCell(S, "done_at:d77.t1", "meta", "2026-07-13T12:00:00Z", { silent: true });
+  const r = reconcile.reconcile(rm);
+  t.eq(r.pruned, 2, "the unknown rows are hidden from this session's counts");
+  t.eq(store.isDone(S, "d77.t1"), false, "…so stats never see them");
+  t.deep(sent, [], "…but NOTHING is sent to the database (no delete for rows this client doesn't know)");
+  // aliases are deliberate renames, authored with the content — they DO persist
+  store.resetAll();
+  sent.length = 0;
+  store.setCell(S, "d01.told", "task", "true", { silent: true });
+  reconcile.reconcile(rm);
+  t.ok(sent.some(c => c.id === "d01.tnew" && c.value === "true") && sent.some(c => c.id === "d01.told" && c.value === null),
+    "an alias migration is written through (it is authored intent, not a guess)");
+  store.setSink(null);
+}
+
+t.group("a move whose destination day no longer exists is ignored");
+store.resetAll();
+store.setCell(S, "move:d01.t2", "move", "d42", { silent: true });        // d42 isn't in this content
+store.setCell(S, "d01.t2", "task", "true", { silent: true });
+const rmv = reconcile.reconcile(rm);
+t.ok(rmv.pruned >= 1, "the dangling move row is pruned (in memory)");
+t.eq(store.getMove(S, "d01.t2"), null, "…so the task sits on its origin and can be moved normally again");
+t.eq(store.isDone(S, "d01.t2"), true, "the task's own tick is untouched");
+store.setCell(S, "move:d01.t2", "move", "d01", { silent: true });        // a destination that exists
+t.eq(reconcile.reconcile(rm).pruned, 0, "a move to an existing day is kept");
+
 t.done();

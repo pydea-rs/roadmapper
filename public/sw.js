@@ -9,7 +9,7 @@
 // Served from the web root, so its scope is "/" and it controls the whole app.
 // Plain JS (no build step, no external deps) — matches the rest of the codebase.
 
-const VERSION = "v1";
+const VERSION = "v2";   // bump to force every client onto a fresh cache
 const CACHE = `roadmaps-${VERSION}`;
 const SCOPE = self.registration.scope;              // e.g. https://host/  (or /sub/)
 const SHELL = new URL(".", SCOPE).href;             // the app shell (index.php at scope root)
@@ -66,6 +66,18 @@ function isBypassed(url) {
 const STATIC_RE = /\.(?:js|mjs|css|png|svg|webp|gif|ico|json|webmanifest|woff2?|ttf|otf|html?)$/i;
 function isCacheable(url) { return STATIC_RE.test(url.pathname); }
 
+// The app shell entry: the scope root itself or its index.php. Only a navigation to
+// one of THESE may overwrite the cached shell — opening, say, a raw .js or the
+// manifest in a tab is also a "navigation", and must never replace the offline app.
+function isShellUrl(url) {
+  const root = new URL(SCOPE).pathname;
+  return url.pathname === root || url.pathname === root + "index.php";
+}
+
+// How long a static request waits on the network before the cached copy answers
+// (a slow/lossy connection must not hang the launch; offline falls back at once).
+const NET_TIMEOUT_MS = 4000;
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;                       // writes go straight to the network
@@ -78,7 +90,8 @@ self.addEventListener("fetch", (e) => {
     e.respondWith((async () => {
       try {
         const net = await fetch(req);
-        if (net && net.ok) (await caches.open(CACHE)).put(SHELL, net.clone());
+        const html = ((net && net.headers && net.headers.get && net.headers.get("content-type")) || "").includes("text/html");
+        if (net && net.ok && html && isShellUrl(url)) (await caches.open(CACHE)).put(SHELL, net.clone());
         return net;
       } catch {
         return (await caches.match(SHELL)) || (await caches.match(req)) || Response.error();
@@ -87,16 +100,32 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Static assets (css / js modules / icons / roadmap data): stale-while-revalidate.
+  // Static assets (css / js modules / icons / roadmap content): NETWORK-FIRST with a
+  // short timeout, falling back to the cache. Stale-while-revalidate was wrong here:
+  // right after a deploy it served last version's modules (the new code only showed
+  // on the launch AFTER next), and could mix old and new ES modules in one page.
+  // `cache: "no-cache"` makes the browser revalidate with the server (a cheap 304)
+  // instead of trusting its own heuristic HTTP cache for days.
   // Unknown/dynamic GETs are not cached — pass them straight to the network.
   if (!isCacheable(url)) return;
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
-    const hit = await cache.match(req);
-    const net = fetch(req).then((res) => {
+    const network = fetch(req, { cache: "no-cache" }).then((res) => {
       if (res && res.ok && res.type === "basic") cache.put(req, res.clone());
       return res;
-    }).catch(() => null);
-    return hit || (await net) || Response.error();
+    });
+    network.catch(() => {});                                 // may lose the race; never an unhandled rejection
+    let timer;
+    const timeout = new Promise((resolve) => { timer = setTimeout(resolve, NET_TIMEOUT_MS, null); });
+    try {
+      const first = await Promise.race([network, timeout]);
+      if (first) return first;                               // network answered in time
+      const hit = await cache.match(req);                    // slow network: cached copy if any…
+      return hit || (await network);                         // …else keep waiting on the network
+    } catch {
+      return (await cache.match(req)) || Response.error();   // offline
+    } finally {
+      clearTimeout(timer);
+    }
   })());
 });

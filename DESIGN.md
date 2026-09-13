@@ -389,14 +389,19 @@ generated ULIDs only for runtime records** (ULID for lexicographic sortability; 
 1. **Unique within a roadmap** (enforced by the boot validator, §7.5).
 2. **Stable forever** once it may have been ticked/moved: never reuse, never renumber. Editing a task's
    label/estimate/links/category is free (id unchanged → progress preserved).
-3. **Deleting** a task is allowed; orphaned rows are harmless and pruned (§7.4).
+3. **Deleting** a task is allowed; orphaned rows are harmless and hidden (§7.4).
 4. **Adding** uses a fresh id; reads as not-done until ticked.
 5. Milestones/moves reference tasks/days by id, so they stay correct across edits.
 
 ### 7.4 Content changes after use (lightweight reconcile)
 At load, a **reconciler** (generalising the reference pruner):
-- Drops **orphaned rows** (item_id no longer in the current definition) so counts stay truthful; stashes
-  first. This also cleans a `move:` row whose destination day was removed (task falls back to origin).
+- Hides **orphaned rows** (item_id no longer in the current definition) so counts stay truthful. This also
+  ignores a `move:` row whose destination day was removed (task falls back to origin).
+- ⚠️ The hiding is **in memory only — reconcile never deletes a row from the DB.** The content a client runs
+  can be *older* than the data (a service worker's cached roadmap files, a tab left open across a deploy, a
+  typo'd id), and deleting "unknown" rows server-side would then destroy progress newer content created.
+  Orphans cost nothing and come back into play as soon as the client runs content that knows them. A reset
+  (`clear` / `clearAll`) or a whole-journey import removes them server-side explicitly (stashed first).
 - Applies an optional per-roadmap **`aliases` map** (`{ oldId: newId }`) for the rare deliberate id
   rename, migrating the row on next load; the alias can then be removed.
 Each roadmap declares `schemaVersion`; `roadmap_registry.schema_version` records what stored data was
@@ -527,8 +532,8 @@ Returning a task to its origin simply makes `current==origin` again and both fig
 - Origin day: **static**, from the day object in code (`day.id`), never stored.
 - Move: a single `journey_state` row `kind='move'`, `item_id='move:<taskId>'`, `value='<dayId>'`.
   **Absence = on origin.** Return-to-origin **deletes** the row.
-- Guard: a `move:` whose destination day no longer exists is pruned by the reconciler → task falls back
-  to origin (§7.4). Moves are restricted to days **within the same roadmap** (validator/UX enforced).
+- Guard: a `move:` whose destination day no longer exists is ignored by the reconciler (in memory) → task
+  falls back to origin (§7.4). Moves are restricted to days **within the same roadmap** (validator/UX enforced).
 This is the "two owner-days" idea from the brief, minimized: one static origin (code) + one optional
 `moved_to` (DB). Using stable **day ids** (not dates) avoids any date-collision ambiguity.
 

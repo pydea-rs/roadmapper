@@ -125,6 +125,63 @@ t.ok(intercepts("https://host/assets/js/app.js?v=2"), "a query string doesn't de
 // …and page navigations take the (network-first) shell path.
 t.ok(intercepts("https://host/", { mode: "navigate" }), "a page navigation is handled (network-first shell)");
 
+t.group("service worker — what a fetch actually RETURNS (network-first, shell-only caching)");
+// A fresh sandbox per scenario with a controllable network and a recording cache.
+async function swScenario({ net, cached = null, timeoutFires = false }) {
+  const puts = [];
+  const cache = {
+    match: async () => cached, add: async () => {},
+    put: async (key, res) => { puts.push(typeof key === "string" ? key : key.url); },
+  };
+  const L = {};
+  const box = {
+    self: { location: { origin: "https://host" }, registration: { scope: "https://host/app/" },
+      addEventListener: (type, fn) => { L[type] = fn; }, skipWaiting: async () => {}, clients: { claim: async () => {} } },
+    caches: { open: async () => cache, keys: async () => [], match: async () => cached, delete: async () => true },
+    fetch: async (req, opts) => { box.lastFetchOpts = opts; return net(req, opts); },
+    Response: { error: () => ({ error: true }) }, Request: function (u) { this.url = u; },
+    URL, Promise, console,
+    setTimeout: (fn, ms, arg) => { if (timeoutFires) fn(arg); return 1; }, clearTimeout: () => {},
+  };
+  vm.createContext(box);
+  vm.runInContext(sw, box, { filename: "sw.js" });
+  const fetchOf = (url, mode = "cors") => new Promise(resolve => {
+    L.fetch({ request: { method: "GET", url, mode }, respondWith: p => resolve(p) });
+  });
+  return { puts, box, fetchOf };
+}
+const res = (body, type = "text/html") => ({ ok: true, type: "basic", body, headers: { get: () => type }, clone() { return this; } });
+
+{
+  const s1 = await swScenario({ net: async () => res("<html>shell</html>") });
+  await (await s1.fetchOf("https://host/app/", "navigate"));
+  await new Promise(r => setImmediate(r));
+  t.ok(s1.puts.includes("https://host/app/"), "navigating to the app root refreshes the cached shell");
+  const s2 = await swScenario({ net: async () => res("export const x = 1;", "text/javascript") });
+  await (await s2.fetchOf("https://host/app/assets/js/app.js", "navigate"));
+  await new Promise(r => setImmediate(r));
+  t.ok(!s2.puts.includes("https://host/app/"), "opening a raw .js in a tab never overwrites the offline shell");
+  const s3 = await swScenario({ net: async () => res("{}", "application/manifest+json") });
+  await (await s3.fetchOf("https://host/app/manifest.webmanifest", "navigate"));
+  await new Promise(r => setImmediate(r));
+  t.ok(!s3.puts.includes("https://host/app/"), "…nor does opening the manifest");
+
+  const fresh = res("NEW", "text/javascript"), stale = res("OLD", "text/javascript");
+  const s4 = await swScenario({ net: async () => fresh, cached: stale });
+  const r4 = await (await s4.fetchOf("https://host/app/assets/js/registry.js"));
+  t.eq(r4 && r4.body, "NEW", "a static module comes from the NETWORK when it answers (a deploy shows at once)");
+  t.eq(s4.box.lastFetchOpts && s4.box.lastFetchOpts.cache, "no-cache", "…revalidated past the browser's heuristic HTTP cache");
+  const s5 = await swScenario({ net: () => new Promise(() => {}), cached: stale, timeoutFires: true });
+  const r5 = await (await s5.fetchOf("https://host/app/assets/js/registry.js"));
+  t.eq(r5 && r5.body, "OLD", "a slow network falls back to the cached copy after the timeout");
+  const s6 = await swScenario({ net: async () => { throw new TypeError("offline"); }, cached: stale });
+  const r6 = await (await s6.fetchOf("https://host/app/assets/css/theme.css"));
+  t.eq(r6 && r6.body, "OLD", "offline: the cached copy is served");
+  const s7 = await swScenario({ net: async () => { throw new TypeError("offline"); }, cached: null });
+  const r7 = await (await s7.fetchOf("https://host/app/assets/css/theme.css"));
+  t.ok(r7 && r7.error, "offline with nothing cached: a network error, not a hang");
+}
+
 t.group("index.php — links the manifest, theme colour, and Apple bits");
 const html = read("index.php");
 t.ok(/<link[^>]+rel=["']manifest["'][^>]+href=["']manifest\.webmanifest["']/.test(html),
@@ -146,5 +203,13 @@ const ht = read(".htaccess");
 t.ok(/AddType\s+application\/manifest\+json\s+\.webmanifest/.test(ht),
   "serves .webmanifest with the correct MIME type");
 t.ok(/sw\\?\.js/.test(ht) && /Cache-Control/.test(ht), "sw.js is served with a Cache-Control rule");
+t.ok(/FilesMatch\s+"[^"]*js\|mjs\|css[^"]*"[\s\S]*?Cache-Control\s+"no-cache"/.test(ht),
+  "app JS/CSS are served no-cache (revalidated) so a deploy never serves stale or mixed modules");
+t.ok(ht.indexOf("js|mjs|css") < ht.indexOf("^sw\\.js$"), "…declared BEFORE the sw.js rule, so sw.js keeps its stricter header");
+
+t.group("index.php — a start-up watchdog replaces an endless splash");
+const idx = readFileSync(pub("index.php"), "utf8");
+t.ok(/__roadmapsBooted/.test(idx) && /location\.reload\(\)/.test(idx), "index.php offers a Reload if the app never boots");
+t.ok(/window\.__roadmapsBooted\s*=\s*true/.test(app), "app.js marks itself booted first thing");
 
 t.done();

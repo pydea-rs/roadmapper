@@ -8,14 +8,14 @@ import "../../roadmaps/_index.js";
 import { getRoadmaps, getRoadmap, validateAll } from "./registry.js";
 import * as store from "./store.js";
 import * as sync from "./sync.js";
-import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest } from "./render.js";
+import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest, releaseView } from "./render.js";
 import { renderInsights } from "./insights.js";
 import { renderBookmarks } from "./bookmarks.js";
 import { sidebarStats, dayDate } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
   initLock, loadSettings, initDrawer, initFab, initTutorials, renderSidebar,
-  toast, confirmModal, setDrawerSync, closeDrawer,
+  toast, confirmModal, setDrawerSync, closeDrawer, closeAllModals, refreshDrawer,
 } from "./ui.js";
 import { $, debounce, downloadJSON, pickFile, readFileText, todayStr } from "./util.js";
 
@@ -23,6 +23,7 @@ let activeSlug = null;
 let sidebarExpandedSlug = null;         // which roadmap's sidebar quick-jumps are open (togglable)
 let lock = null;
 let routeWired = false;                 // hashchange listener registered once (survives re-unlock)
+let lastPaintDay = null;                // the local date the current view was drawn for (rollover check)
 
 document.addEventListener("DOMContentLoaded", boot);
 
@@ -37,6 +38,7 @@ if ("serviceWorker" in navigator) {
 }
 
 async function boot() {
+  window.__roadmapsBooted = true;        // index.php's start-up watchdog reads this
   loadSettings();
   initFab();
   initTutorials();
@@ -53,6 +55,14 @@ async function boot() {
   sync.installExitFlush();
 
   lock = initLock({ onLogin: p => sync.login(p), onUnlock: () => startApp() });
+  // The session expired while the app was open (sessions last a fixed number of days
+  // from login). Ask to sign in again; queued changes stay in memory and are written
+  // by startApp's load (which flushes first) right after the unlock.
+  sync.onAuthExpired(() => {
+    closeAllModals(); closeDrawer();
+    $("#app").hidden = true;
+    lock.show("Your session expired — sign in again. Unsaved changes are kept and will be saved.");
+  });
 
   wireChrome();
 
@@ -85,9 +95,9 @@ async function startApp() {
 
   const roadmaps = getRoadmaps();
   // Reconcile stored journey against current content (DESIGN §7.4): apply id
-  // aliases, then prune rows whose referent no longer exists so counts stay
-  // truthful and the DB doesn't drift. Runs before first render.
-  for (const rm of roadmaps) reconcile(rm);
+  // aliases, then hide rows whose referent no longer exists so counts stay truthful
+  // (in memory only — see reconcile.js). Runs before first render.
+  reconcileAll();
 
   if (!roadmaps.length) { $("#view").innerHTML =
     `<div class="center-note"><div class="big">🗺️</div>No roadmaps registered yet.<br>Add one in <code>roadmaps/</code>.</div>`;
@@ -95,7 +105,7 @@ async function startApp() {
 
   // Register the router once — startApp() runs again after every lock→unlock, so
   // re-adding it each time would fire route() N times per navigation.
-  if (!routeWired) { window.addEventListener("hashchange", route); routeWired = true; }
+  if (!routeWired) { window.addEventListener("hashchange", onHashChange); routeWired = true; wireLiveRefresh(); }
   setupGoTop();
   route();
   updateSidebar();
@@ -147,6 +157,50 @@ function swapView(paint) {
   else paint(true);
 }
 
+function reconcileAll() { for (const rm of getRoadmaps()) reconcile(rm); }
+
+// A real navigation (link, Back/Forward): dialogs and menus opened for the previous
+// view must not stay up acting on a view that is gone; an open settings drawer
+// re-reads which roadmap is current.
+function onHashChange() {
+  closeAllModals();
+  route();
+  refreshDrawer();
+}
+
+/* ---- keeping a long-open tab current -------------------------------------
+ * The app is often left open for days (an installed PWA). Two things go stale:
+ *  - the DATE: "Today", overdue flags, streaks and the effort panel are computed at
+ *    paint time, so crossing midnight must repaint;
+ *  - the DATA: another device may have saved since this tab loaded. Re-adopting the
+ *    DB copy when the tab comes back matters beyond display — a tick made on a stale
+ *    copy would re-stamp done_at and flip an on-time task to late. */
+const REFRESH_AFTER_MS = 5 * 60 * 1000;
+let liveWired = false, hiddenAt = 0;
+function wireLiveRefresh() {
+  if (liveWired) return;
+  liveWired = true;
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") { hiddenAt = Date.now(); return; }
+    if ($("#app").hidden) return;
+    if (hiddenAt && Date.now() - hiddenAt >= REFRESH_AFTER_MS) refreshFromServer();
+    else checkRollover();
+  });
+  setInterval(checkRollover, 60 * 1000);
+}
+function checkRollover() {
+  if ($("#app").hidden || document.visibilityState === "hidden") return;
+  if (lastPaintDay && todayStr() !== lastPaintDay) repaintView();
+}
+/** Re-adopt the DB copy, re-reconcile, repaint. Returns the load result. */
+async function refreshFromServer() {
+  const loaded = await sync.loadAndReconcile();
+  if (loaded && loaded.auth) return loaded;          // the lock gate is already up
+  if (!(loaded && loaded.error)) reconcileAll();
+  if (!$("#app").hidden) repaintView();
+  return loaded || {};
+}
+
 // slug → renderer for the global (non-roadmap) views; their slugs are reserved.
 const GLOBAL_VIEWS = { today: renderToday, insights: renderInsights, bookmarks: renderBookmarks };
 
@@ -161,20 +215,23 @@ function route() {
   if (globalView && !sub) {
     activeSlug = null;
     sidebarExpandedSlug = null;      // no roadmap quick-jumps expanded on a global view
-    swapView(() => { globalView($("#view")); updateSidebar(); scrollMainTop(); });
+    lastPaintDay = todayStr();
+    swapView(() => { releaseView($("#view")); globalView($("#view")); updateSidebar(); scrollMainTop(); });
     closeMobileSidebar();
     return;
   }
 
   let rm = slug && getRoadmap(slug);
   if (!rm) {
-    const last = localStorage.getItem("roadmaps_last") || (roadmaps[0] && roadmaps[0].slug);
+    let saved = null; try { saved = localStorage.getItem("roadmaps_last"); } catch {}
+    const last = saved || (roadmaps[0] && roadmaps[0].slug);
     rm = getRoadmap(last) || roadmaps[0];
     if (rm) { location.hash = `#/${rm.slug}`; return; }
   }
   activeSlug = rm.slug;
   sidebarExpandedSlug = rm.slug;     // viewing a roadmap expands its quick-jumps by default
-  localStorage.setItem("roadmaps_last", rm.slug);
+  lastPaintDay = todayStr();
+  try { localStorage.setItem("roadmaps_last", rm.slug); } catch {}
   swapView(animate => {
     renderRoadmap(rm, $("#view"), { animate });
     updateSidebar();
@@ -195,8 +252,17 @@ function scrollMainTop() { const m = document.getElementById("main"); if (m) m.s
 // rerender() there would wrongly stamp the LAST roadmap into #view — re-run the
 // router instead to repaint the correct global view.
 function repaintView() {
-  if (activeSlug) { rerender(); updateSidebar(); }
-  else route();
+  lastPaintDay = todayStr();
+  if (activeSlug) { rerender(); updateSidebar(); return; }
+  // A global view: redraw it in place, keeping the scroll position (re-running the
+  // router would jump back to the top).
+  const slug = location.hash.replace(/^#\/?/, "").split("/")[0];
+  const globalView = GLOBAL_VIEWS[slug];
+  if (!globalView) { route(); return; }
+  const main = document.getElementById("main");
+  const top = main ? main.scrollTop : 0;
+  releaseView($("#view")); globalView($("#view")); updateSidebar();
+  if (main) main.scrollTop = top;
 }
 /* Land on the day the user is currently on: today's day, else the nearest
  * upcoming day, else (roadmap already finished) its last day. Falls back to the
@@ -220,6 +286,8 @@ function scrollToSub(rm, sub) {
   if (targetDay) {
     const node = $(`.day[data-day="${cssEsc(targetDay.id)}"]`);
     if (node) { openCard(node); node.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  } else if (sub === "today") {
+    scrollToCurrentDay(rm);            // a finished roadmap has no day today or later: land on its last day
   }
 }
 /** Open a day card the way the user would: trigger its own toggle so aria-expanded
@@ -307,21 +375,38 @@ function drawerHooks() {
     resetRoadmap: resetRoadmapIO,
     activeTitle: () => { const rm = getRoadmap(activeSlug); return rm ? rm.title : null; },
     repaint: () => repaintView(),
-    syncNow: async () => { await sync.flush(); await sync.loadAndReconcile(); repaintView(); toast("Synced", { type: "ok" }); },
+    syncNow: async () => {
+      const r = await refreshFromServer();          // flushes queued writes first
+      if (r.auth) return;                           // the lock gate explains it
+      if (r.error) toast("Couldn't reach the database — your changes are kept and will retry.", { type: "bad" });
+      else if (sync.hasPending()) toast("Some changes are still waiting to be saved.", { type: "bad" });
+      else toast("Synced", { type: "ok" });
+    },
     lock: lockNowIO,
   };
 }
 
+/** A bulk save failed: say so, and re-adopt the DB so the screen shows what is
+ *  really stored (never a local-only "success" that a reload would undo). */
+async function bulkFailed(what) {
+  toast(`${what} failed — nothing was changed on the server.`, { type: "bad" });
+  await refreshFromServer();
+}
+
 async function resetRoadmapIO() {
   const rm = getRoadmap(activeSlug); if (!rm) return;
+  const slug = rm.slug;
   const ok = await confirmModal({ title: `Reset ${rm.title}?`, icon: "🗑️", danger: true,
     body: "Clears all ticks, moves and notes for this roadmap only. A stash is kept on the server.",
     confirmLabel: "Reset this roadmap", });
   if (!ok) return;
-  const ids = Object.keys(store.rawState()[activeSlug] || {});
-  store.resetRoadmap(activeSlug);
-  if (ids.length) await sync.saveRoadmapFull(activeSlug, ids.map(id => ({ id, value: null })),
-    { stashFirst: true, reason: "reset-roadmap" });
+  // Unsaved queued changes for this roadmap would otherwise flush AFTER the reset and
+  // resurrect part of it. The server clears every row of the roadmap — including rows
+  // this tab never loaded — after stashing them.
+  sync.dropQueued(slug);
+  const r = await sync.saveRoadmapFull(slug, [], { stashFirst: true, reason: "reset-roadmap", clear: true });
+  if (!r.ok) { if (r.error !== "auth") await bulkFailed("Reset"); return; }
+  store.resetRoadmap(slug);
   closeDrawer(); repaintView(); toast("Roadmap reset", { type: "ok" });
 }
 
@@ -337,36 +422,50 @@ function exportAllIO() {
 async function importRoadmapIO(slug) {
   const file = await pickFile(); if (!file) return;
   let doc; try { doc = JSON.parse(await readFileText(file)); } catch { toast("Not valid JSON", { type: "bad" }); return; }
+  if (!doc || typeof doc !== "object") { toast("Unrecognized roadmap file", { type: "bad" }); return; }
   const items = doc.scope === "roadmap" ? doc.items
     : (doc.scope === "all" && doc.state) ? doc.state[slug]
     : doc.items || (doc.state && doc.state[slug]);
-  if (!items) { toast("No matching roadmap data in file", { type: "bad" }); return; }
+  if (!items || typeof items !== "object") { toast("No matching roadmap data in file", { type: "bad" }); return; }
   const ok = await confirmModal({ title: "Import into this roadmap?", icon: "⬇️", danger: true,
     subtitle: getRoadmap(slug).title,
     body: "This replaces your current progress for this roadmap. A safety copy is stashed on the server first.",
     confirmLabel: "Replace", });
   if (!ok) return;
-  const before = Object.keys(store.rawState()[slug] || {});
+  sync.dropQueued(slug);
   store.importRoadmap(slug, items);
-  const after = store.rawState()[slug] || {};
-  const changes = [];
-  for (const id of before) if (!(id in after)) changes.push({ id, value: null });
-  for (const [id, cell] of Object.entries(after)) changes.push({ id, kind: cell.kind, value: cell.value });
-  await sync.saveRoadmapFull(slug, changes, { stashFirst: true, reason: "roadmap-import" });
-  repaintView(); toast("Imported", { type: "ok" });
+  const changes = Object.entries(store.rawState()[slug] || {})
+    .map(([id, cell]) => ({ id, kind: cell.kind, value: cell.value }));
+  // clear:true — the imported rows REPLACE the roadmap server-side, not merge into it
+  const r = await sync.saveRoadmapFull(slug, changes, { stashFirst: true, reason: "roadmap-import", clear: true });
+  if (!r.ok) { if (r.error !== "auth") await bulkFailed("Import"); return; }
+  reconcileAll();
+  repaintView();
+  toast(r.rejected && r.rejected.length ? `Imported — ${r.rejected.length} invalid entr${r.rejected.length === 1 ? "y was" : "ies were"} skipped` : "Imported",
+    { type: r.rejected && r.rejected.length ? "bad" : "ok" });
 }
 
 async function importAllIO() {
   const file = await pickFile(); if (!file) return;
   let doc; try { doc = JSON.parse(await readFileText(file)); } catch { toast("Not valid JSON", { type: "bad" }); return; }
-  const full = doc.scope === "all" ? doc.state : (doc.scope === "roadmap" && doc.slug ? { [doc.slug]: doc.items } : null);
-  if (!full) { toast("Unrecognized journey file", { type: "bad" }); return; }
+  const full = !doc || typeof doc !== "object" ? null
+    : doc.scope === "all" ? doc.state : (doc.scope === "roadmap" && doc.slug ? { [doc.slug]: doc.items } : null);
+  if (!full || typeof full !== "object") { toast("Unrecognized journey file", { type: "bad" }); return; }
   const ok = await confirmModal({ title: "Import whole journey?", icon: "⬇️", danger: true,
     body: "This replaces ALL progress and saved bookmarks across every roadmap. A safety copy is stashed on the server first.",
     confirmLabel: "Replace everything", });
   if (!ok) return;
+  sync.dropQueued();
   store.importAll(full);
-  await sync.saveFull(store.toFlatMap(), { stashFirst: true, reason: "journey-import" });
+  const r = await sync.saveFull(store.toFlatMap(), { stashFirst: true, reason: "journey-import" });
+  if (!r.ok) { if (r.error !== "auth") await bulkFailed("Import"); return; }
+  if (r.skipped) {
+    // the server refuses to replace a populated journey with an empty file
+    toast("That file has no progress in it — your journey was left unchanged.", { type: "bad" });
+    await refreshFromServer();
+    return;
+  }
+  reconcileAll();
   closeDrawer(); repaintView(); toast("Journey imported", { type: "ok" });
 }
 
@@ -375,18 +474,17 @@ async function resetAllIO() {
     body: "Clears all ticks, moves, notes and saved bookmarks across every roadmap. A stash is kept on the server. This can't be undone locally.",
     confirmLabel: "Reset all", });
   if (!ok) return;
-  const snapshot = store.rawState();
-  const deletes = {};
-  for (const [slug, bucket] of Object.entries(snapshot)) deletes[slug] = Object.keys(bucket || {});
+  sync.dropQueued();
+  const r = await sync.clearAll({ reason: "reset-all" });
+  if (!r.ok) { if (r.error !== "auth") await bulkFailed("Reset"); return; }
   store.resetAll();
-  for (const [slug, ids] of Object.entries(deletes))
-    if (ids.length) await sync.saveRoadmapFull(slug, ids.map(id => ({ id, value: null })), { stashFirst: true, reason: "reset-all" });
   closeDrawer(); repaintView(); toast("Everything reset", { type: "ok" });
 }
 
 async function lockNowIO() {
+  await sync.flush();                    // don't strand queued changes behind the lock
   await sync.logout();
-  closeDrawer();
+  closeAllModals(); closeDrawer();
   $("#app").hidden = true;
   lock.show();
 }

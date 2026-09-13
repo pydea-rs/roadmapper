@@ -19,14 +19,20 @@
  *                                     create session on success
  *   POST ?action=logout            -> destroy session
  *   GET  ?action=load[&roadmap=s]  -> { ok, empty, savedAt, data:{ "slugitem_id": {kind,value}, ...} }
- *   POST ?action=save              -> { roadmap?, changes:[{id,kind,value|null}], full?:{...},
- *                                       stashFirst?, reason? }
+ *   POST ?action=save              -> { roadmap?, changes:[{id,kind,value|null}], clear?, full?:{...},
+ *                                       clearAll?, stashFirst?, reason? }
  *                                     Upserts changed rows, deletes rows whose value is null
  *                                     (return-to-default), guards empty overwrites, stashes.
+ *                                     clear:true empties that roadmap first; clearAll:true empties
+ *                                     the journey (stashed). Refused cells come back in `rejected`.
+ *   POST ?action=stash {roadmap?, reason?} -> snapshot rows into journey_stash (last 20 kept)
  *   GET  ?action=search&q=&type=   -> { ok, type, q, fetched, results:[{title,url,thumb,source}] }
  *                                     Best-effort discovery proxy (YouTube / DuckDuckGo). Auth
  *                                     required, fixed hosts, no client URL. fetched:false => the
  *                                     client falls back to a results-page link. Touches no DB.
+ *
+ * Every POST must be same-origin JSON (Content-Type: application/json); see
+ * require_same_origin_json().
  *
  * The DB stores ONLY deviations from default: absence of a row = "not done / on
  * origin / unset". A newly authored roadmap needs zero rows (DESIGN.md §7).
@@ -49,6 +55,13 @@ const MAX_VALUE_BYTES  = 256 * 1024;   // per-cell cap — generous for notes/bo
 const STASH_KEEP       = 20;
 const THROTTLE_WINDOW  = 5;          // wrong attempts before a lock kicks in
 const THROTTLE_UNIT    = 60;         // seconds per strike (strike 1 => 60s, strike 2 => 120s, ...)
+const THROTTLE_MAX_LOCK = 1800;      // a lock never exceeds 30 min, however many strikes pile up
+const THROTTLE_DECAY   = 86400;      // a quiet day (no attempts, not locked) forgives all strikes
+const THROTTLE_PRUNE   = 30 * 86400; // stale throttle rows are deleted after a month
+const SQLITE_MIN       = "3.24.0";   // UPSERT (INSERT … ON CONFLICT DO UPDATE) needs 3.24+
+// Every JSON response survives a stray invalid UTF-8 byte (e.g. a scraped search
+// title) instead of json_encode() returning false and emitting an empty 200 body.
+const JSON_OUT         = JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
 const VERIFY_DELAY_US  = 250000;     // small constant delay per verify, blunts online guessing
 // Roadmap slug and item id are joined with US (unit separator) into one map key
 // for transport, so the client sees a flat { "slugitem": {...} } object.
@@ -56,8 +69,17 @@ const KEY_SEP          = "\x01";
 
 function fail(int $code, string $msg, array $extra = []): void {
     http_response_code($code);
-    echo json_encode(array_merge(["ok" => false, "error" => $msg], $extra));
+    echo json_encode(array_merge(["ok" => false, "error" => $msg], $extra), JSON_OUT);
     exit;
+}
+
+/** Cut a string to at most $max BYTES without splitting a UTF-8 character (a split
+ *  character is invalid UTF-8, which would later break json_encode on load). */
+function clip_bytes(string $s, int $max): string {
+    if (strlen($s) <= $max) return $s;
+    $s = substr($s, 0, $max);
+    while ($s !== "" && preg_match('//u', $s) !== 1) $s = substr($s, 0, -1);
+    return $s;
 }
 
 /** Minimal .env reader: KEY=VALUE lines, `#` comments, optional surrounding quotes. */
@@ -86,10 +108,22 @@ function load_env(string $file): array {
  */
 function session_boot(bool $create, int $lifetime): void {
     if (session_status() === PHP_SESSION_ACTIVE) return;
-    if (!$create && empty($_COOKIE[SESSION_NAME])) return;
+    $sid = (string)($_COOKIE[SESSION_NAME] ?? "");
+    if (!$create && $sid === "") return;
     $dir = __DIR__ . "/.sessions";
     if (!is_dir($dir)) @mkdir($dir, 0700, true);
-    if (is_dir($dir) && is_writable($dir)) session_save_path($dir);
+    $ownDir = is_dir($dir) && is_writable($dir);
+    if ($ownDir) session_save_path($dir);
+    else error_log("roadmaps: $dir is not writable — sessions fall back to the system save path");
+    // A cookie naming a session that doesn't exist must NOT start one: with strict
+    // mode PHP would mint a fresh session (a new file) per request, so any client
+    // replaying a junk cookie could fill the disk without ever logging in. Treat
+    // it as logged-out and expire the dead cookie instead.
+    if (!$create) {
+        $known = preg_match('/^[A-Za-z0-9,-]{16,128}$/', $sid) === 1
+            && (!$ownDir || is_file("$dir/sess_$sid"));
+        if (!$known) { clear_session_cookie(); return; }
+    }
     ini_set("session.gc_maxlifetime", (string)$lifetime);
     ini_set("session.use_strict_mode", "1");
     session_name(SESSION_NAME);
@@ -103,6 +137,17 @@ function session_boot(bool $create, int $lifetime): void {
     session_start();
 }
 
+function clear_session_cookie(): void {
+    if (headers_sent()) return;
+    setcookie(SESSION_NAME, "", [
+        "expires"  => time() - 42000,
+        "path"     => "/",
+        "secure"   => req_is_https(),
+        "httponly" => true,
+        "samesite" => "Lax",
+    ]);
+}
+
 function is_authed(): bool {
     return !empty($_SESSION["authed"])
         && isset($_SESSION["expires"])
@@ -112,18 +157,27 @@ function is_authed(): bool {
 function require_auth(int $lifetime): void {
     session_boot(false, $lifetime);
     if (!is_authed()) fail(401, "authentication required");
+    // Data actions only READ the session. Release its file lock now, so a slow
+    // request (a search proxy can take seconds) never stalls a save from the same
+    // browser queued behind it on the session lock.
+    session_write_close();
 }
 
 function db(): PDO {
     static $pdo = null;
-    if ($pdo === null) {
-        try {
-            $pdo = new PDO("sqlite:" . DB_FILE);
-        } catch (PDOException $e) {
-            error_log("roadmaps: cannot open journey.sqlite: " . $e->getMessage());
+    if ($pdo !== null) return $pdo;
+    // The whole setup is guarded, not just the open: an unwritable directory makes
+    // the WAL pragma / CREATE TABLE throw, and that must be a clean JSON 500 with a
+    // log line rather than an empty response.
+    try {
+        $pdo = new PDO("sqlite:" . DB_FILE);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $ver = (string)$pdo->query("SELECT sqlite_version()")->fetchColumn();
+        if (version_compare($ver, SQLITE_MIN, "<")) {
+            error_log("roadmaps: SQLite $ver is too old; " . SQLITE_MIN . "+ is required");
+            $pdo = null;
             fail(500, "database unavailable");
         }
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec("PRAGMA journal_mode = WAL");
         $pdo->exec("PRAGMA busy_timeout = 5000");
         $pdo->exec("
@@ -164,8 +218,23 @@ function db(): PDO {
                 updated_at TEXT NOT NULL
             );
         ");
+    } catch (Throwable $e) {
+        error_log("roadmaps: cannot open/initialise journey.sqlite: " . $e->getMessage());
+        $pdo = null;
+        fail(500, "database unavailable");
     }
     return $pdo;
+}
+
+/** POST bodies must be same-origin JSON. A plain HTML form cannot send
+ *  Content-Type: application/json, and a cross-origin fetch that does must pass a
+ *  CORS preflight this API never grants — so this closes form-based CSRF even from
+ *  a sibling subdomain, where SameSite=Lax cookies are still sent. */
+function require_same_origin_json(): void {
+    $site = strtolower((string)($_SERVER["HTTP_SEC_FETCH_SITE"] ?? ""));
+    if ($site !== "" && $site !== "same-origin" && $site !== "none") fail(403, "cross-site request refused");
+    $ct = strtolower(trim((string)($_SERVER["CONTENT_TYPE"] ?? $_SERVER["HTTP_CONTENT_TYPE"] ?? "")));
+    if (strpos($ct, "application/json") !== 0) fail(415, "expected application/json");
 }
 
 function now_iso(): string { return gmdate("c"); }
@@ -198,32 +267,47 @@ function throttle_id(): string {
     return substr(hash("sha256", $ip . "|" . __DIR__), 0, 32);
 }
 
+/** The throttle row for an id, with strike DECAY applied: once an id has been quiet
+ *  (not locked, no attempt) for THROTTLE_DECAY seconds, its history is forgiven. The
+ *  statement cursor is closed before returning — an open SELECT keeps a read lock
+ *  that makes a following write on the same connection fail with "database is locked". */
+function throttle_row(PDO $pdo, string $id): array {
+    $st = $pdo->prepare("SELECT fails, strikes, locked_until, updated_at FROM login_throttle WHERE id = ?");
+    $st->execute([$id]);
+    $r = $st->fetch(PDO::FETCH_ASSOC);
+    $st->closeCursor();
+    $clean = ["fails" => 0, "strikes" => 0, "locked_until" => null];
+    if (!$r) return $clean;
+    $now = time();
+    $locked = $r["locked_until"] !== null && (int)$r["locked_until"] > $now;
+    $last = strtotime((string)$r["updated_at"]) ?: 0;
+    if (!$locked && $last < $now - THROTTLE_DECAY) return $clean;
+    return ["fails" => (int)$r["fails"], "strikes" => (int)$r["strikes"],
+            "locked_until" => $r["locked_until"] === null ? null : (int)$r["locked_until"]];
+}
+
 /** @return array{locked:bool, retryAfter:int, remaining:int} */
 function throttle_check(PDO $pdo, string $id): array {
-    $row = $pdo->prepare("SELECT fails, strikes, locked_until FROM login_throttle WHERE id = ?");
-    $row->execute([$id]);
-    $r = $row->fetch(PDO::FETCH_ASSOC);
+    $r = throttle_row($pdo, $id);
     $now = time();
-    if ($r && $r["locked_until"] !== null && (int)$r["locked_until"] > $now) {
-        return ["locked" => true, "retryAfter" => (int)$r["locked_until"] - $now, "remaining" => 0];
+    if ($r["locked_until"] !== null && $r["locked_until"] > $now) {
+        return ["locked" => true, "retryAfter" => $r["locked_until"] - $now, "remaining" => 0];
     }
-    $fails = $r ? (int)$r["fails"] : 0;
-    return ["locked" => false, "retryAfter" => 0, "remaining" => max(0, THROTTLE_WINDOW - $fails)];
+    return ["locked" => false, "retryAfter" => 0, "remaining" => max(0, THROTTLE_WINDOW - $r["fails"])];
 }
 
 /** Record a wrong attempt; escalate to a lock when the window fills. @return array */
 function throttle_fail(PDO $pdo, string $id): array {
     $now = time();
-    $sel = $pdo->prepare("SELECT fails, strikes FROM login_throttle WHERE id = ?");
-    $sel->execute([$id]);
-    $r = $sel->fetch(PDO::FETCH_ASSOC);
-    $fails   = ($r ? (int)$r["fails"] : 0) + 1;
-    $strikes = $r ? (int)$r["strikes"] : 0;
+    $r = throttle_row($pdo, $id);
+    $fails   = $r["fails"] + 1;
+    $strikes = $r["strikes"];
     $lockedUntil = null;
     $retryAfter = 0;
     if ($fails >= THROTTLE_WINDOW) {
         $strikes += 1;
-        $retryAfter  = $strikes * THROTTLE_UNIT;      // strike 1 => 60s, 2 => 120s, ...
+        // strike 1 => 60s, 2 => 120s, ... capped, so a shared IP can't be locked for hours
+        $retryAfter  = min($strikes * THROTTLE_UNIT, THROTTLE_MAX_LOCK);
         $lockedUntil = $now + $retryAfter;
         $fails = 0;                                    // reset the window; strike count persists
     }
@@ -243,6 +327,40 @@ function throttle_fail(PDO $pdo, string $id): array {
 
 function throttle_clear(PDO $pdo, string $id): void {
     $pdo->prepare("DELETE FROM login_throttle WHERE id = ?")->execute([$id]);
+}
+
+/** Drop throttle rows nobody has touched for a month (and that aren't locked), so
+ *  the table can't grow forever from one-off addresses. */
+function throttle_prune(PDO $pdo): void {
+    $pdo->prepare("DELETE FROM login_throttle WHERE updated_at < ? AND (locked_until IS NULL OR locked_until < ?)")
+        ->execute([gmdate("c", time() - THROTTLE_PRUNE), time()]);
+}
+
+/**
+ * Reserve one login attempt ATOMICALLY, before the password is checked. The lock
+ * check and the fail counter run inside one write transaction, so N parallel
+ * requests are counted as exactly N attempts (serialised by SQLite) instead of all
+ * slipping through a check-then-count gap. The attempt is counted up front; a
+ * correct password then clears the row.
+ * @return array{locked:bool, retryAfter:int, remaining:int} locked => refuse now
+ */
+function throttle_reserve(PDO $pdo, string $id): array {
+    $pdo->exec("BEGIN IMMEDIATE");
+    try {
+        $state = throttle_check($pdo, $id);
+        if (!$state["locked"]) {
+            $after = throttle_fail($pdo, $id);
+            // This attempt was reserved inside the window, so it is still evaluated
+            // even when it is the one that fills the window and sets the lock.
+            $state = ["locked" => false, "retryAfter" => $after["retryAfter"],
+                      "remaining" => $after["remaining"], "lockedAfter" => $after["locked"]];
+        }
+        $pdo->exec("COMMIT");
+        return $state;
+    } catch (Throwable $e) {
+        try { $pdo->exec("ROLLBACK"); } catch (Throwable $_) {}
+        throw $e;
+    }
 }
 
 /* ------------------------------------------------------------------ *
@@ -278,8 +396,15 @@ function count_state(PDO $pdo, ?string $roadmap): int {
 
 function insert_stash(PDO $pdo, array $snapshot, string $reason): void {
     if (!$snapshot) return;
+    $json = json_encode($snapshot, JSON_OUT);
+    // An identical snapshot to the newest stash adds nothing — and inserting it
+    // anyway would push a genuinely different older backup out of the keep-window.
+    $st = $pdo->query("SELECT data_json FROM journey_stash ORDER BY id DESC LIMIT 1");
+    $latest = $st->fetchColumn();
+    $st->closeCursor();
+    if ($latest === $json) return;
     $pdo->prepare("INSERT INTO journey_stash (created_at, reason, data_json) VALUES (?, ?, ?)")
-        ->execute([now_iso(), $reason, json_encode($snapshot, JSON_UNESCAPED_SLASHES)]);
+        ->execute([now_iso(), clip_bytes($reason, 64), $json]);
     $pdo->exec("DELETE FROM journey_stash WHERE id NOT IN
                 (SELECT id FROM journey_stash ORDER BY id DESC LIMIT " . STASH_KEEP . ")");
 }
@@ -317,11 +442,15 @@ $EXPIRY_DAYS = (isset($ENV["SESSION_EXPIRY_DAYS"]) && (int)$ENV["SESSION_EXPIRY_
     ? (int)$ENV["SESSION_EXPIRY_DAYS"] : 7;
 $SESSION_LIFETIME = $EXPIRY_DAYS * 86400;
 
+if ($method === "POST") require_same_origin_json();
+
 switch ($action) {
     case "status":
         if ($method !== "GET") fail(405, "status is GET-only");
         session_boot(false, $SESSION_LIFETIME);
-        echo json_encode(["ok" => true, "authed" => is_authed(), "expiresInDays" => $EXPIRY_DAYS]);
+        $authed = is_authed();
+        if (session_status() === PHP_SESSION_ACTIVE) session_write_close();   // read-only
+        echo json_encode(["ok" => true, "authed" => $authed, "expiresInDays" => $EXPIRY_DAYS]);
         break;
 
     case "login": {
@@ -330,7 +459,12 @@ switch ($action) {
         $pdo = db();
         $tid = throttle_id();
 
-        $state = throttle_check($pdo, $tid);
+        // Count this attempt first (atomically), THEN verify — see throttle_reserve.
+        try { $state = throttle_reserve($pdo, $tid); }
+        catch (Throwable $e) {
+            error_log("roadmaps: throttle failed: " . $e->getMessage());
+            fail(503, "busy, try again");
+        }
         if ($state["locked"]) {
             fail(429, "locked", ["retryAfter" => $state["retryAfter"], "remaining" => 0]);
         }
@@ -343,19 +477,22 @@ switch ($action) {
         // server-side session file (anti disk-fill), and only a correct secret
         // clears the throttle.
         if ($pw === "" || !password_verify($pw, $PW_HASH)) {
-            $after = throttle_fail($pdo, $tid);
             fail(401, "incorrect secret", [
-                "remaining"  => $after["remaining"],
-                "locked"     => $after["locked"],
-                "retryAfter" => $after["retryAfter"],
+                "remaining"  => $state["remaining"],
+                "locked"     => $state["lockedAfter"],
+                "retryAfter" => $state["retryAfter"],
             ]);
         }
 
         throttle_clear($pdo, $tid);
+        throttle_prune($pdo);
         session_boot(true, $SESSION_LIFETIME);
         session_regenerate_id(true);
         $_SESSION["authed"]  = true;
         $_SESSION["expires"] = time() + $SESSION_LIFETIME;
+        // Expired session files are otherwise only collected by PHP's probabilistic GC,
+        // which many hosts disable for a custom save path.
+        if (function_exists("session_gc")) @session_gc();
         echo json_encode(["ok" => true, "expiresInDays" => $EXPIRY_DAYS]);
         break;
     }
@@ -367,14 +504,7 @@ switch ($action) {
         session_boot(false, $SESSION_LIFETIME);
         if (session_status() === PHP_SESSION_ACTIVE) {
             $_SESSION = [];
-            $p = session_get_cookie_params();
-            setcookie(session_name(), "", [
-                "expires"  => time() - 42000,
-                "path"     => $p["path"] ?: "/",
-                "secure"   => req_is_https(),
-                "httponly" => true,
-                "samesite" => "Lax",
-            ]);
+            clear_session_cookie();
             session_destroy();
         }
         echo json_encode(["ok" => true]);
@@ -393,7 +523,7 @@ switch ($action) {
             "empty"   => count($data) === 0,
             "savedAt" => $savedAt === false ? null : $savedAt,
             "data"    => (object)$data,
-        ], JSON_UNESCAPED_SLASHES);
+        ], JSON_OUT);
         break;
     }
 
@@ -406,27 +536,42 @@ switch ($action) {
         // full replacement of the whole journey (full:{ "slug\x01item": {kind,value} }).
         $scope = isset($body["roadmap"]) ? (string)$body["roadmap"] : null;
         if ($scope !== null && !valid_slug($scope)) fail(400, "bad roadmap slug");
+        $isFull = isset($body["full"]) && is_array($body["full"]);
+        $clearAll = ($body["clearAll"] ?? false) === true;
+        // Validate the request shape BEFORE taking the write lock.
+        if (!$isFull && !$clearAll && $scope === null) fail(400, "save needs roadmap+changes, full, or clearAll");
+        $reason = clip_bytes((string)($body["reason"] ?? ""), 64);
 
         $pdo = db();
         $now = now_iso();
         $pdo->exec("BEGIN IMMEDIATE");
         try {
-            if (isset($body["full"]) && is_array($body["full"])) {
+            if ($clearAll) {
+                // "Reset everything": an explicit, separately-flagged request (an empty
+                // `full` is still refused by the guard below). Always stashed first.
+                insert_stash($pdo, load_state($pdo, null), $reason !== "" ? $reason : "reset-all");
+                $pdo->exec("DELETE FROM journey_state");
+                write_saved_at($pdo, $now);
+                $pdo->exec("COMMIT");
+                echo json_encode(["ok" => true, "savedAt" => $now, "keys" => 0]);
+                break;
+            }
+            if ($isFull) {
                 // Full-journey replacement (import / whole-journey restore).
                 $incoming = normalize_full($body["full"]);
                 $existingCount = count_state($pdo, null);
 
                 // HARD GUARD: an empty snapshot must never wipe a populated journey.
+                // Nothing is changed, so nothing is stashed either (a stash here would
+                // only push a real backup out of the keep-window).
                 if (count($incoming) === 0 && $existingCount > 0) {
-                    insert_stash($pdo, load_state($pdo, null), "empty-overwrite-blocked");
                     $pdo->exec("COMMIT");
                     echo json_encode(["ok" => true, "skipped" => "empty-overwrite-protected",
                                       "keys" => $existingCount]);
                     break;
                 }
                 if ($existingCount > 0 && !empty($body["stashFirst"])) {
-                    insert_stash($pdo, load_state($pdo, null),
-                                 (string)($body["reason"] ?? "replaced-by-full-save"));
+                    insert_stash($pdo, load_state($pdo, null), $reason !== "" ? $reason : "replaced-by-full-save");
                 }
                 $pdo->exec("DELETE FROM journey_state");
                 $ins = $pdo->prepare(
@@ -447,13 +592,17 @@ switch ($action) {
             }
 
             // Incremental change set for one roadmap.
-            if ($scope === null) fail(400, "save needs either roadmap+changes or full");
             $changes = isset($body["changes"]) && is_array($body["changes"]) ? $body["changes"] : [];
 
             // Optional per-roadmap import: stash the roadmap's current rows first.
             if (!empty($body["stashFirst"])) {
                 $cur = load_state($pdo, $scope);
-                if ($cur) insert_stash($pdo, $cur, (string)($body["reason"] ?? "replaced-by-save"));
+                if ($cur) insert_stash($pdo, $cur, $reason !== "" ? $reason : "replaced-by-save");
+            }
+            // Reset / import of one roadmap: drop EVERY stored row of it first — including
+            // rows the client never had in memory (e.g. progress on content it doesn't know).
+            if (($body["clear"] ?? false) === true) {
+                $pdo->prepare("DELETE FROM journey_state WHERE roadmap = ?")->execute([$scope]);
             }
 
             $del = $pdo->prepare("DELETE FROM journey_state WHERE roadmap = ? AND item_id = ?");
@@ -464,27 +613,30 @@ switch ($action) {
                     kind=excluded.kind, value=excluded.value, updated_at=excluded.updated_at"
             );
             $applied = 0;
+            $rejected = [];     // ids the server refused — reported, never silently "saved"
             foreach ($changes as $ch) {
-                if (!is_array($ch) || !isset($ch["id"]) || !is_string($ch["id"])) continue;
+                if (!is_array($ch) || !isset($ch["id"]) || !is_string($ch["id"])) { $rejected[] = null; continue; }
                 $item = $ch["id"];
-                if ($item === "" || strlen($item) > 256) continue;
+                if ($item === "" || strlen($item) > 256) { $rejected[] = clip_bytes($item, 64); continue; }
                 // value === null  =>  return to default: delete the row.
                 if (!array_key_exists("value", $ch) || $ch["value"] === null) {
                     $del->execute([$scope, $item]);
                 } else {
-                    $kind  = isset($ch["kind"]) && is_string($ch["kind"]) ? substr($ch["kind"], 0, 64) : "task";
+                    $kind  = isset($ch["kind"]) && is_string($ch["kind"]) ? clip_bytes($ch["kind"], 64) : "task";
                     $value = is_string($ch["value"]) ? $ch["value"]
                            : json_encode($ch["value"], JSON_UNESCAPED_SLASHES);
-                    if (strlen($value) > MAX_VALUE_BYTES) continue;   // skip oversized (only reachable by abuse)
+                    if (!is_string($value) || strlen($value) > MAX_VALUE_BYTES) { $rejected[] = $item; continue; }
                     $up->execute([$scope, $item, $kind, $value, $now]);
                 }
                 $applied++;
             }
             touch_registry($pdo, $scope);
             write_saved_at($pdo, $now);
+            $keys = count_state($pdo, $scope);
             $pdo->exec("COMMIT");
-            echo json_encode(["ok" => true, "savedAt" => $now, "applied" => $applied,
-                              "keys" => count_state($pdo, $scope)]);
+            $resp = ["ok" => true, "savedAt" => $now, "applied" => $applied, "keys" => $keys];
+            if ($rejected) $resp["rejected"] = $rejected;
+            echo json_encode($resp, JSON_OUT);
         } catch (Throwable $e) {
             try { $pdo->exec("ROLLBACK"); } catch (Throwable $_) {}
             error_log("roadmaps: save failed: " . $e->getMessage());
@@ -500,7 +652,7 @@ switch ($action) {
         $pdo = db();
         $roadmap = isset($body["roadmap"]) ? (string)$body["roadmap"] : null;
         if ($roadmap !== null && !valid_slug($roadmap)) fail(400, "bad roadmap slug");
-        insert_stash($pdo, load_state($pdo, $roadmap), (string)($body["reason"] ?? "manual"));
+        insert_stash($pdo, load_state($pdo, $roadmap), clip_bytes((string)($body["reason"] ?? "manual"), 64));
         echo json_encode(["ok" => true]);
         break;
     }
@@ -534,7 +686,7 @@ switch ($action) {
         // curl error, parsed count) so a "nothing found" can be pinpointed. Safe
         // to leave in: auth-gated, opt-in, exposes no secrets.
         if (($_GET["debug"] ?? "") === "1") $resp["debug"] = ["fetch" => $diag, "parsed" => count($results)];
-        echo json_encode($resp, JSON_UNESCAPED_SLASHES);
+        echo json_encode($resp, JSON_OUT);
         break;
     }
 
@@ -585,7 +737,7 @@ function http_fetch(string $url, ?array &$diag = null, array $headers = [], int 
     $body = curl_exec($ch);
     $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $err  = curl_error($ch);
-    curl_close($ch);
+    if (PHP_VERSION_ID < 80000) curl_close($ch);   // a no-op since PHP 8.0, deprecated in 8.5
     $diag = ["url" => $url, "http" => $code, "bytes" => is_string($body) ? strlen($body) : 0, "err" => $err];
     if (!is_string($body) || $code < 200 || $code >= 400) return null;
     return $body;
@@ -672,11 +824,11 @@ function normalize_full($full): array {
         [$slug, $item] = explode(KEY_SEP, $rowKey, 2);
         if (!valid_slug($slug) || $item === "" || strlen($item) > 256) continue;
         if (!is_array($cell)) continue;
-        $kind  = isset($cell["kind"]) && is_string($cell["kind"]) ? substr($cell["kind"], 0, 64) : "task";
+        $kind  = isset($cell["kind"]) && is_string($cell["kind"]) ? clip_bytes($cell["kind"], 64) : "task";
         if (!array_key_exists("value", $cell) || $cell["value"] === null) continue;
         $value = is_string($cell["value"]) ? $cell["value"]
                : json_encode($cell["value"], JSON_UNESCAPED_SLASHES);
-        if (strlen($value) > MAX_VALUE_BYTES) continue;   // skip oversized (only reachable by abuse)
+        if (!is_string($value) || strlen($value) > MAX_VALUE_BYTES) continue;   // skip oversized (only reachable by abuse)
         $out[$slug . KEY_SEP . $item] = ["kind" => $kind, "value" => $value];
     }
     return $out;

@@ -13,7 +13,7 @@
 // Item ids:  "d03.t2" (task) · "move:d03.t2" (move) · "soft:d03.s1" · "flag:..." · "note:<ulid>"
 // Absence is expressed by value:null in a change, which the server turns into a row delete.
 
-import { clone } from "./util.js";
+import { clone, localStamp } from "./util.js";
 
 const SEP = "\x01";                   // must match api.php KEY_SEP ("\x01")
 const listeners = new Set();          // (slug, itemId) => void  — for re-render
@@ -81,7 +81,7 @@ export function setTask(slug, taskId, done) {
   // ticking a parent whose sub-tasks are already done, or a re-render) must NOT
   // overwrite an existing completion time — doing so would push done_at to "now"
   // and silently flip an already on-time leaf to late in the on-time metric.
-  if (done) { if (!was) setCell(slug, `done_at:${taskId}`, "meta", new Date().toISOString()); }
+  if (done) { if (!was) setCell(slug, `done_at:${taskId}`, "meta", localStamp()); }
   else setCell(slug, `done_at:${taskId}`, "meta", null);
 }
 

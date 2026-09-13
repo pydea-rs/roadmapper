@@ -565,3 +565,9 @@
   font-family: var(--font-mono); font-size: var(--t-sm); padding: var(--s3) var(--s4); display: none;
   box-shadow: var(--shadow-lg); max-height: 45vh; overflow: auto; white-space: pre-wrap; }
 #dev-error.show { display: block; }
+
+/* Motion off (in-app setting or the OS preference): scrolls jump, never animate —
+ * #main's smooth scroll-behavior would otherwise still apply to every programmatic
+ * scroll (go-to-top, landing on the current day) that passes behavior:"auto". */
+:root[data-motion="off"] #main { scroll-behavior: auto; }
+@media (prefers-reduced-motion: reduce) { #main { scroll-behavior: auto; } }

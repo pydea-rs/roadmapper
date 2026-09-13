@@ -39,7 +39,8 @@ const insights = await import(new URL("insights.js", base).href);
 
 const view = document.getElementById("view");
 const rm = reg.getRoadmap("interp-go");
-const reqLeaves = rm.leaves.filter(l => !l.optional);
+// required PRIMARY leaves — secondary-tier work has its own meter (stats.computeAll)
+const reqLeaves = rm.leaves.filter(l => !l.optional && (rm.objById.get(l.obj) || {}).tier !== "secondary");
 
 function doneOnDate(slug, id, dateStr) {
   const [y, m, d] = dateStr.split("-").map(Number);
@@ -59,13 +60,41 @@ reqLeaves.slice(4, 6).forEach(l => doneOnDate(rm.slug, l.id, TODAY));
 t.group("summarize: on-time vs late vs overdue");
 const leaves = insights.collectLeaves(rm.slug);
 const sum = insights.summarize(leaves, TODAY);
-t.eq(sum.total, reqLeaves.length, "denominator = required leaves");
+t.eq(sum.total, reqLeaves.length, "denominator = required primary leaves");
+t.ok(rm.leaves.some(l => (rm.objById.get(l.obj) || {}).tier === "secondary"), "(interp-go really has secondary work to exclude)");
 t.eq(sum.done, 6, "6 required leaves done");
 t.eq(sum.ontime, 4, "4 done on time");
 t.eq(sum.lateDone, 2, "2 done late");
 t.ok(sum.done === sum.ontime + sum.lateDone, "done splits into on-time + late");
 t.ok(sum.pending + sum.overdue === sum.total - sum.done, "undone splits into pending + overdue");
 t.eq(sum.puncRate, Math.round((4 / 6) * 100), "punctuality rate = on-time / done");
+
+t.group("Insights agrees with the hero/sidebar numbers (one definition of progress)");
+const statsMod = await import(new URL("stats.js", base).href);
+const hero = statsMod.computeAll(rm).overall.actual;
+t.eq(sum.total, hero.total, `Insights' denominator equals computeAll's (${hero.total})`);
+t.eq(sum.done, hero.done, "…and so does its done count");
+t.eq(sum.pct, hero.pct, "…so the percentages can never disagree");
+
+t.group("overdue: counted where the work sits NOW, as parent tasks (like the Today digest)");
+store.resetAll();
+{
+  // a subbed task whose day is in the past, then moved to a future day
+  const pastTask = rm.days.filter(d => d.date < TODAY).flatMap(d => d.tasks).find(x => !x.optional && x.subs && x.subs.length > 1);
+  const futureDay = rm.days.find(d => d.date > TODAY);
+  const before = insights.summarize(insights.collectLeaves(rm.slug), TODAY);
+  t.ok(before.overdueTasks >= 1 && before.overdue >= before.overdueTasks,
+    `leaf-overdue (${before.overdue}) ≥ task-overdue (${before.overdueTasks}) before any move`);
+  store.setMove(rm.slug, pastTask.id, futureDay.id);
+  const after = insights.summarize(insights.collectLeaves(rm.slug), TODAY);
+  t.eq(after.overdueTasks, before.overdueTasks - 1, "moving an overdue task to a future day removes exactly ONE overdue task");
+  const isSecondary = (rm.objById.get(pastTask.obj) || {}).tier === "secondary";   // secondary leaves aren't in the donut
+  t.eq(after.overdue, before.overdue - (isSecondary ? 0 : pastTask.subs.length),
+    "…and its leaves leave the leaf-level overdue slice too");
+  store.resetAll();
+}
+reqLeaves.slice(0, 4).forEach(l => doneOnDate(rm.slug, l.id, l.date));
+reqLeaves.slice(4, 6).forEach(l => doneOnDate(rm.slug, l.id, TODAY));
 
 t.group("burnup: cumulative, monotonic, bounded, four params");
 const bu = insights.burnup(leaves, TODAY);
