@@ -1593,6 +1593,15 @@ function movedChip(rm, slug, task, isMovedIn) {
   return null;
 }
 
+/* "↩ carried over from …": the plan passed this task on from an earlier day so a date
+ * stays within the daily cap (authored `carried`). Unlike a move it changes no date. */
+function carriedChip(rm, task) {
+  const from = task.carried && rm.daysById.get(task.carried);
+  if (!from) return null;
+  return el("span.t-carried", { text: `↩ carried over from “${from.title}”`,
+    title: `Planned with ${from.title} (${relDay(dayDate(rm, rm.slug, from))}) and passed on to keep that day within the daily cap` });
+}
+
 function leafTaskRow(rm, task, isMovedIn, hostId) {
   const slug = rm.slug;
   const done = store.isDone(slug, task.id);
@@ -1616,6 +1625,8 @@ function leafTaskRow(rm, task, isMovedIn, hostId) {
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
   const chip = movedChip(rm, slug, task, isMovedIn);
   if (chip) meta.append(chip);
+  const carried = carriedChip(rm, task);
+  if (carried) meta.append(carried);
   bodyEl.append(meta);
   const recall = taskRecall(rm, task);
   if (recall) bodyEl.append(recall);
@@ -1665,6 +1676,8 @@ function parentTaskRow(rm, task, isMovedIn, hostId) {
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
   const chip = movedChip(rm, slug, task, isMovedIn);
   if (chip) meta.append(chip);
+  const carried = carriedChip(rm, task);
+  if (carried) meta.append(carried);
   bodyEl.append(meta);
 
   const expand = el("div.t-expand");
@@ -1777,6 +1790,8 @@ function bonusRow(rm, task) {
   meta.append(catChip(task.cat, rm));
   if (task.est) meta.append(el("span.t-est", { html: `${clockIcon()} ${fmtMins(task.est)}` }));
   if (task.fallback) meta.append(el("span.t-est", { text: `· or short: ${task.fallback.label.replace(/<[^>]+>/g,"")}` }));
+  const carried = carriedChip(rm, task);
+  if (carried) meta.append(carried);
   bodyEl.append(meta);
   const recall = taskRecall(rm, task);
   if (recall) bodyEl.append(recall);

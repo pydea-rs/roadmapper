@@ -464,6 +464,7 @@
   color: color-mix(in srgb, var(--chip, var(--cat-alt)) 92%, var(--text)); }
 .t-est { font-size: var(--t-xs); color: var(--text-3); display: inline-flex; align-items: center; gap: 3px; }
 .t-moved { font-size: var(--t-xs); color: var(--warn); font-weight: 600; }
+.t-carried { font-size: var(--t-xs); color: var(--text-3); font-style: italic; }
 .t-move { margin-left: auto; opacity: 0; color: var(--text-3); cursor: grab; padding: 2px;
   transition: opacity var(--dur-fast), color var(--dur-fast); flex: none; }
 .task:hover .t-move { opacity: 1; }

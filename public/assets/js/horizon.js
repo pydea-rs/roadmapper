@@ -43,7 +43,7 @@ export function buildHorizon(roadmaps = getRoadmaps()) {
     const sum = k => entries.reduce((n, e) => n + e[k], 0);
     const roadmapsBusy = new Set(entries.filter(e => e.tasks > 0).map(e => e.rm.slug)).size;
     return { date, entries, mins: sum("mins"), doneMins: sum("doneMins"), tasks: sum("tasks"),
-      tasksDone: sum("tasksDone"), roadmaps: roadmapsBusy, cap: dailyBudget(Math.max(1, roadmapsBusy)) };
+      tasksDone: sum("tasksDone"), roadmaps: roadmapsBusy, cap: dailyBudget() };
   });
 }
 

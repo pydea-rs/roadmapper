@@ -95,6 +95,11 @@ function normalize(def) {
         fallback: t.fallback ? { est: t.fallback.est || 0, label: t.fallback.label || "" } : null,
         group: t.group || null, link: t.link || null, preread: !!t.preread,
         phase: t.phase || null,       // carried so phase-scoped milestones can resolve
+        // Authored carry-over: the id of the EARLIER day this task belongs with. The
+        // plan passes a task on to the roadmap's next day when a date would pass the
+        // daily cap, and the card shows where it came from. Content-only — unlike a
+        // user move (store `move:` cell) it changes no dates and no on-time judgement.
+        carried: typeof t.carried === "string" ? t.carried : null,
         order: i,
         subs: null,                   // filled below when the task is broken into sub-tasks
       };
@@ -240,6 +245,11 @@ export function validateAll() {
         tasksSeen.add(t.id);
         if (reserved(t.localId)) P(`task id "${t.id}" uses a reserved state-key prefix`);
         if (badLocal(t.localId)) P(`task id "${t.id}" must be letters, digits, "_" or "-"`);
+        if (t.carried !== null) {
+          const from = rm.daysById.get(t.carried);
+          if (!from) P(`task "${t.id}" is carried from unknown day "${t.carried}"`);
+          else if (!(from.date < d.date)) P(`task "${t.id}" is carried from "${t.carried}", which is not an earlier day`);
+        }
         if (!t.obj) P(`task "${t.id}" has no objective`);
         else if (!rm.objById.has(t.obj)) P(`task "${t.id}" references unknown objective "${t.obj}"`);
         // sub-tasks (leaves) must be namespaced under their parent and unique

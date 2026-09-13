@@ -27,16 +27,17 @@ const budgetRm = (slug, cadence) => ({ slug, title: slug, objectives: O, cadence
 freezeAt("2026-07-13");
 registry.registerRoadmap(budgetRm("bud-a", [4]));
 const perWeek = slug => stats.computeAll(registry.getRoadmap(slug)).projection.perWeekMins;
-t.eq(perWeek("bud-a"), Math.round(4 * 240 * 0.92), "alone on its dates (1 roadmap/day): 4 days × 240 min × tax");
+t.eq(perWeek("bud-a"), Math.round(4 * 180 * 0.92), "alone on its dates (1 roadmap/day): 4 days × the 3h ceiling × tax");
 registry.registerRoadmap(budgetRm("bud-b", [4]));
-t.eq(perWeek("bud-a"), Math.round(4 * (240 / 2) * 0.92), "two roadmaps on the same dates share the 4h ceiling (≤2 → 240)");
+t.eq(perWeek("bud-a"), Math.round(4 * (180 / 2) * 0.92), "two roadmaps on the same dates share the one 3h ceiling");
 registry.registerRoadmap(budgetRm("bud-c", [4]));
-t.eq(perWeek("bud-a"), Math.round(4 * (360 / 3) * 0.92), "three share the 6h ceiling (3+ → 360)");
+t.eq(perWeek("bud-a"), Math.round(4 * (180 / 3) * 0.92), "three share it too — the ceiling does not grow with more roadmaps");
 registry.registerRoadmap(budgetRm("bud-d", [4]));
-t.eq(perWeek("bud-a"), Math.round(4 * (360 / 4) * 0.92), "four still share 6h — the ceiling never grows past 360");
+t.eq(perWeek("bud-a"), Math.round(4 * (180 / 4) * 0.92), "four still share 3h");
+t.eq(stats.dailyBudget(), 180, "the owner's daily ceiling is 3h of required work");
 // a finished roadmap stops drawing a share
 for (const slug of ["bud-b", "bud-c", "bud-d"]) for (const l of registry.getRoadmap(slug).leaves) store.setTask(slug, l.id, true);
-t.eq(perWeek("bud-a"), Math.round(4 * 240 * 0.92), "roadmaps with no required work left release their share");
+t.eq(perWeek("bud-a"), Math.round(4 * 180 * 0.92), "roadmaps with no required work left release their share");
 store.resetAll();
 // retire the budget roadmaps from later groups' concurrency (all work done = no share)
 for (const slug of ["bud-a", "bud-b", "bud-c", "bud-d"]) for (const l of registry.getRoadmap(slug).leaves) store.setTask(slug, l.id, true);

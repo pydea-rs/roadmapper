@@ -74,7 +74,7 @@ t.group("buildHorizon — every date with work, every task counted once");
   for (const r of R) for (const d of r.days) for (const x of d.tasks) if (!x.optional)
     byDate.set(d.date, (byDate.get(d.date) || 0) + reqMins(x));
   t.ok(dates.every(d => d.mins === (byDate.get(d.date) || 0)), "each date's minutes are its planned required minutes (bonus never loads a day)");
-  t.ok(dates.every(d => d.cap === (d.roadmaps >= 3 ? 360 : 240)), "the day's ceiling is ~4h for 1–2 roadmaps, 6h for 3+");
+  t.ok(dates.every(d => d.cap === 180), "every day's ceiling is the owner's 3h, however many roadmaps share it");
   t.ok(dates.every(d => d.entries.every((e, i) => i === 0 || R.indexOf(e.rm) > R.indexOf(d.entries[i - 1].rm))),
     "a date's roadmaps keep the sidebar order");
   t.ok(dates.some(d => d.roadmaps >= 3), "the real plan has days shared by three or more roadmaps");

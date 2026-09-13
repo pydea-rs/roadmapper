@@ -34,17 +34,14 @@ function isOnTime(slug, leafId, originDate) {
 // authored calendar.) A roadmap's slice of that block is proportional to how often
 // it runs, and it earns its slice on each of its own active days.
 //
-// The block is the owner's daily CEILING, not a target, and it depends on how many
-// roadmaps share the date: ~4h when one or two do, up to 6h when three or more do.
-// (7h is allowed only as a rare, hand-placed exception — never assumed here.)
-const BUDGET_FEW_MINS = 240;          // a date shared by 1–2 roadmaps
-const BUDGET_MANY_MINS = 360;         // a date shared by 3+ roadmaps
-/** The day's ceiling when `c` roadmaps typically share it. `c` is an average, so a
- *  fractional value between 2 and 3 blends linearly between the two ceilings. */
-export function dailyBudget(c) {
-  if (c <= 2) return BUDGET_FEW_MINS;
-  if (c >= 3) return BUDGET_MANY_MINS;
-  return BUDGET_FEW_MINS + (c - 2) * (BUDGET_MANY_MINS - BUDGET_FEW_MINS);
+// The block is the owner's daily CEILING, not a target: at most 3h of required work
+// on one date, however many roadmaps share it (the 2026-09-13 cap; it replaced a
+// 4h-for-one-or-two / 6h-for-three-plus rule). A 4h date is a rare, hand-placed
+// exception in the content — never assumed here.
+export const DAILY_CAP_MINS = 180;
+/** The day's ceiling. It no longer depends on how many roadmaps share the date. */
+export function dailyBudget() {
+  return DAILY_CAP_MINS;
 }
 // Residual context-switching cost only. This used to be 0.85 to stand in for "several
 // roadmaps are competing for the day" — but dayConcurrency() now models exactly that,
@@ -395,7 +392,7 @@ function project(rm, remainingMins, done, total, plannedByToday = 0) {
   // On a day the owner works, the budget splits between whichever roadmaps run that
   // day; this roadmap earns its slice on each of its own active days.
   const c = dayConcurrency(rm);
-  const perDayMins = dailyBudget(c) / c;
+  const perDayMins = dailyBudget() / c;
   const perWeekMins = Math.max(1, active * perDayMins * OVERLAP_TAX);
   const weeksNeeded = remainingMins / perWeekMins;
   const expectedFinish = addDays(todayStr(), Math.ceil(weeksNeeded * 7));
@@ -426,7 +423,7 @@ function projectSecondary(rm, remainingMins) {
   if (remainingMins <= 0) return null;
   const active = 1.2;                  // secondary gets little time
   const c = dayConcurrency(rm);
-  const perWeekMins = Math.max(1, active * (dailyBudget(c) / c) * OVERLAP_TAX);
+  const perWeekMins = Math.max(1, active * (dailyBudget() / c) * OVERLAP_TAX);
   const finish = addDays(todayStr(), Math.ceil((remainingMins / perWeekMins) * 7));
   return { remainingMins, finish };
 }

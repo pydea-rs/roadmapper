@@ -107,7 +107,7 @@ export function brick(rm, task, opts = {}) {
   });
 
   const main = el("button.brick-main", { type: "button",
-    title: `${label}${task.est ? " · " + fmtMins(task.est) : ""}${movedIn ? " · moved in" : ""}`,
+    title: `${label}${task.est ? " · " + fmtMins(task.est) : ""}${movedIn ? " · moved in" : ""}${task.carried && rm.daysById.get(task.carried) ? ` · carried over from “${rm.daysById.get(task.carried).title}”` : ""}`,
     "aria-label": `${label}. ${task.est ? fmtMins(task.est) + ", " : ""}${state}. Show the day` });
   main.append(el("span.brick-label", { text: (movedIn ? "↩ " : "") + (task.optional ? "★ " : "") + label }));
   if (task.subs) {
@@ -374,6 +374,8 @@ function lensTask(rm, task, slot, o) {
     const od = rm.daysById.get(task.day);
     meta.append(el("span.t-moved", { text: `↩ from ${od ? shortDate(dayDate(rm, slug, od)) : task.day}` }));
   }
+  const carriedFrom = task.carried && rm.daysById.get(task.carried);
+  if (carriedFrom) meta.append(el("span.t-carried", { text: `↩ carried over from “${carriedFrom.title}”` }));
   body.append(meta);
   if (task.subs) {
     const subs = el("div.lens-subs");
