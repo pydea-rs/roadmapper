@@ -1,8 +1,8 @@
 // raylib.test.mjs — invariants specific to the second side-track roadmap,
 // "Big Bang" (slug "raylib"): the interleaved-thread design, the course→physics→
 // project→shaders SEQUENCING the owner specified, milestone placement, recall
-// cards, and the scheduling promise that it lands on LIGHT days and never piles
-// onto the main roadmaps (especially Rust). Structural basics (id/date ordering,
+// cards, and — since the 2026-09-13 consolidation — the promise that the SHARED
+// working day stays inside the owner's band. Structural basics (id/date ordering,
 // week windows, referentOf) are covered for every roadmap by content.test.mjs.
 import { suite } from "./_harness.mjs";
 import { registry, loadRoadmap } from "./_load.mjs";
@@ -27,7 +27,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   ["course", "examples", "noc", "project", "shaders"],
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
-t.ok(rm.days[0].date === "2026-09-04", "the journey starts on 2026-09-04 (start shifted to Friday), not a week later");
+t.ok(rm.days[0].date === "2026-09-05", "the journey starts on 2026-09-05 (its slot in the shared working week)");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -92,33 +92,29 @@ t.ok(rm.milestones.some(m => m.week === "w6"),
 t.ok(rm.milestones.some(m => m.week === "w19"),
   "the capstone milestone lands at the final week (19)");
 
-t.group("scheduling — lands on LIGHT days, low collision with the mains");
-// combined main-roadmap minutes per calendar date
-const mainLoad = new Map();
-for (const r of registry.getMainRoadmaps())
+t.group("scheduling — the SHARED working day stays inside the owner's band");
+// RETIRED (2026-09-13) — this group used to assert that raylib landed only on LIGHT
+// main-roadmap days (main <= 160, combined <= 240). That framing assumed each roadmap
+// got its own slice of the calendar, so a side track had to dodge the mains. The
+// Option-B consolidation inverts it: all four roadmaps are now deliberately STACKED
+// onto shared working days precisely so the COMBINED day reaches the owner's 4–6h
+// target, with real rest days in between. "Keep the side track off busy days" is
+// therefore no longer the promise — the promise is that the combined day never blows
+// past the band, and that a side day stays small ON ITS OWN so it can be stacked.
+const combined = new Map();
+for (const r of registry.getRoadmaps())
   for (const d of r.days) {
-    const est = d.tasks.reduce((s, x) => s + (x.est || 0), 0);
-    mainLoad.set(d.date, (mainLoad.get(d.date) || 0) + est);
+    const est = d.tasks.reduce((s, x) => s + (x.optional ? 0 : x.est || 0), 0);
+    combined.set(d.date, (combined.get(d.date) || 0) + est);
   }
-// The light-day invariant is measured on raylib's STEADY STATE (from 2026-09-16).
-// The launch fortnight (Sep 4–Sep 15) deliberately overlaps: the owner asked all
-// three roadmaps to KICK OFF together on Fri Sep 4, so their heavy opening days
-// coincide with raylib's during that window. That overlap is accepted and transient
-// — raylib's Group-2 cadence re-plan (2–3 days/week) re-tunes placement across the
-// full range.
-const STEADY = "2026-09-16";
-let maxMainOnRaylibDay = 0, maxCombined = 0;
-for (const d of rm.days) {
-  if (d.date < STEADY) continue;                 // skip the blessed shared-launch window
-  const main = mainLoad.get(d.date) || 0;
-  const self = d.tasks.reduce((s, x) => s + (x.est || 0), 0);
-  maxMainOnRaylibDay = Math.max(maxMainOnRaylibDay, main);
-  maxCombined = Math.max(maxCombined, main + self);
-}
-t.ok(maxMainOnRaylibDay <= 120,
-  `no steady-state raylib day lands on a heavy main-roadmap day (worst main load ${maxMainOnRaylibDay} min)`);
-t.ok(maxCombined <= 165,
-  `combined main+raylib load stays medium on every steady-state day (worst ${maxCombined} min)`);
+const loads = [...combined.values()];
+const peak = Math.max(...loads);
+t.ok(peak <= 420, `no calendar date passes the 7h hard ceiling (worst ${peak} min)`);
+t.ok(loads.filter(v => v > 360).length <= 3,
+  `only rarely may a day pass 6h (found ${loads.filter(v => v > 360).length})`);
+// A side-track day must stay a single small block, or stacking it would be impossible.
+const selfMax = Math.max(...rm.days.map(d => d.tasks.reduce((s, x) => s + (x.optional ? 0 : x.est || 0), 0)));
+t.ok(selfMax <= 130, `a raylib day stays small on its own (worst ${selfMax} min)`);
 // unique dates (the effort/digest views key off date)
 const dates = rm.days.map(d => d.date);
 t.eq(new Set(dates).size, dates.length, "raylib day dates are unique (no self-collisions)");

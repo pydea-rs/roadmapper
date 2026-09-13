@@ -12,8 +12,12 @@ await loadRoadmap("raylib.js");
 const rm = registry.getRoadmap("raylib");
 const slug = "raylib";
 
-const parent = rm.tasksById.get("d01.t1");      // a 3-part parent (12 + 18 + 15 = 45)
+const parent = rm.tasksById.get("d01.t1");      // a 3-part parent (watch + 2 build steps)
 const [s1, s2, s3] = parent.subs.map(s => s.id);
+// Minute assertions below are DERIVED from the content, not hardcoded: this suite
+// proves the leaf-level effort MECHANISM, so a re-estimate of the material must
+// not drag it red. (content.test holds the deliberately literal tripwires.)
+const [e1, e2] = parent.subs.map(s => s.est);
 const clear = (...ids) => ids.forEach(id => store.setTask(slug, id, false));
 
 t.group("taskProgress — derived and tri-state (parents hold no state)");
@@ -44,7 +48,7 @@ t.eq(S0.overall.actual.done, 0, "nothing done yet");
 store.setTask(slug, s1, true);
 const S1 = stats.computeAll(rm);
 t.eq(S1.overall.actual.done, 1, "ticking ONE sub-task advances by one leaf (not a whole task)");
-t.eq(S1.invested, 12, "invested minutes = that leaf's own est (12)");
+t.eq(S1.invested, e1, `invested minutes = that leaf's own est (${e1})`);
 t.eq(S1.days["d01"].actual.total, 3, "day d01's ring counts its 3 leaves");
 t.eq(S1.days["d01"].actual.done, 1, "day d01 reads 1 of 3 done");
 clear(s1);
@@ -64,7 +68,7 @@ store.setTask(slug, s2, true);
 store.setCell(slug, `done_at:${s2}`, "meta", new Date(2026, 6, 20, 12, 0, 0).toISOString());
 const e = activity.dayEffort("2026-07-20", activity.activityByDate("side"));
 t.eq(e.tasks, 2, "two completed sub-tasks = two units of effort");
-t.eq(e.mins, 30, "their minutes sum (12 + 18)");
+t.eq(e.mins, e1 + e2, `their minutes sum (${e1} + ${e2})`);
 clear(s1, s2);
 
 t.group("reconcile prunes orphan sub-task rows, keeps real ones");

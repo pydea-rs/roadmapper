@@ -277,11 +277,16 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
 render.renderToday(view);                                     // restore the Today view for the next group
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-09-06, so raylib d01.t1 (2026-09-04) is OVERDUE. A
+// "now" is frozen at 2026-09-06, so raylib d01.t1 (2026-09-05) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
 // "d01.t1" in the cross-roadmap digest.
+//
+// Since the 2026-09-13 consolidation raylib's next day is 09-08, not the frozen
+// "today", so d01.t1 is the ONLY raylib item outstanding — finishing it empties the
+// whole card. Assert on the TASK being gone (optional-chaining the card), not on the
+// card surviving: an absent card satisfies the invariant just as well as an empty one.
 const railCard = () => view.querySelector('.today-card a[href="#/raylib/today"]')?.closest(".today-card");
 render.renderToday(view);
 t.ok(railCard() && railCard().querySelector('[data-task="d01.t1"]'),
@@ -289,7 +294,7 @@ t.ok(railCard() && railCard().querySelector('[data-task="d01.t1"]'),
 const od = rl.tasksById.get("d01.t1");
 od.subs.forEach(s => store.setTask("raylib", s.id, true));   // complete every sub
 render.renderToday(view);
-t.ok(railCard() && !railCard().querySelector('[data-task="d01.t1"]'),
+t.ok(!railCard()?.querySelector('[data-task="d01.t1"]'),
   "once all its subs are done, the overdue parent leaves the raylib outstanding list");
 od.subs.forEach(s => store.setTask("raylib", s.id, false));
 
