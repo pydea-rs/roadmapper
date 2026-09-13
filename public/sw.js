@@ -9,7 +9,7 @@
 // Served from the web root, so its scope is "/" and it controls the whole app.
 // Plain JS (no build step, no external deps) — matches the rest of the codebase.
 
-const VERSION = "v2";   // bump to force every client onto a fresh cache
+const VERSION = "v3";   // bump to force every client onto a fresh cache
 const CACHE = `roadmaps-${VERSION}`;
 const SCOPE = self.registration.scope;              // e.g. https://host/  (or /sub/)
 const SHELL = new URL(".", SCOPE).href;             // the app shell (index.php at scope root)
@@ -25,6 +25,8 @@ const PRECACHE = [
   "assets/css/shell.css",
   "assets/css/roadmap.css",
   "assets/css/insights.css",
+  "assets/css/atlas.css",
+  "assets/css/horizon.css",
   "assets/js/app.js",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",

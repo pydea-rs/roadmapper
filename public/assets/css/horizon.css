@@ -1,0 +1,178 @@
+/* horizon.css — the Horizon view (#/horizon): a look-ahead strip, the sticky skyline
+ * navigator, and a day-by-day timetable with one lane per roadmap. Bricks and the
+ * day lens come from atlas.css. */
+
+.hz { --gutter: 132px; display: flex; flex-direction: column; gap: var(--s4); }
+.hz-hero { margin-bottom: 0; }
+
+/* ---- look-ahead ---- */
+.hz-ahead { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: var(--s3); }
+.hz-stat { display: flex; flex-direction: column; gap: 2px; min-width: 0; padding: var(--s3) var(--s4); text-align: left;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r2); box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur-fast), transform var(--dur-fast); }
+.hz-stat.link { cursor: pointer; }
+.hz-stat.link:hover { border-color: var(--accent); transform: translateY(-2px); }
+.hz-stat-k { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--text-3); }
+.hz-stat-v { font-size: var(--t-xl); font-weight: 750; letter-spacing: -.02em; font-variant-numeric: tabular-nums; color: var(--text); }
+.hz-stat-s { font-size: var(--t-xs); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- sticky head ---- */
+.hz-head { position: sticky; top: 0; z-index: 7; display: flex; flex-direction: column; gap: var(--s3);
+  margin: 0 calc(-1 * var(--s3)); padding: var(--s3) var(--s3) var(--s2);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  -webkit-backdrop-filter: saturate(1.3) blur(14px); backdrop-filter: saturate(1.3) blur(14px);
+  border-bottom: 1px solid var(--border); border-radius: 0 0 var(--r3) var(--r3); }
+@media (max-width: 860px) { .hz-head { top: 54px; } }
+
+/* the skyline: a column per calendar day, as tall as its planned minutes */
+.sky { position: relative; height: 78px; padding-bottom: 16px; cursor: crosshair; touch-action: none;
+  user-select: none; -webkit-user-select: none; border-radius: var(--r2); outline-offset: 4px; }
+.sky-cols { position: absolute; inset: 6px 0 16px 0; display: grid; align-items: end; column-gap: 1px;
+  grid-template-columns: repeat(var(--span), minmax(0, 1fr));
+  background: linear-gradient(to top, var(--border-2) 1px, transparent 1px); }
+.sky-col { grid-row: 1; height: max(3px, var(--h)); min-width: 1px; display: flex; flex-direction: column-reverse;
+  gap: 1px; border-radius: 2px 2px 0 0; overflow: hidden; transition: opacity var(--dur); }
+.sky-col i { display: block; min-height: 1px; background: var(--accent); }
+.sky-col.past { opacity: .32; }
+.sky:hover .sky-col.past { opacity: .5; }
+.sky-now { position: absolute; top: 0; bottom: 12px; width: 2px; margin-left: -1px; border-radius: 2px;
+  background: var(--text); pointer-events: none; }
+.sky-now::before { content: ""; position: absolute; top: -3px; left: 50%; width: 8px; height: 8px; margin-left: -4px;
+  border-radius: 50%; background: var(--text); box-shadow: 0 0 0 3px var(--bg); }
+.sky-ticks { position: absolute; left: 0; right: 0; bottom: 0; height: 14px; pointer-events: none; }
+.sky-tick { position: absolute; top: 0; padding-left: 4px; border-left: 1px solid var(--border-2);
+  font-size: 10px; line-height: 13px; color: var(--text-3); white-space: nowrap; }
+.sky-win { position: absolute; top: 0; bottom: 12px; min-width: 5px; border-radius: 6px; pointer-events: none;
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--text) 55%, transparent);
+  transition: left .14s linear, width .14s linear; }
+.sky.dragging .sky-win { transition: none; }
+.sky-tip { position: absolute; top: -30px; transform: translateX(-50%); padding: 3px 9px; border-radius: var(--r-pill);
+  font-size: var(--t-xs); font-weight: 650; white-space: nowrap; pointer-events: none; color: var(--text);
+  background: var(--surface); border: 1px solid var(--border-2); box-shadow: var(--shadow);
+  opacity: 0; transition: opacity var(--dur-fast); font-variant-numeric: tabular-nums; }
+.sky.tipping .sky-tip { opacity: 1; }
+.sky:focus-visible { outline: 2px solid var(--accent); }
+
+/* controls */
+.hz-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2) var(--s3); margin-bottom: calc(-1 * var(--s2)); }
+.hz-lanes { display: flex; flex-wrap: wrap; gap: 6px; }
+.hz-lane { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px 4px 8px; border-radius: var(--r-pill);
+  font-size: var(--t-xs); font-weight: 650; color: var(--text-2); background: var(--surface); border: 1px solid var(--border);
+  transition: opacity var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast); }
+.hz-lane i { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+.hz-lane:hover { border-color: var(--accent); color: var(--text); }
+.hz-lane:not(.on) { opacity: .6; }
+.hz-lane:not(.on) i { background: transparent; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.hz-lane:not(.on) .hz-lane-t { text-decoration: line-through; }
+.hz-ctl-right { margin-left: auto; display: flex; align-items: center; gap: var(--s2); }
+
+/* lane titles, aligned with the columns below */
+.hz-lanes-head { display: grid; grid-template-columns: var(--gutter) repeat(var(--lanes), minmax(0, 1fr)); gap: var(--s2);
+  padding: 0 7px; }
+.hz-lh { display: flex; align-items: center; gap: 6px; min-width: 0; padding: 2px 6px 5px;
+  font-size: var(--t-xs); font-weight: 700; color: var(--text-2); border-bottom: 2px solid var(--accent); }
+.hz-lh i { display: none; }
+.hz-lh-t { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- the timetable ---- */
+.hz-list { display: flex; flex-direction: column; gap: 6px; padding-bottom: var(--s6); }
+.hz-past-toggle { align-self: center; display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+  border-radius: var(--r-pill); border: 1px dashed var(--border-2); font-size: var(--t-xs); font-weight: 650; color: var(--text-2);
+  transition: border-color var(--dur-fast), color var(--dur-fast); }
+.hz-past-toggle:hover { border-color: var(--text-3); color: var(--text); }
+.hz-od { color: var(--warn); font-weight: 700; }
+
+.hz-week { display: flex; align-items: center; gap: var(--s3); margin-top: var(--s4); padding: 0 4px 2px;
+  font-size: var(--t-xs); color: var(--text-3); }
+.hz-list > .hz-week:first-child, .hz-past-toggle + .hz-week { margin-top: var(--s2); }
+.hz-week-no { font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+.hz-week-range { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hz-week-mix { flex: 1; display: flex; gap: 1px; height: 4px; min-width: 40px; max-width: 280px; border-radius: 3px; overflow: hidden; }
+.hz-week-mix i { background: var(--accent); }
+.hz-week-sum { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.hz-day { display: grid; grid-template-columns: var(--gutter) repeat(var(--lanes), minmax(0, 1fr)); gap: var(--s2);
+  padding: 6px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3);
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.hz-day:hover { border-color: var(--border-2); }
+.hz-day.today { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 12px 30px -16px color-mix(in srgb, var(--accent) 60%, transparent); }
+.hz-day.past { background: var(--surface-2); }
+.hz-day.past .hz-dnum { color: var(--text-2); }
+
+.hz-when { display: flex; flex-direction: column; gap: 3px; min-width: 0; padding: 4px 6px; }
+.hz-date { display: flex; align-items: center; gap: 7px; }
+.hz-dnum { font-size: 27px; font-weight: 800; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; min-width: 1.2em; }
+.hz-dm { display: flex; flex-direction: column; line-height: 1.15; }
+.hz-dow { font-size: var(--t-xs); font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--text-2); }
+.hz-mon { font-size: var(--t-xs); color: var(--text-3); }
+.hz-rel { font-size: var(--t-xs); font-weight: 650; color: var(--text-3); }
+.hz-day.today .hz-rel, .hz-day.today .hz-dow { color: var(--accent-ink, var(--accent)); }
+.hz-gauge { margin-top: auto; display: flex; flex-direction: column; gap: 3px; padding-top: 4px; }
+.hz-gauge-track { position: relative; height: 5px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.hz-gauge-track i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 3px; }
+.hz-gauge-track i.plan { background: color-mix(in srgb, var(--text-3) 55%, transparent); }
+.hz-gauge-track i.done { background: var(--ok); }
+.hz-gauge.full .hz-gauge-track i.plan { background: color-mix(in srgb, var(--warn) 70%, transparent); }
+.hz-gauge.over .hz-gauge-track i.plan { background: var(--bad); }
+.hz-gauge-t { font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.hz-gauge.over .hz-gauge-t { color: var(--bad); font-weight: 700; }
+
+.hz-cell { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.hz-cell.empty { border-radius: var(--r2); opacity: .55;
+  background: repeating-linear-gradient(135deg, transparent 0 7px, color-mix(in srgb, var(--border) 80%, transparent) 7px 8px); }
+
+.hz-ticket { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding: 4px;
+  border-radius: var(--r2); background: color-mix(in srgb, var(--accent) 6%, var(--surface-2));
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--border));
+  transition: border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.hz-ticket.lens-anchor { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.hz-ticket.complete { border-color: color-mix(in srgb, var(--ok) 45%, var(--border)); }
+.hz-thead { display: flex; align-items: center; gap: 6px; width: 100%; min-width: 0; padding: 2px 5px; border-radius: 7px; text-align: left;
+  transition: background var(--dur-fast); }
+.hz-thead:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+.hz-tico { display: none; font-size: 14px; }
+.hz-ttitle { flex: 1; min-width: 0; font-size: var(--t-xs); font-weight: 700; color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hz-tcount { font-size: 10px; font-weight: 700; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.hz-ticket.complete .hz-tcount { color: var(--ok); }
+.hz-bricks { display: flex; flex-direction: column; gap: 4px; }
+
+.hz-free { display: flex; align-items: center; gap: var(--s2); min-height: 24px; padding: 0 var(--s3);
+  font-size: var(--t-xs); color: var(--text-3); }
+.hz-free-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--border-2); flex: none; margin-left: 6px; }
+.hz-free-t { font-weight: 650; color: var(--text-2); }
+.hz-free-d { font-variant-numeric: tabular-nums; }
+.hz-free-now { font-weight: 700; color: var(--accent-ink, var(--accent)); background: var(--accent-soft);
+  padding: 1px 8px; border-radius: var(--r-pill); }
+.hz-free::after { content: ""; flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--border-2) 0 4px, transparent 4px 8px); }
+
+/* ---- compact: each day's tasks become one proportional strip ---- */
+.hz.compact .hz-list { gap: 4px; }
+.hz.compact .hz-day { padding: 4px; }
+.hz.compact .hz-when { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 2px 8px; padding: 2px 4px; }
+.hz.compact .hz-dnum { font-size: 18px; }
+.hz.compact .hz-gauge { margin-top: 0; padding-top: 0; width: 100%; }
+.hz.compact .hz-gauge-t { display: none; }
+.hz.compact .hz-bricks { flex-direction: row; gap: 2px; }
+.hz.compact .brick { flex: var(--est) 1 0; min-width: 8px; height: 12px; border-radius: 3px; }
+.hz.compact .brick::before { inset: auto 0 0 0; width: auto; height: 2px; }
+.hz.compact .brick-label, .hz.compact .brick-pips, .hz.compact .brick-tick { display: none; }
+.hz.compact .brick-main { padding: 0; }
+.hz.compact .brick:hover { transform: scaleY(1.25); }
+.hz.compact .hz-free { min-height: 18px; }
+
+/* ---- narrow screens: lanes stack inside each day ---- */
+@media (max-width: 720px) {
+  .hz { --gutter: 1fr; }
+  .hz-ahead { grid-template-columns: 1fr 1fr; }
+  .hz-lanes-head { display: none; }
+  .hz-day { grid-template-columns: 1fr; }
+  .hz-when { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 4px 10px; }
+  .hz-gauge { margin: 0 0 0 auto; padding: 0; width: 120px; }
+  .hz-cell.empty { display: none; }
+  .hz-tico { display: inline; }
+  .hz-week-mix { display: none; }
+  .hz-ctl-right { margin-left: 0; }
+  .sky { height: 64px; }
+}

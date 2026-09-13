@@ -13,6 +13,7 @@ import { openDayMenu } from "./daymenu.js";
 import { checkIcon, toast, getSettings, setSetting, inputModal, openModal } from "./ui.js";
 import { finderPanel } from "./finder.js";
 import { interludesAfter, interludeUrl } from "./interludes.js";
+import { atlasBoard, refreshLens, closeLens } from "./atlas.js";
 import {
   activityByDate, dayEffort, trailingAvg, weekDelta, series, tasksDoneOn,
 } from "./activity.js";
@@ -117,13 +118,154 @@ export function renderRoadmap(rm, mount, { animate = true } = {}) {
  *  paint that roadmap over the global view, and its accent would tint the global view. */
 export function releaseView(mount) {
   cur = null;
+  closeLens(true);
   if (mount && mount.style) for (const p of ["--accent", "--accent-soft", "--accent-ink"]) mount.style.removeProperty(p);
+  if (mount && mount.classList) mount.classList.remove("wide");
 }
 
 function rerender() {
   if (!cur || !cur.mount.isConnected) return;
-  const open = new Set($$open());
+  // The open-card set lives in the DOM only while cards are drawn; in the Atlas there
+  // are no cards, so reading the DOM would forget every open card.
+  const open = cur.mount.querySelector(".timeline") ? new Set($$open()) : (loadOpen(cur.rm.slug) || new Set());
   paint(cur.rm, cur.mount, open, false); // in-place update → no cascade (stable on ticks)
+}
+
+/* ================================================================== *
+ *  Journey layout: the day cards, or the compact Atlas
+ * ================================================================== */
+const journeyView = () => (getSettings().timelineView === "atlas" ? "atlas" : "cards");
+
+/** The day the user is on: today's, else the next one ahead, else the last. */
+export function currentDayOf(rm) {
+  const ts = todayStr();
+  const eff = d => dayDate(rm, rm.slug, d);
+  const byDate = [...rm.days].sort((a, b) => (eff(a) < eff(b) ? -1 : eff(a) > eff(b) ? 1 : 0));
+  return byDate.find(d => eff(d) === ts) || byDate.find(d => eff(d) >= ts) || byDate[byDate.length - 1] || null;
+}
+
+/** Bring a day into view in whichever layout is drawn. Cards open the day's card;
+ *  the Atlas scrolls to its column and flashes it. Returns false when not found. */
+export function revealDay(dayId, { block = "center", behavior = "auto", open = true } = {}) {
+  if (!cur || !dayId) return false;
+  const card = cur.mount.querySelector(`.day[data-day="${cssEsc(dayId)}"]`);
+  if (card) {
+    if (open && !card.classList.contains("open")) {
+      const head = card.querySelector(".day-head");
+      if (head) head.click(); else card.classList.add("open");
+    }
+    card.scrollIntoView({ block, behavior });
+    return true;
+  }
+  const col = cur.mount.querySelector(`[data-atlas-day="${cssEsc(dayId)}"]`);
+  if (!col) return false;
+  const plateEl = col.closest(".plate") || col;
+  plateEl.scrollIntoView({ block: block === "center" ? "center" : "start", behavior });
+  if (motionOK()) {
+    col.classList.remove("flash");
+    void col.offsetWidth;                            // restart the animation
+    col.classList.add("flash");
+    col.addEventListener("animationend", () => col.classList.remove("flash"), { once: true });
+  }
+  return true;
+}
+
+/* The sticky bar above the journey: what it holds, and the Cards ⇄ Atlas switch. */
+function journeyBar(rm, mode) {
+  const bar = el("div.jbar");
+  const lead = el("div.jbar-lead");
+  lead.append(el("span.jbar-title", { text: "Journey" }));
+  const tasks = rm.days.reduce((n, d) => n + d.tasks.filter(t => !t.optional).length, 0);
+  lead.append(el("span.jbar-sub", { text: `${rm.days.length} days · ${rm.weeks.length} weeks · ${tasks} tasks` }));
+  bar.append(lead);
+
+  const now = el("button.jbar-now", { type: "button", title: "Jump to the day you're on", html: `${nowIcon()}<span>Now</span>` });
+  now.addEventListener("click", () => { const d = currentDayOf(rm); if (d) revealDay(d.id, { behavior: motionOK() ? "smooth" : "auto" }); });
+  bar.append(now);
+
+  const seg = el("div.jview" + (atlasEnter ? ".switched" : ""), { role: "group", "aria-label": "Journey layout", dataset: { mode } });
+  seg.append(el("span.jview-thumb", { "aria-hidden": "true" }));
+  const opt = (val, label, icon, hint) => {
+    const b = el("button.jview-btn" + (mode === val ? ".on" : ""), { type: "button",
+      "aria-pressed": mode === val ? "true" : "false", title: hint, dataset: { view: val }, html: `${icon}<span>${label}</span>` });
+    b.addEventListener("click", () => setJourneyView(val));
+    return b;
+  };
+  seg.append(opt("cards", "Cards", cardsIcon(), "Day cards — full detail, one day at a time"));
+  seg.append(opt("atlas", "Atlas", atlasIcon(), "Atlas — every week, day and task on one board"));
+  bar.append(seg);
+  return bar;
+}
+
+/** Switch the journey layout in place. The days on screen travel to their spot in the
+ *  other layout (a shared-element view transition), and the view stays on the same
+ *  part of the journey; without transitions support the new layout assembles itself. */
+export function setJourneyView(mode, { focusDay = null } = {}) {
+  mode = mode === "atlas" ? "atlas" : "cards";
+  if (!cur || !cur.mount.isConnected || journeyView() === mode) return;
+  const { mount } = cur;
+  const main = document.getElementById("main");
+  closeLens(true);
+
+  const before = visibleDays(mount);
+  const body = mount.querySelector(".timeline, .atlas");
+  // still up in the hero/stats? then stay there; otherwise keep the same days in view
+  const nearTop = !body || !main || body.getBoundingClientRect().top > main.getBoundingClientRect().top + 90;
+  const anchor = before.length ? before[0].id : null;
+
+  const apply = animateIn => {
+    setSetting("timelineView", mode);
+    atlasEnter = animateIn;
+    rerender();
+    atlasEnter = false;
+    if (focusDay) revealDay(focusDay, { block: "center" });
+    else if (!nearTop && anchor) revealDay(anchor, { block: "start", open: false });
+  };
+
+  const canMorph = motionOK() && typeof document.startViewTransition === "function" && main;
+  if (!canMorph) { apply(motionOK()); return; }
+
+  // name the days on screen so each one travels to its new place, in reading order
+  const names = new Set();
+  let stagger = "";
+  before.slice(0, 16).forEach(({ id, node }, i) => {
+    node.style.viewTransitionName = `jv-${id}`; names.add(id);
+    const sel = ["group", "old", "new"].map(p => `::view-transition-${p}(jv-${id})`).join(",");
+    stagger += `${sel}{animation-delay:${i * 22}ms}`;
+  });
+  const staggerEl = el("style", { text: stagger });
+  document.head.append(staggerEl);
+  const root = document.documentElement;
+  root.classList.add("jv-morph");
+  let vt;
+  try {
+    vt = document.startViewTransition(() => {
+      apply(false);
+      if (!cur) return;
+      for (const { id, node } of visibleDays(cur.mount)) if (names.has(id)) node.style.viewTransitionName = `jv-${id}`;
+    });
+  } catch { root.classList.remove("jv-morph"); staggerEl.remove(); apply(true); return; }
+  const cleanup = () => {
+    root.classList.remove("jv-morph");
+    staggerEl.remove();
+    if (cur) cur.mount.querySelectorAll(".day, .aday").forEach(n => { n.style.viewTransitionName = ""; });
+  };
+  vt.finished.then(cleanup, cleanup);
+}
+let atlasEnter = false;             // the next paint follows a layout switch without view transitions: animate it
+
+/* Day elements (cards or Atlas columns) currently inside the #main viewport, top first. */
+function visibleDays(mount) {
+  const main = document.getElementById("main");
+  if (!main) return [];
+  const mr = main.getBoundingClientRect();
+  const nodes = mount.querySelectorAll(".day[data-day], .aday[data-atlas-day]");
+  const out = [];
+  for (const n of nodes) {
+    const r = n.getBoundingClientRect();
+    if (r.height && r.bottom > mr.top + 60 && r.top < mr.bottom) out.push({ id: n.dataset.day || n.dataset.atlasDay, node: n, top: r.top, left: r.left });
+  }
+  return out.sort((a, b) => a.top - b.top || a.left - b.left);
 }
 function $$open() {
   return [...document.querySelectorAll(".day.open")].map(d => d.dataset.day);
@@ -674,6 +816,8 @@ function paint(rm, mount, open, animateIn = false) {
   const S = computeAll(rm);
 
   applyAccent(rm, mount);
+  const mode = journeyView();
+  mount.classList.toggle("wide", mode === "atlas");     // the Atlas uses the full width
 
   mount.innerHTML = "";
   const blocks = [];
@@ -681,7 +825,11 @@ function paint(rm, mount, open, animateIn = false) {
   blocks.push(statsStrip(rm, S));
   blocks.push(meters(rm, S));
   if (rm.milestones.length) blocks.push(milestoneRail(rm, S));
-  blocks.push(timeline(rm, S, open));
+  blocks.push(journeyBar(rm, mode));
+  blocks.push(mode === "atlas"
+    ? atlasBoard(rm, S, { enter: atlasEnter, onChange: rerender, openMilestone: m => openMilestoneDetail(rm, m),
+        openCard: dayId => setJourneyView("cards", { focusDay: dayId }) })
+    : timeline(rm, S, open));
   if (rm.features && rm.features.length) blocks.push(extras(rm));
   for (const b of blocks) mount.append(b);
 
@@ -693,6 +841,7 @@ function paint(rm, mount, open, animateIn = false) {
   saveOpen(rm.slug, open);
   if (main) main.scrollTop = scrollTop;
   setupDayReveal(mount);                 // wire scroll-in reveals (after scroll is restored)
+  refreshLens();                         // an open day lens follows the new state (or closes)
 
   // just-ticked checkbox: pop it (and a tiny sparkle when it became done)
   if (lastToggled) {
@@ -1822,6 +1971,9 @@ const caretIcon = () => `<svg width="14" height="14" viewBox="0 0 24 24" fill="n
 const clockIcon = () => `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>`;
 const infoIcon = () => `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v5"/><circle cx="12" cy="7.6" r="0.1"/></svg>`;
 const moveIcon = () => `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4M3 12h18"/></svg>`;
+const cardsIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5" rx="1.5"/><rect x="3" y="11" width="18" height="4" rx="1.5"/><rect x="3" y="17" width="18" height="3" rx="1.5"/></svg>`;
+const atlasIcon = () => `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="5" height="11" rx="1.2"/><rect x="10" y="3" width="5" height="7" rx="1.2"/><rect x="17" y="3" width="4" height="14" rx="1.2"/><rect x="10" y="12" width="5" height="9" rx="1.2"/><rect x="3" y="16" width="5" height="5" rx="1.2"/></svg>`;
+const nowIcon = () => `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>`;
 const starIcon = () => `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 6.5 7 .8-5.2 4.8 1.5 7L12 17.8 5.2 21l1.5-7L1.5 9.3l7-.8z"/></svg>`;
 const exportIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 7l4-4 4 4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>`;
 const importIcon = () => `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M8 11l4 4 4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>`;

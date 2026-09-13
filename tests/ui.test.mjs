@@ -250,4 +250,22 @@ ui.refreshDrawer();
 t.ok(!document.getElementById("drawer-body").textContent.includes("Interpreters"), "a CLOSED drawer is left alone (rebuilt on open)");
 t.ok(!drawerRootEl.classList.contains("open"), "…and stays closed");
 
+t.group("settings — the journey layout (Cards / Atlas) is a remembered choice");
+let repainted = 0;
+ui.initDrawer({ repaint: () => repainted++ });
+ui.openDrawer();
+{
+  const row = [...document.querySelectorAll("#drawer-body .set-row")].find(r => /Journey layout/.test(r.textContent));
+  t.ok(row, "the drawer offers a Journey layout setting");
+  const btn = v => [...row.querySelectorAll(".seg button")].find(b => b.textContent === v);
+  t.eq(ui.getSettings().timelineView, "cards", "day cards are the default layout");
+  t.eq(btn("cards").getAttribute("aria-pressed"), "true", "…and show as selected");
+  click(btn("atlas"));
+  t.eq(ui.getSettings().timelineView, "atlas", "choosing Atlas stores it");
+  t.eq(repainted, 1, "…and repaints the view");
+  t.ok(JSON.parse(localStorage.getItem("roadmaps_settings_v1")).timelineView === "atlas", "…persisted across reloads");
+  ui.setSetting("timelineView", "cards");
+}
+ui.closeDrawer();
+
 t.done();

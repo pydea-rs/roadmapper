@@ -181,6 +181,8 @@ responsiveness." Direction:
 ```
 
 ### 5.2 Left sidebar (sections)
+- Global views on top: **Today** (`#/today`), **Insights** (`#/insights`), **Horizon** (`#/horizon`,
+  §5.8) and **Bookmarks** (`#/bookmarks`). Their slugs are reserved — no roadmap may use one.
 - Every registered roadmap: icon/emoji, title, a slim **progress mini-bar**, an **on-track dot**
   (ahead/on/behind from the projection).
 - **Expandable** entry: reveals quick-jumps (phases/weeks, "Today").
@@ -202,9 +204,25 @@ responsiveness." Direction:
   milestone; step with prev/next, dots, or drag, and it loops (wrap-around) so you can reach the start.
   **Cards** — the classic compact horizontal rail. Each milestone shows its week, target and met/at-risk/
   missed status; slideshow cards add a progress bar.
-- **Timeline**: months (if long) → week group headers (with the week's dual progress + milestone) →
-  **day cards**. Today's card highlighted and auto-opened; past days dim; future closed by default.
-  Each card header shows its **actual** and **original** figures, done/total, est-time.
+- **Journey bar** (sticky above the journey): its size (days · weeks · tasks), a **Now** button that
+  lands on the current day, and the **Cards ⇄ Atlas** layout switch. The choice is a remembered
+  setting (also in the drawer), and switching keeps the same stretch of the journey in view: with
+  view transitions the days on screen travel from card to column (or back) one after another; without
+  them the Atlas assembles, plates rising in sequence. Open cards stay open across switches.
+- **Timeline — Cards** (default): months (if long) → week group headers (with the week's dual progress
+  + milestone) → **day cards**. Today's card highlighted and auto-opened; past days dim; future closed
+  by default. Each card header shows its **actual** and **original** figures, done/total, est-time.
+- **Timeline — Atlas**: the whole roadmap on one board, for seeing every day and task in a few looks.
+  One **plate per week** (week number, dates, title, actual bar with on-time underline, milestones);
+  inside it the week's days sit **side by side as columns**, each a stack of **bricks**. A brick is one
+  task: its **height follows its minutes**, its **fill rises with progress** (pips for sub-tasks), its
+  left edge is its category colour; moved-in tasks are dashed, overdue ones hatched. Plates flow like a
+  justified gallery — each as wide as its days need, every row filled edge to edge — with a heading per
+  month. A brick's round tick completes (or clears) the task; dragging a brick onto another day moves
+  it; right-clicking a day opens the day menu; a **Spotlight** legend dims every other kind of work.
+  Clicking a brick or a day opens the **day lens** — a floating panel (a bottom sheet on phones) with
+  the day's full task list, sub-tasks, ticks and move buttons, plus "Open the full day card". It
+  follows repaints, and closes on Escape, an outside press or navigation.
 - **Task rows**: checkbox (accent), category chip, rich label, estimate, and a **move handle (⇄)**.
   Ticking animates bars and updates both figures optimistically, then syncs.
 - **Grouped/linked tasks** rendered with a connector (e.g. *watch videos 34–36* ⇄ *review Calhoun
@@ -249,7 +267,8 @@ responsiveness." Direction:
 ### 5.6 Settings (floating button → right drawer)
 - A **floating action button** pinned right (draggable vertically if feasible; static fallback ok).
   Opens a **right drawer**:
-  - Theme (auto/light/dark), accent, density, reduce-motion, card-reveal-on-scroll, milestones view (slideshow/cards).
+  - Theme (auto/light/dark), accent, density, reduce-motion, card-reveal-on-scroll, milestones view (slideshow/cards),
+    journey layout (cards/atlas).
   - **Whole-journey Export / Import** (all roadmaps), with a custom overwrite-confirm modal.
   - **Reset**: per-roadmap and reset-everything, each behind an explicit confirm modal.
   - **Sync status**: last saved, online/offline, "sync now."
@@ -260,6 +279,24 @@ responsiveness." Direction:
 - Full-screen centered card: single **secret** input, show/hide toggle, unlock button.
 - Wrong secret → inline error + remaining-attempts; lockout → countdown to next try.
 - Success → smooth reveal; session remembered for the expiry window. "Lock now" returns here.
+
+### 5.8 Horizon — every day ahead, across all roadmaps (`#/horizon`)
+- A **timetable**: one row per date, one **lane (column) per roadmap** in sidebar order. Each cell holds
+  that roadmap's day as a **ticket** of the same bricks as the Atlas (tickable in place; the ticket or a
+  brick opens the day lens, whose main action opens the day in its roadmap: `#/slug/<dayId>`). Tasks
+  appear on the date they currently live on (moves and re-dated cards applied). Slim rows mark free
+  days; rules mark each week of the plan's shared frame with its planned total and roadmap mix.
+- Each date's **gauge** measures its required minutes (bonus never loads a day) against the owner's
+  daily ceiling — ~4h when one or two roadmaps share it, 6h for three or more — turning amber near it
+  and red past it.
+- The list **opens on today**; earlier days (with their unfinished count) are one click away. A
+  look-ahead strip sums the next 7 and 30 days (time and tasks still left), the busiest day ahead
+  (click to jump) and free days coming up.
+- A sticky **skyline** draws the whole plan as one waveform — a column per calendar day, stacked by
+  roadmap, as tall as its minutes, past days dimmed, a needle on today — with a window tracking what the
+  list shows. Press or drag anywhere on it to travel there (arrow keys step a week, Home returns).
+- Lanes can be hidden and rows switched between **Detailed** and **Compact** (each day's tasks as one
+  proportional strip); both are per-viewer conveniences kept in localStorage, never journey data.
 
 ---
 

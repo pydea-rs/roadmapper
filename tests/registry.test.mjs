@@ -37,10 +37,12 @@ registerRoadmap(base({ slug: "rsv-clean" }));
 t.ok(!validateAll().some(p => /\[rsv-clean\]/.test(p)), "well-formed roadmap yields no problems");
 
 t.group("reserved global-route slugs are rejected");
-// today/insights/bookmarks address the global views in the router — a roadmap
+// today/insights/horizon/bookmarks address the global views in the router — a roadmap
 // claiming one would be permanently unreachable.
-registerRoadmap(base({ slug: "today" }));
-t.ok(validateAll().some(p => /\[today\].*reserved route/.test(p)), "a roadmap on a reserved route slug is flagged");
+for (const slug of ["today", "insights", "horizon", "bookmarks"]) {
+  registerRoadmap(base({ slug }));
+  t.ok(validateAll().some(p => new RegExp(`\\[${slug}\\].*reserved route`).test(p)), `a roadmap on the reserved route "${slug}" is flagged`);
+}
 
 t.group("a derived week starts from its EARLIEST day, not the first-authored one");
 registerRoadmap({ slug: "wk-order", title: "T", objectives: OBJ, days: [

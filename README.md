@@ -116,7 +116,9 @@ public/             ← the ONLY web-exposed dir (its contents go into public_ht
   sync.php          thin public endpoint → forwards to roadmapper/api.php
   app-path.php      locates the private roadmapper/ dir (sibling of the web root)
   assets/css/       theme.css (tokens/themes) · shell.css (layout) · roadmap.css (content view)
+                    atlas.css (journey bar, Atlas, bricks, day lens) · horizon.css · insights.css
   assets/js/        app.js (bootstrap/routing) · registry.js (register+validate) · render.js
+                    atlas.js (Atlas layout, bricks, day lens) · horizon.js (#/horizon timetable)
                     stats.js (dual progress, milestones, projection) · moves.js (task moves)
                     store.js (journey state) · sync.js (DB read/write) · ui.js (modals/drawer/lock)
                     util.js (helpers)

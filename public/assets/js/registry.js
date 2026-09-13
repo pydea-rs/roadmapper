@@ -212,7 +212,7 @@ export function validateAll() {
     if (!rm.objectives.length) P(`has no objectives`);
     // these slugs address the global (non-roadmap) views in the router; a roadmap
     // claiming one would be unreachable (the hash always renders the global view).
-    if (["today", "insights", "bookmarks"].includes(rm.slug)) P(`slug "${rm.slug}" is a reserved route`);
+    if (["today", "insights", "horizon", "bookmarks"].includes(rm.slug)) P(`slug "${rm.slug}" is a reserved route`);
     const localIds = new Set();
     const tasksSeen = new Set();
     const softSeen = new Set();

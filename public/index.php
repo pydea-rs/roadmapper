@@ -27,6 +27,8 @@
   <link rel="stylesheet" href="assets/css/shell.css">
   <link rel="stylesheet" href="assets/css/roadmap.css">
   <link rel="stylesheet" href="assets/css/insights.css">
+  <link rel="stylesheet" href="assets/css/atlas.css">
+  <link rel="stylesheet" href="assets/css/horizon.css">
   <style>
     /* inline critical: paint the right ground before theme.css resolves, and keep
        agreeing with an explicit theme toggle (data-theme on <html>) afterwards.

@@ -1,0 +1,287 @@
+/* atlas.css — the compact journey layouts shared by a roadmap and Horizon:
+ * the sticky journey bar (Cards ⇄ Atlas switch), the Atlas board of week plates,
+ * bricks (a task as a block: height = minutes, fill = progress), the day lens,
+ * and the layout-switch motion. Horizon's own timetable lives in horizon.css. */
+
+:root { --jbar-h: 52px; }
+
+/* A board wants the room: roadmap Atlas + Horizon widen the reading column. */
+#view.wide { max-width: 1480px; }
+
+/* ------------------------------------------------------------------ *
+ *  Journey bar — sticky, so the layout switch is always one tap away
+ * ------------------------------------------------------------------ */
+.jbar { position: sticky; top: 0; z-index: 7; display: flex; align-items: center; gap: var(--s3);
+  min-height: var(--jbar-h); margin: 0 calc(-1 * var(--s3)) var(--s3); padding: var(--s2) var(--s3);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  -webkit-backdrop-filter: saturate(1.3) blur(14px); backdrop-filter: saturate(1.3) blur(14px);
+  border-radius: 0 0 var(--r3) var(--r3); }
+.jbar-lead { display: flex; align-items: baseline; gap: var(--s2); min-width: 0; flex: 1; }
+.jbar-title { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em; font-weight: 800; color: var(--text); }
+.jbar-sub { font-size: var(--t-xs); color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums; }
+.jbar-now { display: inline-flex; align-items: center; gap: 5px; padding: 6px 11px; border-radius: var(--r-pill);
+  font-size: var(--t-xs); font-weight: 700; color: var(--text-2); border: 1px solid var(--border); background: var(--surface);
+  transition: color var(--dur-fast), border-color var(--dur-fast); }
+.jbar-now:hover { color: var(--accent-ink, var(--accent)); border-color: var(--accent); }
+.jbar-now svg { color: var(--accent); }
+
+/* the switch: a pill thumb that springs between the two layouts */
+.jview { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: 3px;
+  border-radius: var(--r-pill); background: var(--surface-3); border: 1px solid var(--border); flex: none; }
+.jview-thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px); border-radius: var(--r-pill);
+  background: var(--surface); box-shadow: var(--shadow-sm), 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: transform .42s var(--ease-spring); }
+.jview[data-mode="atlas"] .jview-thumb { transform: translateX(100%); }
+.jview.switched[data-mode="atlas"] .jview-thumb { animation: jvThumbR .46s var(--ease-spring); }
+.jview.switched[data-mode="cards"] .jview-thumb { animation: jvThumbL .46s var(--ease-spring); }
+@keyframes jvThumbR { from { transform: translateX(0); } }
+@keyframes jvThumbL { from { transform: translateX(100%); } }
+.jview-btn { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 5px 13px; border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 700; color: var(--text-3);
+  transition: color var(--dur-fast); }
+.jview-btn:hover { color: var(--text); }
+.jview-btn.on { color: var(--text); }
+.jview-btn.on svg { color: var(--accent); }
+@media (max-width: 560px) { .jbar-sub { display: none; } .jbar-now span, .jview-btn span { display: none; } .jview-btn { padding: 6px 12px; } }
+
+/* sticky offsets: month heads sit under the bar; jumps land below it */
+.month-head { top: var(--jbar-h); background: linear-gradient(var(--bg) 75%, transparent); }
+.day { scroll-margin-top: calc(var(--jbar-h) + 12px); }
+.plate { scroll-margin-top: calc(var(--jbar-h) + 12px); }
+@media (max-width: 560px) { .plate { flex-basis: 100%; max-width: none; } }
+@media (max-width: 860px) {
+  .jbar { top: 54px; }
+  .month-head { top: calc(54px + var(--jbar-h)); }
+  .day, .plate { scroll-margin-top: calc(54px + var(--jbar-h) + 12px); }
+}
+
+/* ------------------------------------------------------------------ *
+ *  Atlas board
+ * ------------------------------------------------------------------ */
+/* Plates flow like a justified gallery: each is as wide as its days need (a 5-day week
+ * takes more room than a 2-day one) and every row stretches to the edge, so day columns
+ * stay readable, weeks stay in order, and no row is left with a hole. */
+.atlas { display: flex; flex-wrap: wrap; gap: var(--s3); margin-bottom: var(--s6); }
+
+.atlas-legend { flex: 1 1 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: var(--s1); }
+.atlas-legend-cap { font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .07em; font-weight: 700;
+  color: var(--text-3); margin-right: 4px; }
+.atlas-cat { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px 3px 8px; border-radius: var(--r-pill);
+  font-size: var(--t-xs); font-weight: 650; text-transform: capitalize; color: var(--text-2);
+  background: var(--surface); border: 1px solid var(--border);
+  transition: border-color var(--dur-fast), background var(--dur-fast), color var(--dur-fast); }
+.atlas-cat i { width: 8px; height: 8px; border-radius: 3px; background: var(--chip); }
+.atlas-cat small { font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; }
+.atlas-cat:hover { border-color: var(--chip); color: var(--text); }
+.atlas-cat.on { color: var(--text); border-color: var(--chip);
+  background: color-mix(in srgb, var(--chip) 16%, var(--surface)); }
+
+.atlas-month { flex: 1 1 100%; display: flex; align-items: center; gap: var(--s3); margin-top: var(--s3);
+  font-size: var(--t-md); font-weight: 750; letter-spacing: -.01em; color: var(--text); }
+.atlas-month::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border-2), transparent); }
+.atlas-month:first-of-type { margin-top: 0; }
+
+/* a week plate */
+.plate { flex: var(--n, 3) 1 calc(var(--n, 3) * 104px + 22px); max-width: calc(var(--n, 3) * 260px + 22px);
+  display: flex; flex-direction: column; gap: 7px; min-width: 0; padding: 10px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r3); box-shadow: var(--shadow-sm);
+  transition: border-color var(--dur), box-shadow var(--dur); }
+.plate:hover { border-color: var(--border-2); box-shadow: var(--shadow); }
+.plate.now { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 10px 28px -14px color-mix(in srgb, var(--accent) 60%, transparent); }
+.plate.complete { border-color: color-mix(in srgb, var(--ok) 40%, var(--border)); }
+.plate-head { display: flex; align-items: center; gap: var(--s2); font-size: var(--t-xs); min-width: 0; }
+.plate-no { font-family: var(--font-mono); font-weight: 800; color: var(--accent-ink, var(--accent));
+  background: var(--accent-soft); padding: 1px 7px; border-radius: 6px; letter-spacing: .02em; }
+.plate-range { color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.plate-now { font-weight: 700; color: var(--accent-ink, var(--accent)); white-space: nowrap; }
+.plate-pct { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+.plate.complete .plate-pct { color: var(--ok); }
+.plate-title { font-size: var(--t-sm); font-weight: 650; line-height: 1.3; color: var(--text);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }
+/* week progress: actual fills the bar, on-time runs underneath it in gold */
+.plate-meter { position: relative; height: 5px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.plate-meter i { position: absolute; left: 0; border-radius: 3px; transition: width var(--dur-slow) var(--ease); }
+.plate-meter i.a { top: 0; bottom: 0; background: var(--accent); }
+.plate-meter i.t { bottom: 0; height: 2px; background: var(--ontime); }
+.plate-days { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); gap: 5px; flex: 1; align-items: stretch; }
+.plate-mss { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.plate-ms { flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: var(--r1);
+  font-size: var(--t-xs); text-align: left; color: var(--text-2); background: var(--surface-2);
+  border: 1px dashed color-mix(in srgb, var(--warn) 45%, var(--border)); }
+.plate-ms:hover { color: var(--text); }
+.plate-ms.met { border-style: solid; border-color: color-mix(in srgb, var(--ok) 45%, var(--border));
+  background: color-mix(in srgb, var(--ok) 8%, var(--surface-2)); }
+.plate-ms.missed { border-color: color-mix(in srgb, var(--bad) 50%, var(--border)); }
+.plate-ms-t { flex: 1; min-width: 0; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.plate-ms-n { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--warn); }
+.plate-ms.met .plate-ms-n { color: var(--ok); }
+.plate-ms.missed .plate-ms-n { color: var(--bad); }
+
+/* a day column */
+.aday { position: relative; display: flex; flex-direction: column; gap: 5px; min-width: 0; padding: 4px;
+  border-radius: var(--r2); background: var(--surface-2); border: 1px solid transparent;
+  transition: background var(--dur-fast), border-color var(--dur-fast), box-shadow var(--dur-fast); }
+.aday.today { background: color-mix(in srgb, var(--accent) 9%, var(--surface-2)); border-color: color-mix(in srgb, var(--accent) 70%, transparent); }
+.aday.past:not(.complete) .aday-num { color: var(--text-2); }
+.aday.dragover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.aday.lens-anchor { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.aday.flash { animation: adayFlash 1.3s var(--ease-out); }
+@keyframes adayFlash { 0%, 35% { box-shadow: 0 0 0 3px var(--accent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+
+.aday-head { display: grid; gap: 1px; width: 100%; padding: 3px 4px 2px; border-radius: 8px; text-align: left; min-width: 0;
+  transition: background var(--dur-fast); }
+.aday-head:hover { background: var(--surface-3); }
+.aday-top { display: flex; align-items: center; gap: 5px; }
+.aday-dow { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 800; color: var(--text-3); }
+.aday.today .aday-dow { color: var(--accent-ink, var(--accent)); }
+.aday-num { font-size: 16px; font-weight: 800; letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
+.aday-ring { --p: 0; width: 14px; height: 14px; border-radius: 50%; flex: none;
+  background: conic-gradient(var(--accent) calc(var(--p) * 1%), var(--track) 0);
+  -webkit-mask: radial-gradient(circle, transparent 3.5px, #000 4px); mask: radial-gradient(circle, transparent 3.5px, #000 4px); }
+.aday.complete .aday-ring { background: var(--ok); -webkit-mask: none; mask: none; }
+.aday-title { font-size: 10.5px; line-height: 1.25; color: var(--text-2); min-height: 2.5em;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word; }
+.aday-load { margin-left: auto; font-size: 10px; color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.aday.today .aday-load { color: var(--accent-ink, var(--accent)); font-weight: 700; }
+.aday-bricks { display: flex; flex-direction: column; gap: 4px; }
+.aday-empty { font-size: 10px; color: var(--text-3); text-align: center; padding: 8px 0; font-style: italic; }
+
+/* ------------------------------------------------------------------ *
+ *  Brick — a task as a block. Height = minutes, liquid fill = progress,
+ *  left edge = kind of work, pips = its sub-tasks.
+ * ------------------------------------------------------------------ */
+.brick { position: relative; height: var(--h, 30px); flex: none; border-radius: 7px; overflow: hidden; isolation: isolate;
+  background: var(--surface); border: 1px solid var(--border);
+  transition: transform .16s var(--ease), box-shadow .16s var(--ease), opacity .24s var(--ease), filter .24s var(--ease), border-color .16s; }
+.brick::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 3px; background: var(--chip, var(--cat-alt)); z-index: 1; }
+.brick::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--fill, 0%); z-index: -1;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 34%, transparent), color-mix(in srgb, var(--accent) 20%, transparent));
+  box-shadow: inset 0 1.5px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+.brick.done::after { box-shadow: none; }
+.brick.ticked::after { animation: brickFill .6s var(--ease-out); }
+@keyframes brickFill { from { height: var(--from, 0%); } }
+.brick:hover { transform: translateY(-1px); border-color: var(--border-2); box-shadow: var(--shadow-sm); }
+.brick.moving { opacity: .4; }
+
+.brick-main { position: absolute; inset: 0; display: block;
+  padding: 5px 18px 5px 8px; text-align: left; font-size: 11px; line-height: 13px; color: var(--text); cursor: pointer; }
+.brick-main:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 7px; }
+.brick-label { display: -webkit-box; -webkit-line-clamp: var(--lines, 1); -webkit-box-orient: vertical; overflow: hidden;
+  word-break: break-word; }
+.brick.done .brick-label { color: var(--text-2); text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--text-3) 70%, transparent); }
+.brick-pips { position: absolute; left: 8px; right: 7px; bottom: 4px; display: flex; gap: 2px; }
+.brick-pips i { flex: 1; height: 3px; border-radius: 2px; background: color-mix(in srgb, var(--text-3) 32%, transparent); }
+.brick-pips i.on { background: var(--accent); }
+
+.brick-tick { position: absolute; top: 4px; right: 4px; z-index: 2; width: 15px; height: 15px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; background: var(--surface); border: 1.5px solid var(--border-2);
+  opacity: 0; transform: scale(.8); transition: opacity .14s, transform .18s var(--ease-spring), background .14s, border-color .14s; }
+.brick-tick svg { width: 9px; height: 9px; max-width: none; stroke-dasharray: 20; stroke-dashoffset: 20; transition: stroke-dashoffset var(--dur) var(--ease); }
+.brick:hover .brick-tick, .brick:focus-within .brick-tick, .brick.done .brick-tick, .brick.partial .brick-tick { opacity: 1; transform: none; }
+.brick-tick:hover { border-color: var(--accent); transform: scale(1.12); }
+.brick.done .brick-tick { background: var(--accent); border-color: var(--accent); }
+.brick.done .brick-tick svg { stroke-dashoffset: 0; }
+.brick.partial .brick-tick { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, var(--surface)); }
+@media (hover: none) { .brick-tick { opacity: .9; transform: none; } }
+
+.brick.bonus { border-style: dashed; background: transparent; }
+.brick.bonus .brick-label { color: var(--text-2); }
+.brick.moved-in { border-style: dashed; border-color: color-mix(in srgb, var(--warn) 55%, var(--border)); }
+.brick.overdue { border-color: color-mix(in srgb, var(--warn) 60%, var(--border)); }
+.brick.overdue::before { background: repeating-linear-gradient(180deg, var(--warn) 0 4px, transparent 4px 7px); }
+.brick.dim { opacity: .2; filter: saturate(.2); }
+.brick.dim:hover { opacity: .7; filter: none; }
+
+/* ------------------------------------------------------------------ *
+ *  The lens — a floating day panel
+ * ------------------------------------------------------------------ */
+.lens { position: fixed; z-index: 70; left: 12px; top: 12px; width: min(400px, calc(100vw - 24px));
+  max-height: min(74vh, 660px); overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column; gap: var(--s3); padding: var(--s4);
+  background: var(--surface); border: 1px solid var(--border-2); border-top: 3px solid var(--accent);
+  border-radius: var(--r3); box-shadow: var(--shadow-lg); outline: none;
+  opacity: 0; transform: scale(.93) translateY(6px);
+  transition: opacity .16s var(--ease-out), transform .26s var(--ease-spring);
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+.lens.in { opacity: 1; transform: none; }
+.lens.out { opacity: 0; transform: scale(.97); transition-duration: .12s; pointer-events: none; }
+.lens.sheet { left: 0; right: 0; top: auto; bottom: 0; width: 100%; max-height: 80vh;
+  border-radius: var(--r4) var(--r4) 0 0; padding-bottom: calc(var(--s4) + env(safe-area-inset-bottom));
+  transform: translateY(28px); transform-origin: bottom center; }
+.lens.sheet.in { transform: none; }
+
+.lens-head { position: relative; display: flex; flex-direction: column; gap: 3px; padding-right: 30px; }
+.lens-kicker { display: flex; align-items: center; gap: 6px; font-size: var(--t-xs); text-transform: uppercase;
+  letter-spacing: .07em; font-weight: 700; color: var(--accent-ink, var(--accent)); }
+.lens-ico { font-size: 14px; }
+.lens-x { position: absolute; top: -4px; right: -6px; width: 30px; height: 30px; border-radius: 8px;
+  display: grid; place-items: center; color: var(--text-3); }
+.lens-x:hover { background: var(--surface-3); color: var(--text); }
+.lens-when { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; font-size: var(--t-sm); color: var(--text-3); }
+.lens-when b { color: var(--text); font-variant-numeric: tabular-nums; }
+.lens-when.today span:first-of-type { color: var(--accent-ink, var(--accent)); font-weight: 700; }
+.lens-moved { font-size: var(--t-xs); color: var(--warn); font-weight: 600; }
+.lens-title { font-size: var(--t-lg); font-weight: 750; letter-spacing: -.01em; line-height: 1.25; text-wrap: balance; }
+.lens-theme { font-size: var(--t-sm); color: var(--text-2); line-height: 1.45; }
+.lens-sum { display: flex; flex-direction: column; gap: 5px; font-size: var(--t-xs); color: var(--text-3); font-variant-numeric: tabular-nums; }
+.lens-bar { height: 5px; border-radius: 3px; background: var(--track); overflow: hidden; }
+.lens-bar i { display: block; height: 100%; border-radius: 3px; background: var(--accent); transition: width var(--dur-slow) var(--ease); }
+.lens-note { font-size: var(--t-xs); line-height: 1.5; color: var(--text-2); background: var(--surface-2);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 55%, transparent); padding: 6px 10px; border-radius: 0 var(--r1) var(--r1) 0; }
+.lens-list { display: flex; flex-direction: column; gap: 6px; }
+.lens-sec { margin-top: var(--s2); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .06em; font-weight: 700; color: var(--text-3); }
+.lens-empty { font-size: var(--t-sm); color: var(--text-3); font-style: italic; }
+
+.lens-task { display: flex; align-items: flex-start; gap: 10px; padding: 8px 10px; border-radius: var(--r2);
+  border: 1px solid var(--border); background: var(--surface); transition: border-color var(--dur-fast), background var(--dur-fast); }
+.lens-task:hover { border-color: var(--border-2); }
+.lens-task.focus { border-color: var(--accent); animation: lensFocus 1.4s var(--ease-out); }
+@keyframes lensFocus { 0%, 30% { box-shadow: 0 0 0 3px var(--accent-soft); background: var(--accent-soft); } 100% { box-shadow: none; } }
+.lens-task.bonus { border-style: dashed; }
+.lens-task .checkbox { --sz: 20px; }
+.lens-task.done > .checkbox, .lens-sub.done > .checkbox { background: var(--accent); border-color: var(--accent); }
+.lens-task.done > .checkbox svg, .lens-sub.done > .checkbox svg { stroke-dashoffset: 0; }
+.lens-task.partial > .checkbox { position: relative; border-color: var(--accent); background: color-mix(in srgb, var(--accent) 22%, transparent); }
+.lens-task.partial > .checkbox::after { content: ""; position: absolute; inset: 0; margin: auto; width: 9px; height: 2.5px;
+  border-radius: 2px; background: var(--accent-ink, var(--accent)); }
+.lens-tbody { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.lens-tlabel { font-size: var(--t-sm); font-weight: 650; line-height: 1.4; color: var(--text); }
+.lens-task.done .lens-tlabel { color: var(--text-2); text-decoration: line-through; text-decoration-color: var(--text-3); }
+.lens-tlabel code, .lens-slabel code { background: var(--surface-3); padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+.lens-tlabel a, .lens-slabel a { color: var(--accent-ink, var(--accent)); border-bottom: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+.lens-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.lens-est { font-size: var(--t-xs); color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lens-subs { display: flex; flex-direction: column; gap: 3px; border-left: 2px solid var(--accent-soft); padding-left: 8px; margin-top: 2px; }
+.lens-sub { display: flex; align-items: flex-start; gap: 8px; padding: 3px 0; }
+.lens-sub .checkbox { --sz: 17px; border-radius: 5px; }
+.lens-slabel { flex: 1; min-width: 0; font-size: var(--t-xs); line-height: 1.45; color: var(--text-2); }
+.lens-sub.done .lens-slabel { text-decoration: line-through; color: var(--text-3); }
+.lens-sub .lens-est { margin-left: auto; padding-top: 1px; }
+.lens-move { flex: none; width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: var(--text-3); }
+.lens-move:hover { background: var(--surface-3); color: var(--accent); }
+.lens-foot { display: flex; justify-content: flex-end; gap: var(--s2); }
+.lens-foot:empty { display: none; }
+
+/* ------------------------------------------------------------------ *
+ *  Switching layouts
+ *  With view transitions: the days on screen fly from card to column (or back),
+ *  one after another, while the rest of the view crossfades. Without them: the
+ *  Atlas assembles — plates rise in sequence and their bricks settle into place.
+ * ------------------------------------------------------------------ */
+html.jv-morph .jview-thumb { view-transition-name: jv-thumb; }
+html.jv-morph::view-transition-old(rm-view) { animation: jvOut .2s var(--ease) both; }
+html.jv-morph::view-transition-new(rm-view) { animation: jvIn .36s var(--ease-out) .1s both; }
+html.jv-morph::view-transition-group(*) { animation-duration: .56s; animation-timing-function: cubic-bezier(.2, .9, .25, 1); }
+html.jv-morph::view-transition-image-pair(*) { overflow: hidden; border-radius: 10px; }
+html.jv-morph::view-transition-old(*), html.jv-morph::view-transition-new(*) { height: 100%; object-fit: cover; object-position: left top; }
+@keyframes jvOut { to { opacity: 0; } }
+@keyframes jvIn { from { opacity: 0; } }
+
+.atlas.enter .plate, .atlas.enter .atlas-month, .atlas.enter .atlas-legend {
+  animation: plateIn .52s var(--ease-out) both; animation-delay: min(calc(var(--i, 0) * 32ms), 480ms); }
+.atlas.enter .brick { animation: brickSettle .5s var(--ease-spring) both;
+  animation-delay: calc(min(calc(var(--i, 0) * 32ms), 480ms) + 140ms); }
+@keyframes plateIn { from { opacity: 0; transform: translateY(16px) scale(.975); } }
+@keyframes brickSettle { from { opacity: 0; transform: translateY(-8px) scaleY(.6); } }

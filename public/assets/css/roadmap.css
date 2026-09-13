@@ -355,7 +355,9 @@
   border: 2px solid var(--border-2); display: grid; place-items: center; color: #fff;
   transition: background var(--dur-fast), border-color var(--dur-fast), transform var(--dur-fast); }
 .checkbox:hover { border-color: var(--accent); }
-.checkbox svg { width: 13px; height: 13px; stroke-dasharray: 20; stroke-dashoffset: 20;
+/* max-width:none — the reset's `svg { max-width:100% }` resolves against the centred grid
+   track and squeezes the tick to a ~6px sliver */
+.checkbox svg { width: 13px; height: 13px; max-width: none; flex: none; stroke-dasharray: 20; stroke-dashoffset: 20;
   transition: stroke-dashoffset var(--dur) var(--ease); }
 /* `> .checkbox` = the row's OWN box only; a plain descendant selector would also
    restyle the sub-task checkboxes nested inside a done parent. */

@@ -329,7 +329,7 @@ const SETTINGS_KEY = "roadmaps_settings_v1";
 const ACCENTS = { violet: 265, indigo: 245, blue: 215, cyan: 190, teal: 172, green: 145,
   amber: 35, orange: 22, rose: 340 };
 let settings = { theme: "auto", accent: "violet", accentHue: 265, roadmapAccent: "on",
-  density: "cozy", motion: "on", sidebar: "expanded", milestoneView: "slideshow", dayReveal: "on",
+  density: "cozy", motion: "on", sidebar: "expanded", milestoneView: "slideshow", timelineView: "cards", dayReveal: "on",
   tutorials: "payaina" };
 
 export function loadSettings() {
@@ -386,6 +386,14 @@ export function renderSidebar({ roadmaps, active, statsFor, onNavigate, expanded
   insightsLink.append(el("span.sb-ico", { text: "📊" }));
   insightsLink.append(el("span.sb-today-label", { text: "Insights · charts & stats" }));
   list.append(insightsLink);
+
+  // Horizon: every day ahead, across all roadmaps, as one timetable.
+  const onHorizon = location.hash.replace(/^#\/?/, "") === "horizon";
+  const horizonLink = el("a.sb-today.sb-horizon" + (onHorizon ? ".active" : ""),
+    { href: "#/horizon", "aria-current": onHorizon ? "true" : "false" });
+  horizonLink.append(el("span.sb-ico", { text: "🔭" }));
+  horizonLink.append(el("span.sb-today-label", { text: "Horizon · days ahead" }));
+  list.append(horizonLink);
 
   // Saved finder picks (videos / articles bookmarked from Today).
   const onBookmarks = location.hash.replace(/^#\/?/, "") === "bookmarks";
@@ -573,6 +581,9 @@ function buildDrawerBody() {
   appear.append(settingRow("Milestones", "How the milestones section is shown",
     segmented(["slideshow", "cards"], settings.milestoneView === "cards" ? "cards" : "slideshow",
       v => { setSetting("milestoneView", v); drawerHooks.repaint && drawerHooks.repaint(); })));
+  appear.append(settingRow("Journey layout", "Day cards, or the Atlas — every week on one board",
+    segmented(["cards", "atlas"], settings.timelineView === "atlas" ? "atlas" : "cards",
+      v => { setSetting("timelineView", v); drawerHooks.repaint && drawerHooks.repaint(); })));
   appear.append(settingRow("Tutorial links", "Which host the sidebar companion links point to",
     segmented(["payaina", "github"], settings.tutorials === "github" ? "github" : "payaina",
       v => setSetting("tutorials", v))));

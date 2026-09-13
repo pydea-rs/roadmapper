@@ -8,9 +8,11 @@ import "../../roadmaps/_index.js";
 import { getRoadmaps, getRoadmap, validateAll } from "./registry.js";
 import * as store from "./store.js";
 import * as sync from "./sync.js";
-import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest, releaseView } from "./render.js";
+import { renderRoadmap, renderToday, setRenderHooks, rerender, initDayRest, releaseView, revealDay, currentDayOf } from "./render.js";
 import { renderInsights } from "./insights.js";
 import { renderBookmarks } from "./bookmarks.js";
+import { renderHorizon } from "./horizon.js";
+import { closeLens } from "./atlas.js";
 import { sidebarStats, dayDate } from "./stats.js";
 import { reconcile } from "./reconcile.js";
 import {
@@ -59,7 +61,7 @@ async function boot() {
   // from login). Ask to sign in again; queued changes stay in memory and are written
   // by startApp's load (which flushes first) right after the unlock.
   sync.onAuthExpired(() => {
-    closeAllModals(); closeDrawer();
+    closeAllModals(); closeLens(true); closeDrawer();
     $("#app").hidden = true;
     lock.show("Your session expired — sign in again. Unsaved changes are kept and will be saved.");
   });
@@ -202,14 +204,15 @@ async function refreshFromServer() {
 }
 
 // slug → renderer for the global (non-roadmap) views; their slugs are reserved.
-const GLOBAL_VIEWS = { today: renderToday, insights: renderInsights, bookmarks: renderBookmarks };
+const GLOBAL_VIEWS = { today: renderToday, insights: renderInsights, horizon: renderHorizon, bookmarks: renderBookmarks };
 
 function route() {
   const roadmaps = getRoadmaps();
   const hash = location.hash.replace(/^#\/?/, "");
   const [slug, sub] = hash.split("/");
 
-  // Global cross-roadmap views: #/today digest, #/insights analytics, #/bookmarks.
+  // Global cross-roadmap views: #/today digest, #/insights analytics, #/horizon (every
+  // day ahead), #/bookmarks.
   // (These slugs are reserved — validateAll forbids a roadmap from claiming one.)
   const globalView = GLOBAL_VIEWS[slug];
   if (globalView && !sub) {
@@ -265,39 +268,27 @@ function repaintView() {
   if (main) main.scrollTop = top;
 }
 /* Land on the day the user is currently on: today's day, else the nearest
- * upcoming day, else (roadmap already finished) its last day. Falls back to the
- * top when the card isn't found. */
+ * upcoming day, else (roadmap already finished) its last day — in whichever journey
+ * layout is drawn (render.revealDay opens the card, or finds the Atlas column). It
+ * sits centred in the viewport so it lands with breathing room above. */
 function scrollToCurrentDay(rm) {
-  const today = todayStr();
-  const eff = d => dayDate(rm, rm.slug, d);
-  const target = rm.days.find(d => eff(d) === today)
-    || rm.days.find(d => eff(d) >= today)
-    || rm.days[rm.days.length - 1];
-  const node = target && $(`.day[data-day="${cssEsc(target.id)}"]`);
-  // Center the day in the viewport (a tall card that can't fit just sits with its
-  // top in view) so it lands with breathing room above, not flush at the edge.
-  if (node) { openCard(node); node.scrollIntoView({ block: "center" }); }
+  const target = currentDayOf(rm);
+  if (target) revealDay(target.id, { block: "center" });
 }
+/* #/slug/today, #/slug/<weekId> or #/slug/<dayId> */
 function scrollToSub(rm, sub) {
   let targetDay = null;
   if (sub === "today") { const ts = todayStr(); const eff = d => dayDate(rm, rm.slug, d);
     targetDay = rm.days.find(d => eff(d) === ts) || rm.days.find(d => eff(d) >= ts); }
+  else if (rm.daysById.has(sub)) targetDay = rm.daysById.get(sub);
   else { const wk = rm.weeksById.get(sub); if (wk) targetDay = rm.days.find(d => d.week === sub); }
   if (targetDay) {
-    const node = $(`.day[data-day="${cssEsc(targetDay.id)}"]`);
-    if (node) { openCard(node); node.scrollIntoView({ behavior: "smooth", block: "start" }); }
+    const block = rm.daysById.has(sub) ? "center" : "start";
+    revealDay(targetDay.id, { behavior: "smooth", block });
   } else if (sub === "today") {
     scrollToCurrentDay(rm);            // a finished roadmap has no day today or later: land on its last day
   }
 }
-/** Open a day card the way the user would: trigger its own toggle so aria-expanded
- *  and the persisted open-set stay in sync (adding `.open` by hand desyncs both). */
-function openCard(node) {
-  if (node.classList.contains("open")) return;
-  const head = node.querySelector(".day-head");
-  if (head) head.click(); else node.classList.add("open");
-}
-const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : String(s).replace(/[^\w-]/g, "\\$&");
 function navigate(slug) { location.hash = `#/${slug}`; }
 
 // Sidebar click: navigating to a different roadmap opens its quick-jumps; clicking
@@ -484,7 +475,7 @@ async function resetAllIO() {
 async function lockNowIO() {
   await sync.flush();                    // don't strand queued changes behind the lock
   await sync.logout();
-  closeAllModals(); closeDrawer();
+  closeAllModals(); closeLens(true); closeDrawer();
   $("#app").hidden = true;
   lock.show();
 }

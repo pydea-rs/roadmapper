@@ -191,6 +191,10 @@ t.ok(/apple-mobile-web-app-capable/.test(html) || /mobile-web-app-capable/.test(
   "declares web-app-capable for mobile");
 t.ok(/<link[^>]+rel=["']apple-touch-icon["'][^>]+apple-touch-icon\.png/.test(html),
   "links the apple-touch-icon");
+// a stylesheet added to the shell but forgotten in PRECACHE would leave that view unstyled offline
+const linkedCss = [...html.matchAll(/<link[^>]+rel=["']stylesheet["'][^>]+href=["']([^"']+)["']/g)].map(m => m[1]);
+t.ok(linkedCss.length >= 6, `the shell links its stylesheets (${linkedCss.length})`);
+for (const css of linkedCss) t.ok(preList.includes(css), `every linked stylesheet is precached for offline: ${css}`);
 
 t.group("app.js — registers the service worker, robustly");
 const app = read("assets/js/app.js");

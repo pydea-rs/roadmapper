@@ -113,6 +113,28 @@ async function run() {
   t.eq($("#view").style.getPropertyValue("--accent"), "", "…without the previous roadmap's colour");
   await go("#/insights");
   t.ok($("#view").textContent.length > 0 && !$("#view .timeline"), "#/insights renders a global view");
+  await go("#/rust-fastapi");
+  await go("#/horizon");
+  t.ok($("#view .hz"), "#/horizon renders every day ahead");
+  t.eq($("#view").style.getPropertyValue("--accent"), "", "…without the previous roadmap's colour");
+  t.ok($(".sb-horizon.active"), "…and its sidebar link is active");
+
+  t.group("routing — a link to one day of a roadmap, in either layout");
+  const rust = (await import(new URL("registry.js", base).href)).getRoadmap("rust-fastapi");
+  const target = rust.days[9];
+  await go(`#/rust-fastapi/${target.id}`);
+  await settle();
+  t.ok($(`#view .day[data-day="${target.id}"]`).classList.contains("open"), "#/slug/<day> opens that day's card");
+  ui.setSetting("timelineView", "atlas");
+  await go("#/today");
+  await go(`#/rust-fastapi/${rust.days[30].id}`);
+  await settle();
+  t.ok($("#view .atlas") && $(`#view [data-atlas-day="${rust.days[30].id}"]`), "in the Atlas layout the same link lands on the day's column");
+  await go(`#/rust-fastapi/${rust.weeks[3].id}`);
+  await settle();
+  t.ok($("#view .atlas"), "a week quick-jump works in the Atlas too");
+  ui.setSetting("timelineView", "cards");
+  await go("#/today");
 
   t.group("navigation dismisses dialogs opened for the previous view");
   let answered = null;

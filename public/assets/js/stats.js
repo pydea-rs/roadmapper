@@ -41,7 +41,7 @@ const BUDGET_FEW_MINS = 240;          // a date shared by 1–2 roadmaps
 const BUDGET_MANY_MINS = 360;         // a date shared by 3+ roadmaps
 /** The day's ceiling when `c` roadmaps typically share it. `c` is an average, so a
  *  fractional value between 2 and 3 blends linearly between the two ceilings. */
-function dailyBudget(c) {
+export function dailyBudget(c) {
   if (c <= 2) return BUDGET_FEW_MINS;
   if (c >= 3) return BUDGET_MANY_MINS;
   return BUDGET_FEW_MINS + (c - 2) * (BUDGET_MANY_MINS - BUDGET_FEW_MINS);
