@@ -142,8 +142,8 @@ O['interp-go']['replace'] += [
 # notes whose claim about the day stopped being true once carried-over work landed on it
 # (keyed by the NEW card id — these depend on plan.json)
 O['rust-fastapi']['notes'] = {
-  'd06': "Wraps up the opening block — smart pointers done, the FastAPI DB layer + structure in place.",
-  'd11': "The FastAPI part is short — the rest of the day finishes Patterns & matching, carried over from d10.",
+  'd06': "Wraps up the opening block — smart pointers done, the FastAPI DB layer in place and the structure reading done (the router refactor opens the next card).",
+  'd11': "Patterns & matching's tryout, carried over from d10, comes first; then the Depends reading and refactor.",
   'd19': "One of the heaviest Rust sections — its reading today; the ThreadPool build is carried into the next session (d20).",
   'd20': "The FastAPI part is deliberately light — the thread-pool build carried over from d19 fills the rest of the day.",
   'd33': "Buffer day — nothing of its own is required; the async-server work carried over from d32 comes first, then close any gaps.",
@@ -152,5 +152,43 @@ O['rust-fastapi']['notes'] = {
 O['rust-fastapi']['replace'].append([
   "🔗 Nothing due today by design. A plan with zero slack",
   "🔗 Nothing new is due today by design — here it absorbs the async-server work carried over from d32. A plan with zero slack"])
+# review pass (2026-09-14): prose that still described the pre-cap split of a chapter or topic
+O['rust-fastapi']['replace'] += [
+ ["Async (Ch17) is the weeks-6–7 focus.", "Async (Ch17) is the week-7 focus."],
+ ["theme: \"Take the Week-4/5 capstone from 'runs locally' to 'deployed'.\",", "theme: \"Take the Week-5/6 capstone from 'runs locally' to 'deployed'.\","],
+ ['title: "FastAPI microservices (light)",', 'title: "FastAPI microservices",'],
+ ['theme: "Ch6 is prose-heavy/thin — read for concepts, keep it light (overlap day).",',
+  'theme: "Ch6 is prose-heavy/thin — read for concepts and keep that part light; the thread-pool build carried over from d19 comes first.",'],
+ ['theme: "Rebuild the Ch21 server the async way — the payoff of d30.",',
+  'theme: "The rest of Ch17 — its reading today; rebuilding the Ch21 server the async way (the payoff of d30) follows next session (d33).",'],
+ ["service (your async server from d32, exposing a JSON endpoint or two) fronted", "service (your async server from d33, exposing a JSON endpoint or two) fronted"],
+ ["service (your async server from d32, exposing a JSON endpoint or two).`", "service (your async server from d33, exposing a JSON endpoint or two).`"],
+ ["Existing ids/dates unchanged; d24 re-scoped to a checkpoint.",
+  "Existing ids/dates unchanged; d24 re-scoped to a checkpoint.\n// (Ids of the time: since the 3-hour cap re-plan the checkpoint is d29, the buffer\n// d33, and this block runs d30–d37 in weeks 7–8.)"],
+ ["URLs replace every page range. Async (Ch17) is read/applied in weeks 6–7.", "URLs replace every page range. Async (Ch17) is read/applied in week 7 (weeks 6–7 before the re-plan)."],
+]
+O['interp-go']['replace'] += [
+ ["theme: `The 27-page chapter, split across two days. Today: declarations → methods.`",
+  "theme: `The 27-page chapter, split across several sessions. This card: the reading — declarations → methods; the build follows next session.`"],
+ ["💡 Splitting a heavy chapter over two short days beats one marathon: you code the mechanics on day 1 and let <code>this</code>/initializers (the subtle part) land fresh on day 2.",
+  "💡 Splitting a heavy chapter over short sessions beats one marathon: you code the mechanics first and let <code>this</code>/initializers (the subtle part) land fresh in a later session."],
+ ["theme: `The dense idea — the Pratt parser — split over two days. Today: the core.`",
+  "theme: `The dense idea — the Pratt parser — split over several sessions. This card: the reading — the core.`"],
+ ['title: `CI Ch17 — Pratt parser II + challenges (clox)`', 'title: `CI Ch17 — Pratt parser II (clox)`'],
+ ["theme: `The 32-page chapter, split over two days. Today: function objects + call frames.`",
+  "theme: `The 32-page chapter, split over several sessions. This card: the reading — function objects + call frames.`"],
+ ["note: `Continuation of the heavy Ch24 — call frames last session (d54), the tricky call/return glue today.`",
+  "note: `Continuation of the heavy Ch24 — the CallFrame build from last session's reading (d54) first, then the tricky call/return glue.`"],
+ ["theme: `The longest clox chapter (35pp), split over two days. Today: upvalues + capture.`",
+  "theme: `The longest clox chapter (35pp), split over several sessions. This card: the reading — upvalues + capture.`"],
+ ["note: `Split day 1 of the longest chapter — capture today, closing-over-the-stack next session (d58).`",
+  "note: `Split day 1 of the longest chapter — the capture reading today; the capture build and closing-over-the-stack next session (d58).`"],
+ ["sweep + 'collect during allocation' bugs next session (d61).`", "sweep + 'collect during allocation' bugs over the next sessions (d61–d62).`"],
+]
+# the "clox VM running" week-share goal belongs to the week the VM chapter now lands in (was pre-cap w5)
+O['interp-go']['milestoneWeek'] = {'w5.m2': 'w7'}
+# the smart-pointers video goes before the OOP topic, not between its reading and its build
+O['rust-fastapi']['interludeAfter'] = {'il1': 'd06'}
+O['interludesReplace'] = [["Rust Web Programming extension (d33–d98)", "Rust Web Programming extension (d38–d103)"]]
 json.dump(O, open(f'{H}/overrides.json', 'w'), ensure_ascii=False, indent=1)
 print('overrides.json written')

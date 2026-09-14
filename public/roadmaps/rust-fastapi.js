@@ -14,12 +14,14 @@
 // async chapter (Ch17) applied for real with tokio, and a Rust-service-behind-a-
 // FastAPI-gateway integration capstone — plus a real buffer day (d28). Moves the
 // finish to 2026-10-20. Existing ids/dates unchanged; d24 re-scoped to a checkpoint.
+// (Ids of the time: since the 3-hour cap re-plan the checkpoint is d29, the buffer
+// d33, and this block runs d30–d37 in weeks 7–8.)
 //
 // NEW-BOOK REFACTOR (2026-07-20): re-referenced from the old 20-chapter PDF to the
 // live 21-chapter Book. Async is now the Book's own Ch17 (was external-only); the
 // later chapters renumber 17→18 (OOP) / 18→19 (Patterns) / 19→20 (Advanced) /
 // 20→21 (web server); Macros moved from Appendix D into Ch20.5. Section names +
-// URLs replace every page range. Async (Ch17) is read/applied in weeks 6–7.
+// URLs replace every page range. Async (Ch17) is read/applied in week 7 (weeks 6–7 before the re-plan).
 //
 // RWP EXTENSION (2026-07-20): APPENDED a third objective — `rwp` (Rust Web
 // Programming, 3rd ed., Flitton/Packt, the local EPUB). It's a hands-on
@@ -261,7 +263,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 <code>response_model_exclude</code> and separate input/output Pydantic models are how you keep secrets out of responses without hand-filtering dicts.` },
       ],
-      note: "Wraps up the opening block — smart pointers done, the FastAPI DB layer + structure in place.",
+      note: "Wraps up the opening block — smart pointers done, the FastAPI DB layer in place and the structure reading done (the router refactor opens the next card).",
     },
     {
       id: "d07", date: "2026-09-22", week: "w2", title: "OOP in Rust",
@@ -368,7 +370,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 A <code>yield</code> dependency is FastAPI's answer to context managers — code before <code>yield</code> runs on entry, code after runs on exit even if the route raised.` },
       ],
-      note: "The FastAPI part is short — the rest of the day finishes Patterns & matching, carried over from d10.",
+      note: "Patterns & matching's tryout, carried over from d10, comes first; then the Depends reading and refactor.",
     },
     {
       id: "d12", date: "2026-09-28", week: "w3", title: "Advanced Rust I",
@@ -498,8 +500,8 @@ registerRoadmap({
       note: "One of the heaviest Rust sections — its reading today; the ThreadPool build is carried into the next session (d20).",
     },
     {
-      id: "d20", date: "2026-10-10", week: "w4", title: "FastAPI microservices (light)",
-      theme: "Ch6 is prose-heavy/thin — read for concepts, keep it light (overlap day).",
+      id: "d20", date: "2026-10-10", week: "w4", title: "FastAPI microservices",
+      theme: "Ch6 is prose-heavy/thin — read for concepts and keep that part light; the thread-pool build carried over from d19 comes first.",
       tasks: [
         { id: "t1", carried: "d19", obj: R, cat: "project", est: 100, group: "g1-d19",
           label: `<b>Build:</b> implement the full thread pool and serve concurrent requests; verify a slow route no longer blocks others.`,
@@ -690,7 +692,7 @@ registerRoadmap({
       theme: "The Book's core (Ch15–16, 18–21) and Mastering FastAPI (Ch4–7) are done. Async (Ch17) + integration are next.",
       tasks: [
         { id: "t1", obj: R, cat: "review", est: 40, group: "g1",
-          label: `Rust — skim your notes across Ch15–16 & 18–21; list the 3 ideas you'd most want to re-read (likely unsafe, advanced traits, or the thread pool). Async (Ch17) is the weeks-6–7 focus.`,
+          label: `Rust — skim your notes across Ch15–16 & 18–21; list the 3 ideas you'd most want to re-read (likely unsafe, advanced traits, or the thread pool). Async (Ch17) is the week-7 focus.`,
           sub: [
             { id: "s1", est: 20, label: `Rust — skim your notes across Ch15–16 & 18–21.` },
             { id: "s2", est: 20, label: `list the 3 ideas you'd most want to re-read (likely unsafe, advanced traits, or the thread pool).` },
@@ -739,7 +741,7 @@ registerRoadmap({
     },
     {
       id: "d31", date: "2026-10-27", week: "w7", title: "FastAPI — ship the capstone",
-      theme: "Take the Week-4/5 capstone from 'runs locally' to 'deployed'.",
+      theme: "Take the Week-5/6 capstone from 'runs locally' to 'deployed'.",
       tasks: [
         { id: "t1", obj: F, cat: "project", est: 65, group: "g1",
           label: `Deploy your capstone's Docker image to a real host (Fly.io / Railway / a VPS): env-based secrets, a managed Postgres, and a public URL with HTTPS.`,
@@ -763,7 +765,7 @@ registerRoadmap({
     },
     {
       id: "d32", date: "2026-10-28", week: "w7", title: "Async Rust II — an async web server",
-      theme: "Rebuild the Ch21 server the async way — the payoff of d30.",
+      theme: "The rest of Ch17 — its reading today; rebuilding the Ch21 server the async way (the payoff of d30) follows next session (d33).",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 45, group: "g1",
           label: `Rust — <b>Ch17.4–17.6</b>: streams, a closer look at the async traits, and futures-vs-tasks-vs-threads; then skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world for a real async framework. <a href="https://doc.rust-lang.org/stable/book/ch17-04-streams.html" target="_blank" rel="noopener">Book §17.4</a>`,
@@ -806,9 +808,9 @@ registerRoadmap({
       theme: "One system that uses both languages: a Rust service behind a FastAPI gateway.",
       tasks: [
         { id: "t1", obj: R, cat: "read", est: 30, group: "g1",
-          label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d32, exposing a JSON endpoint or two) fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.`,
+          label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d33, exposing a JSON endpoint or two) fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.`,
           sub: [
-            { id: "s1", est: 15, label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d32, exposing a JSON endpoint or two).` },
+            { id: "s1", est: 15, label: `Sketch the architecture: a small <b>Rust</b> service (your async server from d33, exposing a JSON endpoint or two).` },
             { id: "s2", est: 15, label: `fronted by a <b>FastAPI</b> gateway that auth-gates and proxies to it.` },
           ] },
         { id: "t2", obj: R, cat: "project", est: 80, group: "g1",

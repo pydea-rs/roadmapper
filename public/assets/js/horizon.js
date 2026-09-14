@@ -8,7 +8,7 @@
 // tracks what the list is showing; press or drag anywhere on it to travel there.
 //
 // Minutes are REQUIRED work only (bonus never loads a day), measured against the owner's
-// daily ceiling for that date: ~4h when one or two roadmaps share it, 6h for three or more.
+// daily ceiling: a flat 3h per date (stats.DAILY_CAP_MINS), however many roadmaps share it.
 
 import { getRoadmaps } from "./registry.js";
 import { dailyBudget, taskProgress } from "./stats.js";

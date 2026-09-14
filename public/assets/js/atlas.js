@@ -13,7 +13,7 @@
 // The Horizon view (horizon.js) lays the same bricks and lens out across every roadmap.
 
 import * as store from "./store.js";
-import { currentDay, dayDate, taskProgress } from "./stats.js";
+import { currentDay, carriedFrom, dayDate, taskProgress } from "./stats.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { openDayMenu } from "./daymenu.js";
 import { checkIcon, getSettings } from "./ui.js";
@@ -106,8 +106,9 @@ export function brick(rm, task, opts = {}) {
       `--lines:${lines};--chip:var(--cat-${cat}, var(--cat-alt))`,
   });
 
+  const carried = carriedFrom(rm, task);
   const main = el("button.brick-main", { type: "button",
-    title: `${label}${task.est ? " · " + fmtMins(task.est) : ""}${movedIn ? " · moved in" : ""}${task.carried && rm.daysById.get(task.carried) ? ` · carried over from “${rm.daysById.get(task.carried).title}”` : ""}`,
+    title: `${label}${task.est ? " · " + fmtMins(task.est) : ""}${movedIn ? " · moved in" : ""}${carried ? ` · carried over from “${carried.title}”` : ""}`,
     "aria-label": `${label}. ${task.est ? fmtMins(task.est) + ", " : ""}${state}. Show the day` });
   main.append(el("span.brick-label", { text: (movedIn ? "↩ " : "") + (task.optional ? "★ " : "") + label }));
   if (task.subs) {
@@ -374,8 +375,8 @@ function lensTask(rm, task, slot, o) {
     const od = rm.daysById.get(task.day);
     meta.append(el("span.t-moved", { text: `↩ from ${od ? shortDate(dayDate(rm, slug, od)) : task.day}` }));
   }
-  const carriedFrom = task.carried && rm.daysById.get(task.carried);
-  if (carriedFrom) meta.append(el("span.t-carried", { text: `↩ carried over from “${carriedFrom.title}”` }));
+  const from = carriedFrom(rm, task);
+  if (from) meta.append(el("span.t-carried", { text: `↩ carried over from “${from.title}”` }));
   body.append(meta);
   if (task.subs) {
     const subs = el("div.lens-subs");

@@ -56,6 +56,14 @@ export function currentDay(rm, slug, task) {
   return task.day;                    // origin (also handles pruned/removed targets)
 }
 
+/** The day a task was passed along FROM by the plan (authored `carried`), or null.
+ *  Also null while the task has been moved back onto that very day — a card telling
+ *  you its own task was "carried over from" itself would be nonsense. */
+export function carriedFrom(rm, task) {
+  const from = task.carried && rm.daysById.get(task.carried);
+  return from && currentDay(rm, rm.slug, task) !== from.id ? from : null;
+}
+
 /** The EFFECTIVE calendar date of a day-CARD: its user-chosen override when one is
  *  set and still valid, else the authored date. Valid = strictly after the card's
  *  own base date and strictly before the next card's base (`day.nextDate`), i.e.

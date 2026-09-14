@@ -178,6 +178,17 @@ t.group("carried-over work in the Atlas: the brick and the lens name the origina
   t.ok(chip && chip.textContent.includes(from.title), "the lens row names the original day");
   document.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
   await wait(200);
+  // moved back onto its origin day, neither the tooltip nor the lens claims it came from there
+  store.setMove(rm.slug, task.id, from.id);
+  render.rerender();
+  const movedMain = view.querySelector(`.brick[data-task="${task.id}"] .brick-main`);
+  t.ok(movedMain && !movedMain.title.includes("carried over"), "moved back to its origin day, the brick tooltip drops 'carried over'");
+  click(movedMain);
+  t.ok($(`.lens .lens-task[data-task="${task.id}"]`) && !$(`.lens .lens-task[data-task="${task.id}"] .t-carried`), "…and so does the lens row");
+  document.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  await wait(200);
+  store.setMove(rm.slug, task.id, null);
+  render.rerender();
 }
 
 t.group("the day lens — details, ticks, moves, dismissal");

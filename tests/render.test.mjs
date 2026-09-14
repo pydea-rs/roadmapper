@@ -344,6 +344,14 @@ t.group("carried-over tasks say where they came from (the daily-cap re-plan)");
     "the origin card doesn't show it (the task lives on the later card)");
   const bonus = ru.days.flatMap(d => d.tasks.filter(x => x.optional && x.carried))[0];
   if (bonus) t.ok(view.querySelector(`.task.bonus[data-task="${bonus.id}"] .t-carried`), "a carried bonus task shows the chip too");
+  // moved BACK onto the day it was carried from: that card must not claim its own task came from itself
+  store.setMove(ru.slug, carried.id, from.id);
+  render.renderRoadmap(ru, view);
+  const back = view.querySelector(`.day[data-day="${from.id}"] .task[data-task="${carried.id}"]`);
+  t.ok(back && !back.querySelector(".t-carried"), "moved back to its origin day, the task drops the carried chip");
+  store.setMove(ru.slug, carried.id, null);
+  render.renderRoadmap(ru, view);
+  t.ok(view.querySelector(`.task[data-task="${carried.id}"] .t-carried`), "…and shows it again once the move is undone");
 }
 
 t.group("a global view releases the roadmap that was drawn in the shared mount");

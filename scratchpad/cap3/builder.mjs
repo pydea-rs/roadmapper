@@ -219,7 +219,8 @@ for (const s of SLUGS) {
       wk = lastCard.week;
     } else {
       const ow = +prop(mn, "week").value.value.slice(1);
-      wk = `w${weekMap.first.get(ow)}`;
+      // a week-share goal follows its week; overrides.json may pin it to the week its topic now lands in
+      wk = O.milestoneWeek?.[prop(mn, "id").value.value] || `w${weekMap.first.get(ow)}`;
       const pt = prop(mn, "title");
       edits.push({ start: pt.value.start, end: pt.value.end, text: q(strOf(pt.value).replace(/week \d+/i, m => m.replace(/\d+/, weekMap.first.get(ow)))) });
     }
@@ -261,9 +262,15 @@ for (const s of SLUGS) {
     for (const e of p.value.elements) {
       const pa = prop(e, "afterDay");
       const h = W[slug].homes.find(h => h.id === pa.value.value);
-      edits.push({ start: pa.value.start, end: pa.value.end, text: `"${W[slug].lastCardOf.get(h.k).id}"` });
+      const pinned = OVR[slug]?.interludeAfter?.[prop(e, "id").value.value];   // hand-placed (overrides.json)
+      edits.push({ start: pa.value.start, end: pa.value.end, text: `"${pinned || W[slug].lastCardOf.get(h.k).id}"` });
     }
   }
-  fs.writeFileSync(file, applyEdits(src, 0, edits));
+  let out = applyEdits(src, 0, edits);
+  for (const [a, b] of OVR.interludesReplace || []) {
+    if (out.split(a).length !== 2) throw new Error(`interludes: replace target not found exactly once — ${a.slice(0, 90)}`);
+    out = out.replace(a, () => b);
+  }
+  fs.writeFileSync(file, out);
 }
 console.log(report.join("\n"));

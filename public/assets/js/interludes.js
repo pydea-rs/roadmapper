@@ -19,7 +19,7 @@
 
 const INTERLUDES = {
   "rust-fastapi": [
-    { id: "il1", afterDay: "d07", kind: "video",
+    { id: "il1", afterDay: "d06", kind: "video",
       title: "Crust of Rust: Smart Pointers & Interior Mutability",
       source: "Jon Gjengset",
       note: "You just met Box, Rc, RefCell & Weak. Jon rebuilds Cell/RefCell/Rc from scratch — the definitive mental model for interior mutability and shared ownership.",
@@ -43,7 +43,7 @@ const INTERLUDES = {
       note: "Right before Async Rust week: what a Future really is, how `.await` suspends, and why it isn't a thread.",
       url: "https://www.youtube.com/watch?v=9_3krAQtD2k",
       query: "async rust tokio futures await runtime explained" },
-    /* ---- Rust Web Programming extension (d33–d98): go-beyond cards at concept
+    /* ---- Rust Web Programming extension (d38–d103): go-beyond cards at concept
        boundaries. All verified (YouTube via oembed; articles resolve https). ---- */
     { id: "il5", afterDay: "d42", kind: "video",
       title: "Traits in Rust",

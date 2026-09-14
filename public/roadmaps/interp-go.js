@@ -290,7 +290,7 @@ registerRoadmap({
     },
     {
       id: "d14", date: "2026-10-06", week: "w4", title: `CI Ch12 — Classes I (jlox)`,
-      theme: `The 27-page chapter, split across two days. Today: declarations → methods.`,
+      theme: `The 27-page chapter, split across several sessions. This card: the reading — declarations → methods; the build follows next session.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/classes.html" target="_blank" rel="noopener">Ch12 Classes, part 1</a></b> (jlox): class declarations, instances, properties, methods (pp 190–205).`,
           sub: [
@@ -324,7 +324,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Splitting a heavy chapter over two short days beats one marathon: you code the mechanics on day 1 and let <code>this</code>/initializers (the subtle part) land fresh on day 2.` },
+        { id: "s1", type: "hint", label: `💡 Splitting a heavy chapter over short sessions beats one marathon: you code the mechanics first and let <code>this</code>/initializers (the subtle part) land fresh in a later session.` },
       ],
       note: `Continuation of Ch12 on the next calendar day — lighter than one 27-page sprint.`,
     },
@@ -568,7 +568,7 @@ registerRoadmap({
     /* ---------------- Week 9 ---------------- */
     {
       id: "d33", date: "2026-11-08", week: "w9", title: `CI Ch17 — Compiling Expressions I (clox, Pratt)`,
-      theme: `The dense idea — the Pratt parser — split over two days. Today: the core.`,
+      theme: `The dense idea — the Pratt parser — split over several sessions. This card: the reading — the core.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 65, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">Ch17 Compiling Expressions, part 1</a></b> (clox): single-pass compilation, the <b>Pratt parser</b> — the precedence table and how prefix/infix rules dispatch (pp 297–310).`,
           sub: [
@@ -582,7 +582,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d34", date: "2026-11-11", week: "w9", title: `CI Ch17 — Pratt parser II + challenges (clox)`,
+      id: "d34", date: "2026-11-11", week: "w9", title: `CI Ch17 — Pratt parser II (clox)`,
       theme: `Finish the compiler: the remaining rules, then all three challenges.`,
       tasks: [
         { id: "t1", carried: "d33", obj: CI, cat: "code", est: 70, group: "g1-d33", label: `Implement the core of the Pratt <code>compiler.c</code> — the precedence-climbing loop and the parse-rule table.`,
@@ -897,7 +897,7 @@ registerRoadmap({
     },
     {
       id: "d54", date: "2026-12-16", week: "w14", title: `CI Ch24 — Calls and Functions I (clox)`,
-      theme: `The 32-page chapter, split over two days. Today: function objects + call frames.`,
+      theme: `The 32-page chapter, split over several sessions. This card: the reading — function objects + call frames.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/calls-and-functions.html" target="_blank" rel="noopener">Ch24 Calls and Functions, part 1</a></b> (clox): function objects, compiling a function body, and the <code>CallFrame</code> model (pp 425–445).`,
           sub: [
@@ -932,7 +932,7 @@ registerRoadmap({
             { id: "s4", est: 10, label: `The call-depth guard.` },
           ] },
       ],
-      note: `Continuation of the heavy Ch24 — call frames last session (d54), the tricky call/return glue today.`,
+      note: `Continuation of the heavy Ch24 — the CallFrame build from last session's reading (d54) first, then the tricky call/return glue.`,
     },
     {
       id: "d56", date: "2026-12-18", week: "w14", title: `CI Ch24 — Calls II: natives + challenges (clox) (2/2)`,
@@ -951,7 +951,7 @@ registerRoadmap({
     /* ---------------- Week 15 ---------------- */
     {
       id: "d57", date: "2026-12-20", week: "w15", title: `CI Ch25 — Closures I (clox)`,
-      theme: `The longest clox chapter (35pp), split over two days. Today: upvalues + capture.`,
+      theme: `The longest clox chapter (35pp), split over several sessions. This card: the reading — upvalues + capture.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">Ch25 Closures, part 1</a></b> (clox): <code>ObjClosure</code>, upvalues, and capturing local variables (pp 457–478).`,
           sub: [
@@ -963,7 +963,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 Upvalues are the clox answer to the closure problem jlox solved with the resolver (Ch11). Same problem — a captured variable outliving its scope — two very different machines.` },
       ],
-      note: `Split day 1 of the longest chapter — capture today, closing-over-the-stack next session (d58).`,
+      note: `Split day 1 of the longest chapter — the capture reading today; the capture build and closing-over-the-stack next session (d58).`,
     },
     {
       id: "d58", date: "2026-12-21", week: "w15", title: `CI Ch25 — Closures II: closing upvalues + challenges (1/2)`,
@@ -1018,7 +1018,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "callout", label: `🔗 Background — <a href="https://en.wikipedia.org/wiki/Tracing_garbage_collection" target="_blank" rel="noopener">tracing GC</a> (tricolor, generational) situates clox's collector in the wider family.` },
       ],
-      note: `Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs next session (d61).`,
+      note: `Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs over the next sessions (d61–d62).`,
     },
 
     /* ---------------- Week 16 ---------------- */
@@ -1606,7 +1606,7 @@ registerRoadmap({
       rule: { type: "tasks", require: ["d10.t1", "d15.t1"] } },
     { id: "w6.m1", week: "w6", title: `🏁 jlox complete; clox started`,
       rule: { type: "tasks", require: ["d19.t3", "d24.t1"] } },
-    { id: "w6.m2", week: "w6", title: "clox VM running",
+    { id: "w7.m1", week: "w7", title: "clox VM running",
       rule: { type: "weekPct", min: 70 } },
     { id: "w9.m1", week: "w9", title: `Pratt compiler + values`,
       rule: { type: "tasks", require: ["d34.t1", "d36.t1"] } },

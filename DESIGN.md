@@ -215,7 +215,8 @@ responsiveness." Direction:
   A task the plan passed on from an earlier day to keep a date within the 3h ceiling (authored
   `carried: "dNN"`, listed before the card's own tasks) shows *↩ carried over from “that day”* — in the
   card, the bonus list, the Atlas lens and the brick's tooltip. A card holding only such work is titled
-  "… (cont.)". Unlike a user move, `carried` changes no date and no on-time judgement.
+  "… (cont.)". Unlike a user move, `carried` changes no date and no on-time judgement. While the task
+  is moved back onto the very day it was carried from, the chip is hidden (`stats.carriedFrom`).
 - **Timeline — Atlas**: the whole roadmap on one board, for seeing every day and task in a few looks.
   One **plate per week** (week number, dates, title, actual bar with on-time underline, milestones);
   inside it the week's days sit **side by side as columns**, each a stack of **bricks**. A brick is one

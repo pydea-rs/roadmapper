@@ -6,7 +6,7 @@
 // cards and scroll position are preserved, so it stays smooth and correct.
 
 import * as store from "./store.js";
-import { computeAll, currentDay, dayDate, taskProgress, taskComplete } from "./stats.js";
+import { computeAll, currentDay, carriedFrom, dayDate, taskProgress, taskComplete } from "./stats.js";
 import { getRoadmaps, getMainRoadmaps, getSideRoadmaps } from "./registry.js";
 import { makeDraggable, installDayDrop, openMovePicker } from "./moves.js";
 import { openDayMenu } from "./daymenu.js";
@@ -1596,7 +1596,7 @@ function movedChip(rm, slug, task, isMovedIn) {
 /* "↩ carried over from …": the plan passed this task on from an earlier day so a date
  * stays within the daily cap (authored `carried`). Unlike a move it changes no date. */
 function carriedChip(rm, task) {
-  const from = task.carried && rm.daysById.get(task.carried);
+  const from = carriedFrom(rm, task);
   if (!from) return null;
   return el("span.t-carried", { text: `↩ carried over from “${from.title}”`,
     title: `Planned with ${from.title} (${relDay(dayDate(rm, rm.slug, from))}) and passed on to keep that day within the daily cap` });
