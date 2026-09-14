@@ -23,10 +23,10 @@ global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slid
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-09-06 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-09-14 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 6, 12, 0, 0); }
-  static now() { return new RealDate(2026, 8, 6, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 14, 12, 0, 0); }
+  static now() { return new RealDate(2026, 8, 14, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
 
@@ -277,7 +277,7 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
 render.renderToday(view);                                     // restore the Today view for the next group
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-09-06, so raylib d01.t1 (2026-09-05) is OVERDUE. A
+// "now" is frozen at 2026-09-14, so raylib d01.t1 (2026-09-13) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id
@@ -329,6 +329,22 @@ store.setDayDate(igo.slug, movable.id, null);          // reset so state stays c
 render.renderRoadmap(igo, view);
 t.ok(!view.querySelector(`.day[data-day="${movable.id}"]`).classList.contains("moved"),
   "resetting the override drops the .moved flag");
+
+t.group("carried-over tasks say where they came from (the daily-cap re-plan)");
+{
+  const ru = reg.getRoadmap("rust-fastapi");
+  render.renderRoadmap(ru, view);
+  const host = ru.days.find(d => d.tasks.some(x => x.carried && !x.optional));
+  const carried = host.tasks.find(x => x.carried && !x.optional), own = host.tasks.find(x => !x.carried);
+  const from = ru.daysById.get(carried.carried);
+  const chip = view.querySelector(`.task[data-task="${carried.id}"] .t-carried`);
+  t.ok(chip && chip.textContent.includes(from.title), `a carried task names its original day ("${from.title}")`);
+  t.ok(!own || !view.querySelector(`.task[data-task="${own.id}"] .t-carried`), "the card's own tasks carry no such chip");
+  t.ok(!view.querySelector(`.day[data-day="${from.id}"] .t-carried`) || from.tasks.some(x => x.carried),
+    "the origin card doesn't show it (the task lives on the later card)");
+  const bonus = ru.days.flatMap(d => d.tasks.filter(x => x.optional && x.carried))[0];
+  if (bonus) t.ok(view.querySelector(`.task.bonus[data-task="${bonus.id}"] .t-carried`), "a carried bonus task shows the chip too");
+}
 
 t.group("a global view releases the roadmap that was drawn in the shared mount");
 render.renderRoadmap(reg.getRoadmap("rust-fastapi"), view);

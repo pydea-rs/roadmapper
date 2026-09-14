@@ -54,7 +54,8 @@ t.eq(S1.days["d01"].actual.done, 1, "day d01 reads 1 of 3 done");
 clear(s1);
 
 t.group("milestones need the WHOLE parent complete, not one part");
-const w5 = () => stats.computeAll(rm).milestones.find(x => x.id === "w5.m1");
+// the "Foundations" milestone — the one whose rule requires d01.t1
+const w5 = () => stats.computeAll(rm).milestones.find(x => (rm.milestones.find(m => m.id === x.id).rule.require || []).includes("d01.t1"));
 store.setTask(slug, s1, true); store.setTask(slug, s2, true);   // d01.t1 partial (2/3)
 t.eq(w5().progress, 0, "a partially-done required task does NOT count toward its milestone");
 store.setTask(slug, s3, true);                                   // d01.t1 complete

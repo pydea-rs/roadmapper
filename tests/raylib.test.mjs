@@ -15,7 +15,7 @@ await loadRoadmap("bedrock.js");
 await loadRoadmap("raylib.js");
 
 const rm = registry.getRoadmap("raylib");
-const firstTaskObj = d => d.tasks[0] && d.tasks[0].obj;
+const firstTaskObj = d => (d.tasks.find(x => !x.carried) || {}).obj;   // carried-in work never sets the topic
 const allTasks = rm.days.flatMap(d => d.tasks);
 
 t.group("registration & shape");
@@ -28,7 +28,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
 // ⚠️ SHIFT-SENSITIVE: bump with every uniform date shift (like content.test's ANCHORS).
-t.ok(rm.days[0].date === "2026-09-05", "the journey starts on 2026-09-05, its first day in week 1");
+t.ok(rm.days[0].date === "2026-09-13", "the journey starts on 2026-09-13, its first day in week 1");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 t.ok(allTasks.filter(x => !x.optional).every(x => x.cards && x.cards.length >= 2),
@@ -94,7 +94,7 @@ t.group("scheduling — never piles onto a heavy day");
 // The old "lands on LIGHT main days" framing pinned the mains to fixed weekdays so the
 // side track could dodge them. Since the 2026-09-13 re-plan no roadmap has fixed
 // weekdays, so the promise is stated directly on the whole day: any date raylib
-// shares stays inside the owner's ~4h ceiling for a lightly-shared day.
+// shares stays inside the owner's 3h daily ceiling (the 3-hour cap re-plan).
 const combined = new Map();
 for (const r of registry.getRoadmaps())
   for (const d of r.days) {
@@ -102,7 +102,7 @@ for (const r of registry.getRoadmaps())
     combined.set(d.date, (combined.get(d.date) || 0) + est);
   }
 const worstShared = Math.max(...rm.days.map(d => combined.get(d.date)));
-t.ok(worstShared <= 270, `every raylib date stays a light combined day (worst ${worstShared} min, ceiling ~4h)`);
+t.ok(worstShared <= 180, `every raylib date stays within the 3h combined ceiling (worst ${worstShared} min)`);
 // A side-track day is a single focused block on its own.
 const selfMax = Math.max(...rm.days.map(d => d.tasks.reduce((s, x) => s + (x.optional ? 0 : x.est || 0), 0)));
 t.ok(selfMax <= 130, `a raylib day stays one focused block (worst ${selfMax} min)`);

@@ -1,0 +1,5 @@
+node_modules/
+orig/
+profile/
+*.log
+*.txt

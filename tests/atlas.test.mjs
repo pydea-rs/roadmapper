@@ -147,7 +147,8 @@ render.renderRoadmap(rm, view, { animate: false });
 
 t.group("ticking from a brick");
 {
-  const task = rm.days[8].tasks.find(x => x.subs && !x.optional);
+  // a task with 2+ parts, so ticking one part can read as partial (a split "(1/2)" part may hold only one)
+  const task = rm.days.slice(8).flatMap(d => d.tasks).find(x => x.subs && x.subs.length > 1 && !x.optional);
   const brickOf = () => view.querySelector(`.brick[data-task="${task.id}"]`);
   click(brickOf().querySelector(".brick-tick"));
   t.ok(allDone(rm.slug, task), "the brick's tick completes every part of the task");
@@ -164,6 +165,19 @@ t.group("ticking from a brick");
   t.eq(brickOf().querySelector(".brick-tick").getAttribute("aria-checked"), "mixed", "…with a mixed tick");
   store.setTask(rm.slug, task.subs[0].id, false);
   render.rerender();
+}
+
+t.group("carried-over work in the Atlas: the brick and the lens name the original day");
+{
+  const host = rm.days.find(d => d.tasks.some(x => x.carried && !x.optional));
+  const task = host.tasks.find(x => x.carried && !x.optional), from = rm.daysById.get(task.carried);
+  const main = view.querySelector(`.brick[data-task="${task.id}"] .brick-main`);
+  t.ok(main && main.title.includes(`carried over from “${from.title}”`), "the brick's tooltip says where the task came from");
+  click(main);
+  const chip = $(`.lens .lens-task[data-task="${task.id}"] .t-carried`);
+  t.ok(chip && chip.textContent.includes(from.title), "the lens row names the original day");
+  document.dispatchEvent(new w.KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+  await wait(200);
 }
 
 t.group("the day lens — details, ticks, moves, dismissal");

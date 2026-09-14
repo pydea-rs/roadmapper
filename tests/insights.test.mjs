@@ -20,13 +20,13 @@ global.localStorage = dom.window.localStorage;
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-09-06 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-09-18 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 6, 12, 0, 0); }
-  static now() { return new RealDate(2026, 8, 6, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 18, 12, 0, 0); }
+  static now() { return new RealDate(2026, 8, 18, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
-const TODAY = "2026-09-06";
+const TODAY = "2026-09-18";
 
 const base = new URL("../public/assets/js/", import.meta.url);
 const rmBase = new URL("../public/roadmaps/", import.meta.url);

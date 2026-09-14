@@ -1,3 +1,7 @@
+// ⛔ SUPERSEDED (2026-09-13, later that day): the 3-hour daily cap replaced the 4–6h rules this
+// scheduler encodes, and every roadmap restarted on 2026-09-13. The current planner and file
+// builder are scratchpad/cap3/ (engine.mjs → plan.json, builder.mjs → the roadmap files).
+// Running this against the live files now reports every day as different — expected.
 // replan.mjs — week-by-week VARIED scheduler (2026-09-13, owner's corrected rules).
 // Replaces consolidate.mjs (the rejected "stack everything on shared working days" engine).
 //   node scratchpad/replan.mjs        → rebuild the plan from the LIVE roadmap files and

@@ -6,12 +6,12 @@
 // (Networking A→B→C…, DevOps 1→2→3…, Databases…), but the threads are
 // INTERLEAVED across the calendar, so consecutive side-days switch topics (TCP
 // one day, containers the next, a chain the next). A thread always advances in
-// order when it reappears. First 3 months (this ~13-week core) front-load the
+// order when it reappears. First 3 months (this 12-week core) front-load the
 // most important backend/blockchain foundations, with Networking + DevOps from
 // week 1; deeper "under the hood" material continues in a later extension.
 //
 // Cadence: 2–3 focused side-days per week (a few weeks take 4), on weekdays that
-// change from week to week — see the 2026-09-13 re-plan note — one ~60–125 min task
+// change from week to week — see the 3-hour cap re-plan note — one ~60–125 min task
 // each, alongside the main roadmaps. Progress/effort stay OFF the main track's
 // totals (kind:"side") — only the Today panel's "Main + Side" line combines them.
 //
@@ -33,9 +33,9 @@
 // re-laid by the re-plan note below.
 
 // 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again
-// the same day after the owner reviewed the Horizon view's daily totals. It replaces
-// the earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h
-// as a target to fill).
+// the same day after the owner read the Horizon view's daily totals. It replaces the
+// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a
+// target to fill).
 //  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts
 //    2026-09-13 + 7i).
 //  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —
@@ -45,16 +45,18 @@
 //    roadmap's next card, ahead of that card's own tasks, and marked `carried: "dNN"`
 //    so the card shows where each one came from. A card whose own tasks all moved on
 //    is titled "… (cont.)". A task too big to share its date is split at a sub-task
-//    boundary into "(1/2)" / "(2/2)". Nothing was cut or reworded.
+//    boundary into "(1/2)" / "(2/2)" — main roadmaps only; the side tracks were planned
+//    around it so every task keeps its recall cards. Nothing was cut or reworded.
 //  - Days per week follow the authored phase of the content, weekdays change from
 //    week to week, and no roadmap goes more than a week without a session.
-// Day ids were renumbered and milestones/interludes re-anchored (no DB backward
-// compatibility needed); day and week references inside the content point at the
-// new ids. Ids quoted in the dated notes ABOVE use the numbering of their own day.
-// For this file: 97 → 100 days, 32 → 33 weeks, 2026-09-16 → 2027-04-30 (was
-// 2026-09-07 → 2027-04-12). 2–4 side-days a week (mostly 3); 3 tasks split, 3
-// continuation cards. The core now ends in week 13; Extension I runs w13–26, II w26–30
-// and III w30–33. The 9 inline `dow:` labels were recomputed.
+// Day ids were renumbered where cards were added, and milestones/interludes re-anchored
+// (no DB backward compatibility needed); day and week references inside the content
+// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's
+// numbering. The planner and file builder live in scratchpad/cap3/.
+// For this file: still 97 days / 32 weeks, each week holding the same side-days it was
+// authored with; 2026-09-14 → 2027-04-24 (was 2026-09-07 → 2027-04-12). One task is
+// carried (d71's "Compiler lens" into d72), none split. The 9 inline `dow:` labels and
+// the two extension "Dates X → Y" ranges were recomputed.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -93,46 +95,45 @@ registerRoadmap({
   weeks: [
     { id: "w1", title: "Week 1 — The wire, the container, the process", start: "2026-09-13" },
     { id: "w2", title: "Week 2 — Addresses, images & the B-tree", start: "2026-09-20" },
-    { id: "w3", title: "Week 3 — TCP, Kubernetes & the memory hierarchy", start: "2026-09-27" },
-    { id: "w4", title: "Week 4 — The planner, DNS & k8s scheduling", start: "2026-10-04" },
-    { id: "w5", title: "Week 5 — First security, TLS & MVCC", start: "2026-10-11" },
-    { id: "w6", title: "Week 6 — Shipping, crypto & HTTP", start: "2026-10-18" },
-    { id: "w7", title: "Week 7 — Redis, isolation & metrics", start: "2026-10-25" },
-    { id: "w8", title: "Week 8 — The EVM, the log & proxies", start: "2026-11-01" },
-    { id: "w9", title: "Week 9 — OAuth, locks & Solana", start: "2026-11-08" },
-    { id: "w10", title: "Week 10 — SLOs, the event loop & transactions", start: "2026-11-15" },
-    { id: "w11", title: "Week 11 — Kafka, a Rust review & stampedes", start: "2026-11-22" },
-    { id: "w12", title: "Week 12 — Sealevel, load tests & consensus", start: "2026-11-29" },
-    // ---- Extension: "deepen your knowledge" — under-the-hood internals (w13 opens with the last core days) ----
-    { id: "w13", title: "Week 13 — The security capstone & Raft", start: "2026-12-06" },
-    { id: "w14", title: "Week 14 — VACUUM, virtual memory & rollups", start: "2026-12-13" },
-    { id: "w15", title: "Week 15 — BGP, exactly-once & Byzantine faults", start: "2026-12-20" },
-    { id: "w16", title: "Week 16 — TOAST, the mesh & blobs", start: "2026-12-27" },
-    { id: "w17", title: "Week 17 — Go's scheduler, Redis Cluster & CAP", start: "2027-01-03" },
-    { id: "w18", title: "Week 18 — Joins, the page cache & MEV", start: "2027-01-10" },
-    { id: "w19", title: "Week 19 — Rebalances, proxy security & logical clocks", start: "2027-01-17" },
-    { id: "w20", title: "Week 20 — Sharding, QUIC & account abstraction", start: "2027-01-24" },
-    { id: "w21", title: "Week 21 — The GIL, supply chain & 2PC/Sagas", start: "2027-01-31" },
-    { id: "w22", title: "Week 22 — Replication, the outbox & ZK proofs", start: "2027-02-07" },
-    { id: "w23", title: "Week 23 — Redlock, io_uring & quorums", start: "2027-02-14" },
-    { id: "w24", title: "Week 24 — LSM-trees, XDP & Firedancer", start: "2027-02-21" },
-    { id: "w25", title: "Week 25 — The C++ memory model, streams & flame graphs", start: "2027-02-28" },
-    // ---- Extension II: "the cool internals" — data structures & runtime under the hood (from w26's 3rd day) ----
-    { id: "w26", title: "Week 26 — Signatures, async internals & amortized O(1)", start: "2027-03-07" },
-    { id: "w27", title: "Week 27 — False sharing, hash maps & the JS heap", start: "2027-03-14" },
-    { id: "w28", title: "Week 28 — Garbage collection, the allocator & floats", start: "2027-03-21" },
-    { id: "w29", title: "Week 29 — The JIT, Unicode & branch prediction", start: "2027-03-28" },
-    // ---- Extension III: "how the languages are built" — compilers & interpreters (from w30's 2nd day) ----
-    { id: "w30", title: "Week 30 — Bloom filters & the territory", start: "2027-04-04" },
-    { id: "w31", title: "Week 31 — CPython, parsing & the Go compiler", start: "2027-04-11" },
-    { id: "w32", title: "Week 32 — Tree-walkers, the JVM & bytecode VMs", start: "2027-04-18" },
-    { id: "w33", title: "Week 33 — LLVM & code generation", start: "2027-04-25" },
+    { id: "w3", title: "Week 3 — TCP, Kubernetes, cache & the planner", start: "2026-09-27" },
+    { id: "w4", title: "Week 4 — DNS, scheduling & first security", start: "2026-10-04" },
+    { id: "w5", title: "Week 5 — TLS, MVCC & shipping", start: "2026-10-11" },
+    { id: "w6", title: "Week 6 — Crypto, HTTP, Redis & isolation", start: "2026-10-18" },
+    { id: "w7", title: "Week 7 — Metrics, the EVM & the log", start: "2026-10-25" },
+    { id: "w8", title: "Week 8 — Proxies, OAuth & locks", start: "2026-11-01" },
+    { id: "w9", title: "Week 9 — Solana, SLOs & the event loop", start: "2026-11-08" },
+    { id: "w10", title: "Week 10 — Transactions, Kafka & a Rust review", start: "2026-11-15" },
+    { id: "w11", title: "Week 11 — Stampedes, Sealevel & load tests", start: "2026-11-22" },
+    { id: "w12", title: "Week 12 — Consensus & the security capstone", start: "2026-11-29" },
+    // ---- Extension: "deepen your knowledge" — under-the-hood internals ----
+    { id: "w13", title: "Week 13 — Raft, VACUUM & virtual memory", start: "2026-12-06" },
+    { id: "w14", title: "Week 14 — Rollups, BGP & exactly-once", start: "2026-12-13" },
+    { id: "w15", title: "Week 15 — Byzantine faults, TOAST & the mesh", start: "2026-12-20" },
+    { id: "w16", title: "Week 16 — Blobs, Go's scheduler & Redis Cluster", start: "2026-12-27" },
+    { id: "w17", title: "Week 17 — CAP, joins & the page cache", start: "2027-01-03" },
+    { id: "w18", title: "Week 18 — MEV, rebalances & proxy security", start: "2027-01-10" },
+    { id: "w19", title: "Week 19 — Logical clocks, sharding & QUIC", start: "2027-01-17" },
+    { id: "w20", title: "Week 20 — Account abstraction, the GIL & supply chain", start: "2027-01-24" },
+    { id: "w21", title: "Week 21 — 2PC/Sagas, replication & the outbox", start: "2027-01-31" },
+    { id: "w22", title: "Week 22 — ZK proofs, Redlock & io_uring", start: "2027-02-07" },
+    { id: "w23", title: "Week 23 — Quorums, LSM-trees & XDP", start: "2027-02-14" },
+    { id: "w24", title: "Week 24 — Firedancer, the C++ memory model & streams", start: "2027-02-21" },
+    { id: "w25", title: "Week 25 — Flame graphs, signatures & async internals", start: "2027-02-28" },
+    // ---- Extension II: "the cool internals" — data structures & runtime under the hood ----
+    { id: "w26", title: "Week 26 — Amortized O(1), false sharing & hash maps", start: "2027-03-07" },
+    { id: "w27", title: "Week 27 — The JS heap, garbage collection & the allocator", start: "2027-03-14" },
+    { id: "w28", title: "Week 28 — Floats, the JIT & Unicode", start: "2027-03-21" },
+    { id: "w29", title: "Week 29 — Branch prediction & Bloom filters", start: "2027-03-28" },
+    // ---- Extension III: "how the languages are built" — compilers & interpreters ----
+    { id: "w30", title: "Week 30 — The territory, CPython & parsing", start: "2027-04-04" },
+    { id: "w31", title: "Week 31 — The Go compiler, tree-walkers & the JVM", start: "2027-04-11" },
+    { id: "w32", title: "Week 32 — Bytecode VMs, LLVM & code generation", start: "2027-04-18" },
   ],
 
   days: [
     /* ---------------- Week 1 ---------------- */
     {
-      id: "d01", date: "2026-09-16", week: "w1", title: "The OSI myth vs how the internet really layers",
+      id: "d01", date: "2026-09-14", week: "w1", title: "The OSI myth vs how the internet really layers",
       theme: "Networking · thread part 1 — encapsulation is the load-bearing idea, not the number 7.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 65,
@@ -209,7 +210,7 @@ registerRoadmap({
 
     /* ---------------- Week 2 ---------------- */
     {
-      id: "d04", date: "2026-09-21", week: "w2", title: "IP addressing, subnets & CIDR",
+      id: "d04", date: "2026-09-20", week: "w2", title: "IP addressing, subnets & CIDR",
       theme: "Networking · part 2 — stop CIDR from being magic.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 65,
@@ -238,7 +239,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-09-22", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
+      id: "d05", date: "2026-09-21", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
       theme: "DevOps · part 2 — an image is a manifest + content-addressed layers.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -292,10 +293,24 @@ registerRoadmap({
       id: "d07", date: "2026-09-28", week: "w3", title: "TCP vs UDP — handshake, flow, congestion, HOL",
       theme: "Networking · part 3 — reliability is a feature you pay for.",
       tasks: [
-        { id: "t1", obj: NET, cat: "read", est: 35,
-          lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you. (1/2)`,
+        { id: "t1", obj: NET, cat: "read", est: 75,
+          lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you.`,
           sub: [
             { id: "s1", est: 35, label: `Read HPBN (free) <a href="https://hpbn.co/building-blocks-of-tcp/" target="_blank" rel="noopener">"Building Blocks of TCP"</a> + <a href="https://hpbn.co/building-blocks-of-udp/" target="_blank" rel="noopener">UDP</a>.` },
+            { id: "s2", est: 25, label: `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.`,
+              info: `<p>The four things that make TCP reliable, ordered and congestion-aware:</p>
+<ul>
+<li><b>3-way handshake</b> (SYN → SYN-ACK → ACK) agrees on starting sequence numbers before any data — one round-trip of latency before byte one.</li>
+<li><b>Slow-start + AIMD</b>: the sender ramps its congestion window up exponentially, then on loss backs off (additive-increase / multiplicative-decrease) — TCP <i>discovers</i> the path's capacity rather than being told it.</li>
+<li><b>Receive window</b> = flow control: the receiver advertises free buffer so a fast sender can't overrun a slow reader (distinct from congestion control, which protects the <i>network</i>).</li>
+<li><b>Head-of-line blocking</b>: one lost segment stalls everything behind it because bytes must arrive in order — the exact problem HTTP/3-over-QUIC was built to escape.</li>
+</ul>` },
+            { id: "s3", est: 15, label: `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).` },
+          ],
+          model: `Two different HOL blockings: TCP's byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams). The latter is what QUIC/HTTP-3 fixes — and what interviewers usually mean.`,
+          cards: [
+            { q: `TCP's 3-way handshake?`, a: `SYN → SYN-ACK → ACK.` },
+            { q: `The two different "head-of-line blocking"?`, a: `TCP's byte-stream ordering; and HTTP/2-over-TCP (one lost packet stalls <i>all</i> multiplexed streams) — the latter is what QUIC/H3 fixes.` },
           ] },
       ],
       soft: [
@@ -304,31 +319,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-09-30", week: "w3", title: "TCP vs UDP — handshake, flow, congestion, HOL (cont.)",
-      theme: "Finish “TCP vs UDP — handshake, flow, congestion, HOL” — the part that didn't fit its first session.",
-      tasks: [
-        { id: "t1", carried: "d07", obj: NET, cat: "read", est: 40,
-          lead: `<b>Networking ③</b> — what TCP does for you, and what UDP leaves to you. (2/2)`,
-          sub: [
-            { id: "s1", est: 25, label: `Own the <b>3-way handshake</b> (SYN/SYN-ACK/ACK), <b>slow-start</b> & congestion avoidance (AIMD), the receive window (flow control), and <b>head-of-line blocking</b>.`,
-              info: `<p>The four things that make TCP reliable, ordered and congestion-aware:</p>
-<ul>
-<li><b>3-way handshake</b> (SYN → SYN-ACK → ACK) agrees on starting sequence numbers before any data — one round-trip of latency before byte one.</li>
-<li><b>Slow-start + AIMD</b>: the sender ramps its congestion window up exponentially, then on loss backs off (additive-increase / multiplicative-decrease) — TCP <i>discovers</i> the path's capacity rather than being told it.</li>
-<li><b>Receive window</b> = flow control: the receiver advertises free buffer so a fast sender can't overrun a slow reader (distinct from congestion control, which protects the <i>network</i>).</li>
-<li><b>Head-of-line blocking</b>: one lost segment stalls everything behind it because bytes must arrive in order — the exact problem HTTP/3-over-QUIC was built to escape.</li>
-</ul>` },
-            { id: "s2", est: 15, label: `UDP = no handshake/ordering/congestion control — you build reliability yourself (or use QUIC).` },
-          ],
-          model: `Two different HOL blockings: TCP's byte-stream ordering, and the famous <b>HTTP/2-over-TCP</b> one (a single lost packet stalls all multiplexed streams). The latter is what QUIC/HTTP-3 fixes — and what interviewers usually mean.`,
-          cards: [
-            { q: `TCP's 3-way handshake?`, a: `SYN → SYN-ACK → ACK.` },
-            { q: `The two different "head-of-line blocking"?`, a: `TCP's byte-stream ordering; and HTTP/2-over-TCP (one lost packet stalls <i>all</i> multiplexed streams) — the latter is what QUIC/H3 fixes.` },
-          ] },
-      ],
-    },
-    {
-      id: "d09", date: "2026-10-02", week: "w3", title: "Kubernetes: the reconciliation loop + core objects",
+      id: "d08", date: "2026-09-29", week: "w3", title: "Kubernetes: the reconciliation loop + core objects",
       theme: "DevOps · part 3 — everything in k8s is a controller driving current → desired.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 95,
@@ -349,7 +340,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d10", date: "2026-10-03", week: "w3", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
+      id: "d09", date: "2026-10-02", week: "w3", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
       theme: "Systems · part 2 — cache lines, page tables, and why a warm read never hits disk.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 100,
@@ -370,19 +361,24 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Callback from d03: a context switch's <i>direct</i> cost (~1–few µs) is often dwarfed by the <i>indirect</i> cost — cold caches + a TLB flush. That's the real reason user-space coroutines are cheap.` },
-        { id: "s2", type: "callout", label: `🔬 This is why "data-oriented design" and columnar storage win: pack the bytes you touch together so each cache-line fetch does useful work. The <b>page cache</b> is also why your DB's second read of a row is fast — and why <code>fsync</code> vs. "write returned" is the durability line you'll meet again at the WAL (d29).` },
+        { id: "s2", type: "callout", label: `🔬 This is why "data-oriented design" and columnar storage win: pack the bytes you touch together so each cache-line fetch does useful work. The <b>page cache</b> is also why your DB's second read of a row is fast — and why <code>fsync</code> vs. "write returned" is the durability line you'll meet again at the WAL (d26).` },
       ],
     },
-
-    /* ---------------- Week 4 ---------------- */
     {
-      id: "d11", date: "2026-10-06", week: "w4", title: "EXPLAIN: reading the query planner's mind",
+      id: "d10", date: "2026-10-03", week: "w3", title: "EXPLAIN: reading the query planner's mind",
       theme: "Databases · part 2 — estimated vs actual rows is the #1 diagnostic.",
       tasks: [
-        { id: "t1", obj: DATA, cat: "read", est: 35,
-          lead: `<b>Databases ②</b> — read a plan and diagnose a slow query. (1/2)`,
+        { id: "t1", obj: DATA, cat: "read", est: 85,
+          lead: `<b>Databases ②</b> — read a plan and diagnose a slow query.`,
           sub: [
             { id: "s1", est: 35, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/using-explain.html" target="_blank" rel="noopener">14.1 "Using EXPLAIN"</a> and UTIL's <a href="https://use-the-index-luke.com/sql/explain-plan/postgresql" target="_blank" rel="noopener">Postgres execution plans</a>.` },
+            { id: "s2", est: 25, label: `Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>.` },
+            { id: "s3", est: 25, label: `Always use <code>EXPLAIN (ANALYZE, BUFFERS)</code>: a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> / raise <code>default_statistics_target</code>).` },
+          ],
+          model: `The planner is <b>cost-based</b>, not rule-based: it will (correctly) ignore your index when a predicate matches a large fraction of rows, because a sequential scan is cheaper. An unused index isn't always a bug.`,
+          cards: [
+            { q: `<code>EXPLAIN ANALYZE</code> shows estimated ≫ actual rows — what does it mean?`, a: `Stale statistics — run <code>ANALYZE</code> / raise <code>default_statistics_target</code>.` },
+            { q: `Why might the planner ignore your index?`, a: `It's cost-based: when a predicate matches a large fraction of rows, a sequential scan is cheaper. Not always a bug.` },
           ] },
       ],
       soft: [
@@ -391,25 +387,10 @@ registerRoadmap({
       ],
       note: "End of month 1's first heavy week — Networking + DevOps + Systems + DB all in motion.",
     },
+
+    /* ---------------- Week 4 ---------------- */
     {
-      id: "d12", date: "2026-10-08", week: "w4", title: "EXPLAIN: reading the query planner's mind (cont.)",
-      theme: "Finish “EXPLAIN: reading the query planner's mind” — the part that didn't fit its first session.",
-      tasks: [
-        { id: "t1", carried: "d11", obj: DATA, cat: "read", est: 50,
-          lead: `<b>Databases ②</b> — read a plan and diagnose a slow query. (2/2)`,
-          sub: [
-            { id: "s1", est: 25, label: `Learn to read <b>Seq Scan / Index Scan / Index-Only Scan / Bitmap Heap Scan / Nested Loop vs Hash Join</b>.` },
-            { id: "s2", est: 25, label: `Always use <code>EXPLAIN (ANALYZE, BUFFERS)</code>: a big gap between <i>estimated</i> and <i>actual</i> rows means stale stats (run <code>ANALYZE</code> / raise <code>default_statistics_target</code>).` },
-          ],
-          model: `The planner is <b>cost-based</b>, not rule-based: it will (correctly) ignore your index when a predicate matches a large fraction of rows, because a sequential scan is cheaper. An unused index isn't always a bug.`,
-          cards: [
-            { q: `<code>EXPLAIN ANALYZE</code> shows estimated ≫ actual rows — what does it mean?`, a: `Stale statistics — run <code>ANALYZE</code> / raise <code>default_statistics_target</code>.` },
-            { q: `Why might the planner ignore your index?`, a: `It's cost-based: when a predicate matches a large fraction of rows, a sequential scan is cheaper. Not always a bug.` },
-          ] },
-      ],
-    },
-    {
-      id: "d13", date: "2026-10-09", week: "w4", title: "DNS resolution, end to end",
+      id: "d11", date: "2026-10-04", week: "w4", title: "DNS resolution, end to end",
       theme: "Networking · part 4 — the recursive resolver as middleman.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 60,
@@ -439,7 +420,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d14", date: "2026-10-10", week: "w4", title: "k8s scheduling, probes, requests/limits & HPA",
+      id: "d12", date: "2026-10-05", week: "w4", title: "k8s scheduling, probes, requests/limits & HPA",
       theme: "DevOps · part 4 — the operational levers you get asked about.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -460,10 +441,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 HPA scales replica count toward a target metric (CPU/custom). It can't scale below readiness — an unready Pod serves no traffic, so probes and autoscaling are coupled.` },
       ],
     },
-
-    /* ---------------- Week 5 ---------------- */
     {
-      id: "d15", date: "2026-10-11", week: "w5", title: "Security foundations: OWASP 2025 + authn vs authz",
+      id: "d13", date: "2026-10-09", week: "w4", title: "Security foundations: OWASP 2025 + authn vs authz",
       theme: "Security · part 1 — the vocabulary you're measured against.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 80,
@@ -479,13 +458,15 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 13. Today is the map.` },
+        { id: "s1", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 12. Today is the map.` },
         { id: "s2", type: "hint", label: `💡 "Security misconfiguration" climbing to #2 is a DevOps overlap: default creds, open S3 buckets, verbose errors, missing headers. Config <i>is</i> attack surface.` },
       ],
       note: "🏁 Month-1 checkpoint week: Networking + DevOps foundations laid, plus Systems, DB and the security map.",
     },
+
+    /* ---------------- Week 5 ---------------- */
     {
-      id: "d16", date: "2026-10-12", week: "w5", title: "The TLS 1.3 handshake & PKI",
+      id: "d14", date: "2026-10-12", week: "w5", title: "The TLS 1.3 handshake & PKI",
       theme: "Networking · part 5 — how two strangers agree a secret over a wiretap.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 70,
@@ -506,7 +487,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-10-13", week: "w5", title: "MVCC: how Postgres lets readers not block writers",
+      id: "d15", date: "2026-10-13", week: "w5", title: "MVCC: how Postgres lets readers not block writers",
       theme: "Databases · part 3 — every row carries its own version stamps.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 95,
@@ -519,7 +500,7 @@ registerRoadmap({
 <li>Every row version is stamped with <code>xmin</code> (the txid that created it) and <code>xmax</code> (the txid that deleted/superseded it).</li>
 <li>Each transaction gets a <b>snapshot</b> — the set of txids visible to it — and sees only versions whose <code>xmin</code> is visible and whose <code>xmax</code> is not.</li>
 </ul>
-<p>So <b>readers never block writers and writers never block readers</b>: an <code>UPDATE</code> writes a new version while existing readers keep seeing the old one. The cost is dead tuples that <b>VACUUM</b> later reclaims (d43).</p>` },
+<p>So <b>readers never block writers and writers never block readers</b>: an <code>UPDATE</code> writes a new version while existing readers keep seeing the old one. The cost is dead tuples that <b>VACUUM</b> later reclaims (d40).</p>` },
             { id: "s3", est: 25, label: `Deeper tuple-level detail: Egor Rogov's <a href="https://www.postgrespro.com/blog/pgsql/5967856" target="_blank" rel="noopener">MVCC series</a>.` },
           ],
           model: `An <code>UPDATE</code> is really <i>insert a new row version + mark the old dead</i> — so heavy-update tables bloat and need <b>VACUUM</b>/autovacuum. That single fact explains "my table is 5× its data size."`,
@@ -533,10 +514,8 @@ registerRoadmap({
         { id: "s2", type: "callout", label: `🔬 MVCC is why long-running transactions are dangerous in Postgres: they hold back the "xmin horizon" so VACUUM can't reclaim dead tuples cluster-wide → bloat.` },
       ],
     },
-
-    /* ---------------- Week 6 ---------------- */
     {
-      id: "d18", date: "2026-10-18", week: "w6", title: "Getting it out the door: deploys, GitOps & 12-factor",
+      id: "d16", date: "2026-10-15", week: "w5", title: "Getting it out the door: deploys, GitOps & 12-factor",
       theme: "DevOps · part 5 — rolling vs blue-green vs canary, and config in the environment.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75,
@@ -556,8 +535,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Same shape three times now: k8s controllers, GitOps agents, and Terraform's plan/apply-vs-state all reconcile desired → actual. Learn it once, recognize it everywhere.` },
       ],
     },
+
+    /* ---------------- Week 6 ---------------- */
     {
-      id: "d19", date: "2026-10-21", week: "w6", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
+      id: "d17", date: "2026-10-18", week: "w6", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
       theme: "Blockchain · part 1 — get the three-way distinction exactly right.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 100,
@@ -578,30 +559,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d20", date: "2026-10-24", week: "w6", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
+      id: "d18", date: "2026-10-20", week: "w6", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
       theme: "Networking · part 6 — each version fixes the last one's bottleneck.",
       tasks: [
-        { id: "t1", obj: NET, cat: "read", est: 40,
-          lead: `<b>Networking ⑥</b> — why HTTP kept getting rewritten. (1/2)`,
+        { id: "t1", obj: NET, cat: "read", est: 85,
+          lead: `<b>Networking ⑥</b> — why HTTP kept getting rewritten.`,
           sub: [
             { id: "s1", est: 40, label: `Read HPBN <a href="https://hpbn.co/http1x/" target="_blank" rel="noopener">HTTP/1.X</a> + <a href="https://hpbn.co/http2/" target="_blank" rel="noopener">HTTP/2</a> (persistent connections, why pipelining failed, H2 multiplexing/framing/HPACK).` },
-          ] },
-      ],
-      soft: [
-        { id: "s1", type: "suggestion", label: `Pair with keep-alive/pooling (MDN <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x" target="_blank" rel="noopener">Connection management</a>) — check a client you ship: Go <code>http.Transport.MaxIdleConnsPerHost</code>, Node <code>http.Agent keepAlive</code>.` },
-        { id: "s2", type: "hint", label: `💡 HPACK/QPACK header compression is why H2/H3 are efficient for many small requests — H1's repeated plaintext headers were a real cost at scale.` },
-      ],
-    },
-
-    /* ---------------- Week 7 ---------------- */
-    {
-      id: "d21", date: "2026-10-26", week: "w7", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC (cont.)",
-      theme: "Finish “HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC” — the part that didn't fit its first session.",
-      tasks: [
-        { id: "t1", carried: "d20", obj: NET, cat: "read", est: 45,
-          lead: `<b>Networking ⑥</b> — why HTTP kept getting rewritten. (2/2)`,
-          sub: [
-            { id: "s1", est: 45, label: `For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, connection migration.` },
+            { id: "s2", est: 45, label: `For H3/QUIC, read the free <a href="https://http3-explained.haxx.se/" target="_blank" rel="noopener">HTTP/3 explained</a>: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in, connection migration.` },
           ],
           model: `H2 fixed HTTP-level HOL blocking (multiplexing) but sits on TCP, so one lost packet still stalls all streams at the transport layer. H3 moves multiplexing into QUIC/UDP so a loss stalls only <i>its</i> stream. That's the whole H2→H3 story.`,
           cards: [
@@ -609,9 +574,13 @@ registerRoadmap({
             { q: `What transport does HTTP/3 run on?`, a: `<b>QUIC over UDP</b>, with TLS 1.3 built in and connection migration.` },
           ] },
       ],
+      soft: [
+        { id: "s1", type: "suggestion", label: `Pair with keep-alive/pooling (MDN <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Connection_management_in_HTTP_1.x" target="_blank" rel="noopener">Connection management</a>) — check a client you ship: Go <code>http.Transport.MaxIdleConnsPerHost</code>, Node <code>http.Agent keepAlive</code>.` },
+        { id: "s2", type: "hint", label: `💡 HPACK/QPACK header compression is why H2/H3 are efficient for many small requests — H1's repeated plaintext headers were a real cost at scale.` },
+      ],
     },
     {
-      id: "d22", date: "2026-10-27", week: "w7", title: "Redis internals: why single-threaded is fast",
+      id: "d19", date: "2026-10-21", week: "w6", title: "Redis internals: why single-threaded is fast",
       theme: "Caching · part 1 — one event loop, atomic commands, no locks.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 75,
@@ -636,7 +605,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d23", date: "2026-10-29", week: "w7", title: "Isolation levels & the anomalies they prevent",
+      id: "d20", date: "2026-10-24", week: "w6", title: "Isolation levels & the anomalies they prevent",
       theme: "Databases · part 4 — and the one everyone misses: write skew.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 100,
@@ -657,8 +626,10 @@ registerRoadmap({
       ],
       note: "Month 2 underway — data, HTTP, caching and blockchain now interleaving with DevOps.",
     },
+
+    /* ---------------- Week 7 ---------------- */
     {
-      id: "d24", date: "2026-10-30", week: "w7", title: "Observability: golden signals, histograms & why p99",
+      id: "d21", date: "2026-10-29", week: "w7", title: "Observability: golden signals, histograms & why p99",
       theme: "DevOps · part 6 — averages lie; you live at the tail.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 95,
@@ -679,10 +650,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Three lenses: <b>Golden Signals</b> (services) ≈ <b>RED</b> (Rate/Errors/Duration) + Saturation; <b>USE</b> (Utilization/Saturation/Errors) for resources (the load-testing day).` },
       ],
     },
-
-    /* ---------------- Week 8 ---------------- */
     {
-      id: "d25", date: "2026-11-04", week: "w8", title: "Inside the EVM: stack machine, storage, gas",
+      id: "d22", date: "2026-10-30", week: "w7", title: "Inside the EVM: stack machine, storage, gas",
       theme: "Blockchain · part 2 — what your Solidity actually compiles down to.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 100,
@@ -711,7 +680,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d26", date: "2026-11-05", week: "w8", title: "Message queues vs logs — the core distinction",
+      id: "d23", date: "2026-10-31", week: "w7", title: "Message queues vs logs — the core distinction",
       theme: "Messaging · part 1 — delete-on-ack vs retain-and-offset.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 90,
@@ -731,8 +700,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 SQS Standard = at-least-once + best-effort order; SQS FIFO = ordered + dedup, lower throughput. "Exactly-once" almost always means at-least-once + idempotency (later this thread).` },
       ],
     },
+
+    /* ---------------- Week 8 ---------------- */
     {
-      id: "d27", date: "2026-11-07", week: "w8", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
+      id: "d24", date: "2026-11-01", week: "w8", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
       theme: "Networking · part 7 — what nginx and your ALB really do.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 70,
@@ -753,10 +724,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Rule of thumb: L4 for raw throughput / non-HTTP; L7 when routing decisions need application data (path, headers, cookies).` },
       ],
     },
-
-    /* ---------------- Week 9 ---------------- */
     {
-      id: "d28", date: "2026-11-08", week: "w9", title: "OAuth 2.0, OIDC, PKCE & JWT the right way",
+      id: "d25", date: "2026-11-02", week: "w8", title: "OAuth 2.0, OIDC, PKCE & JWT the right way",
       theme: "Security · part 2 — and the alg:none footgun.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 100,
@@ -784,7 +753,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d29", date: "2026-11-10", week: "w9", title: "Locking, deadlocks & the write-ahead log",
+      id: "d26", date: "2026-11-04", week: "w8", title: "Locking, deadlocks & the write-ahead log",
       theme: "Databases · part 5 — log the change before you touch the page.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -804,8 +773,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Postgres kills one victim on deadlock and raises an error — so wrap contended transactions in a retry. Deadlocks are expected under load, not a bug to eliminate entirely.` },
       ],
     },
+
+    /* ---------------- Week 9 ---------------- */
     {
-      id: "d30", date: "2026-11-13", week: "w9", title: "Solana's account model — everything is an account",
+      id: "d27", date: "2026-11-09", week: "w9", title: "Solana's account model — everything is an account",
       theme: "Blockchain · part 3 — stateless programs + separate data accounts.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -826,10 +797,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 "Everything is an account" includes programs, token mints, and your data — a uniform model that makes the runtime simple but forces explicit account passing everywhere.` },
       ],
     },
-
-    /* ---------------- Week 10 ---------------- */
     {
-      id: "d31", date: "2026-11-16", week: "w10", title: "SLIs, SLOs, error budgets & tracing",
+      id: "d28", date: "2026-11-12", week: "w9", title: "SLIs, SLOs, error budgets & tracing",
       theme: "DevOps · part 7 — turn reliability into a number you can spend.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 80,
@@ -851,7 +820,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2026-11-18", week: "w10", title: "How a server accepts 10k connections: epoll & the event loop",
+      id: "d29", date: "2026-11-14", week: "w9", title: "How a server accepts 10k connections: epoll & the event loop",
       theme: "Systems · part 3 — the pattern behind nginx, Node, tokio & Go's netpoller.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
@@ -878,8 +847,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Your async runtime = non-blocking syscalls + an event loop presenting an async API. That's why "async" and "threads" aren't opposites — async is <i>how</i> a few threads serve many connections.` },
       ],
     },
+
+    /* ---------------- Week 10 ---------------- */
     {
-      id: "d33", date: "2026-11-19", week: "w10", title: "A transaction's life & EIP-1559 fees",
+      id: "d30", date: "2026-11-17", week: "w10", title: "A transaction's life & EIP-1559 fees",
       theme: "Blockchain · part 4 — base fee burned, tip to the proposer.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -900,10 +871,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 The nonce is per-account and strictly sequential — it's what prevents replay and enforces ordering of your own txs. A stuck low-nonce tx blocks all higher ones ("nonce gap").` },
       ],
     },
-
-    /* ---------------- Week 11 ---------------- */
     {
-      id: "d34", date: "2026-11-22", week: "w11", title: "Kafka's model: partitions, offsets, consumer groups, ISR",
+      id: "d31", date: "2026-11-18", week: "w10", title: "Kafka's model: partitions, offsets, consumer groups, ISR",
       theme: "Messaging · part 2 — the unit of parallelism is the partition.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 85,
@@ -925,7 +894,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d35", date: "2026-11-24", week: "w11", title: "Review: Rust ownership & the borrow checker",
+      id: "d32", date: "2026-11-20", week: "w10", title: "Review: Rust ownership & the borrow checker",
       theme: "Review · a deliberate re-grounding in a hard model you already use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -946,8 +915,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 The "many readers XOR one writer" rule is the same invariant a RwLock enforces at runtime — Rust just checks it at compile time for references. Same idea, zero cost.` },
       ],
     },
+
+    /* ---------------- Week 11 ---------------- */
     {
-      id: "d36", date: "2026-11-28", week: "w11", title: "Cache patterns, the stampede & invalidation",
+      id: "d33", date: "2026-11-22", week: "w11", title: "Cache patterns, the stampede & invalidation",
       theme: "Caching · part 2 — the hard part isn't caching, it's invalidating.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 75,
@@ -975,10 +946,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 "Only two hard things… cache invalidation" — design keys so invalidation is a single <code>DEL</code> or a version-bump, never a scan.` },
       ],
     },
-
-    /* ---------------- Week 12 ---------------- */
     {
-      id: "d37", date: "2026-12-01", week: "w12", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
+      id: "d34", date: "2026-11-26", week: "w11", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
       theme: "Blockchain · part 5 — why declaring accounts up front buys parallelism.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 80,
@@ -1000,7 +969,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2026-12-02", week: "w12", title: "Load & stress testing without fooling yourself",
+      id: "d35", date: "2026-11-27", week: "w11", title: "Load & stress testing without fooling yourself",
       theme: "DevOps · part 8 — coordinated omission and the USE method.",
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 110,
@@ -1021,8 +990,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Capacity is about headroom, not a single number: high utilization with <i>no</i> saturation can be fine; <i>any</i> saturation (a growing queue/run-queue) usually means a real problem.` },
       ],
     },
+
+    /* ---------------- Week 12 ---------------- */
     {
-      id: "d39", date: "2026-12-04", week: "w12", title: "Consensus: PoW, longest chain & what 'finality' means",
+      id: "d36", date: "2026-11-30", week: "w12", title: "Consensus: PoW, longest chain & what 'finality' means",
       theme: "Blockchain · part 6 — agreement without a coordinator.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 95,
@@ -1042,10 +1013,8 @@ registerRoadmap({
         { id: "s2", type: "callout", label: `🔬 Solana's PoH gives a verifiable clock so validators needn't agree on time before ordering — a different answer to the same "who decides order" question.` },
       ],
     },
-
-    /* ---------------- Week 13 ---------------- */
     {
-      id: "d40", date: "2026-12-07", week: "w13", title: "Password hashing, sessions vs tokens & TLS recap",
+      id: "d37", date: "2026-12-02", week: "w12", title: "Password hashing, sessions vs tokens & TLS recap",
       theme: "Security · part 3 — store secrets like they'll be stolen.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 65,
@@ -1073,7 +1042,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2026-12-10", week: "w13", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
+      id: "d38", date: "2026-12-05", week: "w12", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
       theme: "Security · part 4 — the two bug classes that drain DeFi, in your domain.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 90,
@@ -1098,13 +1067,24 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🏁 Core complete — and the <b>extension</b> continues right below (weeks 13–26): every thread picks up in order and goes <i>deeper under the hood</i> — Raft/CAP/quorums, VACUUM/TOAST/joins/LSM, rollups/blobs/MEV/ZK, io_uring/page cache, and Go/Python/C++/Rust runtime reviews.` },
+        { id: "s1", type: "callout", label: `🏁 Core complete — and the <b>extension</b> continues right below (weeks 13–25): every thread picks up in order and goes <i>deeper under the hood</i> — Raft/CAP/quorums, VACUUM/TOAST/joins/LSM, rollups/blobs/MEV/ZK, io_uring/page cache, and Go/Python/C++/Rust runtime reviews.` },
         { id: "s2", type: "hint", label: `💡 The through-line of the whole security thread: never trust input you didn't verify — an <code>alg</code> header, a spot price, or the timing of an external call are all "input". Verify, then act.` },
       ],
       note: "🎓 12-week core finished — the essentials a backend/blockchain engineer is expected to own.",
     },
+
+    /* ---------------- Week 13 ---------------- */
+    /* ================================================================== *
+     *  EXTENSION — "deepen your knowledge": the under-the-hood internals.
+     *  Every core thread continues in order (Networking ⑧→, Databases ⑥→,
+     *  Blockchain ⑦→, Systems ④→, …) and a NEW thread — Distributed systems —
+     *  starts here. Same interleaving rule: consecutive side-days switch
+     *  topics; a thread advances when it reappears. References verified
+     *  2026-07-18 with status flags for fast-moving items (chains, Kafka,
+     *  Python free-threading). Dates 2026-12-06 → 2027-03-05.
+     * ================================================================== */
     {
-      id: "d42", date: "2026-12-12", week: "w13", title: "Consensus I: Raft — leader election & log replication",
+      id: "d39", date: "2026-12-06", week: "w13", title: "Consensus I: Raft — leader election & log replication",
       theme: "Distributed systems · part 1 — one strong leader makes agreement tractable.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 90,
@@ -1121,18 +1101,16 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🧭 New thread: <b>Distributed systems</b> — the theory (consensus, clocks, CAP, transactions) beneath every database, queue and chain you studied. It starts here and advances in order.` },
-        { id: "s2", type: "hint", label: `💡 etcd (hence Kubernetes), Consul and CockroachDB run Raft. The k8s "single source of truth" from d09 is a Raft log under the hood.` },
+        { id: "s2", type: "hint", label: `💡 etcd (hence Kubernetes), Consul and CockroachDB run Raft. The k8s "single source of truth" from d08 is a Raft log under the hood.` },
       ],
       note: "Extension begins — the same 2–3 days/week rhythm, now going under the hood. Threads resume where the core left them.",
     },
-
-    /* ---------------- Week 14 ---------------- */
     {
-      id: "d43", date: "2026-12-13", week: "w14", title: "VACUUM, autovacuum & the xmin horizon",
+      id: "d40", date: "2026-12-08", week: "w13", title: "VACUUM, autovacuum & the xmin horizon",
       theme: "Databases · part 6 — why one idle transaction can bloat the whole cluster.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
-          lead: `<b>Databases ⑥</b> — the machinery that cleans up MVCC's dead tuples (callback to d17).`,
+          lead: `<b>Databases ⑥</b> — the machinery that cleans up MVCC's dead tuples (callback to d15).`,
           sub: [
             { id: "s1", est: 50, label: `Read PostgreSQL docs <a href="https://www.postgresql.org/docs/current/routine-vacuuming.html" target="_blank" rel="noopener">"Routine Vacuuming"</a> (dead tuples, the autovacuum daemon, transaction-ID wraparound).` },
             { id: "s2", est: 40, label: `Deeper: Egor Rogov, <a href="https://postgrespro.com/blog/pgsql/5967918" target="_blank" rel="noopener">"MVCC in PostgreSQL — 6. Vacuum"</a>.` },
@@ -1144,12 +1122,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d17: <code>UPDATE</code> = new version + dead old one. VACUUM is the janitor; the xmin horizon is why "just one idle txn" bloats everything.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d15: <code>UPDATE</code> = new version + dead old one. VACUUM is the janitor; the xmin horizon is why "just one idle txn" bloats everything.` },
         { id: "s2", type: "callout", label: `⚠️ <b>Idle in transaction</b> is the silent killer — a connection that <code>BEGIN</code>s and forgets to commit holds the horizon. Set <code>idle_in_transaction_session_timeout</code>.` },
       ],
     },
     {
-      id: "d44", date: "2026-12-16", week: "w14", title: "Virtual memory: page tables & the TLB",
+      id: "d41", date: "2026-12-10", week: "w13", title: "Virtual memory: page tables & the TLB",
       theme: "Systems · part 4 — every memory access is secretly two accesses.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 100,
@@ -1161,16 +1139,18 @@ registerRoadmap({
           model: `Paging turns every virtual reference into an extra memory lookup — the <b>page-table walk</b>. The <b>TLB</b> is a small MMU cache of recent virtual-page→physical-frame translations, so a hit makes translation nearly free and only a miss pays the walk. TLB hit rate, not the table shape, governs paging performance.`,
           cards: [
             { q: `What does the page-table walk cost, and what hides it?`, a: `Every virtual access needs a translation (an extra memory lookup); the <b>TLB</b> caches recent translations so a hit makes it nearly free.` },
-            { q: `After a context switch, why can memory feel slow?`, a: `The TLB (and caches) are cold/flushed — the indirect cost of a switch, met back at d10.` },
+            { q: `After a context switch, why can memory feel slow?`, a: `The TLB (and caches) are cold/flushed — the indirect cost of a switch, met back at d09.` },
           ] },
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Huge pages (2 MB/1 GB) exist to cut TLB misses — fewer, larger entries cover more memory. Databases and JVMs enable them for exactly this.` },
-        { id: "s2", type: "callout", label: `🔬 This is the "virtual memory" you skimmed at d10 — now the internals. Next Systems day: the page cache, where files live in that memory.` },
+        { id: "s2", type: "callout", label: `🔬 This is the "virtual memory" you skimmed at d09 — now the internals. Next Systems day: the page cache, where files live in that memory.` },
       ],
     },
+
+    /* ---------------- Week 14 ---------------- */
     {
-      id: "d45", date: "2026-12-18", week: "w14", title: "Rollups: optimistic vs ZK — when do you pay for trust?",
+      id: "d42", date: "2026-12-14", week: "w14", title: "Rollups: optimistic vs ZK — when do you pay for trust?",
       theme: "Blockchain · part 7 — both post to L1; they differ in how they prove correctness.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 100,
@@ -1186,14 +1166,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d33: rollups post compressed data to L1 — exactly what the next Blockchain day (d51, blobs / EIP-4844) made cheap.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d30: rollups post compressed data to L1 — exactly what the next Blockchain day (d48, blobs / EIP-4844) made cheap.` },
         { id: "s2", type: "hint", label: `💡 "Validity" (proven up front) vs "fraud" (disproven later) proofs — that one word is the whole distinction interviewers probe.` },
       ],
     },
-
-    /* ---------------- Week 15 ---------------- */
     {
-      id: "d46", date: "2026-12-21", week: "w15", title: "BGP & Anycast: how the internet actually routes",
+      id: "d43", date: "2026-12-16", week: "w14", title: "BGP & Anycast: how the internet actually routes",
       theme: "Networking · part 8 — routing is policy and assertion, not shortest path.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 95,
@@ -1214,7 +1192,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d47", date: "2026-12-22", week: "w15", title: "Kafka exactly-once: idempotent producer + transactions",
+      id: "d44", date: "2026-12-18", week: "w14", title: "Kafka exactly-once: idempotent producer + transactions",
       theme: "Messaging · part 3 — 'exactly-once' is at-least-once + dedupe, done right.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 90,
@@ -1231,11 +1209,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 Idempotence is <b>on by default</b> since Kafka 3.0. In Kafka Streams use <code>processing.guarantee=exactly_once_v2</code> — the old <code>exactly_once</code> was removed.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d26: "exactly-once" delivery over a network is impossible; what you get is at-least-once + idempotent dedupe. Same lesson, protocol-enforced.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d23: "exactly-once" delivery over a network is impossible; what you get is at-least-once + idempotent dedupe. Same lesson, protocol-enforced.` },
       ],
     },
+
+    /* ---------------- Week 15 ---------------- */
     {
-      id: "d48", date: "2026-12-26", week: "w15", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
+      id: "d45", date: "2026-12-20", week: "w15", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
       theme: "Distributed systems · part 2 — from 'nodes crash' to 'nodes lie'.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 100,
@@ -1251,14 +1231,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 Callback to d39: a blockchain is BFT consensus among untrusting parties — PBFT is where that lineage starts (Tendermint, HotStuff descend from it).` },
+        { id: "s1", type: "callout", label: `🔗 Callback to d36: a blockchain is BFT consensus among untrusting parties — PBFT is where that lineage starts (Tendermint, HotStuff descend from it).` },
         { id: "s2", type: "hint", label: `💡 "Understandable" is a design goal, not fluff — Raft was literally user-tested against Paxos. Simplicity that ships correct systems is a feature.` },
       ],
     },
-
-    /* ---------------- Week 16 ---------------- */
     {
-      id: "d49", date: "2026-12-27", week: "w16", title: "TOAST & HOT updates: storage internals that bite",
+      id: "d46", date: "2026-12-23", week: "w15", title: "TOAST & HOT updates: storage internals that bite",
       theme: "Databases · part 7 — 8 KB pages, big values, and cheap updates.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 85,
@@ -1279,7 +1257,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2026-12-30", week: "w16", title: "Service mesh, mTLS & workload identity (SPIFFE)",
+      id: "d47", date: "2026-12-24", week: "w15", title: "Service mesh, mTLS & workload identity (SPIFFE)",
       theme: "DevOps · part 9 — who a service IS, proved cryptographically, auto-rotated.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75,
@@ -1296,11 +1274,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ The whole model rests on the <b>attestation policy</b> being strict — weak attestation means any pod can claim any identity.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d16/d27: the same TLS/PKI machinery, now pointed <i>inward</i> — every hop authenticated, certs rotated by the platform.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d14/d24: the same TLS/PKI machinery, now pointed <i>inward</i> — every hop authenticated, certs rotated by the platform.` },
       ],
     },
+
+    /* ---------------- Week 16 ---------------- */
     {
-      id: "d51", date: "2026-12-31", week: "w16", title: "Data availability & EIP-4844 blobs",
+      id: "d48", date: "2026-12-28", week: "w16", title: "Data availability & EIP-4844 blobs",
       theme: "Blockchain · part 8 — why L2 fees fell 10–100× in 2024.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 75,
@@ -1320,10 +1300,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 "Data availability" = can everyone GET the data to verify?, distinct from "storage". A rollup's security rests on DA — which is why blobs matter.` },
       ],
     },
-
-    /* ---------------- Week 17 ---------------- */
     {
-      id: "d52", date: "2027-01-04", week: "w17", title: "Review: Go's scheduler (G-M-P) & async preemption",
+      id: "d49", date: "2026-12-29", week: "w16", title: "Review: Go's scheduler (G-M-P) & async preemption",
       theme: "Review · re-derive the runtime under every goroutine you spawn.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -1339,12 +1317,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Review tasks re-derive hard models you already use (Rust at d35; Python's GIL, C++ memory, Rust async ahead).` },
-        { id: "s2", type: "hint", label: `💡 Callback to d03/d32: the P is why "blocking" goroutines don't block the program — the netpoller parks the G and frees the M.` },
+        { id: "s1", type: "callout", label: `🧭 Review tasks re-derive hard models you already use (Rust at d32; Python's GIL, C++ memory, Rust async ahead).` },
+        { id: "s2", type: "hint", label: `💡 Callback to d03/d29: the P is why "blocking" goroutines don't block the program — the netpoller parks the G and frees the M.` },
       ],
     },
     {
-      id: "d53", date: "2027-01-05", week: "w17", title: "Redis Cluster & consistent hashing",
+      id: "d50", date: "2027-01-02", week: "w16", title: "Redis Cluster & consistent hashing",
       theme: "Caching · part 3 — 16384 slots, and moving keys without moving all of them.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 85,
@@ -1364,8 +1342,10 @@ registerRoadmap({
         { id: "s2", type: "callout", label: `🔬 The same consistent-hashing trick sits under Cassandra, DynamoDB and CDN request routing — learn it once.` },
       ],
     },
+
+    /* ---------------- Week 17 ---------------- */
     {
-      id: "d54", date: "2027-01-08", week: "w17", title: "CAP done right — and PACELC",
+      id: "d51", date: "2027-01-04", week: "w17", title: "CAP done right — and PACELC",
       theme: "Distributed systems · part 3 — you don't 'choose' partition tolerance.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 85,
@@ -1382,17 +1362,15 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Reframe: CAP is one case of the general <b>safety vs liveness</b> impossibility under unreliable networks — the rigorous reading.` },
-        { id: "s2", type: "callout", label: `🔬 Postgres sync replication picks C over L (slower commits); Dynamo-style stores pick L/A (stale reads). PACELC names the dial you meet at d67/d72.` },
+        { id: "s2", type: "callout", label: `🔬 Postgres sync replication picks C over L (slower commits); Dynamo-style stores pick L/A (stale reads). PACELC names the dial you meet at d64/d69.` },
       ],
     },
-
-    /* ---------------- Week 18 ---------------- */
     {
-      id: "d55", date: "2027-01-10", week: "w18", title: "Join algorithms & how the planner picks",
+      id: "d52", date: "2027-01-07", week: "w17", title: "Join algorithms & how the planner picks",
       theme: "Databases · part 8 — nested loop, hash, merge — and why it chose that.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
-          lead: `<b>Databases ⑧</b> — the three physical joins, and the cost model behind EXPLAIN (callback d11).`,
+          lead: `<b>Databases ⑧</b> — the three physical joins, and the cost model behind EXPLAIN (callback d10).`,
           sub: [
             { id: "s1", est: 40, label: `Read PG docs <a href="https://www.postgresql.org/docs/current/planner-optimizer.html" target="_blank" rel="noopener">"Planner/Optimizer"</a> — the three joins and cost-based join-order search.` },
             { id: "s2", cat: "lab", est: 35, label: `Re-run <code>EXPLAIN (ANALYZE, BUFFERS)</code> on a 2–3 table join and name the join node it chose.` },
@@ -1405,15 +1383,15 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ A nested loop over a large right table with no index is the classic "why is my join O(n·m)?" — avoided only if the planner's row estimates are good (stats!).` },
-        { id: "s2", type: "hint", label: `💡 Callback to d11: a plan flipping to a bad join under load is usually stale statistics or a row-estimate blow-up, not a "wrong" planner.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d10: a plan flipping to a bad join under load is usually stale statistics or a row-estimate blow-up, not a "wrong" planner.` },
       ],
     },
     {
-      id: "d56", date: "2027-01-14", week: "w18", title: "The page cache & why fsync is the durability line",
+      id: "d53", date: "2027-01-08", week: "w17", title: "The page cache & why fsync is the durability line",
       theme: "Systems · part 5 — 'write() returned' is not 'on disk'.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
-          lead: `<b>Systems ⑤</b> — where files live in RAM, and the fsync trap that ate data (callback d10/d29).`,
+          lead: `<b>Systems ⑤</b> — where files live in RAM, and the fsync trap that ate data (callback d09/d26).`,
           sub: [
             { id: "s1", est: 45, label: `Read LWN, <a href="https://lwn.net/Articles/752063/" target="_blank" rel="noopener">"PostgreSQL's fsync() surprise"</a> — dirty pages, writeback, and how an fsync error can be reported once and lost.` },
             { id: "s2", est: 30, label: `Reference: <a href="https://man7.org/linux/man-pages/man2/fsync.2.html" target="_blank" rel="noopener">fsync(2)</a> (and <code>fdatasync</code>, which skips non-essential metadata).` },
@@ -1425,12 +1403,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 This is the OS half of d29's WAL: the DB fsyncs the log before the page precisely because "write returned" ≠ durable. Same tension, one layer down.` },
+        { id: "s1", type: "callout", label: `🔬 This is the OS half of d26's WAL: the DB fsyncs the log before the page precisely because "write returned" ≠ durable. Same tension, one layer down.` },
         { id: "s2", type: "hint", label: `💡 Error-reporting behaviour is kernel-version-dependent (pre-4.13 could lose it entirely). "Durable" is a property you must fsync for, per open fd.` },
       ],
     },
+
+    /* ---------------- Week 18 ---------------- */
     {
-      id: "d57", date: "2027-01-16", week: "w18", title: "MEV & Proposer-Builder Separation",
+      id: "d54", date: "2027-01-12", week: "w18", title: "MEV & Proposer-Builder Separation",
       theme: "Blockchain · part 9 — who orders your transaction, and what they extract.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -1447,13 +1427,11 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 MEV-Boost is LIVE (out-of-protocol, relay-based). <b>Enshrined PBS</b> (EIP-7732) is PROPOSED — a headliner for the Glamsterdam upgrade, targeted ~H2 2026, not on mainnet as of 2026.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d41: a sandwich attack is on-chain front/back-running — the same "spot price is manipulable within a tx" you hardened against with TWAPs.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d38: a sandwich attack is on-chain front/back-running — the same "spot price is manipulable within a tx" you hardened against with TWAPs.` },
       ],
     },
-
-    /* ---------------- Week 19 ---------------- */
     {
-      id: "d58", date: "2027-01-18", week: "w19", title: "Kafka consumer rebalances & log compaction",
+      id: "d55", date: "2027-01-13", week: "w18", title: "Kafka consumer rebalances & log compaction",
       theme: "Messaging · part 4 — don't stop the world to add one consumer.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1470,11 +1448,11 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 Kafka 4.x makes the broker-side next-gen rebalance protocol (KIP-848) the default — it largely supersedes the client-side eager/cooperative split. Know the concepts, check your version.` },
-        { id: "s2", type: "hint", label: `💡 Compacted topics power CDC and stateful stream apps — the "table" view of a "stream" (callback to d26's log).` },
+        { id: "s2", type: "hint", label: `💡 Compacted topics power CDC and stateful stream apps — the "table" view of a "stream" (callback to d23's log).` },
       ],
     },
     {
-      id: "d59", date: "2027-01-19", week: "w19", title: "Upgradeable contracts: proxies & delegatecall collisions",
+      id: "d56", date: "2027-01-16", week: "w18", title: "Upgradeable contracts: proxies & delegatecall collisions",
       theme: "Security · part 5 — storage is addressed by slot, not by name.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 85,
@@ -1491,11 +1469,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Upgrades that <i>insert or reorder</i> state variables shift every later slot — the #1 upgrade bug. Append-only, or use storage gaps.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d25: <code>delegatecall</code> runs someone else's code in <i>your</i> storage/context — powerful, and exactly why proxy bugs are so dangerous.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d22: <code>delegatecall</code> runs someone else's code in <i>your</i> storage/context — powerful, and exactly why proxy bugs are so dangerous.` },
       ],
     },
+
+    /* ---------------- Week 19 ---------------- */
     {
-      id: "d60", date: "2027-01-20", week: "w19", title: "Logical clocks: Lamport timestamps & vector clocks",
+      id: "d57", date: "2027-01-17", week: "w19", title: "Logical clocks: Lamport timestamps & vector clocks",
       theme: "Distributed systems · part 4 — ordering events with no shared clock.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 75,
@@ -1511,14 +1491,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d34/d23: "happened-before" is the same causality Kafka partitions and MVCC snapshots impose locally — here it's made explicit across machines.` },
-        { id: "s2", type: "callout", label: `🔬 Vector clocks are how Dynamo (d72) detects conflicting concurrent writes for the client to reconcile.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d31/d20: "happened-before" is the same causality Kafka partitions and MVCC snapshots impose locally — here it's made explicit across machines.` },
+        { id: "s2", type: "callout", label: `🔬 Vector clocks are how Dynamo (d69) detects conflicting concurrent writes for the client to reconcile.` },
       ],
     },
-
-    /* ---------------- Week 20 ---------------- */
     {
-      id: "d61", date: "2027-01-24", week: "w20", title: "Partitioning & sharding",
+      id: "d58", date: "2027-01-18", week: "w19", title: "Partitioning & sharding",
       theme: "Databases · part 9 — the win is pruning, and it needs the partition key.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -1535,15 +1513,15 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Choose the partition key by how you <i>query</i>, not how data arrives — sharded by the wrong key means every query hits every shard.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d34: Kafka partitions and DB shards share the lesson — pick the key so related rows/events co-locate, and ordering/pruning follows.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d31: Kafka partitions and DB shards share the lesson — pick the key so related rows/events co-locate, and ordering/pruning follows.` },
       ],
     },
     {
-      id: "d62", date: "2027-01-28", week: "w20", title: "QUIC internals beyond HTTP/3",
+      id: "d59", date: "2027-01-23", week: "w19", title: "QUIC internals beyond HTTP/3",
       theme: "Networking · part 9 — connection IDs, streams, per-space loss recovery.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 85,
-          lead: `<b>Networking ⑨</b> — the transport under HTTP/3, in its own right (callback d20).`,
+          lead: `<b>Networking ⑨</b> — the transport under HTTP/3, in its own right (callback d18).`,
           sub: [
             { id: "s1", est: 60, label: `Read <a href="https://www.rfc-editor.org/info/rfc9000" target="_blank" rel="noopener">RFC 9000</a> (QUIC transport: connection IDs, streams, migration) and skim <a href="https://www.rfc-editor.org/info/rfc9002" target="_blank" rel="noopener">RFC 9002</a> (loss detection & congestion control).` },
             { id: "s2", est: 25, label: `Keep the layer split straight: 9000 transport, 9001 TLS, 9002 loss/CC, <b>HTTP/3 = RFC 9114</b>.` },
@@ -1556,11 +1534,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Don't conflate QUIC (transport) with HTTP/3 (one app mapping, RFC 9114). QUIC can carry other protocols too.` },
-        { id: "s2", type: "callout", label: `🔬 Callback to d20: H2's HOL blocking was at TCP; QUIC's independent streams are the fix, at the transport layer.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d18: H2's HOL blocking was at TCP; QUIC's independent streams are the fix, at the transport layer.` },
       ],
     },
+
+    /* ---------------- Week 20 ---------------- */
     {
-      id: "d63", date: "2027-01-29", week: "w20", title: "Account abstraction: EIP-4337 & EIP-7702",
+      id: "d60", date: "2027-01-26", week: "w20", title: "Account abstraction: EIP-4337 & EIP-7702",
       theme: "Blockchain · part 10 — smart-account superpowers, two ways.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -1577,13 +1557,11 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 EIP-7702 is <b>live</b> — shipped in the Pectra upgrade (mainnet 7 May 2025); ERC-4337 EntryPoint is live (pin a version, e.g. v0.7/0.8, when it matters).` },
-        { id: "s2", type: "callout", label: `⚠️ 7702 introduces a new drainer vector: "sign to upgrade your wallet" delegation prompts are high-risk (an EOA can delegate to arbitrary code). Callback to d41's "verify, then act".` },
+        { id: "s2", type: "callout", label: `⚠️ 7702 introduces a new drainer vector: "sign to upgrade your wallet" delegation prompts are high-risk (an EOA can delegate to arbitrary code). Callback to d38's "verify, then act".` },
       ],
     },
-
-    /* ---------------- Week 21 ---------------- */
     {
-      id: "d64", date: "2027-02-02", week: "w21", title: "Review: the Python GIL & free-threading (3.14)",
+      id: "d61", date: "2027-01-28", week: "w20", title: "Review: the Python GIL & free-threading (3.14)",
       theme: "Review · what the lock protects, and the no-GIL build that's now supported.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -1604,7 +1582,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d65", date: "2027-02-03", week: "w21", title: "Supply-chain security: Sigstore, SLSA & SBOM",
+      id: "d62", date: "2027-01-29", week: "w20", title: "Supply-chain security: Sigstore, SLSA & SBOM",
       theme: "DevOps · part 10 — prove what's in the artifact and how it was built.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75,
@@ -1621,11 +1599,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 SLSA is at <b>v1.2</b> with two tracks — a <b>Build</b> track (L0–3) and a newer <b>Source</b> track (L1–4). Don't cite "SLSA 1.0 / one 4-level ladder" — say the track + level (e.g. "Build L3").` },
-        { id: "s2", type: "hint", label: `💡 Callback to d15: "Software Supply-Chain Failures" is high on OWASP 2025 — these three are the concrete answer to "how do you trust a dependency?".` },
+        { id: "s2", type: "hint", label: `💡 Callback to d13: "Software Supply-Chain Failures" is high on OWASP 2025 — these three are the concrete answer to "how do you trust a dependency?".` },
       ],
     },
+
+    /* ---------------- Week 21 ---------------- */
     {
-      id: "d66", date: "2027-02-06", week: "w21", title: "Distributed transactions: 2PC & the Saga pattern",
+      id: "d63", date: "2027-01-31", week: "w21", title: "Distributed transactions: 2PC & the Saga pattern",
       theme: "Distributed systems · part 5 — atomicity across services, and its price.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 80,
@@ -1641,14 +1621,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 Callback to d26/d58: the transactional <b>outbox</b> (next Messaging day) is how a Saga step reliably emits its event — same local txn as the state change.` },
+        { id: "s1", type: "callout", label: `🔗 Callback to d23/d55: the transactional <b>outbox</b> (next Messaging day) is how a Saga step reliably emits its event — same local txn as the state change.` },
         { id: "s2", type: "hint", label: `💡 Choreography (events) vs orchestration (a coordinator) is the Saga design axis — orchestration is easier to reason about, choreography more decoupled.` },
       ],
     },
-
-    /* ---------------- Week 22 ---------------- */
     {
-      id: "d67", date: "2027-02-08", week: "w22", title: "Replication: physical vs logical, sync vs async",
+      id: "d64", date: "2027-02-03", week: "w21", title: "Replication: physical vs logical, sync vs async",
       theme: "Databases · part 10 — replication lag is your failover data-loss window.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -1663,12 +1641,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d29/d54: it's the WAL again — the same log that gives crash recovery streams to replicas. Sync-vs-async is PACELC's L-vs-C made concrete.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d26/d51: it's the WAL again — the same log that gives crash recovery streams to replicas. Sync-vs-async is PACELC's L-vs-C made concrete.` },
         { id: "s2", type: "hint", label: `💡 A read replica gives read scaling but <i>stale</i> reads under lag — "read-your-writes" needs routing the just-written user to the primary.` },
       ],
     },
     {
-      id: "d68", date: "2027-02-11", week: "w22", title: "CDC & the transactional outbox",
+      id: "d65", date: "2027-02-06", week: "w21", title: "CDC & the transactional outbox",
       theme: "Messaging · part 5 — kill the dual-write with one local transaction.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1683,12 +1661,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 This is d66's Saga step made durable, and d26/d29's "log" reused: the WAL is the source of truth, Kafka a projection of it.` },
-        { id: "s2", type: "hint", label: `💡 Debezium tails Postgres logical replication — which is why you enabled <code>wal_level=logical</code> (callback d67).` },
+        { id: "s1", type: "callout", label: `🔗 This is d63's Saga step made durable, and d23/d26's "log" reused: the WAL is the source of truth, Kafka a projection of it.` },
+        { id: "s2", type: "hint", label: `💡 Debezium tails Postgres logical replication — which is why you enabled <code>wal_level=logical</code> (callback d64).` },
       ],
     },
+
+    /* ---------------- Week 22 ---------------- */
     {
-      id: "d69", date: "2027-02-12", week: "w22", title: "ZK proofs: SNARKs vs STARKs (intuition)",
+      id: "d66", date: "2027-02-08", week: "w22", title: "ZK proofs: SNARKs vs STARKs (intuition)",
       theme: "Blockchain · part 11 — prove you ran the computation, reveal nothing.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 105,
@@ -1700,7 +1680,7 @@ registerRoadmap({
           model: `<b>SNARKs</b>: tiny proofs (hundreds of bytes), cheap constant-time verification — but need a per-circuit <b>trusted setup</b> and rest on elliptic-curve/pairing assumptions (not quantum-safe). <b>STARKs</b>: <b>no trusted setup</b>, post-quantum (hash-based) — but much larger proofs. Both let a verifier check a computation without redoing it.`,
           cards: [
             { q: `SNARK vs STARK — the headline trade?`, a: `SNARK: tiny proofs + cheap verify, but a <b>trusted setup</b> and not quantum-safe. STARK: no trusted setup + post-quantum, but much larger proofs.` },
-            { q: `What does a validity (ZK) proof let a verifier avoid?`, a: `Re-executing the computation — it checks a succinct proof instead (the basis of ZK-rollups, d45).` },
+            { q: `What does a validity (ZK) proof let a verifier avoid?`, a: `Re-executing the computation — it checks a succinct proof instead (the basis of ZK-rollups, d42).` },
           ] },
       ],
       soft: [
@@ -1708,10 +1688,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 "Zero-knowledge" and "succinct" are separable: rollups mostly want <i>succinctness</i> (a small proof of a big computation); privacy is a bonus some use.` },
       ],
     },
-
-    /* ---------------- Week 23 ---------------- */
     {
-      id: "d70", date: "2027-02-14", week: "w23", title: "Distributed locks & the Redlock debate",
+      id: "d67", date: "2027-02-09", week: "w22", title: "Distributed locks & the Redlock debate",
       theme: "Caching · part 4 — a lock without a fencing token isn't safe.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 75,
@@ -1726,16 +1704,16 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d29/d23: for correctness-critical mutual exclusion, a DB row lock (<code>SELECT … FOR UPDATE</code>) or a consensus system beats a cache lock. Redlock trades safety for availability.` },
-        { id: "s2", type: "hint", label: `💡 The fencing token is d60's logical clock applied to a lock — a monotonic order that rejects the stale actor.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d26/d20: for correctness-critical mutual exclusion, a DB row lock (<code>SELECT … FOR UPDATE</code>) or a consensus system beats a cache lock. Redlock trades safety for availability.` },
+        { id: "s2", type: "hint", label: `💡 The fencing token is d57's logical clock applied to a lock — a monotonic order that rejects the stale actor.` },
       ],
     },
     {
-      id: "d71", date: "2027-02-16", week: "w23", title: "io_uring vs epoll: completion beats readiness",
+      id: "d68", date: "2027-02-12", week: "w22", title: "io_uring vs epoll: completion beats readiness",
       theme: "Systems · part 6 — batch I/O with (almost) no syscalls.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
-          lead: `<b>Systems ⑥</b> — the modern async I/O interface, and why it's different (callback d32).`,
+          lead: `<b>Systems ⑥</b> — the modern async I/O interface, and why it's different (callback d29).`,
           refs: [
             `Read <a href="https://unixism.net/loti/" target="_blank" rel="noopener">"Lord of the io_uring"</a> (the SQE/CQE ring model) + LWN <a href="https://lwn.net/Articles/810414/" target="_blank" rel="noopener">"The rapid growth of io_uring"</a>.`,
           ],
@@ -1750,8 +1728,10 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 The dead <code>kernel.dk/io_uring.pdf</code> link floats around — use Lord of the io_uring / LWN instead.` },
       ],
     },
+
+    /* ---------------- Week 23 ---------------- */
     {
-      id: "d72", date: "2027-02-17", week: "w23", title: "Quorums (R + W > N) & tunable consistency",
+      id: "d69", date: "2027-02-17", week: "w23", title: "Quorums (R + W > N) & tunable consistency",
       theme: "Distributed systems · part 6 — dial consistency vs latency per read/write.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 75,
@@ -1759,7 +1739,7 @@ registerRoadmap({
           refs: [
             `Read the Dynamo paper, <a href="https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf" target="_blank" rel="noopener">"Dynamo: Amazon's Highly Available Key-value Store"</a> (SOSP 2007) — consistent hashing, quorums, vector clocks.`,
           ],
-          model: `With N replicas and tunable read/write quorums, <b>R + W &gt; N</b> forces every read quorum to overlap every write quorum — so a read sees the latest write. Operators dial latency vs consistency vs durability. But Dynamo uses <b>sloppy</b> quorums + hinted handoff, so R+W&gt;N is <i>not</i> linearizable under partitions — reads can return concurrent versions the client reconciles (vector clocks, d60).`,
+          model: `With N replicas and tunable read/write quorums, <b>R + W &gt; N</b> forces every read quorum to overlap every write quorum — so a read sees the latest write. Operators dial latency vs consistency vs durability. But Dynamo uses <b>sloppy</b> quorums + hinted handoff, so R+W&gt;N is <i>not</i> linearizable under partitions — reads can return concurrent versions the client reconciles (vector clocks, d57).`,
           cards: [
             { q: `What does R + W > N give you?`, a: `Every read quorum overlaps every write quorum, so a read sees the latest write — with tunable R/W to trade latency vs consistency.` },
             { q: `Does R + W > N mean strong consistency?`, a: `Not under Dynamo's sloppy quorums + partitions — you can still read concurrent versions and must reconcile. It's the 2007 research Dynamo, not the DynamoDB product.` },
@@ -1767,13 +1747,11 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 R=1,W=N → fast reads, slow durable writes; R=N,W=1 → the reverse. R=W=⌈(N+1)/2⌉ is the balanced quorum.` },
-        { id: "s2", type: "callout", label: `🔬 Ties the thread together: consistent hashing (d53), vector clocks (d60), PACELC (d54) all appear in this one paper.` },
+        { id: "s2", type: "callout", label: `🔬 Ties the thread together: consistent hashing (d50), vector clocks (d57), PACELC (d51) all appear in this one paper.` },
       ],
     },
-
-    /* ---------------- Week 24 ---------------- */
     {
-      id: "d73", date: "2027-02-22", week: "w24", title: "B-tree vs LSM-tree storage engines",
+      id: "d70", date: "2027-02-18", week: "w23", title: "B-tree vs LSM-tree storage engines",
       theme: "Databases · part 11 — write-optimized vs read-optimized, and amplification.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 85,
@@ -1794,7 +1772,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d74", date: "2027-02-26", week: "w24", title: "eBPF & XDP: programmable packets in the kernel",
+      id: "d71", date: "2027-02-20", week: "w23", title: "eBPF & XDP: programmable packets in the kernel",
       theme: "Networking · part 10 — run verified code before the packet even becomes an skb.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 75,
@@ -1807,7 +1785,19 @@ registerRoadmap({
             { q: `Why is XDP so fast?`, a: `It runs in the NIC driver's RX path <b>before</b> the kernel allocates an skb (and before the full stack) — dropping/redirecting at line rate.` },
             { q: `The XDP verdicts?`, a: `<code>XDP_DROP</code>, <code>XDP_PASS</code> (to the stack), <code>XDP_TX</code> (bounce out the same NIC), <code>XDP_REDIRECT</code>.` },
           ] },
-        { id: "t2", obj: COMP, cat: "read", est: 50,
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `⚠️ Only <b>native/driver</b> XDP is fast — <b>generic</b> mode runs after skb alloc (no perf win). "XDP always bypasses skb" is wrong for generic mode.` },
+        { id: "s2", type: "hint", label: `💡 eBPF is a verified in-kernel VM — the same tech powers Cilium networking, Brendan Gregg's tracing (next DevOps day) and modern observability.` },
+      ],
+    },
+
+    /* ---------------- Week 24 ---------------- */
+    {
+      id: "d72", date: "2027-02-21", week: "w24", title: "Solana under the hood: Firedancer & Alpenglow",
+      theme: "Blockchain · part 12 — client diversity and a faster consensus.",
+      tasks: [
+        { id: "t1", carried: "d71", obj: COMP, cat: "read", est: 50,
           lead: `<b>Compiler lens</b> — before that BPF program runs, a verifier <i>proves</i> it safe and a JIT compiles it. A compiler pipeline living in ring 0.`,
           refs: [
             `Skim the kernel's <a href="https://docs.kernel.org/bpf/verifier.html" target="_blank" rel="noopener">eBPF verifier</a> doc, then the verify-then-JIT half of <a href="https://ebpf.io/what-is-ebpf/" target="_blank" rel="noopener">"What is eBPF?"</a>.`,
@@ -1818,17 +1808,7 @@ registerRoadmap({
             { q: `Why is loaded eBPF still fast if it was "interpreted" bytecode?`, a: `After verification a per-architecture <b>JIT</b> compiles the BPF bytecode to native machine code, so it executes at near-native speed rather than being interpreted.` },
             { q: `How is this like/unlike a language compiler?`, a: `Same shape — front-end checks then back-end codegen — but the verifier proves <b>safety</b> on untrusted input (reject on doubt), where a normal type checker assumes a cooperating programmer.` },
           ] },
-      ],
-      soft: [
-        { id: "s1", type: "callout", label: `⚠️ Only <b>native/driver</b> XDP is fast — <b>generic</b> mode runs after skb alloc (no perf win). "XDP always bypasses skb" is wrong for generic mode.` },
-        { id: "s2", type: "hint", label: `💡 eBPF is a verified in-kernel VM — the same tech powers Cilium networking, Brendan Gregg's tracing (next DevOps day) and modern observability.` },
-      ],
-    },
-    {
-      id: "d75", date: "2027-02-27", week: "w24", title: "Solana under the hood: Firedancer & Alpenglow",
-      theme: "Blockchain · part 12 — client diversity and a faster consensus.",
-      tasks: [
-        { id: "t1", obj: CHAIN, cat: "read", est: 75,
+        { id: "t2", obj: CHAIN, cat: "read", est: 75,
           lead: `<b>Blockchain ⑫</b> — where Solana's performance and resilience are heading.`,
           refs: [
             `Read the <a href="https://github.com/firedancer-io/firedancer" target="_blank" rel="noopener">Firedancer</a> repo/README + <a href="https://docs.anza.xyz/" target="_blank" rel="noopener">Anza docs</a>; follow Anza's Alpenglow announcement for the consensus change.`,
@@ -1841,17 +1821,15 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 As of 2026: Firedancer is <b>live on mainnet</b> (full client since ~Dec 2025, minority stake). Alpenglow is <b>proposed</b> — validator-approved and on a test cluster, mainnet targeted ~H2 2026, not shipped. Know Tower BFT + PoH as the deployed model.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d37/d39: PoH gives the verifiable clock; Alpenglow rethinks how votes finalize on top of it.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d34/d36: PoH gives the verifiable clock; Alpenglow rethinks how votes finalize on top of it.` },
       ],
     },
-
-    /* ---------------- Week 25 ---------------- */
     {
-      id: "d76", date: "2027-02-28", week: "w25", title: "Review: C++ memory model & std::atomic ordering",
+      id: "d73", date: "2027-02-22", week: "w24", title: "Review: C++ memory model & std::atomic ordering",
       theme: "Review · the same acquire/release you met in Rust, at the metal.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
-          lead: `<b>Review</b> — what <code>memory_order</code> actually constrains (contrast d35's Rust).`,
+          lead: `<b>Review</b> — what <code>memory_order</code> actually constrains (contrast d32's Rust).`,
           sub: [
             { id: "s1", est: 35, label: `Read cppreference <a href="https://en.cppreference.com/w/cpp/atomic/memory_order" target="_blank" rel="noopener">std::memory_order</a> (the 6 orderings) + Preshing, <a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">"Acquire and Release Semantics"</a>.` },
             { id: "s2", cat: "exercise", est: 30, label: `Without looking, explain: why does a release-store paired with an acquire-load safely publish data between threads?` },
@@ -1869,17 +1847,17 @@ registerRoadmap({
           model: `A compiler may perform <b>any</b> transformation as long as the program's <b>observable behavior</b> is unchanged — that's the <b>as-if rule</b>. On a single thread "observable" means I/O + volatile access + final state, so the optimizer freely reorders, folds, inlines, and keeps values in registers (<b>register allocation</b> — graph-coloring / linear-scan, spilling to the stack when it runs out). The catch: "as-if" reasons about <i>one</i> thread, so it will happily reorder ordinary loads/stores that another thread is watching. <code>std::atomic</code> with an ordering is how you tell the compiler (and CPU) "this access <b>is</b> observable — don't reorder across it." So <code>volatile</code> ≠ a fence: it blocks the compiler for that one variable but orders nothing else and emits no barrier.`,
           cards: [
             { q: `What is the "as-if" rule?`, a: `A compiler may apply any optimization provided the program's <b>observable behavior</b> (I/O, volatile access, final state) is preserved — it reasons about a <i>single</i> thread.` },
-            { q: `Why does that make lock-free code dangerous?`, a: `"As-if" only preserves single-thread observable behavior, so the optimizer reorders ordinary memory ops another thread can see. <code>std::atomic</code> orderings (d76) re-declare those accesses observable so they aren't reordered.` },
+            { q: `Why does that make lock-free code dangerous?`, a: `"As-if" only preserves single-thread observable behavior, so the optimizer reorders ordinary memory ops another thread can see. <code>std::atomic</code> orderings (d73) re-declare those accesses observable so they aren't reordered.` },
             { q: `Is <code>volatile</code> a thread-safety tool in C++?`, a: `No — it stops the compiler from optimizing away/reordering that one variable's accesses but emits <b>no CPU fence</b> and orders nothing else. Use <code>std::atomic</code> for inter-thread ordering.` },
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Same enum, same semantics as Rust's <code>Ordering</code> (d35) — Rust just checks aliasing at compile time; C++ leaves it to you.` },
+        { id: "s1", type: "callout", label: `🧭 Same enum, same semantics as Rust's <code>Ordering</code> (d32) — Rust just checks aliasing at compile time; C++ leaves it to you.` },
         { id: "s2", type: "hint", label: `💡 <code>memory_order_consume</code> is effectively discouraged — no mainstream compiler implements it as specified; most promote it to acquire.` },
       ],
     },
     {
-      id: "d77", date: "2027-03-02", week: "w25", title: "Stream processing: event time & watermarks",
+      id: "d74", date: "2027-02-23", week: "w24", title: "Stream processing: event time & watermarks",
       theme: "Messaging · part 6 — the clock that matters is in the data, not the wall.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1894,12 +1872,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d34: ordering is only per-partition, and events arrive late/out-of-order — watermarks are how a stream processor copes without a global clock.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d31: ordering is only per-partition, and events arrive late/out-of-order — watermarks are how a stream processor copes without a global clock.` },
         { id: "s2", type: "callout", label: `🔬 The four questions — what / where / when / how — are the Dataflow model's lasting contribution; every stream engine (Flink, Beam, Kafka Streams) implements them.` },
       ],
     },
+
+    /* ---------------- Week 25 ---------------- */
     {
-      id: "d78", date: "2027-03-04", week: "w25", title: "Performance analysis: perf, flame graphs & eBPF",
+      id: "d75", date: "2027-02-28", week: "w25", title: "Performance analysis: perf, flame graphs & eBPF",
       theme: "DevOps · part 11 — find where time actually goes, not where you guess.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75,
@@ -1915,13 +1895,11 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Accurate flame graphs need real stacks — compile with frame pointers or use <code>--call-graph dwarf</code>; missing frame pointers silently produce broken graphs.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d24/d38: golden signals tell you <i>that</i> it's slow; a flame graph tells you <i>where</i>. Measure, don't guess.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d21/d35: golden signals tell you <i>that</i> it's slow; a flame graph tells you <i>where</i>. Measure, don't guess.` },
       ],
     },
-
-    /* ---------------- Week 26 ---------------- */
     {
-      id: "d79", date: "2027-03-08", week: "w26", title: "Signature replay & EIP-712 typed signing",
+      id: "d76", date: "2027-03-03", week: "w25", title: "Signature replay & EIP-712 typed signing",
       theme: "Security · part 6 — a signature must be bound to one chain, one contract, once.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 75,
@@ -1936,16 +1914,16 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `⚠️ Caching the domain separator at deploy breaks after a fork changes chainId — recompute on chainId change (OZ's <code>EIP712</code> does). Callback to d28/d41: never trust input you didn't bind + verify.` },
-        { id: "s2", type: "hint", label: `💡 <code>permit</code> phishing pairs with 7702 delegation (d63) as the modern wallet-signature attack surface — treat every signature prompt as a transaction.` },
+        { id: "s1", type: "callout", label: `⚠️ Caching the domain separator at deploy breaks after a fork changes chainId — recompute on chainId change (OZ's <code>EIP712</code> does). Callback to d25/d38: never trust input you didn't bind + verify.` },
+        { id: "s2", type: "hint", label: `💡 <code>permit</code> phishing pairs with 7702 delegation (d60) as the modern wallet-signature attack surface — treat every signature prompt as a transaction.` },
       ],
     },
     {
-      id: "d80", date: "2027-03-10", week: "w26", title: "🎓 Review: Rust async — Future, Pin & the state machine",
+      id: "d77", date: "2027-03-05", week: "w25", title: "🎓 Review: Rust async — Future, Pin & the state machine",
       theme: "Review · why async fn desugars to a self-referential state machine.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
-          lead: `<b>Review (capstone)</b> — what your <code>.await</code> compiles into (builds on d35's ownership).`,
+          lead: `<b>Review (capstone)</b> — what your <code>.await</code> compiles into (builds on d32's ownership).`,
           sub: [
             { id: "s1", est: 40, label: `Read the std docs <a href="https://doc.rust-lang.org/std/future/trait.Future.html" target="_blank" rel="noopener">Future</a> (<code>poll(self: Pin&lt;&mut Self&gt;, cx)</code>) and <a href="https://doc.rust-lang.org/std/pin/index.html" target="_blank" rel="noopener">Pin</a>; the <a href="https://rust-lang.github.io/async-book/" target="_blank" rel="noopener">async book</a> for narrative (note: mid-rewrite).` },
             { id: "s2", cat: "exercise", est: 30, label: `Without looking, explain: why does <code>Future::poll</code> take <code>Pin&lt;&mut Self&gt;</code>?` },
@@ -1957,13 +1935,24 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🏁 Extension I complete — the threads ran from the wire up to distributed consensus, storage engines, chains and language runtimes. <b>Extension II</b> continues right below (weeks 26–30): the "cool internals" — amortized O(1), hash maps, garbage collection, the JS heap, floats, Unicode & Bloom filters.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d32/d03: the executor is the event loop; the Future is the non-blocking unit; the Waker is "the fd is ready". Async, all the way down.` },
+        { id: "s1", type: "callout", label: `🏁 Extension I complete — the threads ran from the wire up to distributed consensus, storage engines, chains and language runtimes. <b>Extension II</b> continues right below (weeks 26–29): the "cool internals" — amortized O(1), hash maps, garbage collection, the JS heap, floats, Unicode & Bloom filters.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d29/d03: the executor is the event loop; the Future is the non-blocking unit; the Waker is "the fd is ready". Async, all the way down.` },
       ],
-      note: "🎓 Core + Extension I done — from the OSI myth to Rust's async state machine. Extension II (data-structure & runtime internals) runs weeks 26–30.",
+      note: "🎓 Core + Extension I done — from the OSI myth to Rust's async state machine. Extension II (data-structure & runtime internals) runs weeks 26–29.",
     },
+
+    /* ---------------- Week 26 ---------------- */
+    /* ================================================================== *
+     *  EXTENSION II — "the cool internals": the data structures and runtime
+     *  machinery under the code you write every day. A NEW thread —
+     *  Data-structure & runtime internals — is interleaved with more Systems
+     *  and language Review days (same rule: consecutive days switch topics).
+     *  References verified 2026-07-18, status-flagged for fast-moving items
+     *  (Go maps→Swiss tables in 1.24, Go's GC, V8's pipeline, Unicode 17).
+     *  Dates 2027-03-09 → 2027-04-02.
+     * ================================================================== */
     {
-      id: "d81", date: "2027-03-12", week: "w26", title: "Amortized O(1): dynamic arrays & the doubling trick",
+      id: "d78", date: "2027-03-09", week: "w26", title: "Amortized O(1): dynamic arrays & the doubling trick",
       theme: "Data-structure internals · part 1 — a rare O(n) resize, amortized to nothing.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -1982,20 +1971,18 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 This is the same doubling trick a hash map uses when its load factor crosses the threshold (next internals day) — one O(n) rehash, amortized to O(1) per insert.` },
-        { id: "s2", type: "callout", label: `🔬 Callback to d10: a resize isn't just algorithmic cost — copying a big array blows the cache and faults fresh pages. Preallocate (<code>Vec::with_capacity</code> / <code>make([]T, 0, n)</code>) when you know the size to skip both.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d09: a resize isn't just algorithmic cost — copying a big array blows the cache and faults fresh pages. Preallocate (<code>Vec::with_capacity</code> / <code>make([]T, 0, n)</code>) when you know the size to skip both.` },
       ],
       note: "Extension II begins — the 'cool internals': the data structures and runtime machinery under the code you write daily.",
     },
-
-    /* ---------------- Week 27 ---------------- */
     {
-      id: "d82", date: "2027-03-16", week: "w27", title: "NUMA, cache coherence (MESI) & false sharing",
+      id: "d79", date: "2027-03-11", week: "w26", title: "NUMA, cache coherence (MESI) & false sharing",
       theme: "Systems · part 7 — you never own a variable, you own its 64-byte cache line.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 85,
           lead: `<b>Systems ⑦</b> — why two threads touching <i>different</i> variables can still cripple each other.`,
           sub: [
-            { id: "s1", est: 30, label: `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d10).` },
+            { id: "s1", est: 30, label: `Read Ulrich Drepper, <a href="https://www.akkadia.org/drepper/cpumemory.pdf" target="_blank" rel="noopener">"What Every Programmer Should Know About Memory"</a> — the cache-coherence & NUMA parts (builds on the cache line from d09).` },
             { id: "s2", est: 30, label: `Then Martin Thompson, <a href="https://mechanical-sympathy.blogspot.com/2011/07/false-sharing.html" target="_blank" rel="noopener">"False Sharing"</a> — a benchmark + the padding fix.` },
             { id: "s3", est: 25, label: `Coherence runs at <b>cache-line</b> (~64 B) granularity via <b>MESI</b> (Modified / Exclusive / Shared / Invalid): to write a line a core must own it Exclusive, so writing a Shared line invalidates every other core's copy.`,
               info: `<p>Each core has its own L1/L2 cache, so hardware needs a protocol to stop two cores disagreeing about a memory location. <b>MESI</b> tags every cache line with one of four states:</p>
@@ -2015,25 +2002,25 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d10/d76: this is the cache line again — and the acquire/release fences from the C++ memory model (d76) are what make one core's writes <i>visible</i> to another. Coherence + ordering are two halves of shared-memory truth.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d09/d73: this is the cache line again — and the acquire/release fences from the C++ memory model (d73) are what make one core's writes <i>visible</i> to another. Coherence + ordering are two halves of shared-memory truth.` },
         { id: "s2", type: "hint", label: `💡 The classic tell: an array of per-thread counters that gets <i>slower</i> with more threads. They're colliding on cache lines — pad each to its own line and it scales.` },
       ],
     },
     {
-      id: "d83", date: "2027-03-18", week: "w27", title: "Hash maps: why O(1), collisions & Swiss tables",
+      id: "d80", date: "2027-03-13", week: "w26", title: "Hash maps: why O(1), collisions & Swiss tables",
       theme: "Data-structure internals · part 2 — expected O(1), and how it degrades to O(n).",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
           lead: `<b>Internals ②</b> — the structure you reach for daily, and why its O(1) has fine print.`,
           sub: [
-            { id: "s1", est: 30, label: `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d81).` },
+            { id: "s1", est: 30, label: `The model: a good hash spreads keys so expected bucket occupancy is the <b>load factor</b> α = n/m; lookup is O(1+α). Cross the threshold (Java 0.75) → <b>double + rehash</b> (O(n), amortized O(1) — the same trick as d78).` },
             { id: "s2", est: 25, label: `Collisions resolve two ways: <b>separate chaining</b> (bucket holds a list/tree; Java 8+ treeifies long chains to O(log n)) vs <b>open addressing</b> (probe in-array — better cache locality, needs α < 1).`,
               info: `<p>Two keys can hash to the same bucket; the two classic resolutions:</p>
 <ul>
 <li><b>Separate chaining</b> — each bucket holds a list (Java 8+ upgrades a long list to a balanced tree, so a degenerate bucket is <code>O(log n)</code> not <code>O(n)</code>). Simple, tolerates load factor &gt; 1.</li>
 <li><b>Open addressing</b> — on collision, probe for the next free slot in the array itself (linear / quadratic / double hashing). Better cache locality (no pointer chasing) but needs load factor <b>α &lt; 1</b> and tombstones on delete.</li>
 </ul>
-<p>Both keep average lookup near <code>O(1)</code> while α stays bounded — cross the threshold and the map doubles + rehashes (the same amortized trick as the dynamic array in d81).</p>` },
+<p>Both keep average lookup near <code>O(1)</code> while α stays bounded — cross the threshold and the map doubles + rehashes (the same amortized trick as the dynamic array in d78).</p>` },
             { id: "s3", est: 25, label: `Modern layout: read Abseil's <a href="https://abseil.io/about/design/swisstables" target="_blank" rel="noopener">Swiss Tables</a> — open addressing + a parallel array of 1-byte control words, SIMD-scanned a group at a time (Go's built-in map adopted this in <a href="https://go.dev/blog/swisstable" target="_blank" rel="noopener">Go 1.24</a>).` },
           ],
           model: `"O(1)" is <b>expected / amortized</b>, not worst-case: adversarial or unlucky keys can pile into one bucket → O(n). That's exploitable — <b>hash-flooding DoS</b> feeds colliding keys to force O(n²); the fix is a keyed PRF hash, <b>SipHash</b>, seeded per-process so collisions are unpredictable (Python, Rust, Ruby default to it). Swiss/flat maps store entries inline (no per-node alloc) for cache locality; a SIMD compare on control bytes checks ~16 slots at once.`,
@@ -2044,12 +2031,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d81: the O(n) rehash on a doubling amortizes to O(1) per insert — hash maps and dynamic arrays share the exact same trick.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d78: the O(n) rehash on a doubling amortizes to O(1) per insert — hash maps and dynamic arrays share the exact same trick.` },
         { id: "s2", type: "callout", label: `🔬 "Go maps are chained buckets" is now outdated — Go 1.24 (2025) switched the built-in map to Swiss Tables. And your <code>HashMap</code> iteration order changing across runs is SipHash's per-process seed, not a bug.` },
       ],
     },
+
+    /* ---------------- Week 27 ---------------- */
     {
-      id: "d84", date: "2027-03-20", week: "w27", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC",
+      id: "d81", date: "2027-03-17", week: "w27", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC",
       theme: "Review · the engine under every line of JavaScript you ship.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -2078,18 +2067,16 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Review tasks re-derive runtime models you already use (Rust d35, Go d52, Python d64, C++ d76, Rust async d80). This is the JS engine's turn.` },
+        { id: "s1", type: "callout", label: `🧭 Review tasks re-derive runtime models you already use (Rust d32, Go d49, Python d61, C++ d73, Rust async d77). This is the JS engine's turn.` },
         { id: "s2", type: "hint", label: `💡 Don't conflate <b>Oilpan</b> (V8's GC for C++/DOM objects) with <b>Orinoco</b> (the JS-heap collector) — different heaps, different collectors. "Shape" is the ecosystem word; V8's source says "Map".` },
       ],
     },
-
-    /* ---------------- Week 28 ---------------- */
     {
-      id: "d85", date: "2027-03-21", week: "w28", title: "Garbage collection: tracing, generational & tri-color",
+      id: "d82", date: "2027-03-18", week: "w27", title: "Garbage collection: tracing, generational & tri-color",
       theme: "Data-structure internals · part 3 — reclaim the unreachable without stopping the world.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 85,
-          lead: `<b>Internals ③</b> — the collectors under every managed runtime (contrast d84's V8, d52's Go).`,
+          lead: `<b>Internals ③</b> — the collectors under every managed runtime (contrast d81's V8, d49's Go).`,
           sub: [
             { id: "s1", est: 30, label: `The two families: <b>tracing</b> (mark from roots, reclaim the unreachable) vs <b>reference counting</b> (free at count 0 — prompt, but can't collect <i>cycles</i>, so CPython adds a backup tracer).`,
               info: `<p>Two fundamental ways a runtime reclaims memory:</p>
@@ -2097,7 +2084,7 @@ registerRoadmap({
 <li><b>Tracing GC</b> (JVM, Go, C#, V8) — periodically start from the <b>roots</b> (stack, globals), mark everything reachable, reclaim the rest. Handles cycles naturally; the cost is pause time + tracing work.</li>
 <li><b>Reference counting</b> (CPython, Swift, <code>shared_ptr</code>) — each object counts its references and frees the instant the count hits 0. Prompt and incremental, but <b>can't reclaim cycles</b> (A→B→A never reach 0) — which is why CPython bolts on a backup <i>tracing</i> collector just for cycles.</li>
 </ul>
-<p>Neither is "the" GC — real runtimes mix them, and tracing collectors add generations (d85.s3) on top.</p>` },
+<p>Neither is "the" GC — real runtimes mix them, and tracing collectors add generations (d82.s3) on top.</p>` },
             { id: "s2", est: 30, label: `Read the <a href="https://go.dev/doc/gc-guide" target="_blank" rel="noopener">Go GC guide</a> + Rick Hudson's <a href="https://go.dev/blog/ismmkeynote" target="_blank" rel="noopener">"Getting to Go"</a> for a real low-latency concurrent design.` },
             { id: "s3", est: 25, label: `The <b>generational hypothesis</b> ("most objects die young") + a <b>write barrier</b>/remembered set let you collect a small young gen often and the old gen rarely.` },
           ],
@@ -2109,12 +2096,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔬 Callback to d84: V8 <i>is</i> generational + moving (the copying Scavenger); Go is neither. Two valid, opposite answers to the same problem — know why each chose as it did.` },
+        { id: "s1", type: "callout", label: `🔬 Callback to d81: V8 <i>is</i> generational + moving (the copying Scavenger); Go is neither. Two valid, opposite answers to the same problem — know why each chose as it did.` },
         { id: "s2", type: "hint", label: `💡 As of 2026 Go's GC is still concurrent non-generational mark-sweep; an experimental page-scanning "Green Tea" collector (<code>GOEXPERIMENT=greenteagc</code>, Go 1.25) is being trialed for better locality.` },
       ],
     },
     {
-      id: "d86", date: "2027-03-22", week: "w28", title: "The heap allocator: malloc, size classes & fragmentation",
+      id: "d83", date: "2027-03-19", week: "w27", title: "The heap allocator: malloc, size classes & fragmentation",
       theme: "Systems · part 8 — what actually happens on malloc(), and why free() doesn't shrink RSS.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
@@ -2131,12 +2118,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d44/d56: brk/mmap hand you virtual pages; the allocator sub-divides them. "Out of memory" from fragmentation isn't a leak — the bytes are free, just not contiguous.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d41/d53: brk/mmap hand you virtual pages; the allocator sub-divides them. "Out of memory" from fragmentation isn't a leak — the bytes are free, just not contiguous.` },
         { id: "s2", type: "callout", label: `🔬 This is why long-running services swap in jemalloc/tcmalloc: better fragmentation behavior and per-CPU caching under many-thread load than default glibc ptmalloc.` },
       ],
     },
+
+    /* ---------------- Week 28 ---------------- */
     {
-      id: "d87", date: "2027-03-26", week: "w28", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
+      id: "d84", date: "2027-03-21", week: "w28", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
       theme: "Data-structure internals · part 4 — floats are exact binary fractions, just not the ones you typed.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 70,
@@ -2157,14 +2146,12 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 Floats are fully <b>deterministic</b>, not random — same ops, same bits, per IEEE 754 (current edition 754-2019). The "error" is representation, not chance.` },
       ],
     },
-
-    /* ---------------- Week 29 ---------------- */
     {
-      id: "d88", date: "2027-03-30", week: "w29", title: "Review: the JVM — tiered JIT, warmup & deoptimization",
+      id: "d85", date: "2027-03-23", week: "w28", title: "Review: the JVM — tiered JIT, warmup & deoptimization",
       theme: "Review · why the JVM starts slow, gets fast, and can briefly re-slow.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
-          lead: `<b>Review</b> — how HotSpot turns bytecode into specialized native code at runtime (contrast d52's Go, d64's Python).`,
+          lead: `<b>Review</b> — how HotSpot turns bytecode into specialized native code at runtime (contrast d49's Go, d61's Python).`,
           sub: [
             { id: "s1", est: 40, label: `Read the <a href="https://docs.oracle.com/en/java/javase/21/vm/" target="_blank" rel="noopener">Java Virtual Machine Guide</a> (HotSpot compilation) + OpenJDK's <a href="https://wiki.openjdk.org/display/HotSpot/" target="_blank" rel="noopener">HotSpot wiki</a> (tiered compilation, deopt).` },
             { id: "s2", cat: "exercise", est: 30, label: `Without looking, explain aloud: why is a Java microbenchmark meaningless until it's "warmed up"?` },
@@ -2177,12 +2164,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d84: HotSpot's monomorphic-call-site specialization + deopt is the same idea as V8's inline caches — profile the common case, guard it, fall back when the guard fails.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d81: HotSpot's monomorphic-call-site specialization + deopt is the same idea as V8's inline caches — profile the common case, guard it, fall back when the guard fails.` },
         { id: "s2", type: "callout", label: `🧭 As of 2026 the built-in Graal JIT was removed from OpenJDK (JDK 17); GraalVM is a separate distribution (Graal compiler + native-image AOT). Warmup work continues in Project Leyden.` },
       ],
     },
     {
-      id: "d89", date: "2027-03-31", week: "w29", title: "Unicode, UTF-8 & grapheme clusters",
+      id: "d86", date: "2027-03-27", week: "w28", title: "Unicode, UTF-8 & grapheme clusters",
       theme: "Data-structure internals · part 5 — 'length' has four different answers.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 75,
@@ -2200,11 +2187,13 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `⚠️ Truncating/reversing a string by code unit splits emoji and mangles accents. For a user-visible count use a grapheme segmenter (<code>Intl.Segmenter</code>, ICU) — <code>.length</code>/<code>len()</code>/<code>strlen</code> give units, code points, or bytes respectively.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d19: hashes/signatures operate on <b>bytes</b>, so always hash a defined encoding (UTF-8, usually NFC-normalized) — the same text in NFC vs NFD hashes differently. Unicode 17.0 is current (2025).` },
+        { id: "s2", type: "hint", label: `💡 Callback to d17: hashes/signatures operate on <b>bytes</b>, so always hash a defined encoding (UTF-8, usually NFC-normalized) — the same text in NFC vs NFD hashes differently. Unicode 17.0 is current (2025).` },
       ],
     },
+
+    /* ---------------- Week 29 ---------------- */
     {
-      id: "d90", date: "2027-04-01", week: "w29", title: "Branch prediction & speculative execution (Spectre)",
+      id: "d87", date: "2027-03-29", week: "w29", title: "Branch prediction & speculative execution (Spectre)",
       theme: "Systems · part 9 — the CPU guesses your branches, and Spectre is the bill.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
@@ -2222,36 +2211,46 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "hint", label: `💡 Branchless code (masks / <code>cmov</code> / SIMD) only wins when the branch is <i>unpredictable</i> — a well-predicted branch is nearly free. Measure before de-branching.` },
-        { id: "s2", type: "callout", label: `🔬 Callback to d10: this is the memory hierarchy weaponized — the cache side-channel that makes speculation observable. Speculation is fundamental to all fast CPUs (Intel/AMD/ARM), so the class keeps spawning variants.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d09: this is the memory hierarchy weaponized — the cache side-channel that makes speculation observable. Speculation is fundamental to all fast CPUs (Intel/AMD/ARM), so the class keeps spawning variants.` },
       ],
     },
-
-    /* ---------------- Week 30 ---------------- */
     {
-      id: "d91", date: "2027-04-04", week: "w30", title: "🎓 Bloom filters & probabilistic data structures",
+      id: "d88", date: "2027-04-02", week: "w29", title: "🎓 Bloom filters & probabilistic data structures",
       theme: "Data-structure internals · part 6 — trade a little accuracy for enormous space savings.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 75,
           lead: `<b>Internals ⑥ (capstone)</b> — the sketches that answer set/count questions in kilobytes.`,
           sub: [
             { id: "s1", est: 45, label: `Read the <a href="https://en.wikipedia.org/wiki/Bloom_filter" target="_blank" rel="noopener">Bloom filter</a> overview (the math + use cases), then play with the <a href="https://llimllib.github.io/bloomfilter-tutorial/" target="_blank" rel="noopener">interactive visual tutorial</a>.` },
-            { id: "s2", est: 30, label: `Place its siblings: <b>HyperLogLog</b> (cardinality — d22's Redis <code>PFCOUNT</code>) and <b>Count-Min Sketch</b> (frequency). All hash-based, sublinear-space, one-sided error.` },
+            { id: "s2", est: 30, label: `Place its siblings: <b>HyperLogLog</b> (cardinality — d19's Redis <code>PFCOUNT</code>) and <b>Count-Min Sketch</b> (frequency). All hash-based, sublinear-space, one-sided error.` },
           ],
-          model: `A <b>Bloom filter</b> is an m-bit array + k hashes: insert sets k bits; query checks them — any 0 ⇒ <b>definitely absent</b>, all 1 ⇒ <i>possibly</i> present. So it has <b>no false negatives</b>, only tunable false positives (~9.6 bits/element for 1%), at O(k) per op independent of item size. You can't delete from a plain one (shared bits) — use a counting variant. The classic use: skip a disk read in an <b>LSM-tree</b> (d73) when the filter says a key isn't in an SSTable.`,
+          model: `A <b>Bloom filter</b> is an m-bit array + k hashes: insert sets k bits; query checks them — any 0 ⇒ <b>definitely absent</b>, all 1 ⇒ <i>possibly</i> present. So it has <b>no false negatives</b>, only tunable false positives (~9.6 bits/element for 1%), at O(k) per op independent of item size. You can't delete from a plain one (shared bits) — use a counting variant. The classic use: skip a disk read in an <b>LSM-tree</b> (d70) when the filter says a key isn't in an SSTable.`,
           cards: [
             { q: `What can a Bloom filter never do?`, a: `Give a <b>false negative</b> — "absent" is always true. It only has tunable <b>false positives</b> ("possibly present"), in O(k) time and ~9.6 bits/element at 1%.` },
-            { q: `Bloom vs HyperLogLog vs Count-Min Sketch?`, a: `Bloom = set <b>membership</b>; HLL = <b>cardinality</b> (count-distinct, d22); Count-Min = per-item <b>frequency</b>. All hash-based & sublinear, but not interchangeable.` },
-            { q: `Where do LSM-tree engines use Bloom filters?`, a: `One per SSTable — a point lookup skips reading that file from disk when the filter says the key is <b>definitely not</b> there (callback d73).` },
+            { q: `Bloom vs HyperLogLog vs Count-Min Sketch?`, a: `Bloom = set <b>membership</b>; HLL = <b>cardinality</b> (count-distinct, d19); Count-Min = per-item <b>frequency</b>. All hash-based & sublinear, but not interchangeable.` },
+            { q: `Where do LSM-tree engines use Bloom filters?`, a: `One per SSTable — a point lookup skips reading that file from disk when the filter says the key is <b>definitely not</b> there (callback d70).` },
           ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🎓 Extension II complete — wire → runtime → data structure. From the OSI myth to why a hash map is O(1). One thread left: how the languages themselves are built.` },
-        { id: "s2", type: "hint", label: `💡 Callback to d22/d73: you met HyperLogLog (Redis) and Bloom filters (LSM-trees) in passing — now you own the machinery. Reach for a sketch when exact answers cost too much memory.` },
+        { id: "s2", type: "hint", label: `💡 Callback to d19/d70: you met HyperLogLog (Redis) and Bloom filters (LSM-trees) in passing — now you own the machinery. Reach for a sketch when exact answers cost too much memory.` },
       ],
-      note: "🎓 Extension II complete — data-structure & runtime internals owned. Extension III (weeks 30–33) closes the loop: how compilers & interpreters actually turn your code into behavior.",
+      note: "🎓 Extension II complete — data-structure & runtime internals owned. Extension III (weeks 30–32) closes the loop: how compilers & interpreters actually turn your code into behavior.",
     },
+
+    /* ---------------- Week 30 ---------------- */
+    /* ==================================================================== *
+     *  EXTENSION III — "how the languages are built" (authored 2026-07-21)
+     *  A new COMPILERS & INTERPRETERS thread (COMP), interleaved day-by-day
+     *  with language-implementation REVIEWs so consecutive days still switch
+     *  lens. Complements (does NOT duplicate) the interp-go roadmap: that one
+     *  BUILDS a toy interpreter in Go; this one dissects how REAL production
+     *  implementations (CPython, gc, the JVM, V8, LLVM) do it. Also seeded
+     *  earlier by "Compiler lens" tasks woven into d71 (eBPF verifier/JIT),
+     *  d73 (the as-if rule) and d81 (Ignition/TurboFan).
+     * ==================================================================== */
     {
-      id: "d92", date: "2027-04-05", week: "w30", dow: "Mon", title: "A map of the territory: interpreters, compilers & JITs",
+      id: "d89", date: "2027-04-04", week: "w30", dow: "Sun", title: "A map of the territory: interpreters, compilers & JITs",
       theme: "Compilers · part 1 — the whole pipeline, and the words for each stage.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 75,
@@ -2272,10 +2271,8 @@ registerRoadmap({
         { id: "s2", type: "callout", label: `🧭 Keep the mountain diagram in your head — every later day (lexing, parsing, VMs, SSA, JITs) is one stretch of that same climb.` },
       ],
     },
-
-    /* ---------------- Week 31 ---------------- */
     {
-      id: "d93", date: "2027-04-11", week: "w31", dow: "Sun", title: "Review: how CPython runs your code — bytecode & the eval loop",
+      id: "d90", date: "2027-04-08", week: "w30", dow: "Thu", title: "Review: how CPython runs your code — bytecode & the eval loop",
       theme: "Review · the interpreter you use daily, opened up.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 60,
@@ -2292,12 +2289,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Callback to d92: CPython is the "compile to bytecode, then interpret" point on the spectrum — and callback to d64 (the GIL) which is a property of this same eval loop.` },
+        { id: "s1", type: "callout", label: `🧭 Callback to d89: CPython is the "compile to bytecode, then interpret" point on the spectrum — and callback to d61 (the GIL) which is a property of this same eval loop.` },
         { id: "s2", type: "hint", label: `💡 "Python is slow because it's interpreted" is half the story — it's the per-opcode dispatch + boxing, which is exactly what specialization (3.11+) and the 3.13 JIT attack.` },
       ],
     },
     {
-      id: "d94", date: "2027-04-16", week: "w31", dow: "Fri", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
+      id: "d91", date: "2027-04-10", week: "w30", dow: "Sat", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
       theme: "Compilers · part 2 — turning flat text into a tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
@@ -2314,12 +2311,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d92's mountain: scanning + parsing = the entire "front end". Everything after operates on the AST, never the raw text again.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d89's mountain: scanning + parsing = the entire "front end". Everything after operates on the AST, never the raw text again.` },
         { id: "s2", type: "callout", label: `🔬 "Parser generators" (yacc/ANTLR) build bottom-up LR tables from a grammar; most beloved handwritten parsers are top-down recursive-descent + Pratt because errors and edge cases are easier to control.` },
       ],
     },
+
+    /* ---------------- Week 31 ---------------- */
     {
-      id: "d95", date: "2027-04-17", week: "w31", dow: "Sat", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
+      id: "d92", date: "2027-04-12", week: "w31", dow: "Mon", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
       theme: "Review · the toolchain that builds everything you ship in Go.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 60,
@@ -2335,14 +2334,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Callback to d52 (Go's scheduler) and d92: this is the AOT-with-its-own-backend point on the spectrum — no JIT, but a full SSA optimizer.` },
-        { id: "s2", type: "hint", label: `💡 SSA (ahead at d99/d100) is what makes those optimization passes tractable — each value is assigned once, so "where did this come from?" has a single answer.` },
+        { id: "s1", type: "callout", label: `🧭 Callback to d49 (Go's scheduler) and d89: this is the AOT-with-its-own-backend point on the spectrum — no JIT, but a full SSA optimizer.` },
+        { id: "s2", type: "hint", label: `💡 SSA (ahead at d96/d97) is what makes those optimization passes tractable — each value is assigned once, so "where did this come from?" has a single answer.` },
       ],
     },
-
-    /* ---------------- Week 32 ---------------- */
     {
-      id: "d96", date: "2027-04-18", week: "w32", dow: "Sun", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
+      id: "d93", date: "2027-04-13", week: "w31", dow: "Tue", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
       theme: "Compilers · part 3 — the simplest way to actually run the tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
@@ -2359,12 +2356,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d64/d93: CPython does NOT tree-walk — it compiles to bytecode first. Tree-walking is the teaching baseline; almost every fast language moves to a VM.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d61/d90: CPython does NOT tree-walk — it compiles to bytecode first. Tree-walking is the teaching baseline; almost every fast language moves to a VM.` },
         { id: "s2", type: "callout", label: `🔬 Closures force a real decision: capture by reference (shared, JS/Python) vs by value (copied). Loop-variable capture bugs come straight from this choice.` },
       ],
     },
     {
-      id: "d97", date: "2027-04-19", week: "w32", dow: "Mon", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
+      id: "d94", date: "2027-04-14", week: "w31", dow: "Wed", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
       theme: "Review · the other great managed runtime, next to V8.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 60,
@@ -2381,12 +2378,14 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Callback to d84/d92: same idea as V8 (interpret + profile → speculatively JIT → deopt on guard failure). Managed runtimes converge on this design.` },
+        { id: "s1", type: "callout", label: `🧭 Callback to d81/d89: same idea as V8 (interpret + profile → speculatively JIT → deopt on guard failure). Managed runtimes converge on this design.` },
         { id: "s2", type: "hint", label: `💡 "The JVM is slow to start" and "Java is fast" are both true — that's warmup. AOT options (GraalVM native-image) trade peak throughput for instant start.` },
       ],
     },
+
+    /* ---------------- Week 32 ---------------- */
     {
-      id: "d98", date: "2027-04-22", week: "w32", dow: "Thu", title: "Bytecode compilers & a stack VM (the clox model)",
+      id: "d95", date: "2027-04-18", week: "w32", dow: "Sun", title: "Bytecode compilers & a stack VM (the clox model)",
       theme: "Compilers · part 4 — why every fast interpreter compiles to its own instruction set.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
@@ -2395,7 +2394,7 @@ registerRoadmap({
             `Read Crafting Interpreters Part III openers — <a href="https://craftinginterpreters.com/a-bytecode-virtual-machine.html" target="_blank" rel="noopener">"Chunks of Bytecode"</a> + <a href="https://craftinginterpreters.com/a-virtual-machine.html" target="_blank" rel="noopener">"A Virtual Machine"</a> (the stack + dispatch loop).`,
             `Then <a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">"Compiling Expressions"</a> — a single-pass, Pratt-driven bytecode compiler.`,
           ],
-          model: `Instead of re-walking a tree of scattered pointers, compile the AST (or even parse straight) into a flat array of <b>bytecode</b> — one-byte opcodes + operands — and run a <b>virtual machine</b>: a loop that fetches an opcode, dispatches (a <code>switch</code>, or a computed-goto "threaded" dispatch for speed), and mutates a <b>value stack</b>. Most VMs are <b>stack machines</b> (<code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes) because they're simple to compile to; some (Lua, Dalvik) are <b>register machines</b> (fewer instructions, more per-instruction work). The win is <b>locality</b> — sequential bytes, no pointer chasing — plus a portable artifact you can ship and, later, JIT. This is the leap CPython, the JVM, and Lua all make; the tree-walker (d96) was the on-ramp.`,
+          model: `Instead of re-walking a tree of scattered pointers, compile the AST (or even parse straight) into a flat array of <b>bytecode</b> — one-byte opcodes + operands — and run a <b>virtual machine</b>: a loop that fetches an opcode, dispatches (a <code>switch</code>, or a computed-goto "threaded" dispatch for speed), and mutates a <b>value stack</b>. Most VMs are <b>stack machines</b> (<code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes) because they're simple to compile to; some (Lua, Dalvik) are <b>register machines</b> (fewer instructions, more per-instruction work). The win is <b>locality</b> — sequential bytes, no pointer chasing — plus a portable artifact you can ship and, later, JIT. This is the leap CPython, the JVM, and Lua all make; the tree-walker (d93) was the on-ramp.`,
           cards: [
             { q: `Why compile to bytecode instead of walking the AST?`, a: `A flat bytecode array gives <b>cache locality</b> and cheap sequential dispatch (no pointer-chasing through tree nodes), plus a portable artifact you can ship and later JIT — far faster than re-walking the tree each run.` },
             { q: `What is a stack-based VM, concretely?`, a: `A fetch-decode-dispatch loop over opcodes that operate on a <b>value stack</b>: <code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes their sum. Simple to compile to; contrast register VMs (Lua/Dalvik).` },
@@ -2403,14 +2402,12 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 Callback to d93/d97: this IS what CPython and the JVM do — you're now seeing the machinery behind "compiles to bytecode, then interprets". clox even folds parsing + codegen into one pass.` },
-        { id: "s2", type: "callout", label: `🔬 Callback to d90 (branch prediction): the interpreter's central dispatch is one hyper-hot indirect branch — which is exactly why computed-goto/threaded dispatch measurably wins.` },
+        { id: "s1", type: "hint", label: `💡 Callback to d90/d94: this IS what CPython and the JVM do — you're now seeing the machinery behind "compiles to bytecode, then interprets". clox even folds parsing + codegen into one pass.` },
+        { id: "s2", type: "callout", label: `🔬 Callback to d87 (branch prediction): the interpreter's central dispatch is one hyper-hot indirect branch — which is exactly why computed-goto/threaded dispatch measurably wins.` },
       ],
     },
-
-    /* ---------------- Week 33 ---------------- */
     {
-      id: "d99", date: "2027-04-27", week: "w33", dow: "Tue", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
+      id: "d96", date: "2027-04-23", week: "w32", dow: "Fri", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
       theme: "Review · the compiler infrastructure under half the languages you use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
@@ -2427,30 +2424,30 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Callback to d95: Go's <code>gc</code> deliberately does NOT use LLVM (its own SSA backend, for fast builds) — a real engineering trade-off vs Rust's LLVM dependency (slower builds, heavier optimization).` },
-        { id: "s2", type: "hint", label: `💡 SSA appears in three places you've now seen: Go's compiler (d95), LLVM here, and modern JITs. Learn it once; recognize it everywhere.` },
+        { id: "s1", type: "callout", label: `🧭 Callback to d92: Go's <code>gc</code> deliberately does NOT use LLVM (its own SSA backend, for fast builds) — a real engineering trade-off vs Rust's LLVM dependency (slower builds, heavier optimization).` },
+        { id: "s2", type: "hint", label: `💡 SSA appears in three places you've now seen: Go's compiler (d92), LLVM here, and modern JITs. Learn it once; recognize it everywhere.` },
       ],
     },
     {
-      id: "d100", date: "2027-04-30", week: "w33", dow: "Fri", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
+      id: "d97", date: "2027-04-24", week: "w32", dow: "Sat", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
       theme: "Compilers · part 5 (capstone) — the back end that makes it fast, and the rule that lets it.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 80,
           lead: `<b>Compilers ⑤ (capstone)</b> — how an optimizer is <i>allowed</i> to rewrite your code, and the last mile to machine instructions.`,
           refs: [
             `Read <a href="https://en.wikipedia.org/wiki/Static_single-assignment_form" target="_blank" rel="noopener">Static single-assignment form</a> (why optimizers use it) + <a href="https://en.wikipedia.org/wiki/Register_allocation" target="_blank" rel="noopener">register allocation</a> (graph-coloring / linear scan).`,
-            `Then <a href="https://en.wikipedia.org/wiki/Instruction_selection" target="_blank" rel="noopener">instruction selection</a>, and revisit the <a href="https://en.wikipedia.org/wiki/As-if_rule" target="_blank" rel="noopener">as-if rule</a> (d76) that authorizes it all.`,
+            `Then <a href="https://en.wikipedia.org/wiki/Instruction_selection" target="_blank" rel="noopener">instruction selection</a>, and revisit the <a href="https://en.wikipedia.org/wiki/As-if_rule" target="_blank" rel="noopener">as-if rule</a> (d73) that authorizes it all.`,
           ],
-          model: `The back end earns the speed. On an <b>SSA</b> IR, classic passes fall out cheaply: constant folding/propagation, dead-code elimination, common-subexpression elimination, loop-invariant code motion — each easy because every value has one definition. Then the machine-specific mile: <b>instruction selection</b> (map IR ops to real opcodes — often tree/DAG tiling), <b>instruction scheduling</b> (reorder to hide latency), and <b>register allocation</b> (fit unbounded virtual registers into a handful of physical ones — modeled as <b>graph coloring</b>, or <b>linear scan</b> in JITs; when it can't, it <b>spills</b> to the stack). All of this is licensed by one rule: the <b>as-if rule</b> — transform however you like as long as <b>observable behavior</b> is preserved. That single principle is why <code>-O2</code> can delete, reorder, and vectorize your code, and why (d76) it needs <code>atomic</code>/<code>volatile</code> to know what it must NOT touch.`,
+          model: `The back end earns the speed. On an <b>SSA</b> IR, classic passes fall out cheaply: constant folding/propagation, dead-code elimination, common-subexpression elimination, loop-invariant code motion — each easy because every value has one definition. Then the machine-specific mile: <b>instruction selection</b> (map IR ops to real opcodes — often tree/DAG tiling), <b>instruction scheduling</b> (reorder to hide latency), and <b>register allocation</b> (fit unbounded virtual registers into a handful of physical ones — modeled as <b>graph coloring</b>, or <b>linear scan</b> in JITs; when it can't, it <b>spills</b> to the stack). All of this is licensed by one rule: the <b>as-if rule</b> — transform however you like as long as <b>observable behavior</b> is preserved. That single principle is why <code>-O2</code> can delete, reorder, and vectorize your code, and why (d73) it needs <code>atomic</code>/<code>volatile</code> to know what it must NOT touch.`,
           cards: [
             { q: `Why do optimizers convert to SSA before optimizing?`, a: `With every value assigned once, data-flow facts (reaching definitions, liveness) have a single source — so constant folding, dead-code elimination, CSE and LICM become simple, local rewrites.` },
             { q: `What problem is register allocation, and how is it modeled?`, a: `Mapping unbounded virtual registers onto a few physical ones. Modeled as <b>graph coloring</b> (interference graph) or <b>linear scan</b> (fast, JIT-friendly); values that don't fit are <b>spilled</b> to the stack.` },
-            { q: `What licenses every compiler optimization — and its limit?`, a: `The <b>as-if rule</b>: any transformation is legal if the program's <b>observable behavior</b> is unchanged. Its limit is that "observable" is defined per single thread — hence atomics/volatile (d76) to mark what must not be reordered.` },
+            { q: `What licenses every compiler optimization — and its limit?`, a: `The <b>as-if rule</b>: any transformation is legal if the program's <b>observable behavior</b> is unchanged. Its limit is that "observable" is defined per single thread — hence atomics/volatile (d73) to mark what must not be reordered.` },
           ] },
       ],
       soft: [
         { id: "s1", type: "callout", label: `🏁 Bedrock complete — 32 weeks, 12 threads, from the OSI myth to how a compiler is allowed to rewrite your code. The wire, the runtime, the data structure, and now the language itself: the theory a backend/blockchain engineer is expected to own, end to end.` },
-        { id: "s2", type: "hint", label: `💡 Callbacks close the loop: the as-if rule (d76), branch prediction in the dispatch loop (d90), V8's JIT (d84), the eBPF verifier (d74). You've now seen compilation from the kernel to the cloud.` },
+        { id: "s2", type: "hint", label: `💡 Callbacks close the loop: the as-if rule (d73), branch prediction in the dispatch loop (d87), V8's JIT (d81), the eBPF verifier (d71). You've now seen compilation from the kernel to the cloud.` },
       ],
       note: "🏁 Bedrock complete — 32 weeks across 12 threads. From \"there is no OSI layer 5 on the wire\" to \"the as-if rule is why -O2 is allowed\": your interview-and-tech-talk bedrock, wire to compiler.",
     },
@@ -2458,30 +2455,35 @@ registerRoadmap({
 
   milestones: [
     { id: "w4.m1", week: "w4", title: "Month 1 — Networking + DevOps foundations",
-      rule: { type: "tasks", require: ["d01.t1", "d02.t1", "d07.t1", "d08.t1", "d09.t1", "d13.t1", "d14.t1"] } },
-    { id: "w9.m1", week: "w9", title: "Month 2 — data layer, HTTP, blockchain & security basics",
-      rule: { type: "tasks", require: ["d17.t1", "d19.t1", "d23.t1", "d25.t1", "d27.t1", "d28.t1"] } },
-    { id: "w13.m1", week: "w13", title: "🎓 Core complete — the essentials owned",
-      rule: { type: "tasks", require: ["d37.t1", "d39.t1", "d40.t1", "d41.t1"] } },
+      rule: { type: "tasks", require: ["d01.t1", "d02.t1", "d07.t1", "d08.t1", "d11.t1", "d12.t1"] } },
+    { id: "w8.m1", week: "w8", title: "Month 2 — data layer, HTTP, blockchain & security basics",
+      rule: { type: "tasks", require: ["d15.t1", "d17.t1", "d20.t1", "d22.t1", "d24.t1", "d25.t1"] } },
+    { id: "w12.m1", week: "w12", title: "🎓 Core complete — the essentials owned",
+      rule: { type: "tasks", require: ["d34.t1", "d36.t1", "d37.t1", "d38.t1"] } },
+    // ---- Extension milestones ----
     { id: "w17.m1", week: "w17", title: "Extension I — distributed systems & storage internals underway",
-      rule: { type: "tasks", require: ["d42.t1", "d43.t1", "d45.t1", "d48.t1", "d54.t1"] } },
-    { id: "w22.m1", week: "w22", title: "Extension I (halfway) — chains deep, replication & sagas",
-      rule: { type: "tasks", require: ["d57.t1", "d60.t1", "d63.t1", "d66.t1", "d67.t1"] } },
-    { id: "w26.m1", week: "w26", title: "🎓 Extension I complete — distributed systems & internals",
-      rule: { type: "tasks", require: ["d72.t1", "d75.t1", "d77.t1", "d80.t1"] } },
-    { id: "w30.m1", week: "w30", title: "🎓 Extension II complete — data-structure & runtime internals",
-      rule: { type: "tasks", require: ["d81.t1", "d83.t1", "d85.t1", "d87.t1", "d91.t1"] } },
-    { id: "w32.m1", week: "w32", title: "Extension III — the front end: maps, lexing, parsing & real interpreters",
-      rule: { type: "tasks", require: ["d92.t1", "d93.t1", "d94.t1", "d96.t1"] } },
-    { id: "w33.m1", week: "w33", title: "🎓 Extension III complete — how compilers & interpreters really work",
-      rule: { type: "tasks", require: ["d98.t1", "d100.t1"] } },
+      rule: { type: "tasks", require: ["d39.t1", "d40.t1", "d42.t1", "d45.t1", "d51.t1"] } },
+    { id: "w21.m1", week: "w21", title: "Extension I (halfway) — chains deep, replication & sagas",
+      rule: { type: "tasks", require: ["d54.t1", "d57.t1", "d60.t1", "d63.t1", "d64.t1"] } },
+    { id: "w25.m1", week: "w25", title: "🎓 Extension I complete — distributed systems & internals",
+      rule: { type: "tasks", require: ["d69.t1", "d72.t2", "d74.t1", "d77.t1"] } },
+    // ---- Extension II (internals) milestone ----
+    { id: "w29.m1", week: "w29", title: "🎓 Extension II complete — data-structure & runtime internals",
+      rule: { type: "tasks", require: ["d78.t1", "d80.t1", "d82.t1", "d84.t1", "d88.t1"] } },
+    // ---- Extension III (compilers & interpreters) milestones ----
+    // Anchored to w31 because its last required task (the tree-walker, d93) lives
+    // in w31 — the deadline/at-risk math keys off the milestone's week end.
+    { id: "w31.m1", week: "w31", title: "Extension III — the front end: maps, lexing, parsing & real interpreters",
+      rule: { type: "tasks", require: ["d89.t1", "d90.t1", "d91.t1", "d93.t1"] } },
+    { id: "w32.m1", week: "w32", title: "🎓 Extension III complete — how compilers & interpreters really work",
+      rule: { type: "tasks", require: ["d95.t1", "d97.t1"] } },
   ],
 
   features: [
     { title: "How this track works", items: [
       `Each domain is an ordered <b>thread</b>; threads are <b>interleaved</b> across days, so consecutive side-days switch topics but each thread advances in order.`,
       `Progress, streak and effort are <b>separate from your main roadmaps</b> — only the Today panel's "Main + Side" line combines them.`,
-      `<b>Core</b> (weeks 1–13) lays the foundations; <b>Extension I</b> (weeks 13–26) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–30) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters); <b>Extension III</b> (weeks 30–33) closes with a <b>Compilers & interpreters</b> thread — how real implementations (CPython, the Go compiler, the JVM, V8, LLVM) turn your code into behavior, interleaved with language-implementation reviews.`,
+      `<b>Core</b> (weeks 1–12) lays the foundations; <b>Extension I</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–29) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters); <b>Extension III</b> (weeks 30–32) closes with a <b>Compilers & interpreters</b> thread — how real implementations (CPython, the Go compiler, the JVM, V8, LLVM) turn your code into behavior, interleaved with language-implementation reviews.`,
       `Complete a task to <b>unlock its recall cards</b> 🎴 — short Q/A prompts you can re-test yourself on; the Today view resurfaces a few from earlier days so knowledge sticks.`,
     ] },
   ],

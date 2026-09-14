@@ -28,10 +28,10 @@ t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 // shift (exactly like the frozen-now anchors in render.test / insights.test).
 t.group("roadmap date anchors (a bad or asymmetric shift must fail here)");
 const ANCHORS = {
-  "rust-fastapi": { first: "2026-09-04", last: "2027-04-24" },
-  "interp-go":    { first: "2026-09-04", last: "2027-02-03" },
-  "bedrock":      { first: "2026-09-07", last: "2027-04-12" },
-  "raylib":       { first: "2026-09-05", last: "2027-01-08" },
+  "rust-fastapi": { first: "2026-09-13", last: "2027-05-12" },
+  "interp-go":    { first: "2026-09-14", last: "2027-02-27" },
+  "bedrock":      { first: "2026-09-14", last: "2027-04-24" },
+  "raylib":       { first: "2026-09-13", last: "2027-01-18" },
 };
 for (const [slug, a] of Object.entries(ANCHORS)) {
   const rm = registry.getRoadmap(slug);
@@ -193,11 +193,14 @@ t.ok(bedrock.weeksById.has("w32"), "Extension III reaches week 32");
 t.ok(EXT3.first > EXT2.last, `Extension III starts after Extension II ends (${EXT3.first} > ${EXT2.last})`);
 const compTasks = bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "compilers");
 t.ok(compTasks.length >= 8, "the compilers thread has its full run of tasks (appended + woven)");
+// A day's ANCHOR is its first task of its own: work carried over from an earlier day
+// (`carried`, placed first so the day stays under the daily cap) never defines the topic.
+const anchorOf = d => d.tasks.find(x => !x.carried);
 // the woven "Compiler lens" seeds live on EARLIER days as a 2nd task, so they must
-// never sit at tasks[0] (that would perturb the interleaving invariant).
+// never be a day's anchor (that would perturb the interleaving invariant).
 const wovenComp = bedrock.days.filter(d => bWeek(d) < 30 && d.tasks.some(x => x.obj === "compilers"));
 t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 earlier second-half days");
-t.ok(wovenComp.every(d => d.tasks[0].obj !== "compilers"),
+t.ok(wovenComp.every(d => anchorOf(d).obj !== "compilers"),
   "woven compiler tasks are additive (never the day's first/anchor task)");
 
 // no two side-days may share a calendar date (the digest/effort views key off date)
@@ -208,7 +211,7 @@ t.eq(new Set(bDates).size, bDates.length, "bedrock day dates are unique (no coll
 // deliberate security capstone pair (d37 → d38). Guards the core design rule.
 let sameThread = 0;
 for (let i = 1; i < bedrock.days.length; i++) {
-  const a = bedrock.days[i - 1].tasks[0]?.obj, b = bedrock.days[i].tasks[0]?.obj;
+  const a = anchorOf(bedrock.days[i - 1])?.obj, b = anchorOf(bedrock.days[i])?.obj;
   if (a && a === b) sameThread++;
 }
 t.ok(sameThread <= 1, `threads interleave — at most the one capstone pair repeats (found ${sameThread})`);

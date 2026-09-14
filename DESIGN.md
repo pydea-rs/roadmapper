@@ -212,6 +212,10 @@ responsiveness." Direction:
 - **Timeline — Cards** (default): months (if long) → week group headers (with the week's dual progress
   + milestone) → **day cards**. Today's card highlighted and auto-opened; past days dim; future closed
   by default. Each card header shows its **actual** and **original** figures, done/total, est-time.
+  A task the plan passed on from an earlier day to keep a date within the 3h ceiling (authored
+  `carried: "dNN"`, listed before the card's own tasks) shows *↩ carried over from “that day”* — in the
+  card, the bonus list, the Atlas lens and the brick's tooltip. A card holding only such work is titled
+  "… (cont.)". Unlike a user move, `carried` changes no date and no on-time judgement.
 - **Timeline — Atlas**: the whole roadmap on one board, for seeing every day and task in a few looks.
   One **plate per week** (week number, dates, title, actual bar with on-time underline, milestones);
   inside it the week's days sit **side by side as columns**, each a stack of **bricks**. A brick is one
@@ -287,7 +291,7 @@ responsiveness." Direction:
   appear on the date they currently live on (moves and re-dated cards applied). Slim rows mark free
   days; rules mark each week of the plan's shared frame with its planned total and roadmap mix.
 - Each date's **gauge** measures its required minutes (bonus never loads a day) against the owner's
-  daily ceiling — ~4h when one or two roadmaps share it, 6h for three or more — turning amber near it
+  daily ceiling — 3h of required work on a date, however many roadmaps share it — turning amber near it
   and red past it.
 - The list **opens on today**; earlier days (with their unfinished count) are one click away. A
   look-ahead strip sums the next 7 and 30 days (time and tasks still left), the busiest day ahead

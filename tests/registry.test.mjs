@@ -79,4 +79,21 @@ t.eq(sd.daysById.get("d02").nextDate, "2026-09-03", "d02 (first of the tie) sees
 t.eq(sd.daysById.get("d03").nextDate, "2026-09-06", "d03 (second of the tie) sees the real next date");
 t.eq(sd.daysById.get("d04").nextDate, null, "the last card has no ceiling");
 
+t.group("carried-over tasks (the daily-cap re-plan) must come from a real, EARLIER day");
+registerRoadmap({ slug: "carry", title: "T", objectives: OBJ, days: [
+  { id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] },
+  { id: "d02", date: "2026-09-02", tasks: [{ id: "t1", obj: "o1", label: "b", carried: "d01" },
+    { id: "t2", obj: "o1", label: "c", carried: "d03" }, { id: "t3", obj: "o1", label: "d", carried: "d09" },
+    { id: "t4", obj: "o1", label: "e", carried: "d02" }], soft: [] },
+  { id: "d03", date: "2026-09-04", tasks: [{ id: "t1", obj: "o1", label: "f" }], soft: [] },
+]});
+const cr = registry.getRoadmap("carry");
+t.eq(cr.tasksById.get("d02.t1").carried, "d01", "the registry keeps a task's `carried` origin");
+t.eq(cr.tasksById.get("d01.t1").carried, null, "a task that wasn't carried reads null");
+const p3 = validateAll().filter(x => x.startsWith("[carry]"));
+t.ok(!p3.some(x => /"d02\.t1"/.test(x)), "carried from an earlier day is valid");
+t.ok(p3.some(x => /"d02\.t2" is carried from "d03", which is not an earlier day/.test(x)), "carried from a LATER day is flagged");
+t.ok(p3.some(x => /"d02\.t3" is carried from unknown day "d09"/.test(x)), "carried from a day that doesn't exist is flagged");
+t.ok(p3.some(x => /"d02\.t4" is carried from "d02"/.test(x)), "carried from its own day is flagged");
+
 t.done();

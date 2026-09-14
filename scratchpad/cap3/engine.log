@@ -1,0 +1,10 @@
+w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11 w12 w13 w14 w15 w16 w17 w18 w19 w20 w21 w22 w23 w24 w25 w26 w27 w28 w29 w30 w31 w32 w33 w34 w35 
+rust-fastapi 103 cards 2026-09-13 → 2027-05-12 req 8165 placed 8165
+interp-go 96 cards 2026-09-14 → 2027-02-27 req 8495 placed 8495
+bedrock 97 cards 2026-09-14 → 2027-04-24 req 7935 placed 7935
+raylib 54 cards 2026-09-13 → 2027-01-18 req 4185 placed 4185
+splits 7 4h dates 0 over-cap dates 0 163s
+(node:40593) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/paya/thcpp/PHP/Roadmaps/public/assets/js/registry.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /home/paya/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)

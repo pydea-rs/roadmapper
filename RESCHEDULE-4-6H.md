@@ -10,6 +10,11 @@
 > by `scratchpad/replan.mjs` (varied weekdays, per-date ceilings); the rules are asserted in
 > `tests/schedule.test.mjs`, and each roadmap file carries a "RE-PLAN (2026-09-13)" header note.
 > This file is kept only as a record of what not to do.
+>
+> **Later the same day the 4–6 h ceiling itself was replaced** by a **3 h** daily maximum: every roadmap
+> restarted on 2026-09-13 and was re-flowed by `scratchpad/cap3/` (tasks passed along into the next card,
+> marked `carried`). `tests/schedule.test.mjs` now asserts those rules; see each roadmap's
+> "3-HOUR CAP RE-PLAN" header note.
 
 ---
 

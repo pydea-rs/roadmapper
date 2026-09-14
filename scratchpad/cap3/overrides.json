@@ -1,0 +1,153 @@
+{
+ "rust-fastapi": {
+  "replace": [
+   [
+    "// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's\n// clarified rules. (It replaces two earlier same-day passes that misread the 4–6h\n// figure as a daily TARGET to fill: one packed this tail to 3/week, the next stacked\n// every roadmap onto a few shared \"working days\" with rest days in between.)\n//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks\n//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,\n//    7h only rarely. A light day stays light — nothing is padded to reach a number.\n//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.\n//    Every week keeps its authored day count but picks fresh weekdays, deliberately\n//    different from the week before, so the plan doesn't settle into a rut.\n//  - This tail is back to its authored 2 sessions/week, taking a 3rd only in weeks\n//    when the other three roadmaps are light (under 600 min combined — the January\n//    dips, and every week once interp-go ends).\n// For this file: w8–w40 → w8–w34, finishing 2027-04-24 (authored 2027-06-09). Day\n// ids and all content are UNCHANGED; only `date`/`week` moved. Weeks 8–18 keep their\n// original two-day grouping; w19+ titles were re-derived from the days each week now\n// holds, and the 12 RWP milestones re-anchored to the week holding their last\n// required task.",
+    "// 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again\n// the same day after the owner read the Horizon view's daily totals. It replaces the\n// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a\n// target to fill).\n//  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts\n//    2026-09-13 + 7i).\n//  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —\n//    a ceiling, never a target. The owner allowed a few 4h days and up to ~1 month of\n//    extension per roadmap (2 in special cases); the plan needed no 4h day at all.\n//  - When a date would pass the cap, tasks are PASSED ALONG, in order, into the\n//    roadmap's next card, ahead of that card's own tasks, and marked `carried: \"dNN\"`\n//    so the card shows where each one came from. A card whose own tasks all moved on\n//    is titled \"… (cont.)\". A task too big to share its date is split at a sub-task\n//    boundary into \"(1/2)\" / \"(2/2)\" — main roadmaps only; the side tracks were planned\n//    around it so every task keeps its recall cards. Nothing was cut or reworded.\n//  - Days per week follow the authored phase of the content, weekdays change from\n//    week to week, and no roadmap goes more than a week without a session.\n// Day ids were renumbered where cards were added, and milestones/interludes re-anchored\n// (no DB backward compatibility needed); day and week references inside the content\n// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's\n// numbering. The planner and file builder live in scratchpad/cap3/.\n// For this file: 98 → 103 days, 34 → 35 weeks, 2026-09-13 → 2027-05-12 (was 2026-09-04 →\n// 2027-04-24). The two-book core runs 5 cards a week in w1–w5 and 4 in w6–w8; the RWP arc\n// 2 a week from w9, taking a 3rd in the light weeks from late January (w21) on. 24 tasks\n// carried, 5 continuation cards, 2 tasks split."
+   ],
+   [
+    "// rust-fastapi.js — Roadmap 1 (priority HIGH, 2–5 active days/week: 4–5 through the\n// two-book core in w1–w7, then 2 across the RWP arc — 3 in the lighter weeks).",
+    "// rust-fastapi.js — Roadmap 1 (priority HIGH, 2–5 active days/week: 4–5 through the\n// two-book core in w1–w8, then 2 across the RWP arc — 3 in the lighter weeks)."
+   ],
+   [
+    "Added as weeks w8–w26 / days d33–d74 at a\n// gentle 2 sessions/week (3 in the lighter weeks — see the 2026-09-13 re-plan note\n// below), starting 2026-10-26 and finishing 2027-02-26 (~4 months). The original\n// 32 days (d01–d32) are UNCHANGED — this is a pure append.",
+    "Appended after the two-book core at a\n// gentle 2 sessions/week (3 in the lighter weeks), ~4 months — a pure append that\n// left the core untouched (now days d38–d79, weeks 9–27; see the 3-hour cap re-plan\n// note below)."
+   ],
+   [
+    "Appended as weeks w26–w34 / days d75–d98 at 3/week,\n// 2027-02-28 → 2027-04-24.",
+    "Appended after it (now days d80–d103, weeks\n// 27–35, 2027-03-20 → 2027-05-12)."
+   ],
+   [
+    "interp-go (ends 2027-02-03) and raylib (2027-01-08) are done",
+    "interp-go (ends 2027-02-27) and raylib (2027-01-18) are done"
+   ],
+   [
+    "🔗 Nothing due today by design. A plan with zero slack",
+    "🔗 Nothing new is due today by design — here it absorbs the async-server work carried over from d32. A plan with zero slack"
+   ]
+  ],
+  "weekComments": {
+   "w9": "/* ---- RWP extension (Rust Web Programming, 3rd ed.) — weeks 9–27 ---- */",
+   "w27": "/* ---- RWP Part B (2nd-ed Ch9–18) — weeks 27–35 (w27 opens with the 3rd-ed retro & buffer) ---- */"
+  },
+  "weeks": {
+   "w1": "Week 1 — Smart pointers, concurrency & DB foundations",
+   "w2": "Week 2 — Project structure, OOP, security & patterns",
+   "w3": "Week 3 — Dependencies & advanced Rust",
+   "w4": "Week 4 — Testing & the web-server arc",
+   "w5": "Week 5 — Finish the server; deploy FastAPI; the capstone begins",
+   "w6": "Week 6 — Capstone & checkpoint",
+   "w7": "Week 7 — Async Rust (Ch17), shipping the capstone & a buffer",
+   "w8": "Week 8 — Integration capstone & retro",
+   "w9": "Week 9 — RWP: setup & the Ch1 Rust review (Ch1)",
+   "w10": "Week 10 — RWP: finishing the Ch1 review, then traits & macros (Ch1–2)",
+   "w11": "Week 11 — RWP: app design & Cargo (Ch2–3)",
+   "w12": "Week 12 — RWP: nanoservices & the DAL (Ch3)",
+   "w13": "Week 13 — RWP: foundations checkpoint + Async (Ch4)",
+   "w14": "Week 14 — RWP: tokio/Hyper & serving HTTP (Ch4–5)",
+   "w15": "Week 15 — RWP: processing requests (Ch5–6)",
+   "w16": "Week 16 — RWP: full CRUD + backend checkpoint (Ch6)",
+   "w17": "Week 17 — RWP: a browser frontend (Ch7)",
+   "w18": "Week 18 — RWP: styling & Rust-in-WASM (Ch7–8)",
+   "w19": "Week 19 — RWP: WASM kernel & client (Ch8)",
+   "w20": "Week 20 — RWP: full-stack checkpoint & PostgreSQL (Ch9)",
+   "w21": "Week 21 — RWP: SQLx, migrations & the persistence checkpoint (Ch9)",
+   "w22": "Week 22 — RWP: the auth server, users & JWT (Ch10)",
+   "w23": "Week 23 — RWP: login, then server-to-server comms (Ch10–11)",
+   "w24": "Week 24 — RWP: caching with Redis (Ch12)",
+   "w25": "Week 25 — RWP: the cache kernel & logging (Ch12–13)",
+   "w26": "Week 26 — RWP: the stack checkpoint & capstone — run & harden",
+   "w27": "Week 27 — RWP: retro & buffer, then Part B — unit tests (2nd-ed Ch9)",
+   "w28": "Week 28 — RWP Part B — a test pipeline & Docker images (Ch9–10)",
+   "w29": "Week 29 — RWP Part B — Terraform, AWS & local HTTPS (Ch10–11)",
+   "w30": "Week 30 — RWP Part B — HTTPS on AWS, the deploy checkpoint & a clean repo (Ch11, Ch13)",
+   "w31": "Week 31 — RWP Part B — CI, then Rocket (Ch13, Ch12)",
+   "w32": "Week 32 — RWP Part B — Tokio, actors & TCP (Ch14–15)",
+   "w33": "Week 33 — RWP Part B — actors over TCP & protocol framing (Ch15–16)",
+   "w34": "Week 34 — RWP Part B — Hyper actors & a Redis task queue (Ch17–18)",
+   "w35": "Week 35 — RWP Part B — the task queue & the two-book capstone (Ch18)"
+  },
+  "notes": {
+   "d06": "Wraps up the opening block — smart pointers done, the FastAPI DB layer + structure in place.",
+   "d11": "The FastAPI part is short — the rest of the day finishes Patterns & matching, carried over from d10.",
+   "d19": "One of the heaviest Rust sections — its reading today; the ThreadPool build is carried into the next session (d20).",
+   "d20": "The FastAPI part is deliberately light — the thread-pool build carried over from d19 fills the rest of the day.",
+   "d33": "Buffer day — nothing of its own is required; the async-server work carried over from d32 comes first, then close any gaps.",
+   "d38": "Kickoff — the pace stays gentle (2 sessions/week), taking a 3rd session in lighter weeks: a few in February, then every week once interp-go ends at the end of February."
+  }
+ },
+ "interp-go": {
+  "replace": [
+   [
+    "// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's\n// clarified rules. (It replaces an earlier same-day pass that misread the 4–6h figure\n// as a daily TARGET and stacked every roadmap onto a few shared \"working days\" with\n// rest days in between — the owner did not want fixed active days at all.)\n//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks\n//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,\n//    7h only rarely. A light day stays light — nothing is padded to reach a number.\n//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.\n//    This roadmap keeps its 4 days in every week, but each week picks fresh weekdays,\n//    deliberately different from the week before (the old fixed Mon/Wed/Thu/Sat\n//    rhythm is gone), so the plan doesn't settle into a rut.\n// ONLY `date:` moved: day/task ids, content, order, each day's `week:`, every week's\n// `start:` and every day/week COUNT are untouched, so no milestone or interlude needed\n// re-anchoring. Still 88 days / 22 weeks; finishes 2027-02-03 (authored 2027-02-04).",
+    "// 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again\n// the same day after the owner read the Horizon view's daily totals. It replaces the\n// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a\n// target to fill).\n//  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts\n//    2026-09-13 + 7i).\n//  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —\n//    a ceiling, never a target. The owner allowed a few 4h days and up to ~1 month of\n//    extension per roadmap (2 in special cases); the plan needed no 4h day at all.\n//  - When a date would pass the cap, tasks are PASSED ALONG, in order, into the\n//    roadmap's next card, ahead of that card's own tasks, and marked `carried: \"dNN\"`\n//    so the card shows where each one came from. A card whose own tasks all moved on\n//    is titled \"… (cont.)\". A task too big to share its date is split at a sub-task\n//    boundary into \"(1/2)\" / \"(2/2)\" — main roadmaps only; the side tracks were planned\n//    around it so every task keeps its recall cards. Nothing was cut or reworded.\n//  - Days per week follow the authored phase of the content, weekdays change from\n//    week to week, and no roadmap goes more than a week without a session.\n// Day ids were renumbered where cards were added, and milestones/interludes re-anchored\n// (no DB backward compatibility needed); day and week references inside the content\n// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's\n// numbering. The planner and file builder live in scratchpad/cap3/.\n// For this file: 88 → 96 days, 22 → 24 weeks, 2026-09-14 → 2027-02-27 (was 2026-09-04\n// → 2027-02-03). 4 days in every week; 25 tasks carried, 8 continuation cards, 5 tasks\n// split."
+   ],
+   [
+    "Now 88 days / 22 weeks, finishing 2027-02-03 (was 56d/16w, 2026-11-19).",
+    "That pass made it 88 days / 22 weeks (was 56d/16w, finishing 2026-11-19)."
+   ]
+  ],
+  "weeks": {
+   "w1": "Week 1 — CI Ch9; Go: Templates (videos 27–36)",
+   "w2": "Week 2 — Go: Templates (videos 27–36); CI Ch10",
+   "w3": "Week 3 — CI Ch11; Go: Code Org & MVC (videos 37–54)",
+   "w4": "Week 4 — Go: Code Org & MVC (videos 37–54); CI Ch12",
+   "w5": "Week 5 — CI Ch12; Let's Go: read chunk 1 + starter; CI Ch13 (jlox done!)",
+   "w6": "Week 6 — Go: Signup & REST (videos 55–62); CI Ch14",
+   "w7": "Week 7 — CI Ch15; Go: Databases (videos 63–89)",
+   "w8": "Week 8 — Go: Databases (videos 63–89); CI Ch16",
+   "w9": "Week 9 — CI Ch17; CI Ch18",
+   "w10": "Week 10 — CI Ch19; Let's Go: read chunk 2 + Go forms tryout",
+   "w11": "Week 11 — Go: Passwords & bcrypt (videos 90–106); CI Ch20; CI Ch21 begins",
+   "w12": "Week 12 — CI Ch21; Go: SQL relations & migrations (videos 138–155); CI Ch22 begins",
+   "w13": "Week 13 — CI Ch22; CI Ch23; Go: Cookies, Sessions & CSRF (videos 107–137)",
+   "w14": "Week 14 — Go: Cookies, Sessions & CSRF (videos 107–137); CI Ch24",
+   "w15": "Week 15 — CI Ch25; CI Ch26 begins (garbage collection)",
+   "w16": "Week 16 — CI Ch26; CI Ch27",
+   "w17": "Week 17 — CI Ch28; Go: Password reset & email (videos 165–194)",
+   "w18": "Week 18 — CI Ch29; CI Ch30 → 🎉 CI done",
+   "w19": "Week 19 — Monkey Ch1 — Lexing (secondary); Go: Galleries CRUD (videos 195–217); Monkey Ch2 begins",
+   "w20": "Week 20 — Monkey Ch2 — Parsing (secondary); Let's Go: read chunk 4 (auth + testing); Go: Images & config (videos 218–248)",
+   "w21": "Week 21 — Monkey Ch3 — Evaluation (secondary); Go: Deployment (videos 249–263)",
+   "w22": "Week 22 — Go: OAuth & finish → 🎉 course DONE; Monkey Ch4 + extend it (secondary); Let's Go exercises",
+   "w23": "Week 23 — Checkpoint & catch-up; Writing a Compiler in Go — the bridge (secondary)",
+   "w24": "Week 24 — Go: production hardening; Capstone — a Monkey web playground; grand retro"
+  }
+ },
+ "bedrock": {
+  "replace": [
+   [
+    "// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's\n// clarified rules. (It replaces an earlier same-day pass that misread the 4–6h figure\n// as a daily TARGET and stacked every roadmap onto a few shared \"working days\" with\n// rest days in between — the owner did not want fixed active days at all.)\n//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks\n//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,\n//    7h only rarely. A light day stays light — nothing is padded to reach a number.\n//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.\n//    Every week keeps its authored side-day count but picks fresh weekdays,\n//    deliberately different from the week before, so the plan doesn't settle into a rut.\n// ONLY `date:` (and the 9 inline `dow:` labels, d89–d97) moved: day/task ids, content,\n// order, each day's `week:`, every week's `start:` and every day/week COUNT are\n// untouched, so no milestone needed re-anchoring. Still 97 days / 32 weeks; finishes\n// 2027-04-12 (authored 2027-04-15).",
+    "// 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again\n// the same day after the owner read the Horizon view's daily totals. It replaces the\n// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a\n// target to fill).\n//  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts\n//    2026-09-13 + 7i).\n//  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —\n//    a ceiling, never a target. The owner allowed a few 4h days and up to ~1 month of\n//    extension per roadmap (2 in special cases); the plan needed no 4h day at all.\n//  - When a date would pass the cap, tasks are PASSED ALONG, in order, into the\n//    roadmap's next card, ahead of that card's own tasks, and marked `carried: \"dNN\"`\n//    so the card shows where each one came from. A card whose own tasks all moved on\n//    is titled \"… (cont.)\". A task too big to share its date is split at a sub-task\n//    boundary into \"(1/2)\" / \"(2/2)\" — main roadmaps only; the side tracks were planned\n//    around it so every task keeps its recall cards. Nothing was cut or reworded.\n//  - Days per week follow the authored phase of the content, weekdays change from\n//    week to week, and no roadmap goes more than a week without a session.\n// Day ids were renumbered where cards were added, and milestones/interludes re-anchored\n// (no DB backward compatibility needed); day and week references inside the content\n// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's\n// numbering. The planner and file builder live in scratchpad/cap3/.\n// For this file: still 97 days / 32 weeks, each week holding the same side-days it was\n// authored with; 2026-09-14 → 2027-04-24 (was 2026-09-07 → 2027-04-12). One task is\n// carried (d71's \"Compiler lens\" into d72), none split. The 9 inline `dow:` labels and\n// the two extension \"Dates X → Y\" ranges were recomputed."
+   ],
+   [
+    "// Cadence: 2–3 focused side-days per week (a few weeks take 4), on weekdays that\n// change from week to week — see the 2026-09-13 re-plan note —",
+    "// Cadence: 2–3 focused side-days per week (a few weeks take 4), on weekdays that\n// change from week to week — see the 3-hour cap re-plan note —"
+   ]
+  ],
+  "weeks": {
+   "w24": "Week 24 — Firedancer, the C++ memory model & streams"
+  },
+  "weekComments": {
+   "w13": "// ---- Extension: \"deepen your knowledge\" — under-the-hood internals ----",
+   "w26": "// ---- Extension II: \"the cool internals\" — data structures & runtime under the hood ----",
+   "w30": "// ---- Extension III: \"how the languages are built\" — compilers & interpreters ----"
+  }
+ },
+ "raylib": {
+  "replace": [
+   [
+    "// RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt from the owner's\n// clarified rules. (It replaces an earlier same-day pass that misread the 4–6h figure\n// as a daily TARGET and stacked every roadmap onto a few shared \"working days\" with\n// rest days in between — the owner did not want fixed active days at all.)\n//  - The 4–6h figure is a daily MAXIMUM on the sum of every roadmap's required tasks\n//    on one date: ~4h when 1–2 roadmaps have a card that day, up to 6h when 3+ do,\n//    7h only rarely. A light day stays light — nothing is padded to reach a number.\n//  - A roadmap's rule is how many days it gets IN EACH WEEK, never which weekdays.\n//    Every week keeps its authored side-day count but picks fresh weekdays,\n//    deliberately different from the week before, so the plan doesn't settle into a rut.\n// ONLY `date:` moved: day/task ids, content, order, each day's `week:`, every week's\n// `start:` and every day/week COUNT are untouched, so no milestone needed\n// re-anchoring. Still 54 days / 19 weeks; finishes 2027-01-08 (as authored).",
+    "// 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again\n// the same day after the owner read the Horizon view's daily totals. It replaces the\n// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a\n// target to fill).\n//  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts\n//    2026-09-13 + 7i).\n//  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —\n//    a ceiling, never a target. The owner allowed a few 4h days and up to ~1 month of\n//    extension per roadmap (2 in special cases); the plan needed no 4h day at all.\n//  - When a date would pass the cap, tasks are PASSED ALONG, in order, into the\n//    roadmap's next card, ahead of that card's own tasks, and marked `carried: \"dNN\"`\n//    so the card shows where each one came from. A card whose own tasks all moved on\n//    is titled \"… (cont.)\". A task too big to share its date is split at a sub-task\n//    boundary into \"(1/2)\" / \"(2/2)\" — main roadmaps only; the side tracks were planned\n//    around it so every task keeps its recall cards. Nothing was cut or reworded.\n//  - Days per week follow the authored phase of the content, weekdays change from\n//    week to week, and no roadmap goes more than a week without a session.\n// Day ids were renumbered where cards were added, and milestones/interludes re-anchored\n// (no DB backward compatibility needed); day and week references inside the content\n// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's\n// numbering. The planner and file builder live in scratchpad/cap3/.\n// For this file: still 54 days / 19 weeks, each week holding the same side-days it was\n// authored with; 2026-09-13 → 2027-01-18 (was 2026-09-05 → 2027-01-08). Nothing needed\n// carrying or splitting."
+   ],
+   [
+    "finishes ~4 weeks sooner (Jan 8).",
+    "finishes ~4 weeks sooner (Jan 8 then; Jan 18\n  // since the 3-hour cap re-plan)."
+   ],
+   [
+    "light — see the 2026-09-13 re-plan note.",
+    "light — see the 3-hour cap re-plan note."
+   ]
+  ]
+ }
+}
