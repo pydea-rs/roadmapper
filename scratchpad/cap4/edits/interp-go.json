@@ -1,0 +1,176 @@
+{
+ "_rules": [
+  {
+   "cat": "read",
+   "mul": 1.35
+  },
+  {
+   "cat": "book",
+   "mul": 1.25
+  },
+  {
+   "cat": "code",
+   "mul": 1.35
+  },
+  {
+   "cat": "challenge",
+   "mul": 1.55
+  },
+  {
+   "cat": "watch",
+   "mul": 1.15
+  },
+  {
+   "cat": "review",
+   "mul": 1.2
+  },
+  {
+   "cat": "project",
+   "mul": 1.3
+  },
+  {
+   "cat": "exercise",
+   "mul": 1.3
+  },
+  {
+   "cat": "prep",
+   "mul": 1.2
+  }
+ ],
+ "d13.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Mandatory read — <i>Let’s Go</i> pp 11–50</b>, Ch2 Foundations: project setup, routing, and the handler signature."
+   },
+   {
+    "est": 35,
+    "label": "<b><i>Let’s Go</i> pp 50–85</b> — the rest of Ch2 Foundations: <code>http.Server</code>, URL query strings, and HTML templating."
+   }
+  ]
+ },
+ "d13.t1.s2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Ch3 config & structured logging: command-line flags, dependency injection into handlers."
+   },
+   {
+    "est": 35,
+    "label": "Ch3 (continued) — centralised error handling, and the runnable SnippetBox skeleton."
+   }
+  ]
+ },
+ "d31.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Mandatory read — <i>Let’s Go</i> pp 86–125</b>, Ch4 DB layer: MySQL setup, the driver, and a first query."
+   },
+   {
+    "est": 35,
+    "label": "<b><i>Let’s Go</i> pp 125–161</b> — the rest of Ch4: single-record and multi-record queries, and transactions."
+   }
+  ]
+ },
+ "d31.t1.s2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Ch5 dynamic templates: passing data in, and the template cache."
+   },
+   {
+    "est": 35,
+    "label": "Ch5 (continued) — template functions, and rendering live data safely."
+   }
+  ]
+ },
+ "d22.t2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Review Calhoun Ch9</b> (PDF pp 261–303) alongside the videos."
+   },
+   {
+    "est": 35,
+    "label": "<b>Review Calhoun Ch10</b> (PDF pp 304–346)."
+   }
+  ]
+ },
+ "d45.t2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Review Calhoun Ch13</b> (PDF pp 401–465)."
+   },
+   {
+    "est": 35,
+    "label": "<b>Review Calhoun Ch14</b> (PDF pp 466–528)."
+   }
+  ]
+ },
+ "d23.t2": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Implement <code>scanner.c</code>: the token struct, the character cursor, and single-character tokens."
+   },
+   {
+    "est": 40,
+    "label": "Finish <code>scanner.c</code>: literals, identifiers/keywords, and the pull interface the compiler calls one token at a time."
+   }
+  ]
+ },
+ "d60.t2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Companion (Calhoun ends at v164):</b> read <i>Let’s Go</i> Ch9 pp 225–234 — sessions: the manager, and putting data in."
+   },
+   {
+    "est": 30,
+    "label": "<i>Let’s Go</i> Ch9 pp 234–241 — the flash-message pattern, end to end."
+   }
+  ]
+ },
+ "d67.t2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "<b>Companion:</b> <i>Let’s Go</i> Ch8 pp 193–208 — parsing a form, and the POST handler."
+   },
+   {
+    "est": 30,
+    "label": "<i>Let’s Go</i> Ch8 pp 208–224 — validation done idiomatically, and re-displaying a form with errors."
+   }
+  ]
+ },
+ "d79.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "<b>Secondary capstone:</b> pick the feature Ball leaves out (a <code>while</code> loop, a standard-library function, or postfix operators) and design it — grammar, AST node, and where it hooks in."
+   },
+   {
+    "est": 40,
+    "label": "Implement that feature end to end: parser, evaluator, and a couple of Monkey programs that exercise it."
+   }
+  ]
+ },
+ "d85.t1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Pick <b>one</b> — (a) structured request logging + a <code>/healthz</code>; (b) per-IP rate limiting middleware; or (c) graceful shutdown on SIGTERM with in-flight request draining — and design it against your Calhoun/SnippetBox app."
+   },
+   {
+    "est": 35,
+    "label": "Implement it properly: wire it into the middleware chain / server lifecycle."
+   },
+   {
+    "est": 35,
+    "label": "Prove it: a test or a manual run that shows the behaviour, plus the failure case."
+   }
+  ]
+ }
+}

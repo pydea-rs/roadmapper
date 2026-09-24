@@ -23,10 +23,10 @@ global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slid
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-09-14 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-09-25 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 14, 12, 0, 0); }
-  static now() { return new RealDate(2026, 8, 14, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 8, 25, 12, 0, 0); }
+  static now() { return new RealDate(2026, 8, 25, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
 
@@ -116,7 +116,10 @@ t.group("parent tasks: expand, tri-state checkbox, progress, recall");
 await import(new URL("raylib.js", rmBase).href);       // its tasks are broken into sub-tasks
 const rl = reg.getRoadmap("raylib");
 render.renderRoadmap(rl, view);
-const parentRow = view.querySelector(".task.parent");
+// the planner splits tasks across cards, so plenty of parents now hold a single sub —
+// this block exercises the tri-state mechanism, so pick one that really has several
+const parentRow = [...view.querySelectorAll(".task.parent")]
+  .find(r => (rl.tasksById.get(r.dataset.task)?.subs || []).length >= 2);
 t.ok(parentRow, "a task with sub-tasks renders as a .parent row");
 const pid = parentRow && parentRow.dataset.task;
 t.ok(parentRow && parentRow.querySelector(".t-subprogress .t-subcount"), "parent shows a done/total progress count");
@@ -277,7 +280,7 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
 render.renderToday(view);                                     // restore the Today view for the next group
 
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-09-14, so raylib d01.t1 (2026-09-13) is OVERDUE. A
+// "now" is frozen at 2026-09-25, so raylib d01.t1 (2026-09-24) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id

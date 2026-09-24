@@ -228,6 +228,9 @@ responsiveness." Direction:
   Clicking a brick or a day opens the **day lens** — a floating panel (a bottom sheet on phones) with
   the day's full task list, sub-tasks, ticks and move buttons, plus "Open the full day card". It
   follows repaints, and closes on Escape, an outside press or navigation.
+- **Day menu** (right-click a day card, or a day column in the Atlas): *Completion details*,
+  *Time on tasks*, *References & links*, *Move day…* / *Reset to original*, and — only for a roadmap
+  that publishes a source library (§7.6) — *Reading list — sources*.
 - **Task rows**: checkbox (accent), category chip, rich label, estimate, and a **move handle (⇄)**.
   Ticking animates bars and updates both figures optimistically, then syncs.
 - **Grouped/linked tasks** rendered with a connector (e.g. *watch videos 34–36* ⇄ *review Calhoun
@@ -453,8 +456,29 @@ last reconciled against (hook for future structured migrations).
 On boot the container **validates every roadmap**: ids unique within roadmap; slug unique across
 roadmaps; every milestone/move-target references existing ids; every day has a valid date; weeks/months
 derive cleanly; optional-with-fallback well-formed; every task has a known objective; objective
-primary/secondary set. On failure it surfaces a clear **developer error** instead of persisting bad
-state. This is what makes hand-authoring safe.
+primary/secondary set; `library` ids unique, every entry matchable and any `url` http(s). On failure it
+surfaces a clear **developer error** instead of persisting bad state. This is what makes hand-authoring
+safe.
+
+### 7.6 Source library & the reading list (optional, per roadmap)
+A roadmap may publish a **`library`**: the books, papers, specs, documentation sets and long-form
+sites its days read from, described **once** — `title`, `by`, `edition`, `kind`, `free`, `url`, and a
+`get` line saying where to obtain it. Bedrock has one; the other roadmaps don't, because their sources
+are a single named book or an obvious link.
+
+A task is tied to a source by **`match`**: any of the source's match strings occurring in that leaf's
+own text — a URL fragment (`pages.cs.wisc.edu/~remzi/OSTEP`) or, for a book that is only named in
+prose, its distinctive title (`DDIA`, `CS:APP`). Matching on the **text** rather than a per-task
+`src:` field is deliberate:
+- the planner re-flows tasks onto different cards on every re-plan, and text travels with the task;
+- there is no second place to keep in step, so the tie can't rot.
+
+`daymenu.daySources(rm, day)` groups a card's leaves by source, in the order they appear. A leaf that
+names no source of its own **inherits the one before it inside the same task** — the planner splits a
+long reading into "… (1/2)" / "… (2/2)", and the second part often reads "Finish DDIA Ch 7". A card
+that names no source at all is legitimate: a "(cont.)" card holding only absorb-this-idea leaves has
+nothing to read. What is *not* allowed, and is asserted in `daymenu.test`, is a card that links to
+something without naming where it comes from.
 
 ---
 
@@ -500,21 +524,44 @@ loss. Payload size capped; only roadmap-namespaced keys accepted server-side.
 Each roadmap runs on a subset of weekdays; off-day **count** is fixed by priority, but **which** days
 are off varies per week and is chosen by the author.
 
-### 9.1 Priorities & weekly cadence
-- **Roadmap 1 (Rust + FastAPI)** — higher priority → **5–6 active days/week** (1–2 off).
-- **Roadmap 2 (Interpreters & Go)** — lower priority → **3–4 active days/week** (3–4 off).
-The exact active count each week may vary within its band to balance load (e.g. a heavy Rust week takes
-6; a lighter one takes 5).
+### 9.1 Weekly cadence — a budget, not a fixed count
+Each roadmap has a **target week count**. Every week it is given a minutes budget of *work left ÷
+weeks left*, and that budget divided by a **per-card ceiling** decides how many cards it gets that
+week. So the cadence falls out of the content instead of being declared, and a roadmap lands on its
+target however the material splits. Current shape (2026-09-25):
+
+| roadmap | cards/week | per-card ceiling | weeks | required work |
+|---|---|---|---|---|
+| Rust + FastAPI | 3 (4 in the closing weeks) | 105 min | 48 | 185.3 h |
+| Go + interpreters | 3–4 | 105 min | 40 | 185.8 h |
+| Bedrock (side) | 2–3 | 95 min | 48 | 147.2 h |
+| Big Bang (side) | 2 | 95 min | 40 | 82.3 h |
+
+Two ceilings apply at once:
+- **per date**, across every roadmap: `stats.DAILY_CAP_MINS` = **180 min of required work**. A
+  ceiling, never a target.
+- **per card**: one card is one sitting. This is what stops a card absorbing a whole date's budget,
+  and it is why continuation cards are normal rather than exceptional.
+
+When a card is full, the remaining tasks are **passed along** to that roadmap's next card, ahead of
+its own work, marked `carried: "dNN"`; a card left holding only passed-along work is titled
+"… (cont.)". A task too big for one card is split into "(k/n)" parts at a sub-task boundary — and
+each part is re-estimated as its own session, never by halving a number.
+
+Weekdays are re-chosen every week (never repeating the week before, no A/B/A/B cycling, never more
+than ~a week between sessions). There is **no weekday exclusion** — the owner is fine working any day.
 
 ### 9.2 Dates & "how a day gets a date"
-The roadmap is an **ordered list of day objects**, each carrying an explicit **`date`** (like the
-reference). The author lays days onto the calendar so each week hits the required active-day count,
-choosing off-days freely and differently each week. **Week/month grouping is derived from `date`.**
-Rationale for explicit dates over "start + offset": it makes off-day variation, overlaps, and
-milestone-by-calendar-week trivial and unambiguous, and matches the proven reference model. Day **ids**
-(`d01…`) stay stable regardless of date, so moves and progress never depend on dates.
+The roadmap is an **ordered list of day objects**, each carrying an explicit **`date`**. Week/month
+grouping is derived from `date`. Explicit dates make weekday variation, overlaps and
+milestone-by-calendar-week unambiguous. Day **ids** (`d01…`) stay stable regardless of date, so moves
+and progress never depend on dates.
 
-Start anchors (current, after the 2026-07-17 shift): **Roadmap 1 begins Sat 2026-07-18**, **Roadmap 2 begins Sun 2026-07-19** — the reading positions are "as of now." Each roadmap's week is a rolling 7-day block anchored to its start, preserving 4–5 active days/week for Roadmap 1 and 3–4 for Roadmap 2. There is **no weekday exclusion** — the owner is fine working any day of the week, so active days may land on weekends/holidays. (Earlier drafts anchored at 2026-07-16 Thu with a "no active day on a Sunday" rule; that constraint has been dropped.)
+All four roadmaps share **one week frame**: week *i* starts `2026-09-23 + 7i`. Current anchors —
+Rust + FastAPI **2026-09-23 → 2027-08-24**, Go + interpreters **2026-09-23 → 2027-06-28**, Bedrock
+**2026-09-24 → 2027-08-24**, Big Bang **2026-09-24 → 2027-06-29**. The calendar is produced by
+`scratchpad/cap4/` (reprice → engine → builder) and asserted by `tests/schedule.test.mjs` and the
+date anchors in `tests/content.test.mjs`.
 
 ### 9.3 Overlaps (both roadmaps active on the same date)
 Overlap is allowed and expected. On an overlap date, the day is split across two roadmaps → **less time

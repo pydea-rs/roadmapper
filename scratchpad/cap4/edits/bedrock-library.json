@@ -1,0 +1,1088 @@
+[
+ {
+  "id": "ostep",
+  "title": "Operating Systems: Three Easy Pieces",
+  "kind": "book",
+  "by": "Remzi & Andrea Arpaci-Dusseau",
+  "edition": "v1.10",
+  "free": true,
+  "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+  "get": "Every chapter is a free PDF on the book's own page — no account, no paywall.",
+  "match": [
+   "pages.cs.wisc.edu/~remzi/OSTEP",
+   "OSTEP"
+  ]
+ },
+ {
+  "id": "ddia",
+  "title": "Designing Data-Intensive Applications",
+  "kind": "book",
+  "by": "Martin Kleppmann",
+  "edition": "1st ed. (O'Reilly, 2017)",
+  "free": false,
+  "url": "https://dataintensive.net/",
+  "get": "Paid. The 2nd edition is in early release; chapter numbers below follow the 1st edition.",
+  "match": [
+   "DDIA"
+  ]
+ },
+ {
+  "id": "csapp",
+  "title": "Computer Systems: A Programmer's Perspective",
+  "kind": "book",
+  "by": "Randal Bryant & David O'Hallaron",
+  "edition": "3rd ed.",
+  "free": false,
+  "url": null,
+  "get": "Paid. Ch 6 is the memory-hierarchy chapter; the free Drepper paper below covers the same ground.",
+  "match": [
+   "CS:APP"
+  ]
+ },
+ {
+  "id": "mastering-ethereum",
+  "title": "Mastering Ethereum",
+  "kind": "book",
+  "by": "Andreas M. Antonopoulos & Gavin Wood",
+  "edition": "2nd ed.",
+  "free": true,
+  "url": "https://github.com/ethereumbook/ethereumbook",
+  "get": "The full text is in the book's GitHub repo, chapter by chapter, under CC-BY-SA.",
+  "match": [
+   "ethereumbook",
+   "Mastering Ethereum"
+  ]
+ },
+ {
+  "id": "mastering-bitcoin",
+  "title": "Mastering Bitcoin",
+  "kind": "book",
+  "by": "Andreas M. Antonopoulos & David A. Harding",
+  "edition": "3rd ed.",
+  "free": true,
+  "url": "https://github.com/bitcoinbook/bitcoinbook",
+  "get": "Free in the book's GitHub repo (AsciiDoc, one file per chapter).",
+  "match": [
+   "bitcoinbook",
+   "Mastering Bitcoin"
+  ]
+ },
+ {
+  "id": "kafka-dg",
+  "title": "Kafka: The Definitive Guide",
+  "kind": "book",
+  "by": "Gwen Shapira, Todd Palino, Rajini Sivaram & Krit Petty",
+  "edition": "2nd ed.",
+  "free": true,
+  "url": "https://www.confluent.io/resources/kafka-the-definitive-guide-v2/",
+  "get": "Confluent gives the whole book away as a PDF behind a short form.",
+  "match": [
+   "Kafka: The Definitive Guide",
+   "kafka-the-definitive-guide"
+  ]
+ },
+ {
+  "id": "hpbn",
+  "title": "High Performance Browser Networking",
+  "kind": "book",
+  "by": "Ilya Grigorik",
+  "edition": "O'Reilly, 2013",
+  "free": true,
+  "url": "https://hpbn.co/",
+  "get": "The complete book is online at hpbn.co. Pre-dates HTTP/3, which is why QUIC comes from elsewhere.",
+  "match": [
+   "hpbn.co"
+  ]
+ },
+ {
+  "id": "sre-book",
+  "title": "Site Reliability Engineering",
+  "kind": "book",
+  "by": "Betsy Beyer, Chris Jones, Jennifer Petoff & Niall Murphy (Google)",
+  "edition": "",
+  "free": true,
+  "url": "https://sre.google/sre-book/table-of-contents/",
+  "get": "Google publishes the full text online for free.",
+  "match": [
+   "sre.google/sre-book"
+  ]
+ },
+ {
+  "id": "utl",
+  "title": "Use The Index, Luke!",
+  "kind": "book",
+  "by": "Markus Winand",
+  "edition": "",
+  "free": true,
+  "url": "https://use-the-index-luke.com/",
+  "get": "Free web edition of SQL Performance Explained — the indexing half.",
+  "match": [
+   "use-the-index-luke.com"
+  ]
+ },
+ {
+  "id": "crafting-interpreters",
+  "title": "Crafting Interpreters",
+  "kind": "book",
+  "by": "Robert Nystrom",
+  "edition": "",
+  "free": true,
+  "url": "https://craftinginterpreters.com/",
+  "get": "Free online in full. This is the same book the Go + interpreters roadmap builds through.",
+  "match": [
+   "craftinginterpreters.com"
+  ]
+ },
+ {
+  "id": "http3-explained",
+  "title": "HTTP/3 explained",
+  "kind": "book",
+  "by": "Daniel Stenberg (curl)",
+  "edition": "",
+  "free": true,
+  "url": "https://http3-explained.haxx.se/",
+  "get": "Free online book; the readable companion to RFC 9000/9114.",
+  "match": [
+   "http3-explained.haxx.se"
+  ]
+ },
+ {
+  "id": "loti",
+  "title": "Lord of the io_uring",
+  "kind": "book",
+  "by": "Shuveb Hussain",
+  "edition": "",
+  "free": true,
+  "url": "https://unixism.net/loti/",
+  "get": "Free online guide + tutorial code for io_uring.",
+  "match": [
+   "unixism.net/loti"
+  ]
+ },
+ {
+  "id": "raft-paper",
+  "title": "In Search of an Understandable Consensus Algorithm (Raft)",
+  "kind": "paper",
+  "by": "Diego Ongaro & John Ousterhout",
+  "edition": "Extended version",
+  "free": true,
+  "url": "https://raft.github.io/raft.pdf",
+  "get": "Read the EXTENDED version (the conference version cuts the parts you want).",
+  "match": [
+   "raft.github.io/raft.pdf",
+   "Raft paper"
+  ]
+ },
+ {
+  "id": "lamport",
+  "title": "Lamport's papers",
+  "kind": "paper",
+  "by": "Leslie Lamport",
+  "edition": "",
+  "free": true,
+  "url": "https://lamport.azurewebsites.net/pubs/pubs.html",
+  "get": "Paxos Made Simple and Time, Clocks & the Ordering of Events are both free PDFs here.",
+  "match": [
+   "lamport.azurewebsites.net"
+  ]
+ },
+ {
+  "id": "pbft",
+  "title": "Practical Byzantine Fault Tolerance",
+  "kind": "paper",
+  "by": "Miguel Castro & Barbara Liskov",
+  "edition": "OSDI '99",
+  "free": true,
+  "url": "https://pmg.csail.mit.edu/papers/osdi99.pdf",
+  "get": "",
+  "match": [
+   "pmg.csail.mit.edu/papers/osdi99.pdf"
+  ]
+ },
+ {
+  "id": "dynamo",
+  "title": "Dynamo: Amazon's Highly Available Key-value Store",
+  "kind": "paper",
+  "by": "Giuseppe DeCandia et al. (Amazon)",
+  "edition": "SOSP 2007",
+  "free": true,
+  "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf",
+  "get": "",
+  "match": [
+   "amazon-dynamo-sosp2007"
+  ]
+ },
+ {
+  "id": "cap-paper",
+  "title": "Perspectives on the CAP Theorem",
+  "kind": "paper",
+  "by": "Seth Gilbert & Nancy Lynch",
+  "edition": "2012",
+  "free": true,
+  "url": "https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf",
+  "get": "",
+  "match": [
+   "groups.csail.mit.edu/tds/papers/Gilbert"
+  ]
+ },
+ {
+  "id": "pacelc",
+  "title": "Consistency Tradeoffs in Modern Distributed Database Design (PACELC)",
+  "kind": "paper",
+  "by": "Daniel Abadi",
+  "edition": "",
+  "free": true,
+  "url": "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf",
+  "get": "",
+  "match": [
+   "cs.umd.edu/~abadi"
+  ]
+ },
+ {
+  "id": "sagas",
+  "title": "Sagas",
+  "kind": "paper",
+  "by": "Hector Garcia-Molina & Kenneth Salem",
+  "edition": "1987",
+  "free": true,
+  "url": "https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf",
+  "get": "",
+  "match": [
+   "cs.cornell.edu/andru"
+  ]
+ },
+ {
+  "id": "dataflow",
+  "title": "The Dataflow Model",
+  "kind": "paper",
+  "by": "Tyler Akidau et al. (Google)",
+  "edition": "VLDB 2015",
+  "free": true,
+  "url": "https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf",
+  "get": "",
+  "match": [
+   "vldb.org/pvldb"
+  ]
+ },
+ {
+  "id": "drepper",
+  "title": "What Every Programmer Should Know About Memory",
+  "kind": "paper",
+  "by": "Ulrich Drepper",
+  "edition": "2007",
+  "free": true,
+  "url": "https://www.akkadia.org/drepper/cpumemory.pdf",
+  "get": "Long (~114 pp) and still the best free substitute for CS:APP Ch 6. Read the parts a day asks for, not the whole thing.",
+  "match": [
+   "akkadia.org/drepper",
+   "lwn.net/Articles/250967"
+  ]
+ },
+ {
+  "id": "goldberg",
+  "title": "What Every Computer Scientist Should Know About Floating-Point Arithmetic",
+  "kind": "paper",
+  "by": "David Goldberg",
+  "edition": "1991",
+  "free": true,
+  "url": "https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html",
+  "get": "",
+  "match": [
+   "docs.oracle.com/cd/E19957-01"
+  ]
+ },
+ {
+  "id": "gpugems",
+  "title": "GPU Gems 3, Ch 31: Fast N-Body Simulation with CUDA",
+  "kind": "paper",
+  "by": "Lars Nyland, Mark Harris & Jan Prins (NVIDIA)",
+  "edition": "",
+  "free": true,
+  "url": "https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda",
+  "get": "",
+  "match": [
+   "developer.nvidia.com/gpugems"
+  ]
+ },
+ {
+  "id": "rfc",
+  "title": "IETF RFCs",
+  "kind": "spec",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.rfc-editor.org/",
+  "get": "Normative and dry. Read the section a day names, not the whole document.",
+  "match": [
+   "rfc-editor.org",
+   "datatracker.ietf.org"
+  ]
+ },
+ {
+  "id": "eips",
+  "title": "Ethereum EIPs / ERCs",
+  "kind": "spec",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://eips.ethereum.org/",
+  "get": "The Specification section is normative; Rationale and Security Considerations are usually the readable part.",
+  "match": [
+   "eips.ethereum.org"
+  ]
+ },
+ {
+  "id": "oci-image-spec",
+  "title": "OCI Image Format Specification",
+  "kind": "spec",
+  "by": "Open Container Initiative",
+  "edition": "",
+  "free": true,
+  "url": "https://github.com/opencontainers/image-spec/blob/main/spec.md",
+  "get": "Read it for the shape (manifest + config + layers), not to memorise field names.",
+  "match": [
+   "opencontainers/image-spec"
+  ]
+ },
+ {
+  "id": "owasp-top10",
+  "title": "OWASP Top 10",
+  "kind": "spec",
+  "by": "OWASP",
+  "edition": "2025",
+  "free": true,
+  "url": "https://owasp.org/Top10/2025/",
+  "get": "",
+  "match": [
+   "owasp.org/Top10"
+  ]
+ },
+ {
+  "id": "owasp-cheatsheets",
+  "title": "OWASP Cheat Sheet Series",
+  "kind": "docs",
+  "by": "OWASP",
+  "edition": "",
+  "free": true,
+  "url": "https://cheatsheetseries.owasp.org/",
+  "get": "The practical counterpart to the Top 10: what to actually do.",
+  "match": [
+   "cheatsheetseries.owasp.org"
+  ]
+ },
+ {
+  "id": "kip",
+  "title": "Kafka Improvement Proposals (KIPs)",
+  "kind": "spec",
+  "by": "Apache Kafka",
+  "edition": "",
+  "free": true,
+  "url": "https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Improvement+Proposals",
+  "get": "",
+  "match": [
+   "cwiki.apache.org/confluence/display/KAFKA"
+  ]
+ },
+ {
+  "id": "pep",
+  "title": "Python Enhancement Proposals",
+  "kind": "spec",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://peps.python.org/",
+  "get": "",
+  "match": [
+   "peps.python.org"
+  ]
+ },
+ {
+  "id": "slsa",
+  "title": "SLSA — Supply-chain Levels for Software Artifacts",
+  "kind": "spec",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://slsa.dev/spec/",
+  "get": "",
+  "match": [
+   "slsa.dev"
+  ]
+ },
+ {
+  "id": "sbom-formats",
+  "title": "SBOM formats — CycloneDX & SPDX",
+  "kind": "spec",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://cyclonedx.org/",
+  "get": "",
+  "match": [
+   "cyclonedx.org",
+   "spdx.dev"
+  ]
+ },
+ {
+  "id": "pg-docs",
+  "title": "PostgreSQL documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.postgresql.org/docs/current/",
+  "get": "Chapter numbers below are for the CURRENT release; they shift between majors.",
+  "match": [
+   "postgresql.org/docs"
+  ]
+ },
+ {
+  "id": "k8s-docs",
+  "title": "Kubernetes documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://kubernetes.io/docs/concepts/",
+  "get": "",
+  "match": [
+   "kubernetes.io/docs"
+  ]
+ },
+ {
+  "id": "docker-docs",
+  "title": "Docker documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.docker.com/build/",
+  "get": "",
+  "match": [
+   "docs.docker.com"
+  ]
+ },
+ {
+  "id": "redis-docs",
+  "title": "Redis documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://redis.io/docs/latest/",
+  "get": "",
+  "match": [
+   "redis.io/docs"
+  ]
+ },
+ {
+  "id": "solana-docs",
+  "title": "Solana documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://solana.com/docs/core/accounts",
+  "get": "",
+  "match": [
+   "solana.com/docs",
+   "solana.com/developers"
+  ]
+ },
+ {
+  "id": "anza-docs",
+  "title": "Anza validator docs (Agave)",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.anza.xyz/",
+  "get": "",
+  "match": [
+   "docs.anza.xyz"
+  ]
+ },
+ {
+  "id": "go-docs",
+  "title": "Go documentation & blog",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://go.dev/doc/",
+  "get": "",
+  "match": [
+   "go.dev/doc",
+   "go.dev/blog",
+   "go.dev/src"
+  ]
+ },
+ {
+  "id": "python-docs",
+  "title": "Python documentation & devguide",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.python.org/3/",
+  "get": "",
+  "match": [
+   "docs.python.org",
+   "devguide.python.org",
+   "github.com/python/cpython"
+  ]
+ },
+ {
+  "id": "rust-docs",
+  "title": "The Rust Book & std docs",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://doc.rust-lang.org/book/",
+  "get": "Same book the Rust + FastAPI roadmap works through — these are revisits, not first reads.",
+  "match": [
+   "doc.rust-lang.org"
+  ]
+ },
+ {
+  "id": "cppreference",
+  "title": "cppreference.com",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://en.cppreference.com/",
+  "get": "Community-maintained and closer to the standard than any tutorial.",
+  "match": [
+   "en.cppreference.com"
+  ]
+ },
+ {
+  "id": "kernel-docs",
+  "title": "Linux kernel documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.kernel.org/",
+  "get": "man7.org carries the man pages; docs.kernel.org the subsystem docs.",
+  "match": [
+   "docs.kernel.org",
+   "man7.org"
+  ]
+ },
+ {
+  "id": "ebpf-docs",
+  "title": "eBPF & Cilium documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://ebpf.io/what-is-ebpf/",
+  "get": "",
+  "match": [
+   "docs.ebpf.io",
+   "ebpf.io",
+   "docs.cilium.io"
+  ]
+ },
+ {
+  "id": "llvm-docs",
+  "title": "LLVM documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://llvm.org/docs/",
+  "get": "",
+  "match": [
+   "llvm.org/docs"
+  ]
+ },
+ {
+  "id": "v8-blog",
+  "title": "V8 developer blog & docs",
+  "kind": "docs",
+  "by": "the V8 team",
+  "edition": "",
+  "free": true,
+  "url": "https://v8.dev/blog",
+  "get": "",
+  "match": [
+   "v8.dev"
+  ]
+ },
+ {
+  "id": "jvm-docs",
+  "title": "Java / HotSpot documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.oracle.com/en/java/javase/21/vm/",
+  "get": "",
+  "match": [
+   "docs.oracle.com/en/java",
+   "wiki.openjdk.org",
+   "oracle.com/technical-resources"
+  ]
+ },
+ {
+  "id": "prometheus-docs",
+  "title": "Prometheus documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://prometheus.io/docs/practices/histograms/",
+  "get": "",
+  "match": [
+   "prometheus.io/docs"
+  ]
+ },
+ {
+  "id": "otel-docs",
+  "title": "OpenTelemetry documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://opentelemetry.io/docs/concepts/signals/traces/",
+  "get": "",
+  "match": [
+   "opentelemetry.io/docs"
+  ]
+ },
+ {
+  "id": "spiffe-docs",
+  "title": "SPIFFE documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://spiffe.io/docs/latest/spiffe-about/overview/",
+  "get": "",
+  "match": [
+   "spiffe.io"
+  ]
+ },
+ {
+  "id": "sigstore-docs",
+  "title": "Sigstore documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.sigstore.dev/about/overview/",
+  "get": "",
+  "match": [
+   "docs.sigstore.dev"
+  ]
+ },
+ {
+  "id": "oz-docs",
+  "title": "OpenZeppelin documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.openzeppelin.com/contracts/",
+  "get": "",
+  "match": [
+   "docs.openzeppelin.com"
+  ]
+ },
+ {
+  "id": "solidity-docs",
+  "title": "Solidity documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.soliditylang.org/",
+  "get": "",
+  "match": [
+   "docs.soliditylang.org"
+  ]
+ },
+ {
+  "id": "flink-docs",
+  "title": "Apache Flink documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://nightlies.apache.org/flink/flink-docs-stable/",
+  "get": "",
+  "match": [
+   "nightlies.apache.org/flink",
+   "kafka.apache.org"
+  ]
+ },
+ {
+  "id": "aws-whitepapers",
+  "title": "AWS whitepapers",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/welcome.html",
+  "get": "",
+  "match": [
+   "docs.aws.amazon.com/whitepapers"
+  ]
+ },
+ {
+  "id": "confluent-blog",
+  "title": "Confluent blog",
+  "kind": "article",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.confluent.io/blog/",
+  "get": "",
+  "match": [
+   "confluent.io/blog"
+  ]
+ },
+ {
+  "id": "debezium",
+  "title": "Debezium blog & docs",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://debezium.io/",
+  "get": "",
+  "match": [
+   "debezium.io"
+  ]
+ },
+ {
+  "id": "flashbots-docs",
+  "title": "Flashbots documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.flashbots.net/",
+  "get": "",
+  "match": [
+   "docs.flashbots.net"
+  ]
+ },
+ {
+  "id": "erc4337-docs",
+  "title": "ERC-4337 documentation",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://docs.erc4337.io/",
+  "get": "",
+  "match": [
+   "docs.erc4337.io",
+   "eip4844.com"
+  ]
+ },
+ {
+  "id": "ethereum-org",
+  "title": "ethereum.org developer docs",
+  "kind": "docs",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://ethereum.org/en/developers/docs/",
+  "get": "",
+  "match": [
+   "ethereum.org/en/developers",
+   "blog.ethereum.org"
+  ]
+ },
+ {
+  "id": "abseil",
+  "title": "Abseil & tcmalloc design docs",
+  "kind": "docs",
+  "by": "Google",
+  "edition": "",
+  "free": true,
+  "url": "https://abseil.io/about/design/swisstables",
+  "get": "",
+  "match": [
+   "abseil.io",
+   "google.github.io/tcmalloc"
+  ]
+ },
+ {
+  "id": "meta-oss",
+  "title": "RocksDB & folly docs",
+  "kind": "docs",
+  "by": "Meta",
+  "edition": "",
+  "free": true,
+  "url": "https://github.com/facebook/rocksdb/wiki",
+  "get": "",
+  "match": [
+   "github.com/facebook/rocksdb",
+   "github.com/facebook/folly"
+  ]
+ },
+ {
+  "id": "conference-talks",
+  "title": "Conference talks",
+  "kind": "video",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.youtube.com/",
+  "get": "Free on YouTube. Each day names the talk, the speaker and its runtime — the estimate assumes you pause and try things, so it is longer than the runtime.",
+  "match": [
+   "youtube.com/watch"
+  ]
+ },
+ {
+  "id": "cloudflare-learning",
+  "title": "Cloudflare Learning Center",
+  "kind": "article",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.cloudflare.com/learning/",
+  "get": "Short, accurate explainers. Used here as the on-ramp; the RFC is the authority.",
+  "match": [
+   "cloudflare.com/learning"
+  ]
+ },
+ {
+  "id": "lwn",
+  "title": "LWN.net",
+  "kind": "article",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://lwn.net/",
+  "get": "Kernel journalism. Older articles are free; recent ones may be subscriber-only for a week.",
+  "match": [
+   "lwn.net"
+  ]
+ },
+ {
+  "id": "brendangregg",
+  "title": "Brendan Gregg's site",
+  "kind": "article",
+  "by": "Brendan Gregg",
+  "edition": "",
+  "free": true,
+  "url": "https://www.brendangregg.com/",
+  "get": "Flame graphs, the USE method and the perf/eBPF tooling, from the person who built much of it.",
+  "match": [
+   "brendangregg.com"
+  ]
+ },
+ {
+  "id": "martinfowler",
+  "title": "martinfowler.com",
+  "kind": "article",
+  "by": "Martin Fowler",
+  "edition": "",
+  "free": true,
+  "url": "https://martinfowler.com/",
+  "get": "",
+  "match": [
+   "martinfowler.com"
+  ]
+ },
+ {
+  "id": "kleppmann-blog",
+  "title": "Martin Kleppmann's blog",
+  "kind": "article",
+  "by": "Martin Kleppmann",
+  "edition": "",
+  "free": true,
+  "url": "https://martin.kleppmann.com/",
+  "get": "",
+  "match": [
+   "martin.kleppmann.com"
+  ]
+ },
+ {
+  "id": "antirez",
+  "title": "antirez / Redis patterns",
+  "kind": "article",
+  "by": "Salvatore Sanfilippo",
+  "edition": "",
+  "free": true,
+  "url": "https://antirez.com/",
+  "get": "",
+  "match": [
+   "antirez.com",
+   "redis.io/docs/latest/develop/clients/patterns"
+  ]
+ },
+ {
+  "id": "preshing",
+  "title": "Preshing on Programming",
+  "kind": "article",
+  "by": "Jeff Preshing",
+  "edition": "",
+  "free": true,
+  "url": "https://preshing.com/",
+  "get": "",
+  "match": [
+   "preshing.com"
+  ]
+ },
+ {
+  "id": "danluu",
+  "title": "danluu.com",
+  "kind": "article",
+  "by": "Dan Luu",
+  "edition": "",
+  "free": true,
+  "url": "https://danluu.com/",
+  "get": "",
+  "match": [
+   "danluu.com"
+  ]
+ },
+ {
+  "id": "samczsun",
+  "title": "samczsun.com",
+  "kind": "article",
+  "by": "samczsun",
+  "edition": "",
+  "free": true,
+  "url": "https://samczsun.com/",
+  "get": "",
+  "match": [
+   "samczsun.com"
+  ]
+ },
+ {
+  "id": "vitalik",
+  "title": "Vitalik Buterin's writing",
+  "kind": "article",
+  "by": "Vitalik Buterin",
+  "edition": "",
+  "free": true,
+  "url": "https://vitalik.eth.limo/",
+  "get": "",
+  "match": [
+   "vitalik.eth.limo"
+  ]
+ },
+ {
+  "id": "rogov-mvcc",
+  "title": "MVCC in PostgreSQL (series)",
+  "kind": "article",
+  "by": "Egor Rogov",
+  "edition": "",
+  "free": true,
+  "url": "https://postgrespro.com/blog/pgsql/5967856",
+  "get": "The best free walk through Postgres tuple internals; pairs with the official docs.",
+  "match": [
+   "postgrespro.com/blog"
+  ]
+ },
+ {
+  "id": "portswigger",
+  "title": "PortSwigger Web Security Academy",
+  "kind": "course",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://portswigger.net/web-security",
+  "get": "Free labs. The JWT and access-control sections are the ones this roadmap uses.",
+  "match": [
+   "portswigger.net"
+  ]
+ },
+ {
+  "id": "evm-codes",
+  "title": "evm.codes",
+  "kind": "site",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://www.evm.codes/",
+  "get": "Per-opcode gas costs plus a live playground — keep it open while reading the EVM chapter.",
+  "match": [
+   "evm.codes"
+  ]
+ },
+ {
+  "id": "l2beat",
+  "title": "L2BEAT",
+  "kind": "site",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://l2beat.com/scaling/summary",
+  "get": "Independent risk/maturity data on rollups — the reality check on marketing claims.",
+  "match": [
+   "l2beat.com"
+  ]
+ },
+ {
+  "id": "wikipedia",
+  "title": "Wikipedia",
+  "kind": "site",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://en.wikipedia.org/",
+  "get": "Used here for settled CS definitions (SSA, register allocation, Bloom filters), not for anything contested.",
+  "match": [
+   "en.wikipedia.org"
+  ]
+ },
+ {
+  "id": "12factor",
+  "title": "The Twelve-Factor App & OpenGitOps",
+  "kind": "site",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": "https://12factor.net/",
+  "get": "",
+  "match": [
+   "12factor.net",
+   "opengitops.dev"
+  ]
+ },
+ {
+  "id": "misc-classics",
+  "title": "Classic one-off essays",
+  "kind": "article",
+  "by": "",
+  "edition": "",
+  "free": true,
+  "url": null,
+  "get": "Single-page references that don't belong to a bigger work — each day links the exact one it wants.",
+  "match": [
+   "kegel.com/c10k",
+   "joelonsoftware.com",
+   "utf8everywhere.org",
+   "floating-point-gui.de",
+   "gee.cs.oswego.edu",
+   "mechanical-sympathy.blogspot.com",
+   "tls13.xargs.org",
+   "llimllib.github.io",
+   "0.30000000000000004.com",
+   "crdt.tech",
+   "shipilev.net",
+   "mathiasbynens.be",
+   "timilearning.com",
+   "microservices.io",
+   "stackoverflow.com",
+   "spectreattack.com",
+   "meltdownattack.com",
+   "cyfrin.io",
+   "redhat.com/en/topics",
+   "barneshutalgorithm.com",
+   "github.com/firedancer-io",
+   "github.com/golang/proposal"
+  ]
+ }
+]

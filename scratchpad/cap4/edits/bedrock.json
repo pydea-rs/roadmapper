@@ -1,0 +1,1034 @@
+{
+ "d01.t1.s1": {
+  "est": 35
+ },
+ "d02.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Watch Liz Rice, <a href=\"https://www.youtube.com/watch?v=8fi7uSYlOdc\" target=\"_blank\" rel=\"noopener\">\"Containers From Scratch\" (GOTO 2018, ~43 min)</a> up to the <code>chroot</code> step — <code>clone()</code> and the namespace flags, live-coded in Go.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Finish the talk — <code>chroot</code>/pivot_root and cgroups — then re-run her commands yourself in a scratch VM or container.",
+    "refs": null
+   }
+  ]
+ },
+ "d03.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read <a href=\"https://pages.cs.wisc.edu/~remzi/OSTEP/\" target=\"_blank\" rel=\"noopener\">OSTEP</a> (free) <a href=\"https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-intro.pdf\" target=\"_blank\" rel=\"noopener\">Ch 4 \"The Abstraction: The Process\"</a> (~15 pp): the process API, the state machine, and the list of what a process actually <i>is</i>."
+   },
+   {
+    "est": 45,
+    "label": "Read OSTEP <a href=\"https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf\" target=\"_blank\" rel=\"noopener\">Ch 26 \"Concurrency: An Introduction\"</a> (~18 pp): threads share the address space, but each gets its own stack."
+   }
+  ]
+ },
+ "d05.t1.s1": {
+  "est": 45
+ },
+ "d05.t1.s2": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read Docker <a href=\"https://docs.docker.com/build/building/multi-stage/\" target=\"_blank\" rel=\"noopener\">Multi-stage builds</a>: <code>COPY --from</code> to ship only the built binary, leaving the toolchain behind."
+   },
+   {
+    "est": 30,
+    "label": "Read Docker <a href=\"https://docs.docker.com/build/building/best-practices/\" target=\"_blank\" rel=\"noopener\">build best practices</a>: order steps by change-frequency (deps before source) so the layer cache actually hits."
+   }
+  ]
+ },
+ "d06.t1.s1": {
+  "est": 40
+ },
+ "d07.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read HPBN (free) <a href=\"https://hpbn.co/building-blocks-of-tcp/\" target=\"_blank\" rel=\"noopener\">\"Building Blocks of TCP\"</a> — the whole chapter."
+   },
+   {
+    "est": 20,
+    "label": "Then the short <a href=\"https://hpbn.co/building-blocks-of-udp/\" target=\"_blank\" rel=\"noopener\">\"Building Blocks of UDP\"</a> chapter — what TCP gives you that UDP doesn’t."
+   }
+  ]
+ },
+ "d08.t1.s1": {
+  "est": 45
+ },
+ "d08.t1.s2": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Skim the workload objects: <a href=\"https://kubernetes.io/docs/concepts/workloads/pods/\" target=\"_blank\" rel=\"noopener\">Pod</a> and <a href=\"https://kubernetes.io/docs/concepts/workloads/controllers/deployment/\" target=\"_blank\" rel=\"noopener\">Deployment</a>→ReplicaSet→Pod."
+   },
+   {
+    "est": 30,
+    "label": "Then the networking & config objects: <a href=\"https://kubernetes.io/docs/concepts/services-networking/service/\" target=\"_blank\" rel=\"noopener\">Service</a> (stable VIP + label selector), <a href=\"https://kubernetes.io/docs/concepts/services-networking/ingress/\" target=\"_blank\" rel=\"noopener\">Ingress</a>, ConfigMap/Secret."
+   }
+  ]
+ },
+ "d09.t1.s1": {
+  "est": 45
+ },
+ "d10.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read PostgreSQL docs <a href=\"https://www.postgresql.org/docs/current/using-explain.html\" target=\"_blank\" rel=\"noopener\">14.1 \"Using EXPLAIN\"</a> — the whole section, running each example."
+   },
+   {
+    "est": 25,
+    "label": "Then UTIL’s <a href=\"https://use-the-index-luke.com/sql/explain-plan/postgresql\" target=\"_blank\" rel=\"noopener\">Postgres execution plans</a> — the same output read by someone hunting a slow query."
+   }
+  ]
+ },
+ "d12.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the k8s <a href=\"https://kubernetes.io/docs/concepts/scheduling-eviction/kube-scheduler/\" target=\"_blank\" rel=\"noopener\">scheduler</a> — filter → score → bind."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/\" target=\"_blank\" rel=\"noopener\">liveness/readiness/startup probes</a> — three probes, three different jobs."
+   }
+  ]
+ },
+ "d12.t1.s2": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read <a href=\"https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\" target=\"_blank\" rel=\"noopener\">requests/limits</a>."
+   },
+   {
+    "est": 25,
+    "label": "Then the <a href=\"https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/\" target=\"_blank\" rel=\"noopener\">HorizontalPodAutoscaler</a> — what it scales on, and why it needs requests to be set."
+   }
+  ]
+ },
+ "d13.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Skim the <a href=\"https://owasp.org/Top10/2025/\" target=\"_blank\" rel=\"noopener\">OWASP Top 10 (2025 — the current edition)</a>, entries #1–#5: Broken Access Control, Security Misconfiguration, Software Supply-Chain Failures, Cryptographic Failures, Injection."
+   },
+   {
+    "est": 30,
+    "label": "Then entries #6–#10 of the same list — one line each on what the category means and the one defense that kills most of it."
+   }
+  ]
+ },
+ "d13.t1.s2": {
+  "est": 40
+ },
+ "d14.t1.s2": {
+  "est": 35
+ },
+ "d15.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read PostgreSQL docs <a href=\"https://www.postgresql.org/docs/current/mvcc-intro.html\" target=\"_blank\" rel=\"noopener\">Ch 13.1 Concurrency Control (MVCC)</a>."
+   },
+   {
+    "est": 30,
+    "label": "Then <a href=\"https://www.postgresql.org/docs/current/transaction-iso.html\" target=\"_blank\" rel=\"noopener\">13.2 Transaction Isolation</a> — the four levels and the anomalies each one still allows."
+   }
+  ]
+ },
+ "d16.t1.s1": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read Martin Fowler <a href=\"https://martinfowler.com/bliki/BlueGreenDeployment.html\" target=\"_blank\" rel=\"noopener\">BlueGreenDeployment</a> (rolling is the k8s default)."
+   },
+   {
+    "est": 20,
+    "label": "Then <a href=\"https://martinfowler.com/bliki/CanaryRelease.html\" target=\"_blank\" rel=\"noopener\">CanaryRelease</a> — the same cut-over, done to a slice of traffic."
+   }
+  ]
+ },
+ "d16.t1.s2": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read the <a href=\"https://opengitops.dev/\" target=\"_blank\" rel=\"noopener\">4 GitOps principles</a>."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://12factor.net/\" target=\"_blank\" rel=\"noopener\">The Twelve-Factor App</a> — esp. III config in env, VI stateless, IX disposability, XI logs to stdout."
+   }
+  ]
+ },
+ "d17.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read <i>Mastering Ethereum</i> (2nd ed, free) <a href=\"https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_4.md\" target=\"_blank\" rel=\"noopener\">Ch 4 \"Cryptography\"</a> — keys, addresses, and signing."
+   },
+   {
+    "est": 30,
+    "label": "Then the Merkle-tree section of <i>Mastering Bitcoin</i> (3rd ed) <a href=\"https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch11_blockchain.adoc\" target=\"_blank\" rel=\"noopener\">Ch 11</a> — how a root commits to every transaction under it."
+   }
+  ]
+ },
+ "d18.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read HPBN <a href=\"https://hpbn.co/http1x/\" target=\"_blank\" rel=\"noopener\">HTTP/1.X</a>: persistent connections, and why pipelining failed."
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://hpbn.co/http2/\" target=\"_blank\" rel=\"noopener\">HTTP/2</a>: multiplexing, the binary framing layer, and HPACK."
+   }
+  ]
+ },
+ "d18.t1.s2": {
+  "split": [
+   {
+    "est": 25,
+    "label": "For H3/QUIC, read the free <a href=\"https://http3-explained.haxx.se/\" target=\"_blank\" rel=\"noopener\">HTTP/3 explained</a> through the QUIC transport chapters: reliable multiplexed streams over <b>UDP</b>, TLS 1.3 built in."
+   },
+   {
+    "est": 25,
+    "label": "Finish the same book: the HTTP/3 mapping itself, plus connection migration and 0-RTT."
+   }
+  ]
+ },
+ "d19.t1.s1": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read the Redis <a href=\"https://redis.io/docs/latest/develop/get-started/faq/\" target=\"_blank\" rel=\"noopener\">FAQ</a> — the single-thread rationale, in their own words."
+   },
+   {
+    "est": 20,
+    "label": "Then the <a href=\"https://redis.io/docs/latest/develop/data-types/\" target=\"_blank\" rel=\"noopener\">data types</a> overview — strings, hashes, lists, sets, sorted sets, streams, HLL."
+   }
+  ]
+ },
+ "d20.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read DDIA <b>Ch 7 \"Weak Isolation Levels\"</b> as far as <b>Snapshot Isolation</b> (Read Committed → SI, and the reads each one can still see)."
+   },
+   {
+    "est": 35,
+    "label": "Finish DDIA Ch 7: Preventing Lost Updates, then Write Skew & Phantoms."
+   }
+  ]
+ },
+ "d21.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read Google SRE (free) <a href=\"https://sre.google/sre-book/monitoring-distributed-systems/\" target=\"_blank\" rel=\"noopener\">Ch 6 \"Monitoring Distributed Systems\"</a> to the end of the <b>Four Golden Signals</b> (Latency, Traffic, Errors, Saturation)."
+   },
+   {
+    "est": 30,
+    "label": "Finish SRE Ch 6: choosing a resolution, keeping alerts simple, and the long-term-vs-short-term tension."
+   }
+  ]
+ },
+ "d22.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read <i>Mastering Ethereum</i> <a href=\"https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_14.md\" target=\"_blank\" rel=\"noopener\">Ch 14 \"The EVM\"</a> — the machine, its data locations, and gas."
+   },
+   {
+    "est": 25,
+    "label": "Then explore <a href=\"https://www.evm.codes/\" target=\"_blank\" rel=\"noopener\">evm.codes</a> — per-opcode gas in a live playground; run a few opcodes by hand."
+   }
+  ]
+ },
+ "d23.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read DDIA <b>Ch 11</b> \"Messaging Systems\" → \"Partitioned Logs\"."
+   },
+   {
+    "est": 35,
+    "label": "Then Jay Kreps’ <a href=\"https://web.archive.org/web/20260609223006/https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying\" target=\"_blank\" rel=\"noopener\">\"The Log\"</a> (archived — LinkedIn removed the original) — long, and worth it."
+   }
+  ]
+ },
+ "d25.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read the OAuth <a href=\"https://www.rfc-editor.org/rfc/rfc6749\" target=\"_blank\" rel=\"noopener\">RFC 6749</a> authorization-code flow (§4.1) — who redirects whom, and which secret travels on which channel."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://www.rfc-editor.org/rfc/rfc7636\" target=\"_blank\" rel=\"noopener\">PKCE (RFC 7636)</a> — the code_challenge/code_verifier pair and the attack it closes."
+   },
+   {
+    "est": 30,
+    "label": "Then PortSwigger’s <a href=\"https://portswigger.net/web-security/jwt\" target=\"_blank\" rel=\"noopener\">JWT attacks</a> lab pages — alg=none, key confusion, and unverified signatures."
+   }
+  ]
+ },
+ "d27.t1.s1": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read Solana docs <a href=\"https://solana.com/docs/core/accounts\" target=\"_blank\" rel=\"noopener\">Accounts</a> — everything, including code, is an account."
+   },
+   {
+    "est": 20,
+    "label": "Then <a href=\"https://solana.com/docs/core/programs\" target=\"_blank\" rel=\"noopener\">Programs</a> — executable accounts that hold no state of their own."
+   }
+  ]
+ },
+ "d30.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read <i>Mastering Ethereum</i> <a href=\"https://github.com/ethereumbook/ethereumbook/blob/develop/src/chapter_6.md\" target=\"_blank\" rel=\"noopener\">Ch 6 \"Transactions\"</a> — the fields, RLP encoding, and the signature."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://eips.ethereum.org/EIPS/eip-1559\" target=\"_blank\" rel=\"noopener\">EIP-1559</a> itself — base fee, tip, and the burn."
+   }
+  ]
+ },
+ "d31.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read <i>Kafka: The Definitive Guide</i> (2nd ed, <a href=\"https://www.confluent.io/resources/kafka-the-definitive-guide-v2/\" target=\"_blank\" rel=\"noopener\">free from Confluent</a>) <b>Ch 1</b> — the log, the broker, the vocabulary."
+   },
+   {
+    "est": 35,
+    "label": "Then <i>Kafka: The Definitive Guide</i>’s <b>internals</b> chapter — the controller, replication, and how a request is handled."
+   },
+   {
+    "est": 35,
+    "label": "Then <i>Kafka: The Definitive Guide</i>’s <b>reliable data delivery</b> chapter — acks, in-sync replicas, and what each setting costs."
+   }
+  ]
+ },
+ "d33.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the AWS <a href=\"https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html\" target=\"_blank\" rel=\"noopener\">caching patterns</a> whitepaper page — cache-aside vs write-through vs write-behind."
+   },
+   {
+    "est": 30,
+    "label": "Then the Redis <a href=\"https://redis.io/docs/latest/develop/reference/eviction/\" target=\"_blank\" rel=\"noopener\">eviction</a> and <a href=\"https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/\" target=\"_blank\" rel=\"noopener\">persistence (RDB/AOF)</a> pages — what a cache drops, and what it keeps across a restart."
+   }
+  ]
+ },
+ "d34.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read Solana docs <a href=\"https://solana.com/docs/core/pda\" target=\"_blank\" rel=\"noopener\">PDAs</a> + <a href=\"https://solana.com/docs/core/cpi\" target=\"_blank\" rel=\"noopener\">CPIs</a> — program-owned addresses, and one program calling another."
+   },
+   {
+    "est": 30,
+    "label": "Then <a href=\"https://solana.com/docs/core/fees/compute-budget\" target=\"_blank\" rel=\"noopener\">Compute Budget</a> and the <a href=\"https://docs.anza.xyz/validator/runtime\" target=\"_blank\" rel=\"noopener\">Sealevel runtime</a> — the budget an instruction gets, and how the runtime parallelizes."
+   }
+  ]
+ },
+ "d36.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read <i>Mastering Bitcoin</i> (3rd ed) <a href=\"https://github.com/bitcoinbook/bitcoinbook/blob/develop/ch12_mining.adoc\" target=\"_blank\" rel=\"noopener\">Ch 12 \"Mining and Consensus\"</a> as far as difficulty retargeting — PoW and the puzzle itself."
+   },
+   {
+    "est": 30,
+    "label": "Finish Ch 12: assembling and validating a block, and why the best chain is the one with the most cumulative work."
+   }
+  ]
+ },
+ "d36.t1.s2": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read ethereum.org <a href=\"https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/gasper/\" target=\"_blank\" rel=\"noopener\">Gasper</a> — Casper FFG finality + the LMD-GHOST fork choice."
+   },
+   {
+    "est": 25,
+    "label": "Then Vitalik’s <a href=\"https://blog.ethereum.org/2016/05/09/on-settlement-finality\" target=\"_blank\" rel=\"noopener\">\"On Settlement Finality\"</a> — what \"final\" can and cannot mean."
+   }
+  ]
+ },
+ "d38.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the Solidity docs <a href=\"https://docs.soliditylang.org/en/latest/security-considerations.html\" target=\"_blank\" rel=\"noopener\">Security Considerations</a> — checks-effects-interactions, and the rest of the list."
+   },
+   {
+    "est": 25,
+    "label": "Then samczsun’s <a href=\"https://samczsun.com/so-you-want-to-use-a-price-oracle/\" target=\"_blank\" rel=\"noopener\">\"So you want to use a price oracle\"</a> — a tour of how each naive price source gets drained."
+   }
+  ]
+ },
+ "d39.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read the Raft paper (Extended Version) <a href=\"https://raft.github.io/raft.pdf\" target=\"_blank\" rel=\"noopener\">\"In Search of an Understandable Consensus Algorithm\"</a> (Ongaro & Ousterhout) §5.1–§5.3 — leader election and log replication."
+   },
+   {
+    "est": 35,
+    "label": "Finish §5 of the Raft paper: safety (the election restriction), follower/candidate crashes, and timing."
+   }
+  ]
+ },
+ "d41.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read OSTEP (free) <a href=\"https://pages.cs.wisc.edu/~remzi/OSTEP/vm-paging.pdf\" target=\"_blank\" rel=\"noopener\">Ch 18 \"Paging: Introduction\"</a> — page tables, and why the naive version is too slow."
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://pages.cs.wisc.edu/~remzi/OSTEP/vm-tlbs.pdf\" target=\"_blank\" rel=\"noopener\">Ch 19 \"Paging: Faster Translations (TLBs)\"</a> — the cache that makes paging affordable."
+   }
+  ]
+ },
+ "d42.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read ethereum.org <a href=\"https://ethereum.org/en/developers/docs/scaling/\" target=\"_blank\" rel=\"noopener\">Scaling</a> — the rollup model: execute off-chain, settle on L1."
+   },
+   {
+    "est": 30,
+    "label": "Then the same page’s optimistic-vs-ZK sections — fraud proofs (and their challenge window) vs validity proofs."
+   }
+  ]
+ },
+ "d44.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Confluent <a href=\"https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/\" target=\"_blank\" rel=\"noopener\">\"Exactly-Once Semantics… Here's How Kafka Does It\"</a> — the idempotent producer half."
+   },
+   {
+    "est": 30,
+    "label": "Finish it (the transactions half), checking the spec where it matters: <a href=\"https://cwiki.apache.org/confluence/display/KAFKA/KIP-98+-+Exactly+Once+Delivery+and+Transactional+Messaging\" target=\"_blank\" rel=\"noopener\">KIP-98</a>."
+   }
+  ]
+ },
+ "d45.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Skim Lamport, <a href=\"https://lamport.azurewebsites.net/pubs/paxos-simple.pdf\" target=\"_blank\" rel=\"noopener\">\"Paxos Made Simple\"</a> — prepare/promise → accept, and majority quorums."
+   },
+   {
+    "est": 25,
+    "label": "Then the Raft paper’s \"What’s wrong with Paxos?\" section — the same problem, argued from the other side."
+   }
+  ]
+ },
+ "d46.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read PG docs <a href=\"https://www.postgresql.org/docs/current/storage-toast.html\" target=\"_blank\" rel=\"noopener\">\"TOAST\"</a> — where an oversized value actually goes."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://www.postgresql.org/docs/current/storage-hot.html\" target=\"_blank\" rel=\"noopener\">\"Heap-Only Tuples (HOT)\"</a> — the update that skips the indexes."
+   }
+  ]
+ },
+ "d47.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the <a href=\"https://spiffe.io/docs/latest/spiffe-about/overview/\" target=\"_blank\" rel=\"noopener\">SPIFFE overview</a> — a workload identity (<code>spiffe://…</code>) instead of a shared secret."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://spiffe.io/docs/latest/deploying/svids/\" target=\"_blank\" rel=\"noopener\">SVIDs</a> — that identity as a short-lived, auto-rotated cert."
+   }
+  ]
+ },
+ "d48.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read <a href=\"https://eips.ethereum.org/EIPS/eip-4844\" target=\"_blank\" rel=\"noopener\">EIP-4844</a> — blob-carrying transactions and the separate blob-gas market."
+   },
+   {
+    "est": 25,
+    "label": "Then the explainer <a href=\"https://www.eip4844.com/\" target=\"_blank\" rel=\"noopener\">eip4844.com</a> — the same design with the diagrams."
+   }
+  ]
+ },
+ "d50.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read the Redis <a href=\"https://redis.io/docs/latest/operate/oss_and_stack/reference/cluster-spec/\" target=\"_blank\" rel=\"noopener\">Cluster spec</a> — the 16384 hash slots and how keys map onto them."
+   },
+   {
+    "est": 30,
+    "label": "Finish the Cluster spec: gossip between nodes, and MOVED vs ASK redirects."
+   }
+  ]
+ },
+ "d51.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read Gilbert & Lynch, <a href=\"https://groups.csail.mit.edu/tds/papers/Gilbert/Brewer2.pdf\" target=\"_blank\" rel=\"noopener\">\"Perspectives on the CAP Theorem\"</a> (2012) — CAP stated as a safety-vs-liveness trade."
+   },
+   {
+    "est": 30,
+    "label": "Finish the paper: the proof sketch, and why \"pick 2 of 3\" is the part everyone forgets."
+   }
+  ]
+ },
+ "d54.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read ethereum.org <a href=\"https://ethereum.org/en/developers/docs/mev/\" target=\"_blank\" rel=\"noopener\">MEV</a> — where the value comes from, and who extracts it."
+   },
+   {
+    "est": 30,
+    "label": "Then Flashbots <a href=\"https://docs.flashbots.net/flashbots-mev-boost/introduction\" target=\"_blank\" rel=\"noopener\">MEV-Boost</a> — builders bid, proposers sign the best, a relay mediates."
+   }
+  ]
+ },
+ "d56.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read OpenZeppelin <a href=\"https://docs.openzeppelin.com/upgrades-plugins/proxies\" target=\"_blank\" rel=\"noopener\">\"Proxy Upgrade Pattern\"</a> — <code>delegatecall</code>, and how storage layouts collide."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://eips.ethereum.org/EIPS/eip-1967\" target=\"_blank\" rel=\"noopener\">ERC-1967</a> — the standard slots that stop the collision."
+   }
+  ]
+ },
+ "d58.t1.s2": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Scale-out trade-offs: DDIA <b>Ch 6 \"Partitioning\"</b> as far as partitioning secondary indexes (key-range vs hash, and skew)."
+   },
+   {
+    "est": 25,
+    "label": "Finish DDIA Ch 6: rebalancing strategies and request routing."
+   }
+  ]
+ },
+ "d59.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read <a href=\"https://www.rfc-editor.org/info/rfc9000\" target=\"_blank\" rel=\"noopener\">RFC 9000</a> (QUIC transport) for the model — connection IDs, streams, and migration."
+   },
+   {
+    "est": 30,
+    "label": "Then skim <a href=\"https://www.rfc-editor.org/info/rfc9002\" target=\"_blank\" rel=\"noopener\">RFC 9002</a> — loss detection & congestion control, QUIC’s version of the TCP machinery."
+   }
+  ]
+ },
+ "d60.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read <a href=\"https://eips.ethereum.org/EIPS/eip-4337\" target=\"_blank\" rel=\"noopener\">ERC-4337</a> — UserOperations, bundlers, the EntryPoint, and paymasters."
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://eips.ethereum.org/EIPS/eip-7702\" target=\"_blank\" rel=\"noopener\">EIP-7702</a> — an EOA delegating to contract code, the protocol-level shortcut."
+   }
+  ]
+ },
+ "d62.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read <a href=\"https://slsa.dev/spec/\" target=\"_blank\" rel=\"noopener\">SLSA</a> — the build/source provenance levels, and what each one actually requires."
+   },
+   {
+    "est": 30,
+    "label": "Then <a href=\"https://docs.sigstore.dev/about/overview/\" target=\"_blank\" rel=\"noopener\">Sigstore</a> — keyless signing with Cosign + Fulcio + Rekor."
+   }
+  ]
+ },
+ "d63.t1.s2": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Then the Saga original: Garcia-Molina & Salem, <a href=\"https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf\" target=\"_blank\" rel=\"noopener\">\"Sagas\"</a> (1987)."
+   },
+   {
+    "est": 20,
+    "label": "Then <a href=\"https://microservices.io/patterns/data/saga.html\" target=\"_blank\" rel=\"noopener\">microservices.io Saga</a> — the same idea as people actually deploy it."
+   }
+  ]
+ },
+ "d64.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read PG docs <a href=\"https://www.postgresql.org/docs/current/high-availability.html\" target=\"_blank\" rel=\"noopener\">\"High Availability… and Replication\"</a> — streaming replication, and what synchronous really costs.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://www.postgresql.org/docs/current/logical-replication.html\" target=\"_blank\" rel=\"noopener\">\"Logical Replication\"</a> — row-level changes over a publication/subscription, and what it can’t carry.",
+    "refs": null
+   }
+  ]
+ },
+ "d65.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read Debezium, <a href=\"https://debezium.io/blog/2019/02/19/reliable-microservices-data-exchange-with-the-outbox-pattern/\" target=\"_blank\" rel=\"noopener\">\"Reliable Microservices Data Exchange With the Outbox Pattern\"</a> — one local transaction, then the log does the rest.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then the <a href=\"https://debezium.io/documentation/reference/stable/transformations/outbox-event-router.html\" target=\"_blank\" rel=\"noopener\">Outbox Event Router</a> SMT docs — the pattern as a running piece of configuration.",
+    "refs": null
+   }
+  ]
+ },
+ "d66.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Vitalik, <a href=\"https://vitalik.eth.limo/general/2017/02/01/zk_snarks.html\" target=\"_blank\" rel=\"noopener\">\"zk-SNARKs: Under the Hood\"</a> as far as the QAP — computation → circuit → R1CS → QAP."
+   },
+   {
+    "est": 30,
+    "label": "Finish the post: the pairing check, and where the trusted setup enters."
+   }
+  ]
+ },
+ "d67.t1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read antirez’s <a href=\"https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/\" target=\"_blank\" rel=\"noopener\">Redlock</a> spec — the algorithm as proposed.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "label": "Then Kleppmann’s critique <a href=\"https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html\" target=\"_blank\" rel=\"noopener\">\"How to do distributed locking\"</a> — fencing tokens, and clocks you can’t trust.",
+    "refs": null
+   },
+   {
+    "est": 25,
+    "label": "Then antirez’s <a href=\"https://antirez.com/news/101\" target=\"_blank\" rel=\"noopener\">rebuttal</a> — and decide for yourself which assumption you’re willing to make.",
+    "refs": null
+   }
+  ]
+ },
+ "d68.t1": {
+  "split": [
+   {
+    "est": 45,
+    "label": "Read <a href=\"https://unixism.net/loti/\" target=\"_blank\" rel=\"noopener\">\"Lord of the io_uring\"</a> — the SQE/CQE ring model, submission, and completion.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then LWN <a href=\"https://lwn.net/Articles/810414/\" target=\"_blank\" rel=\"noopener\">\"The rapid growth of io_uring\"</a> — what it grew to cover, and the security surface that came with it.",
+    "refs": null
+   }
+  ]
+ },
+ "d69.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read the Dynamo paper, <a href=\"https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf\" target=\"_blank\" rel=\"noopener\">\"Dynamo: Amazon's Highly Available Key-value Store\"</a> (SOSP 2007) §4.1–§4.5 — consistent hashing, replication, and versioning with vector clocks.",
+    "refs": null
+   },
+   {
+    "est": 40,
+    "label": "Finish the Dynamo paper: quorums (R + W > N), hinted handoff, anti-entropy with Merkle trees, and the production lessons in §6.",
+    "refs": null
+   }
+  ]
+ },
+ "d70.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read DDIA <b>Ch 3 \"Storage and Retrieval\"</b> through SSTables & LSM-Trees."
+   },
+   {
+    "est": 30,
+    "label": "Finish DDIA Ch 3: B-Trees, and the comparison (write/read/space amplification)."
+   }
+  ]
+ },
+ "d71.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read the Cilium <a href=\"https://docs.cilium.io/en/stable/reference-guides/bpf/\" target=\"_blank\" rel=\"noopener\">\"BPF and XDP Reference Guide\"</a> — maps, program types, and the hook points.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then the eBPF docs <a href=\"https://docs.ebpf.io/linux/program-type/BPF_PROG_TYPE_XDP/\" target=\"_blank\" rel=\"noopener\">XDP program type</a> — packets handled before the kernel builds an skb.",
+    "refs": null
+   }
+  ]
+ },
+ "d71.t2": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Skim the kernel’s <a href=\"https://docs.kernel.org/bpf/verifier.html\" target=\"_blank\" rel=\"noopener\">eBPF verifier</a> doc — a static analysis that must prove termination and memory safety before your program loads.",
+    "refs": null
+   },
+   {
+    "est": 25,
+    "label": "Then the verify-then-JIT half of <a href=\"https://ebpf.io/what-is-ebpf/\" target=\"_blank\" rel=\"noopener\">\"What is eBPF?\"</a> — the same pipeline, end to end.",
+    "refs": null
+   }
+  ]
+ },
+ "d72.t1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Read the <a href=\"https://github.com/firedancer-io/firedancer\" target=\"_blank\" rel=\"noopener\">Firedancer</a> repo/README — a second validator implementation, and why that matters for client diversity.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then the <a href=\"https://docs.anza.xyz/\" target=\"_blank\" rel=\"noopener\">Anza docs</a>, and follow Anza’s Alpenglow announcement for the consensus change.",
+    "refs": null
+   }
+  ]
+ },
+ "d73.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read cppreference <a href=\"https://en.cppreference.com/w/cpp/atomic/memory_order\" target=\"_blank\" rel=\"noopener\">std::memory_order</a> — the six orderings, as specified."
+   },
+   {
+    "est": 25,
+    "label": "Then Preshing, <a href=\"https://preshing.com/20120913/acquire-and-release-semantics/\" target=\"_blank\" rel=\"noopener\">\"Acquire and Release Semantics\"</a> — the same thing explained so it sticks."
+   }
+  ]
+ },
+ "d73.t2": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read the <a href=\"https://en.wikipedia.org/wiki/As-if_rule\" target=\"_blank\" rel=\"noopener\">as-if rule</a> — C/C++ \"observable behavior\", and everything a compiler may do around it.",
+    "refs": null
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://en.wikipedia.org/wiki/Register_allocation\" target=\"_blank\" rel=\"noopener\">register allocation</a> — one concrete optimization the compiler runs on your IR.",
+    "refs": null
+   }
+  ]
+ },
+ "d74.t1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Flink <a href=\"https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/\" target=\"_blank\" rel=\"noopener\">\"Timely Stream Processing\"</a> — event time vs processing time, and watermarks.",
+    "refs": null
+   },
+   {
+    "est": 45,
+    "label": "Then the Google <a href=\"https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf\" target=\"_blank\" rel=\"noopener\">Dataflow model paper</a> (Akidau et al., 2015) — what/where/when/how, the framework behind all of it.",
+    "refs": null
+   }
+  ]
+ },
+ "d75.t1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read Brendan Gregg: <a href=\"https://www.brendangregg.com/flamegraphs.html\" target=\"_blank\" rel=\"noopener\">Flame Graphs</a> — how to read one, and how to generate one.",
+    "refs": null
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://www.brendangregg.com/perf.html\" target=\"_blank\" rel=\"noopener\">perf examples</a> — the commands you would actually run on a hot box.",
+    "refs": null
+   },
+   {
+    "est": 25,
+    "label": "Then <a href=\"https://www.brendangregg.com/ebpf.html\" target=\"_blank\" rel=\"noopener\">eBPF tracing tools</a> — the same questions answered with far less overhead.",
+    "refs": null
+   }
+  ]
+ },
+ "d76.t1": {
+  "split": [
+   {
+    "est": 45,
+    "label": "Read <a href=\"https://eips.ethereum.org/EIPS/eip-712\" target=\"_blank\" rel=\"noopener\">EIP-712</a> — typed structured signing and the domain separator that binds a signature to one contract and chain.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://eips.ethereum.org/EIPS/eip-2612\" target=\"_blank\" rel=\"noopener\">EIP-2612 permit</a> — the same machinery used to replace an approve transaction.",
+    "refs": null
+   }
+  ]
+ },
+ "d79.t1.s1": {
+  "est": 40
+ },
+ "d81.t2": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read V8’s <a href=\"https://v8.dev/blog/launching-ignition-and-turbofan\" target=\"_blank\" rel=\"noopener\">\"Launching Ignition and TurboFan\"</a> — the interpreter/optimizer pair, and why both exist.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "label": "Then skim <a href=\"https://v8.dev/blog/maglev\" target=\"_blank\" rel=\"noopener\">Maglev</a> — the mid-tier added between Sparkplug and TurboFan, and what it is for.",
+    "refs": null
+   }
+  ]
+ },
+ "d82.t1.s2": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the <a href=\"https://go.dev/doc/gc-guide\" target=\"_blank\" rel=\"noopener\">Go GC guide</a> — the knobs, and the cost model behind them."
+   },
+   {
+    "est": 25,
+    "label": "Then Rick Hudson’s <a href=\"https://go.dev/blog/ismmkeynote\" target=\"_blank\" rel=\"noopener\">\"Getting to Go\"</a> — a real low-latency concurrent collector, and what it took."
+   }
+  ]
+ },
+ "d83.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read Doug Lea’s <a href=\"https://gee.cs.oswego.edu/dl/html/malloc.html\" target=\"_blank\" rel=\"noopener\">\"A Memory Allocator\"</a> — dlmalloc, the design behind glibc."
+   },
+   {
+    "est": 25,
+    "label": "Then Google’s <a href=\"https://google.github.io/tcmalloc/design.html\" target=\"_blank\" rel=\"noopener\">tcmalloc design</a> — per-thread caches and size classes, for the multithreaded case."
+   }
+  ]
+ },
+ "d84.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read <a href=\"https://floating-point-gui.de/\" target=\"_blank\" rel=\"noopener\">floating-point-gui.de</a> for the intuition — why the format can’t hold 0.1."
+   },
+   {
+    "est": 35,
+    "label": "Then skim Goldberg’s canonical <a href=\"https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html\" target=\"_blank\" rel=\"noopener\">\"What Every Computer Scientist Should Know About Floating-Point Arithmetic\"</a> — rounding, guard digits, and cancellation."
+   }
+  ]
+ },
+ "d85.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read the <a href=\"https://docs.oracle.com/en/java/javase/21/vm/\" target=\"_blank\" rel=\"noopener\">Java Virtual Machine Guide</a> — HotSpot compilation, as the vendor documents it."
+   },
+   {
+    "est": 25,
+    "label": "Then OpenJDK’s <a href=\"https://wiki.openjdk.org/display/HotSpot/\" target=\"_blank\" rel=\"noopener\">HotSpot wiki</a> — tiered compilation and deoptimization."
+   }
+  ]
+ },
+ "d86.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read Joel Spolsky’s <a href=\"https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/\" target=\"_blank\" rel=\"noopener\">\"The Absolute Minimum… about Unicode\"</a>."
+   },
+   {
+    "est": 25,
+    "label": "Then the <a href=\"https://utf8everywhere.org/\" target=\"_blank\" rel=\"noopener\">UTF-8 Everywhere</a> manifesto — one encoding, and the bugs that picking another one buys you."
+   }
+  ]
+ },
+ "d87.t1.s1": {
+  "split": [
+   {
+    "est": 20,
+    "label": "Read the famous <a href=\"https://stackoverflow.com/questions/11227809/\" target=\"_blank\" rel=\"noopener\">\"Why is processing a sorted array faster?\"</a> answer."
+   },
+   {
+    "est": 30,
+    "label": "Then Dan Luu’s <a href=\"https://danluu.com/branch-prediction/\" target=\"_blank\" rel=\"noopener\">branch-prediction</a> walkthrough — how predictors actually got good."
+   }
+  ]
+ },
+ "d88.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read the <a href=\"https://en.wikipedia.org/wiki/Bloom_filter\" target=\"_blank\" rel=\"noopener\">Bloom filter</a> overview — the math, the false-positive rate, and where it is used."
+   },
+   {
+    "est": 20,
+    "label": "Then play with the <a href=\"https://llimllib.github.io/bloomfilter-tutorial/\" target=\"_blank\" rel=\"noopener\">interactive visual tutorial</a> until the bit pattern is obvious."
+   }
+  ]
+ },
+ "d89.t1": {
+  "split": [
+   {
+    "est": 45,
+    "fromRef": 0
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d90.t1": {
+  "split": [
+   {
+    "est": 30,
+    "fromRef": 0
+   },
+   {
+    "est": 35,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d91.t1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Crafting Interpreters <a href=\"https://craftinginterpreters.com/scanning.html\" target=\"_blank\" rel=\"noopener\">\"Scanning\"</a> — characters to tokens, and why tokens are regular.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://craftinginterpreters.com/parsing-expressions.html\" target=\"_blank\" rel=\"noopener\">\"Parsing Expressions\"</a> — recursive descent, and precedence as grammar shape.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d92.t1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read the <a href=\"https://github.com/golang/go/blob/master/src/cmd/compile/README.md\" target=\"_blank\" rel=\"noopener\">\"Introduction to the Go compiler\"</a> (cmd/compile README) through type-checking (also on <a href=\"https://go.dev/src/cmd/compile/README\" target=\"_blank\" rel=\"noopener\">go.dev</a>).",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "label": "Finish the README: the SSA phases and machine-code generation.",
+    "refs": null
+   }
+  ]
+ },
+ "d93.t1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Crafting Interpreters <a href=\"https://craftinginterpreters.com/evaluating-expressions.html\" target=\"_blank\" rel=\"noopener\">\"Evaluating Expressions\"</a> — walk the tree, produce a value.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://craftinginterpreters.com/statements-and-state.html\" target=\"_blank\" rel=\"noopener\">\"Statements and State\"</a> — environments and lexical scope.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d94.t1": {
+  "split": [
+   {
+    "est": 35,
+    "fromRef": 0
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d95.t1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Read Crafting Interpreters <a href=\"https://craftinginterpreters.com/a-bytecode-virtual-machine.html\" target=\"_blank\" rel=\"noopener\">\"Chunks of Bytecode\"</a> — a flat instruction array instead of a tree.",
+    "refs": null
+   },
+   {
+    "est": 35,
+    "label": "Then <a href=\"https://craftinginterpreters.com/a-virtual-machine.html\" target=\"_blank\" rel=\"noopener\">\"A Virtual Machine\"</a> — the stack and the dispatch loop.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d96.t1": {
+  "split": [
+   {
+    "est": 30,
+    "fromRef": 0
+   },
+   {
+    "est": 45,
+    "fromRef": 1
+   }
+  ]
+ },
+ "d97.t1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read <a href=\"https://en.wikipedia.org/wiki/Static_single-assignment_form\" target=\"_blank\" rel=\"noopener\">Static single-assignment form</a> — why every serious optimizer converts to it.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "label": "Then <a href=\"https://en.wikipedia.org/wiki/Register_allocation\" target=\"_blank\" rel=\"noopener\">register allocation</a> — graph-colouring and linear scan.",
+    "refs": null
+   },
+   {
+    "est": 30,
+    "fromRef": 1
+   }
+  ]
+ }
+}

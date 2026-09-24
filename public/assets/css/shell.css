@@ -448,6 +448,33 @@
   color: var(--accent); text-decoration: none; background: var(--surface-2); border: 1px solid var(--border); }
 .dm-link:hover { background: var(--surface-3); }
 .dm-link-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Reading list (day menu → "Reading list — sources"): one card per catalogued source,
+   with the items this day reads from it underneath. */
+.dm-src { border: 1px solid var(--border); border-radius: var(--r2); background: var(--surface-2);
+  padding: var(--s3); margin-bottom: var(--s3); }
+.dm-src:last-child { margin-bottom: 0; }
+.dm-src-head { display: flex; align-items: baseline; gap: 8px; }
+.dm-src-ico { flex: 0 0 auto; }
+.dm-src-title { font-weight: 600; flex: 1 1 auto; }
+.dm-src-tag { flex: 0 0 auto; padding: 1px 7px; border-radius: 999px; font-size: var(--t-xs);
+  background: var(--surface-3); border: 1px solid var(--border); color: var(--text-3); }
+.dm-src-tag.is-free { color: var(--ok, var(--accent)); }
+.dm-src-by { color: var(--text-2); font-size: var(--t-xs); margin-top: 2px; }
+.dm-src-get { color: var(--text-3); font-size: var(--t-xs); margin-top: 4px; line-height: 1.5; }
+.dm-src .dm-link { margin-top: 6px; }
+.dm-src-what { margin-top: var(--s3); font-size: var(--t-xs); color: var(--text-3);
+  text-transform: uppercase; letter-spacing: .06em; }
+.dm-src-items { display: flex; flex-direction: column; gap: 4px; margin-top: 5px; }
+.dm-src-item { display: flex; align-items: baseline; gap: 8px; font-size: var(--t-sm); line-height: 1.5; }
+.dm-src-item.is-done { color: var(--text-3); }
+.dm-src-item.is-done .dm-src-label { text-decoration: line-through; }
+.dm-src-check { flex: 0 0 auto; color: var(--text-3); }
+.dm-src-item.is-done .dm-src-check { color: var(--ok, var(--accent)); }
+.dm-src-label { flex: 1 1 auto; min-width: 0; }
+.dm-src-label a { color: var(--accent); }
+.dm-src-est { flex: 0 0 auto; color: var(--text-3); font-size: var(--t-xs);
+  font-variant-numeric: tabular-nums; }
 .dm-dateopts { display: flex; flex-direction: column; gap: 4px; }
 .dm-dateopt { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 11px;
   border: 1px solid var(--border); border-radius: var(--r1); background: var(--surface);

@@ -103,6 +103,47 @@ export function dayLinks(day) {
   return out;
 }
 
+/** Group this day's work by the SOURCE it reads from, using the roadmap's `library`
+ *  (DESIGN §7.6). A leaf belongs to a source when one of that source's `match` strings
+ *  occurs in its own text, so the grouping follows the tasks onto whatever card the
+ *  planner put them on. Returns [{ src, items: [{ id, label, est, done }] }] with the
+ *  sources in the order they first appear on the card. */
+export function daySources(rm, day) {
+  const lib = rm.library || [];
+  if (!lib.length) return [];
+  const byId = new Map();
+  const order = [];
+  const textOf = it => [it.label, it.lead, it.note, it.info, ...(it.refs || [])]
+    .filter(x => typeof x === "string").join(" ");
+  const add = (src, it) => {
+    if (!byId.has(src.id)) { byId.set(src.id, { src, items: [] }); order.push(src.id); }
+    byId.get(src.id).items.push({ id: it.id, label: it.label || it.lead || "",
+      est: it.est || 0, done: store.isDone(rm.slug, it.id) });
+  };
+  // A leaf that names no source of its own is the continuation of the one before it
+  // inside the same task ("Finish DDIA Ch 7", "Then entries #6–#10") — the planner
+  // splits long readings that way, so it inherits that item's sources.
+  const visit = (it, carry) => {
+    if (!it) return carry;
+    const text = textOf(it);
+    const hits = text ? lib.filter(src => src.match.some(m => text.includes(m))) : [];
+    const use = hits.length ? hits : carry;
+    for (const src of use) add(src, it);
+    return hits.length ? hits : carry;
+  };
+  for (const t of day.tasks) {
+    const leaves = t.subs && t.subs.length ? t.subs : [t];
+    let carry = [];
+    // the parent's own lead/refs can name the source its first sub continues from
+    if (t.subs && t.subs.length) {
+      const ptext = [t.lead, ...(t.refs || [])].filter(x => typeof x === "string").join(" ");
+      carry = lib.filter(src => src.match.some(m => ptext.includes(m)));
+    }
+    for (const leaf of leaves) carry = visit(leaf, carry);
+  }
+  return order.map(id => byId.get(id));
+}
+
 /* ---------------------------------------------------------------- *
  *  Modal builders
  * ---------------------------------------------------------------- */
@@ -192,6 +233,50 @@ function refsModal(rm, day) {
     icon: "🔗", body, actions: [{ label: "Close", variant: "primary", onClick: () => true }] });
 }
 
+function sourcesModal(rm, day) {
+  const groups = daySources(rm, day);
+  const body = el("div.day-modal");
+  if (!groups.length) {
+    body.append(el("div.dm-empty", { text: "No catalogued sources on this day." }));
+  } else {
+    const KIND = { book: "📕", paper: "📄", docs: "📘", spec: "📐", article: "📰", video: "🎬", course: "🎓", site: "🌐" };
+    for (const { src, items } of groups) {
+      const card = el("div.dm-src");
+      const head = el("div.dm-src-head");
+      head.append(el("span.dm-src-ico", { text: KIND[src.kind] || "📘" }));
+      head.append(el("span.dm-src-title", { text: src.title }));
+      head.append(el("span.dm-src-tag" + (src.free ? ".is-free" : ""), { text: src.free ? "free" : "paid" }));
+      card.append(head);
+      const meta = [src.by, src.edition].filter(Boolean).join(" · ");
+      if (meta) card.append(el("div.dm-src-by", { text: meta }));
+      if (src.get) card.append(el("div.dm-src-get", { text: src.get }));
+      if (src.url) {
+        const a = el("a.dm-link", { href: src.url, target: "_blank", rel: "noopener noreferrer" });
+        a.append(el("span.dm-link-ico", { text: "🔗" }));
+        a.append(el("span.dm-link-text", { text: src.url.replace(/^https?:\/\/(www\.)?/, "") }));
+        card.append(a);
+      }
+      if (items.length) {
+        card.append(el("div.dm-src-what", { text: items.length === 1 ? "Read on this day" : `Read on this day (${items.length})` }));
+        const ul = el("div.dm-src-items");
+        for (const it of items) {
+          const row = el("div.dm-src-item" + (it.done ? ".is-done" : ""));
+          row.append(el("span.dm-src-check", { text: it.done ? "✓" : "○" }));
+          const txt = el("span.dm-src-label");
+          txt.innerHTML = it.label;
+          row.append(txt);
+          if (it.est) row.append(el("span.dm-src-est", { text: `${it.est}m` }));
+          ul.append(row);
+        }
+        card.append(ul);
+      }
+      body.append(card);
+    }
+  }
+  openModal({ title: `Reading list — ${day.title || relDay(day.date)}`, subtitle: movedSubtitle(rm, day),
+    icon: "📚", body, actions: [{ label: "Close", variant: "primary", onClick: () => true }] });
+}
+
 function moveModal(rm, day, free, rerender) {
   const slug = rm.slug;
   const eff = dayDate(rm, slug, day);                   // resolver-gated effective date
@@ -240,8 +325,12 @@ export function openDayMenu(rm, day, ev, rerender) {
     { label: "Completion details", icon: "📊", onClick: () => completionModal(rm, day) },
     { label: "Time on tasks", icon: "⏱️", onClick: () => timeModal(rm, day) },
     { label: "References & links", icon: "🔗", onClick: () => refsModal(rm, day) },
-    { separator: true },
   ];
+  // only roadmaps that catalogue their sources (bedrock) get the reading list
+  if ((rm.library || []).length) {
+    items.push({ label: "Reading list — sources", icon: "📚", onClick: () => sourcesModal(rm, day) });
+  }
+  items.push({ separator: true });
   // "moved?" is judged by the RESOLVER, not the raw cell, so the menu always agrees
   // with the card. A stale override (e.g. left dangling by a whole-roadmap date
   // shift — nextDate is recomputed but the stored date isn't) is ignored by the

@@ -1,0 +1,213 @@
+{
+ "d02.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read NoC <a href=\"https://natureofcode.com/random/\" target=\"_blank\" rel=\"noopener\">Introduction</a> I.1–I.3: the random walker, and why a uniform distribution looks wrong. (Local PDF pp.1–26.)"
+   },
+   {
+    "est": 30,
+    "label": "Then the Introduction I.4–I.6: non-uniform & Gaussian distributions, then Perlin noise."
+   }
+  ]
+ },
+ "d04.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read NoC <a href=\"https://natureofcode.com/vectors/\" target=\"_blank\" rel=\"noopener\">Ch.1</a> 1.1–1.3: what a vector is, adding and subtracting them."
+   },
+   {
+    "est": 30,
+    "label": "Then NoC Ch.1 1.4–1.6: scaling, magnitude, and normalization."
+   }
+  ]
+ },
+ "d09.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read NoC <a href=\"https://natureofcode.com/forces/\" target=\"_blank\" rel=\"noopener\">Ch.2</a> 2.1–2.3: Newton’s laws, and <code>a = F/m</code> as code."
+   },
+   {
+    "est": 25,
+    "label": "Then NoC Ch.2 2.4–2.5: force accumulation, and what mass changes."
+   }
+  ]
+ },
+ "d11.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read NoC Ch.2 2.6: modeling gravity as weight (<code>m·g</code>) — not as attraction."
+   },
+   {
+    "est": 30,
+    "label": "Then NoC Ch.2 2.7–2.8: friction, and air/fluid resistance."
+   }
+  ]
+ },
+ "d16.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read NoC <a href=\"https://natureofcode.com/oscillation/\" target=\"_blank\" rel=\"noopener\">Ch.3</a> 3.1–3.3: angles, angular motion, and trig on screen."
+   },
+   {
+    "est": 25,
+    "label": "Then NoC Ch.3 3.4–3.5: <b>polar ↔ Cartesian</b>, the conversion the whole burst depends on."
+   }
+  ]
+ },
+ "d18.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read NoC Ch.3 3.6–3.8: amplitude, period, and waves."
+   },
+   {
+    "est": 30,
+    "label": "Then NoC Ch.3 3.9–3.10: the pendulum, and <b>spring forces</b> (Hooke’s law <code>F = −k·x</code>)."
+   }
+  ]
+ },
+ "d21.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read NoC <a href=\"https://natureofcode.com/particles/\" target=\"_blank\" rel=\"noopener\">Ch.4</a> 4.1–4.3: a Particle (pos/vel/acc/lifespan), and an array of them."
+   },
+   {
+    "est": 25,
+    "label": "Then NoC Ch.4 4.4–4.5: the ParticleSystem class, and a system of systems."
+   }
+  ]
+ },
+ "d25.t1.s1": {
+  "est": 40
+ },
+ "d43.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read <a href=\"https://thebookofshaders.com/\" target=\"_blank\" rel=\"noopener\">The Book of Shaders</a> Ch.1: what a fragment shader is — one program, run per pixel."
+   },
+   {
+    "est": 30,
+    "label": "Then BoS Ch.2: GLSL, Hello World, uniforms and <code>gl_FragCoord</code>."
+   }
+  ]
+ },
+ "d44.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read BoS Ch.3.1: step, smoothstep, and sin/cos shaping functions."
+   },
+   {
+    "est": 25,
+    "label": "Then BoS Ch.3.2: mix, gradients, and HSB colour."
+   }
+  ]
+ },
+ "d47.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Read BoS Ch.4.1–4.4: <code>random</code> on the GPU, and controlling chaos."
+   },
+   {
+    "est": 30,
+    "label": "Then BoS Ch.4.5–4.8: 2D value & gradient noise, and using noise."
+   }
+  ]
+ },
+ "d50.t1.s1": {
+  "split": [
+   {
+    "est": 25,
+    "label": "Read BoS Ch.5 up to kernel convolution: textures and blend modes."
+   },
+   {
+    "est": 30,
+    "label": "Then the rest of BoS Ch.5: kernel convolution and the Gaussian blur."
+   }
+  ]
+ },
+ "d15.t1.s1": {
+  "est": 40
+ },
+ "d15.t1.s2": {
+  "est": 40
+ },
+ "d15.t1.s3": {
+  "est": 40
+ },
+ "d28.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Clear Code 1:17–1:40 (Cameras, Using classes) — port to C++."
+   },
+   {
+    "est": 35,
+    "label": "Clear Code 1:40–2:00 (Collision resolution) — port to C++."
+   },
+   {
+    "est": 40,
+    "label": "Clear Code 2:00–2:18 (Timers, Animations) — port to C++."
+   }
+  ]
+ },
+ "d40.t1.s1": {
+  "split": [
+   {
+    "est": 40,
+    "label": "Clear Code 3:21–3:50 (3D basics, 3D imports) — port to C++."
+   },
+   {
+    "est": 40,
+    "label": "Clear Code 3:50–end (3D collisions, Shaders, the 3D game) — port to C++."
+   }
+  ]
+ },
+ "d03.t1.s1": {
+  "split": [
+   {
+    "est": 30,
+    "label": "Udemy §3 Shapes (first part): the screen coordinate system and <code>DrawRectangle</code>/<code>DrawCircle</code>/<code>DrawLine</code>."
+   },
+   {
+    "est": 30,
+    "label": "Udemy §3 (continued): <code>Color</code> structs & constants, and the y-axis convention that will bite every ported formula."
+   }
+  ]
+ },
+ "d20.t1.s1": {
+  "split": [
+   {
+    "est": 35,
+    "label": "Udemy §6 Projects: follow the first guided game as far as its core loop."
+   },
+   {
+    "est": 30,
+    "label": "Finish that project — scoring, reset, and the polish pass."
+   }
+  ]
+ },
+ "_rules": [
+  {
+   "cat": "exercise",
+   "mul": 1.4
+  },
+  {
+   "cat": "project",
+   "mul": 1.2
+  },
+  {
+   "cat": "code",
+   "min": 25,
+   "mul": 1.2
+  }
+ ]
+}

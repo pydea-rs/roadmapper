@@ -181,6 +181,21 @@ function normalize(def) {
   const monthSet = new Map();
   days.forEach(d => { if (d.month && !monthSet.has(d.month)) monthSet.set(d.month, monthLabel(d.date)); });
 
+  // Source library (optional, DESIGN §7.6): the books, papers and docs a roadmap reads
+  // from, described ONCE — full title, author, edition, whether it is free, and where to
+  // get it. A leaf is tied to a source by `match`: any of these strings appearing in the
+  // leaf's own text (a URL fragment, or a distinctive title for an offline book). That
+  // keeps the tie correct when the planner re-flows tasks onto different cards, and
+  // means no per-task bookkeeping to drift out of date.
+  const library = (def.library || []).map(x => ({
+    id: x.id, title: x.title || x.id, by: x.by || "", edition: x.edition || "",
+    kind: x.kind || "book", free: !!x.free, url: x.url || null, get: x.get || "",
+    // filter BEFORE String(): a missing `match` would otherwise stringify to the literal
+    // "undefined" and then match any task whose text mentions undefined behaviour
+    match: (Array.isArray(x.match) ? x.match : [x.match]).filter(m => typeof m === "string" && m),
+  }));
+  const libraryById = new Map(library.map(x => [x.id, x]));
+
   const milestones = (def.milestones || []).map(m => ({
     id: m.id, week: m.week || null, title: m.title || m.id,
     rule: m.rule || { type: "weekPct", min: 80 },
@@ -193,6 +208,7 @@ function normalize(def) {
     schemaVersion: def.schemaVersion || 1,
     cadence: def.cadence || null, aliases: def.aliases || {},
     objectives, objById,
+    library, libraryById,
     days, daysById, tasksById, softById,
     leaves, leavesById,
     weeks, weeksById,
@@ -215,6 +231,15 @@ export function validateAll() {
     slugs.add(rm.slug);
 
     if (!rm.objectives.length) P(`has no objectives`);
+    // source library: ids unique, every entry actually matchable
+    const libIds = new Set();
+    for (const x of rm.library) {
+      if (!x.id || typeof x.id !== "string") P(`library entry has no id`);
+      else if (libIds.has(x.id)) P(`duplicate library id "${x.id}"`);
+      libIds.add(x.id);
+      if (!x.match.length) P(`library entry "${x.id}" has no match strings`);
+      if (x.url && !/^https?:\/\//.test(x.url)) P(`library entry "${x.id}" has a non-http url`);
+    }
     // these slugs address the global (non-roadmap) views in the router; a roadmap
     // claiming one would be unreachable (the hash always renders the global view).
     if (["today", "insights", "horizon", "bookmarks"].includes(rm.slug)) P(`slug "${rm.slug}" is a reserved route`);

@@ -12,7 +12,14 @@ await loadRoadmap("raylib.js");
 const rm = registry.getRoadmap("raylib");
 const slug = "raylib";
 
-const parent = rm.tasksById.get("d01.t1");      // a 3-part parent (watch + 2 build steps)
+// The fixture is DERIVED, not pinned: the planner re-flows raylib's cards on every
+// re-plan, so "d01.t1" has been a 3-part parent and a 1-part one. What this suite needs
+// is a card holding exactly one task, that task having exactly three leaves, and a
+// milestone requiring it — the shape the roll-up rules are written against.
+const DAY = rm.days.find(d => d.tasks.length === 1 && (d.tasks[0].subs || []).length === 3
+  && rm.milestones.some(m => (m.rule.require || []).includes(d.tasks[0].id)));
+const parent = DAY.tasks[0];
+const DEST = rm.days[rm.days.indexOf(DAY) + 1].id;     // a later card to move it onto
 const [s1, s2, s3] = parent.subs.map(s => s.id);
 // Minute assertions below are DERIVED from the content, not hardcoded: this suite
 // proves the leaf-level effort MECHANISM, so a re-estimate of the material must
@@ -49,13 +56,13 @@ store.setTask(slug, s1, true);
 const S1 = stats.computeAll(rm);
 t.eq(S1.overall.actual.done, 1, "ticking ONE sub-task advances by one leaf (not a whole task)");
 t.eq(S1.invested, e1, `invested minutes = that leaf's own est (${e1})`);
-t.eq(S1.days["d01"].actual.total, 3, "day d01's ring counts its 3 leaves");
-t.eq(S1.days["d01"].actual.done, 1, "day d01 reads 1 of 3 done");
+t.eq(S1.days[DAY.id].actual.total, 3, `day ${DAY.id}'s ring counts its 3 leaves`);
+t.eq(S1.days[DAY.id].actual.done, 1, `day ${DAY.id} reads 1 of 3 done`);
 clear(s1);
 
 t.group("milestones need the WHOLE parent complete, not one part");
 // the "Foundations" milestone — the one whose rule requires d01.t1
-const w5 = () => stats.computeAll(rm).milestones.find(x => (rm.milestones.find(m => m.id === x.id).rule.require || []).includes("d01.t1"));
+const w5 = () => stats.computeAll(rm).milestones.find(x => (rm.milestones.find(m => m.id === x.id).rule.require || []).includes(parent.id));
 store.setTask(slug, s1, true); store.setTask(slug, s2, true);   // d01.t1 partial (2/3)
 t.eq(w5().progress, 0, "a partially-done required task does NOT count toward its milestone");
 store.setTask(slug, s3, true);                                   // d01.t1 complete
@@ -74,28 +81,28 @@ clear(s1, s2);
 
 t.group("reconcile prunes orphan sub-task rows, keeps real ones");
 store.setTask(slug, s1, true);                       // a real leaf tick
-store.setCell(slug, "d01.t1.s9", "task", "true");    // an orphan (no such leaf/parent)
+store.setCell(slug, `${parent.id}.s9`, "task", "true");   // an orphan (no such leaf/parent)
 const r = reconcile.reconcile(rm);
 t.ok(r.pruned >= 1, "the orphan sub-task row is pruned");
 t.ok(store.isDone(slug, s1), "a valid sub-task tick survives reconcile");
-t.ok(!store.getCell(slug, "d01.t1.s9"), "the orphan row is gone");
-t.ok(reconcile.referentOf("d01.t1.s1").id === "d01.t1.s1" &&
-     reconcile.referentOf("done_at:d01.t1.s1").id === "d01.t1.s1",
+t.ok(!store.getCell(slug, `${parent.id}.s9`), "the orphan row is gone");
+t.ok(reconcile.referentOf(s1).id === s1 &&
+     reconcile.referentOf(`done_at:${s1}`).id === s1,
   "referentOf round-trips a leaf's bare + done_at ids");
 clear(s1);
 
 t.group("moving a parent relocates ALL its leaves together (move is parent-level)");
-// raylib d01.t1 has 3 leaves and d01 holds only that task; d03.t1 has 2 leaves.
+// the derived parent has 3 leaves and its card holds only that task
 const before = stats.computeAll(rm);
-store.setMove(slug, "d01.t1", "d03");
+store.setMove(slug, parent.id, DEST);
 const after = stats.computeAll(rm);
-t.eq(after.days["d03"].actual.total - before.days["d03"].actual.total, 3,
+t.eq(after.days[DEST].actual.total - before.days[DEST].actual.total, 3,
   "the moved parent's 3 leaves all land on the destination day (actual)");
-t.eq(before.days["d01"].actual.total - after.days["d01"].actual.total, 3,
+t.eq(before.days[DAY.id].actual.total - after.days[DAY.id].actual.total, 3,
   "and all leave the origin day (actual)");
-t.eq(after.days["d01"].original.total, before.days["d01"].original.total,
+t.eq(after.days[DAY.id].original.total, before.days[DAY.id].original.total,
   "ORIGINAL still counts the leaves on their origin day (a move doesn't rewrite history)");
-store.setMove(slug, "d01.t1", null);   // restore
+store.setMove(slug, parent.id, null);   // restore
 
 t.group("subless tasks stay their own single leaf (the unchanged path)");
 // register a throwaway roadmap with a plain task and an empty sub-list

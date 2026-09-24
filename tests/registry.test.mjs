@@ -96,4 +96,51 @@ t.ok(p3.some(x => /"d02\.t2" is carried from "d03", which is not an earlier day/
 t.ok(p3.some(x => /"d02\.t3" is carried from unknown day "d09"/.test(x)), "carried from a day that doesn't exist is flagged");
 t.ok(p3.some(x => /"d02\.t4" is carried from "d02"/.test(x)), "carried from its own day is flagged");
 
+
+t.group("source library — normalised, and validated for id/match/url");
+registerRoadmap({ slug: "lib-ok", title: "T", objectives: OBJ,
+  library: [
+    { id: "ostep", title: "Operating Systems: Three Easy Pieces", by: "Arpaci-Dusseau",
+      edition: "v1.10", kind: "book", free: true, url: "https://pages.cs.wisc.edu/~remzi/OSTEP/",
+      get: "Free PDFs", match: ["OSTEP", "remzi"] },
+    { id: "bare", match: "example.com" },
+  ],
+  days: [{ id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] }]});
+const lb = registry.getRoadmap("lib-ok");
+t.eq(lb.library.length, 2, "the library is carried onto the roadmap");
+t.eq(lb.libraryById.get("ostep").edition, "v1.10", "an entry keeps its edition");
+t.eq(lb.libraryById.get("ostep").free, true, "…and whether it is free");
+t.deep(lb.libraryById.get("bare").match, ["example.com"], "a single match string is normalised to a list");
+t.eq(lb.libraryById.get("bare").title, "bare", "a title-less entry falls back to its id");
+t.eq(lb.libraryById.get("bare").kind, "book", "kind defaults to book");
+t.eq(lb.libraryById.get("bare").free, false, "and free defaults to false (assume paid)");
+t.deep(validateAll().filter(x => x.startsWith("[lib-ok]")), [], "a well-formed library raises nothing");
+
+// an entry with NO match must end up matchable-by-nothing, not matchable-by-"undefined"
+registerRoadmap({ slug: "lib-nomatch", title: "T", objectives: OBJ,
+  library: [{ id: "x", title: "X" }],
+  days: [{ id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "undefined behaviour is fun" }], soft: [] }]});
+t.deep(registry.getRoadmap("lib-nomatch").library[0].match, [],
+  "a missing `match` stays empty — never the string \"undefined\"");
+t.ok(validateAll().some(x => /\[lib-nomatch\].*has no match strings/.test(x)),
+  "…and the validator catches it instead of letting it match everything");
+
+registerRoadmap({ slug: "lib-bad", title: "T", objectives: OBJ,
+  library: [
+    { id: "dup", match: ["a"] },
+    { id: "dup", match: ["b"] },
+    { id: "nomatch", match: [] },
+    { id: "badurl", match: ["c"], url: "ftp://nope/x" },
+  ],
+  days: [{ id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] }]});
+const pl = validateAll().filter(x => x.startsWith("[lib-bad]"));
+t.ok(pl.some(x => /duplicate library id "dup"/.test(x)), "a duplicate library id is flagged");
+t.ok(pl.some(x => /library entry "nomatch" has no match strings/.test(x)), "an entry nothing can match is flagged");
+t.ok(pl.some(x => /library entry "badurl" has a non-http url/.test(x)), "a non-http url is flagged");
+
+// a roadmap that declares none keeps an empty library, and the reading list stays off
+registerRoadmap({ slug: "lib-none", title: "T", objectives: OBJ,
+  days: [{ id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] }]});
+t.deep(registry.getRoadmap("lib-none").library, [], "a roadmap with no library declares an empty one");
+
 t.done();

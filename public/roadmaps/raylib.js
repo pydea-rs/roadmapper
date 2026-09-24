@@ -21,9 +21,9 @@
 //              fBm nebulae, bloom. Begins only once Nature of Code is ~70–80% read.
 //   project  — the Big Bang simulation itself, built version by version (v0 → capstone).
 //
-// Cadence: 3 side-days/week (w5 takes 2, the capstone week 1), on weekdays that change
-// from week to week and are chosen so the combined day across all roadmaps stays
-// light — see the 3-hour cap re-plan note. One ~60–110 min task each.
+// Cadence: 2 side-days/week, on weekdays that change from week to week and are chosen
+// so the combined day across all roadmaps stays light — see the 2026-09-25 note.
+// One ~40–95 min card each.
 // Progress/effort stay OFF the main track (kind:"side"); they combine only with the
 // other side track (Bedrock) and in the Today panel's "Main + Side" line.
 //
@@ -33,49 +33,39 @@
 // Note: the Udemy per-lecture titles are behind a bot wall — section titles/counts
 // are confirmed, so course tasks are grouped by SECTION, which is what matters.
 
-// REALISTIC RE-ESTIMATE + NoC EXERCISES (2026-09-13). Required work 46.1h → 69.8h.
-//
-// 1. Every `est` re-priced from "how long the material is" to "how long the session
-//    actually takes" (pauses, re-reads, build/debug friction): book chapters x1.75,
-//    docs x1.55, code/project x1.35.
-// 2. The Udemy course was priced at 3.9h of watching for a course that is 58
-//    lectures / 11h. Re-based on real runtime at the owner's viewing style (1.5x with
-//    frequent pauses ⇒ runtime / 1.5 x 1.30), allocated per task by that task's
-//    lecture count, the watch thread is now ~9.5h. The build-along `code` subs keep
-//    their own factor — the video budget never swallows the time spent building.
-// 3. NEW `exercise` sub-tasks: the Nature of Code teaches THROUGH its exercises, and
-//    porting a finished idea to raylib is not the same as working the book's own
-//    examples while reading. Seven reading days (d02, d04, d09, d11, d16, d18, d21)
-//    now carry a short "do the exercises in p5.js" step — p5 is the book's native
-//    environment, so an exercise is a 5-line change in the web editor rather than a
-//    C++ rebuild. The raylib port stays as the step after it.
-// Day count and cadence were unchanged BY THAT PASS; the dates were then re-laid by
-// the re-plan note below.
-
-// 3-HOUR CAP RE-PLAN (2026-09-13) — the calendar of ALL FOUR roadmaps, rebuilt again
-// the same day after the owner read the Horizon view's daily totals. It replaces the
-// earlier 4–6h re-plan (which had itself replaced two passes that misread 4–6h as a
-// target to fill).
-//  - Every roadmap RESTARTED on 2026-09-13, on one shared week frame (week i starts
-//    2026-09-13 + 7i).
-//  - The REQUIRED minutes of all roadmaps on one date add up to at most 3h (180 min) —
-//    a ceiling, never a target. The owner allowed a few 4h days and up to ~1 month of
-//    extension per roadmap (2 in special cases); the plan needed no 4h day at all.
-//  - When a date would pass the cap, tasks are PASSED ALONG, in order, into the
-//    roadmap's next card, ahead of that card's own tasks, and marked `carried: "dNN"`
-//    so the card shows where each one came from. A card whose own tasks all moved on
-//    is titled "… (cont.)". A task too big to share its date is split at a sub-task
-//    boundary into "(1/2)" / "(2/2)" — main roadmaps only; the side tracks were planned
-//    around it so every task keeps its recall cards. Nothing was cut or reworded.
-//  - Days per week follow the authored phase of the content, weekdays change from
-//    week to week, and no roadmap goes more than a week without a session.
-// Day ids were renumbered where cards were added, and milestones/interludes re-anchored
-// (no DB backward compatibility needed); day and week references inside the content
-// point at the new ids. Ids quoted in the dated notes ABOVE use their own day's
-// numbering. The planner and file builder live in scratchpad/cap3/.
-// For this file: still 54 days / 19 weeks, each week holding the same side-days it was
-// authored with; 2026-09-13 → 2027-01-18 (was 2026-09-05 → 2027-01-08). Nothing needed
-// carrying or splitting.
+// MAKE-IT-DOABLE PASS (2026-09-25) — the owner tried to follow the plan and could not:
+// the volume per day was beyond a normal day's work, and the estimates hid it. This pass
+// supersedes the 2026-09-13 re-estimate and the 3-hour-cap re-plan that followed it.
+//  1. RE-PRICED, again and honestly. The 2026-09-13 pass multiplied the old numbers by
+//     kind; the numbers it multiplied were still the length of the MATERIAL. A 43-page
+//     chapter priced at 50 minutes stays wrong however it is scaled. Required work
+//     across all four roadmaps: 480h → 600h. Nothing was added; the hours were always
+//     there, unwritten.
+//  2. SPLIT, at the material's own seams. No leaf bundles two documents any more, and
+//     a long chapter is read across two sittings at a named section boundary — never by
+//     halving a number, always re-estimated as its own session.
+//  3. RE-FLOWED under two ceilings, not one: the shared 180 min/date across all
+//     roadmaps (unchanged), AND a new per-CARD ceiling, so one session holds one or two
+//     items and the rest is passed along (`carried: "dNN"`) to the roadmap's next card.
+//     Cards that hold only passed-along work are titled "… (cont.)"; a task split across
+//     cards is suffixed "(1/2)".
+//  4. EXTENDED. The owner first allowed up to +5/+8/+8/+13 weeks, then — shown that an
+//     honest re-price outgrows that — chose eight weeks beyond those limits. Result: the
+//     busiest stretch averages ~2h/day against the 3h ceiling, where the plan it replaces
+//     really wanted ~3h every day while claiming 2.
+//  5. RE-DATED. Day 1 is **2026-09-23**, moved there by the owner on 2026-09-25 so that
+//     a fresh start (old database deleted) opens with nothing already overdue. All four
+//     roadmaps share one week frame: week i starts 2026-09-23 + 7i.
+// Day ids were renumbered and milestones/interludes re-anchored (no DB backward
+// compatibility needed); day/week references inside the content point at the new ids.
+// Ids quoted in the dated notes ABOVE use their own day's numbering.
+// The re-pricer, planner and file builder live in scratchpad/cap4/.
+// For this file: 54 → 80 cards, 19 → 40 weeks, 2026-09-24 → 2027-06-29. Required work
+// 69.8h → 82.3h. 2 cards a week; 33 tasks carried, 26 continuation cards, 64 split
+// parts. The owner's own example drove this one: a Nature of Code chapter was read AND
+// practised AND ported in a single task on a single day. Each chapter is now split at
+// its section boundaries, and the p5.js exercises and the raylib port are separate
+// sittings that the planner is free to place on separate cards.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -89,7 +79,7 @@ registerRoadmap({
   subtitle: "Learn raylib (C++) and the math of motion by building a gravitational N-body Big Bang simulation — from an empty window to a shader-lit universe.",
   accent: "#a855f7",
   schemaVersion: 1,
-  cadence: { activeDaysPerWeek: [2, 3] },
+  cadence: { activeDaysPerWeek: [2] },
 
   objectives: [
     { id: COURSE, title: "raylib course (Udemy)",          tier: "primary", color: "#38bdf8" },
@@ -100,44 +90,77 @@ registerRoadmap({
   ],
 
   // Re-paced 2026-07-20 to a denser 3 days/week (from the old ~2/week front) so the
-  // simple early material moves faster; the arc now finishes ~4 weeks sooner (Jan 8 then; Jan 18
-  // since the 3-hour cap re-plan).
+  // simple early material moves faster; the arc now finishes ~4 weeks sooner (Jan 8).
   weeks: [
-    { id: "w1", title: "Week 1 — First pixels, noise & shapes", start: "2026-09-13" },
-    { id: "w2", title: "Week 2 — Vectors & motion: the mover", start: "2026-09-20" },
-    { id: "w3", title: "Week 3 — Finish drawing; Newton's laws", start: "2026-09-27" },
-    { id: "w4", title: "Week 4 — Input, forces & the update loop", start: "2026-10-04" },
-    { id: "w5", title: "Week 5 — The N-body kernel & collisions", start: "2026-10-11" },
-    { id: "w6", title: "Week 6 — Oscillation, tilemaps & the 2D camera", start: "2026-10-18" },
-    { id: "w7", title: "Week 7 — Waves, springs & an OOP build", start: "2026-10-25" },
-    { id: "w8", title: "Week 8 — First projects & the particle system", start: "2026-11-01" },
-    { id: "w9", title: "Week 9 — The simulation begins 🌌 & the burst", start: "2026-11-08" },
-    { id: "w10", title: "Week 10 — GUI, a port-along & gravity switches on", start: "2026-11-15" },
-    { id: "w11", title: "Week 11 — Audio capstone, integration & thousands", start: "2026-11-22" },
-    { id: "w12", title: "Week 12 — Thousands of particles & the glow", start: "2026-11-29" },
-    { id: "w13", title: "Week 13 — Optimization, Barnes–Hut & into 3D", start: "2026-12-06" },
-    { id: "w14", title: "Week 14 — The third dimension & 3D N-body", start: "2026-12-13" },
-    { id: "w15", title: "Week 15 — Physics consolidated; shaders begin", start: "2026-12-20" },
-    { id: "w16", title: "Week 16 — The glowing-particle shader", start: "2026-12-27" },
-    { id: "w17", title: "Week 17 — Noise, fBm & the nebula", start: "2027-01-03" },
-    { id: "w18", title: "Week 18 — Bloom & the finishing physics", start: "2027-01-10" },
-    { id: "w19", title: "Week 19 — Polish & the capstone 🎓", start: "2027-01-17" },
+    { id: "w1", title: "Week 1 — First pixels: install raylib & open a window", start: "2026-09-23" },
+    { id: "w2", title: "Week 2 — Randomness & Perlin noise — how to seed a universe", start: "2026-09-30" },
+    { id: "w3", title: "Week 3 — Shapes I: the coordinate system, rectangles & colour", start: "2026-10-07" },
+    { id: "w4", title: "Week 4 — Vectors I: the substrate of everything that moves", start: "2026-10-14" },
+    { id: "w5", title: "Week 5 — Shapes II: motion with sin & cos; Vectors II: velocity, acceleration & a mover", start: "2026-10-21" },
+    { id: "w6", title: "Week 6 — Orientation: the examples gallery & a 20-minute setup", start: "2026-10-28" },
+    { id: "w7", title: "Week 7 — Shapes III: triangles, bezier curves & wrapping up drawing; …", start: "2026-11-04" },
+    { id: "w8", title: "Week 8 — Input: keyboard & mouse", start: "2026-11-11" },
+    { id: "w9", title: "Week 9 — Forces II: gravity, friction & drag", start: "2026-11-18" },
+    { id: "w10", title: "Week 10 — The update loop & delta-time, done right", start: "2026-11-25" },
+    { id: "w11", title: "Week 11 — Forces III: gravitational attraction — the N-body kernel ⚛️; Collision detection", start: "2026-12-02" },
+    { id: "w12", title: "Week 12 — Port-along #1: Basics → Movement → Input (Clear Code)", start: "2026-12-09" },
+    { id: "w13", title: "Week 13 — Oscillation I: angles, trig & polar coordinates", start: "2026-12-16" },
+    { id: "w14", title: "Week 14 — Tilemaps & the 2D camera 🎮", start: "2026-12-23" },
+    { id: "w15", title: "Week 15 — Oscillation II: waves, pendulums & springs", start: "2026-12-30" },
+    { id: "w16", title: "Week 16 — An OOP build: Conway's Game of Life (Nick, C++); …", start: "2027-01-06" },
+    { id: "w17", title: "Week 17 — Particle systems I: one particle → a system", start: "2027-01-13" },
+    { id: "w18", title: "Week 18 — Particle systems II: forces & repellers", start: "2027-01-20" },
+    { id: "w19", title: "Week 19 — Projects II: a second build + consolidation; 🌌 The simulation begins", start: "2027-01-27" },
+    { id: "w20", title: "Week 20 — Particle systems III: textures & additive blending ✨", start: "2027-02-03" },
+    { id: "w21", title: "Week 21 — Big Bang v1: the burst 💥; Music & GUI I: buttons, sliders & a control panel", start: "2027-02-10" },
+    { id: "w22", title: "Week 22 — Port-along #2: Cameras → Classes → Timers → Animations", start: "2027-02-17" },
+    { id: "w23", title: "Week 23 — Big Bang v2: gravity switches on — real N-body; Music & GUI II", start: "2027-02-24" },
+    { id: "w24", title: "Week 24 — Integration methods: Euler vs Verlet (stability) 🩹", start: "2027-03-03" },
+    { id: "w25", title: "Week 25 — Big Bang v3: thousands of particles; Draw-count & blending study", start: "2027-03-10" },
+    { id: "w26", title: "Week 26 — Big Bang v4: the glow look in 2D ✨", start: "2027-03-17" },
+    { id: "w27", title: "Week 27 — Big Bang v5: camera, trails & time controls; …", start: "2027-03-24" },
+    { id: "w28", title: "Week 28 — Big Bang v6: Barnes–Hut & softening tuning; …", start: "2027-03-31" },
+    { id: "w29", title: "Week 29 — Big Bang v7: the third dimension; …", start: "2027-04-07" },
+    { id: "w30", title: "Week 30 — Big Bang v8: 3D N-body & orbit cinematics", start: "2027-04-14" },
+    { id: "w31", title: "Week 31 — Consolidate the physics (Nature of Code ~70–80%)", start: "2027-04-21" },
+    { id: "w32", title: "Week 32 — Book of Shaders I; Book of Shaders II", start: "2027-04-28" },
+    { id: "w33", title: "Week 33 — Book of Shaders III: distance fields → a glowing particle", start: "2027-05-05" },
+    { id: "w34", title: "Week 34 — Big Bang v9: GPU glow on every particle", start: "2027-05-12" },
+    { id: "w35", title: "Week 35 — Book of Shaders IV: noise", start: "2027-05-19" },
+    { id: "w36", title: "Week 36 — Book of Shaders V: fBm → a nebula", start: "2027-05-26" },
+    { id: "w37", title: "Week 37 — Big Bang v10: the cosmos gets a nebula; Book of Shaders VI: blur & blend → bloom", start: "2027-06-02" },
+    { id: "w38", title: "Week 38 — Big Bang v11: bloom post-process", start: "2027-06-09" },
+    { id: "w39", title: "Week 39 — Finish the physics tail & consider GPU N-body; …", start: "2027-06-16" },
+    { id: "w40", title: "Week 40 — 🎓 Capstone: the Big Bang, from void to cosmos", start: "2027-06-23" },
   ],
 
   days: [
     /* ---------------- Week 1 ---------------- */
     {
-      id: "d01", date: "2026-09-13", week: "w1", title: "First pixels: install raylib & open a window",
+      id: "d01", date: "2026-09-24", week: "w1", title: "First pixels: install raylib & open a window",
       theme: "raylib course · thread part 1 — the whole library is one draw loop.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 95,
-          lead: `<b>raylib course ①</b> — get a window on screen in C++.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 50,
+          lead: `<b>raylib course ①</b> — get a window on screen in C++. (1/2)`,
           sub: [
             { id: "s1", est: 50, label: `Watch Udemy <a href="https://www.udemy.com/course/learn-raylib-c-fast-and-easy-graphics-library/" target="_blank" rel="noopener">"Learn Raylib: C++"</a> §1 Introduction + §2 Setup & Installation.` },
-            { id: "s2", cat: "code", est: 25, label: `Install raylib + a C++ toolchain (VS Code + mingw-gcc on Windows, package on Linux).`,
-              note: `Shortcut past toolchain pain: the educ8s <a href="https://github.com/educ8s/Raylib-CPP-Starter-Template-for-VSCODE" target="_blank" rel="noopener">Raylib C++ Starter Template for VS Code</a>.` },
-            { id: "s3", cat: "code", est: 20, label: `Write the skeleton: <code>InitWindow()</code> → <code>while(!WindowShouldClose()){ BeginDrawing(); ClearBackground(BLACK); EndDrawing(); }</code> → <code>CloseWindow()</code>.`,
-              note: `Keep the <a href="https://www.raylib.com/cheatsheet/cheatsheet.html" target="_blank" rel="noopener">cheatsheet</a> open — the whole API on one page.` },
+          ] },
+      ],
+      soft: [
+        { id: "s1", type: "callout", label: `🌌 The "Big Bang" side track begins. Two short days a week, one focus each — separate from your main roadmaps. Goal: learn raylib + graphics/simulation math by building a gravitational Big Bang sim.` },
+        { id: "s2", type: "hint", label: `💡 Two side-days a week, on different weekdays each week — placed so your whole day, across every roadmap, stays light. It never piles onto a heavy day.` },
+      ],
+      note: "The journey starts with an empty black window — which is, fittingly, exactly how the universe starts here.",
+    },
+    {
+      id: "d02", date: "2026-09-27", week: "w1", title: "First pixels: install raylib & open a window (cont.)",
+      theme: "Finish “First pixels: install raylib & open a window” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d01", obj: COURSE, cat: "watch", est: 50,
+          lead: `<b>raylib course ①</b> — get a window on screen in C++. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 30, label: `Install raylib + a C++ toolchain (VS Code + mingw-gcc on Windows, package on Linux).`, note: `Shortcut past toolchain pain: the educ8s <a href="https://github.com/educ8s/Raylib-CPP-Starter-Template-for-VSCODE" target="_blank" rel="noopener">Raylib C++ Starter Template for VS Code</a>.` },
+            { id: "s2", cat: "code", est: 20, label: `Write the skeleton: <code>InitWindow()</code> → <code>while(!WindowShouldClose()){ BeginDrawing(); ClearBackground(BLACK); EndDrawing(); }</code> → <code>CloseWindow()</code>.`, note: `Keep the <a href="https://www.raylib.com/cheatsheet/cheatsheet.html" target="_blank" rel="noopener">cheatsheet</a> open — the whole API on one page.` },
           ],
           model: `All of raylib is one loop: <code>InitWindow</code> → (each frame) <code>BeginDrawing … EndDrawing</code> → <code>CloseWindow</code>. Everything else is just <i>what you draw</i> between Begin/EndDrawing.`,
           cards: [
@@ -145,25 +168,31 @@ registerRoadmap({
             { q: `What does <code>WindowShouldClose()</code> return?`, a: `<code>true</code> when ESC or the window's close button fires — the game-loop exit condition.` },
           ] },
       ],
-      soft: [
-        { id: "s1", type: "callout", label: `🌌 The "Big Bang" side track begins. 2–3 short days a week, one focus each — separate from your main roadmaps. Goal: learn raylib + graphics/simulation math by building a gravitational Big Bang sim.` },
-        { id: "s2", type: "hint", label: `💡 Three side-days a week, on different weekdays each week — placed so your whole day, across every roadmap, stays light. It never piles onto a heavy day.` },
-      ],
-      note: "The journey starts with an empty black window — which is, fittingly, exactly how the universe starts here.",
     },
+
+    /* ---------------- Week 2 ---------------- */
     {
-      id: "d02", date: "2026-09-15", week: "w1", title: "Randomness & Perlin noise — how to seed a universe",
+      id: "d03", date: "2026-10-02", week: "w2", title: "Randomness & Perlin noise — how to seed a universe",
       theme: "Nature of Code · thread part 1 — believable randomness isn't flat.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 95,
-          lead: `<b>Nature of Code ①</b> — the Introduction: random walks & smoother randomness.`,
+        { id: "t1", obj: NOC, cat: "read", est: 60,
+          lead: `<b>Nature of Code ①</b> — the Introduction: random walks & smoother randomness. (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read NoC <a href="https://natureofcode.com/random/" target="_blank" rel="noopener">Introduction</a> (I.1–I.6): the random walker, non-uniform & Gaussian distributions, Perlin noise. (Local PDF pp.1–26.)` },
-            { id: "s2", cat: "exercise", est: 25, label: `Work the Introduction's own <b>exercises in p5.js</b> as you read (the <a href="https://editor.p5js.org/" target="_blank" rel="noopener">p5 web editor</a> — no setup): a walker biased toward the mouse, a Gaussian paint-splatter, and a Perlin-noise walker.`,
-              info: `<p>The book teaches through its exercises — reading them without running them is where understanding quietly goes missing.</p>
+            { id: "s1", est: 30, label: `Read NoC <a href="https://natureofcode.com/random/" target="_blank" rel="noopener">Introduction</a> I.1–I.3: the random walker, and why a uniform distribution looks wrong. (Local PDF pp.1–26.)` },
+            { id: "s2", est: 30, label: "Then the Introduction I.4–I.6: non-uniform & Gaussian distributions, then Perlin noise." },
+          ] },
+      ],
+    },
+    {
+      id: "d04", date: "2026-10-06", week: "w2", title: "Randomness & Perlin noise — how to seed a universe (cont.)",
+      theme: "Finish “Randomness & Perlin noise — how to seed a universe” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d03", obj: NOC, cat: "read", est: 65,
+          lead: `<b>Nature of Code ①</b> — the Introduction: random walks & smoother randomness. (2/2)`,
+          sub: [
+            { id: "s1", cat: "exercise", est: 35, label: `Work the Introduction's own <b>exercises in p5.js</b> as you read (the <a href="https://editor.p5js.org/" target="_blank" rel="noopener">p5 web editor</a> — no setup): a walker biased toward the mouse, a Gaussian paint-splatter, and a Perlin-noise walker.`, info: `<p>The book teaches through its exercises — reading them without running them is where understanding quietly goes missing.</p>
 <p>p5.js is the book's native environment, so an exercise is a 5-line change rather than a C++ rebuild. Do them <b>here</b>, in the browser; the raylib port in the next step is what makes it stick in the language you're actually shipping.</p>` },
-            { id: "s3", cat: "code", est: 25, label: `Port the Random Walker to raylib (<code>GetRandomValue</code> or your own RNG); then compare a uniform spread vs a Gaussian one on screen.`,
-              note: `Watch the Gaussian one bunch toward the center while the uniform one fills evenly — that difference is the whole point.` },
+            { id: "s2", cat: "code", est: 30, label: `Port the Random Walker to raylib (<code>GetRandomValue</code> or your own RNG); then compare a uniform spread vs a Gaussian one on screen.`, note: `Watch the Gaussian one bunch toward the center while the uniform one fills evenly — that difference is the whole point.` },
           ],
           model: `Uniform random = evenly scattered; <b>Gaussian</b> clusters around a mean; <b>Perlin noise</b> = smooth, correlated randomness. A believable Big Bang seeds positions/velocities with Gaussian spread + a little noise — never flat uniform.`,
           cards: [
@@ -172,16 +201,28 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 3 ---------------- */
     {
-      id: "d03", date: "2026-09-16", week: "w1", title: "Shapes I: the coordinate system, rectangles & colour",
+      id: "d05", date: "2026-10-07", week: "w3", title: "Shapes I: the coordinate system, rectangles & colour",
       theme: "raylib course · thread part 2 — and the y-axis trap that will bite every ported formula.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 95,
-          lead: `<b>raylib course ②</b> — begin §3 Shapes: draw the primitives.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 60,
+          lead: `<b>raylib course ②</b> — begin §3 Shapes: draw the primitives. (1/2)`,
           sub: [
-            { id: "s1", est: 60, label: `Udemy §3 Shapes (first third): the screen coordinate system, <code>DrawRectangle</code>/<code>DrawCircle</code>/<code>DrawLine</code>, <code>Color</code> structs & constants (RAYWHITE, etc.).` },
-            { id: "s2", cat: "code", est: 35, label: `Sketch a few compositions; note where the origin is and which way y grows.`,
-              note: `Confirm it yourself: draw a dot at <code>(0,0)</code> — it lands top-left, and increasing y moves it <b>down</b>. That's the trap the model warns about.` },
+            { id: "s1", est: 30, label: "Udemy §3 Shapes (first part): the screen coordinate system and <code>DrawRectangle</code>/<code>DrawCircle</code>/<code>DrawLine</code>." },
+            { id: "s2", est: 30, label: "Udemy §3 (continued): <code>Color</code> structs & constants, and the y-axis convention that will bite every ported formula." },
+          ] },
+      ],
+    },
+    {
+      id: "d06", date: "2026-10-11", week: "w3", title: "Shapes I: the coordinate system, rectangles & colour (cont.)",
+      theme: "Finish “Shapes I: the coordinate system, rectangles & colour” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d05", obj: COURSE, cat: "watch", est: 40,
+          lead: `<b>raylib course ②</b> — begin §3 Shapes: draw the primitives. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: `Sketch a few compositions; note where the origin is and which way y grows.`, note: `Confirm it yourself: draw a dot at <code>(0,0)</code> — it lands top-left, and increasing y moves it <b>down</b>. That's the trap the model warns about.` },
           ],
           model: `raylib's origin is <b>top-left</b> and <b>+y points DOWN</b> (screen space) — the opposite of math's +y up. Every physics formula you port from Nature of Code must flip y (or draw through a flipped camera).`,
           cards: [
@@ -191,17 +232,28 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 2 ---------------- */
+    /* ---------------- Week 4 ---------------- */
     {
-      id: "d04", date: "2026-09-21", week: "w2", title: "Vectors I: the substrate of everything that moves",
+      id: "d07", date: "2026-10-16", week: "w4", title: "Vectors I: the substrate of everything that moves",
       theme: "Nature of Code · thread part 2 — position, velocity, acceleration are all one type.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 90,
-          lead: `<b>Nature of Code ②</b> — Ch.1 Vectors (the foundation of the whole sim).`,
+          lead: `<b>Nature of Code ②</b> — Ch.1 Vectors (the foundation of the whole sim). (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read NoC <a href="https://natureofcode.com/vectors/" target="_blank" rel="noopener">Ch.1</a> (1.1–1.6): add/subtract, scaling, magnitude, normalization.` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do Ch.1's <b>exercises in p5.js</b> as you read: a bouncing ball rewritten with <code>PVector</code>, then a mover that accelerates toward the mouse (normalize → scale).` },
-            { id: "s3", cat: "code", est: 25, label: `Map <code>PVector</code> → raylib <code>Vector2</code> + <a href="https://www.raylib.com/cheatsheet/raymath_cheatsheet.html" target="_blank" rel="noopener">raymath</a> (<code>Vector2Add</code>/<code>Vector2Scale</code>/<code>Vector2Length</code>/<code>Vector2Normalize</code>).` },
+            { id: "s1", est: 30, label: `Read NoC <a href="https://natureofcode.com/vectors/" target="_blank" rel="noopener">Ch.1</a> 1.1–1.3: what a vector is, adding and subtracting them.` },
+            { id: "s2", est: 30, label: "Then NoC Ch.1 1.4–1.6: scaling, magnitude, and normalization." },
+            { id: "s3", cat: "exercise", est: 30, label: `Do Ch.1's <b>exercises in p5.js</b> as you read: a bouncing ball rewritten with <code>PVector</code>, then a mover that accelerates toward the mouse (normalize → scale).` },
+          ] },
+      ],
+    },
+    {
+      id: "d08", date: "2026-10-17", week: "w4", title: "Vectors I: the substrate of everything that moves (cont.)",
+      theme: "Finish “Vectors I: the substrate of everything that moves” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d07", obj: NOC, cat: "read", est: 30,
+          lead: `<b>Nature of Code ②</b> — Ch.1 Vectors (the foundation of the whole sim). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 30, label: `Map <code>PVector</code> → raylib <code>Vector2</code> + <a href="https://www.raylib.com/cheatsheet/raymath_cheatsheet.html" target="_blank" rel="noopener">raymath</a> (<code>Vector2Add</code>/<code>Vector2Scale</code>/<code>Vector2Length</code>/<code>Vector2Normalize</code>).` },
           ],
           model: `A vector is just <code>(x,y)</code> plus operations. Position, velocity, and acceleration are <i>all</i> vectors. Normalize (length→1) then scale = "point me this way with that strength" — the move behind every force you'll write.`,
           cards: [
@@ -210,33 +262,50 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 5 ---------------- */
     {
-      id: "d05", date: "2026-09-24", week: "w2", title: "Shapes II: motion with sin & cos",
+      id: "d09", date: "2026-10-21", week: "w5", title: "Shapes II: motion with sin & cos",
       theme: "raylib course · thread part 3 — turning time into smooth movement.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 80,
-          lead: `<b>raylib course ③</b> — §3 Shapes (middle): animate over time.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 50,
+          lead: `<b>raylib course ③</b> — §3 Shapes (middle): animate over time. (1/2)`,
           sub: [
             { id: "s1", est: 50, label: `Udemy §3: animating shapes with <code>GetTime()</code> / a frame counter and <code>sinf</code>/<code>cosf</code> — a pulsing radius, a circling dot.` },
-            { id: "s2", cat: "code", est: 30, label: `Make one shape orbit a point and one pulse; feel how amplitude & speed read on screen.` },
+          ] },
+      ],
+    },
+    {
+      id: "d10", date: "2026-10-26", week: "w5", title: "Vectors II: velocity, acceleration & a mover",
+      theme: "Nature of Code · thread part 3 — the integration step that never changes.",
+      tasks: [
+        { id: "t1", carried: "d09", obj: COURSE, cat: "watch", est: 35,
+          lead: `<b>raylib course ③</b> — §3 Shapes (middle): animate over time. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Make one shape orbit a point and one pulse; feel how amplitude & speed read on screen.` },
           ],
           model: `sin/cos turn a steadily rising time into smooth oscillation (−1…1). <code>radius = base + amp·sin(t)</code> pulses; <code>(cos t, sin t)</code> traces a circle. This is the seed of every orbit and wave you'll draw.`,
           cards: [
             { q: `How do you make a value oscillate smoothly over time?`, a: `<code>base + amplitude·sin(time)</code>.` },
             { q: `What does <code>(cos t, sin t)</code> trace as t increases?`, a: `A unit circle — the basis of angular/orbital motion.` },
           ] },
+        { id: "t2", obj: NOC, cat: "code", est: 35,
+          lead: `<b>Nature of Code ③</b> — Ch.1 (1.7–1.10): motion from vectors. (1/2)`,
+          sub: [
+            { id: "s1", est: 35, label: `Read NoC Ch.1 (1.7–1.10): velocity, acceleration, interactivity.` },
+          ] },
       ],
     },
+
+    /* ---------------- Week 6 ---------------- */
     {
-      id: "d06", date: "2026-09-25", week: "w2", title: "Vectors II: velocity, acceleration & a mover",
-      theme: "Nature of Code · thread part 3 — the integration step that never changes.",
+      id: "d11", date: "2026-10-29", week: "w6", title: "Vectors II: velocity, acceleration & a mover (cont.)",
+      theme: "Finish “Vectors II: velocity, acceleration & a mover” — the part that didn't fit its first session.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "code", est: 70,
-          lead: `<b>Nature of Code ③</b> — Ch.1 (1.7–1.10): motion from vectors.`,
+        { id: "t1", carried: "d10", obj: NOC, cat: "code", est: 50,
+          lead: `<b>Nature of Code ③</b> — Ch.1 (1.7–1.10): motion from vectors. (2/2)`,
           sub: [
-            { id: "s1", est: 30, label: `Read NoC Ch.1 (1.7–1.10): velocity, acceleration, interactivity.` },
-            { id: "s2", cat: "code", est: 40, label: `Build a <code>Mover</code> in raylib (<code>Vector2 pos,vel,acc</code>): each frame <code>vel += acc</code>, <code>pos += vel</code>, wrap at edges; then aim <code>acc</code> toward the mouse.`,
-              note: `This is the integration step you'll never stop using — get the two lines and the edge-wrap right now, while there's only one body to watch.` },
+            { id: "s1", cat: "code", est: 50, label: `Build a <code>Mover</code> in raylib (<code>Vector2 pos,vel,acc</code>): each frame <code>vel += acc</code>, <code>pos += vel</code>, wrap at edges; then aim <code>acc</code> toward the mouse.`, note: `This is the integration step you'll never stop using — get the two lines and the edge-wrap right now, while there's only one body to watch.` },
           ],
           model: `The integration step never changes: set <code>acc</code> from forces → <code>vel += acc·dt</code> → <code>pos += vel·dt</code>. Everything in the whole simulation is just variations on <i>which forces feed <code>acc</code></i>.`,
           cards: [
@@ -245,18 +314,15 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 3 ---------------- */
     {
-      id: "d07", date: "2026-09-30", week: "w3", title: "Orientation: the examples gallery & a 20-minute setup",
+      id: "d12", date: "2026-10-30", week: "w6", title: "Orientation: the examples gallery & a 20-minute setup",
       theme: "Examples · thread part 1 — your API dictionary is 140 runnable programs.",
       tasks: [
-        { id: "t1", obj: EX, cat: "watch", est: 75,
+        { id: "t1", obj: EX, cat: "watch", est: 80,
           lead: `<b>Examples ①</b> — meet the two resources you'll lean on all journey.`,
           sub: [
             { id: "s1", est: 40, label: `Watch Programming With Nick's <a href="https://www.youtube.com/watch?v=wVYKG_ch4yM&list=PLwR6ZGPvjVOSRywn9VCQ3yrRVruxzzuo9" target="_blank" rel="noopener">raylib tutorials playlist</a> — "Get Started in raylib in 20 minutes" + a VS Code / Raylib-6 setup video — to lock in a clean C++ workflow.` },
-            { id: "s2", cat: "code", est: 35, label: `Browse <a href="https://www.raylib.com/examples.html" target="_blank" rel="noopener">raylib.com/examples.html</a>; run <code>core_basic_window</code>, <code>shapes_basic_shapes</code>, and <b><code>shapes_simple_particles</code></b>.`,
-              note: `Bookmark <code>shapes_simple_particles</code> — it's the closest stock example to your capstone's emitter.` },
+            { id: "s2", cat: "code", est: 40, label: `Browse <a href="https://www.raylib.com/examples.html" target="_blank" rel="noopener">raylib.com/examples.html</a>; run <code>core_basic_window</code>, <code>shapes_basic_shapes</code>, and <b><code>shapes_simple_particles</code></b>.`, note: `Bookmark <code>shapes_simple_particles</code> — it's the closest stock example to your capstone's emitter.` },
           ],
           model: `The examples gallery is your API dictionary — every feature has a runnable ~40-line example. Stuck? Find the example, read its <code>.c</code>, adapt. <code>shapes_simple_particles</code> is literally the seed of your capstone.`,
           cards: [
@@ -267,16 +333,17 @@ registerRoadmap({
           label: `<b>Bonus:</b> adapt <code>shapes_starfield_effect</code> into a slow-drifting starfield — a first taste of "many moving points".` },
       ],
     },
+
+    /* ---------------- Week 7 ---------------- */
     {
-      id: "d08", date: "2026-10-01", week: "w3", title: "Shapes III: triangles, bezier curves & wrapping up drawing",
+      id: "d13", date: "2026-11-04", week: "w7", title: "Shapes III: triangles, bezier curves & wrapping up drawing",
       theme: "raylib course · thread part 4 — you now have every 2D primitive.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 80,
+        { id: "t1", obj: COURSE, cat: "watch", est: 85,
           lead: `<b>raylib course ④</b> — finish §3 Shapes.`,
           sub: [
             { id: "s1", est: 50, label: `Udemy §3 (final third): triangles, polygons, bezier curves, line thickness. Complete the Shapes section.` },
-            { id: "s2", cat: "code", est: 30, label: `Draw a "glow" test: stack many translucent circles at one point and watch the center brighten.`,
-              note: `This stacked-circle glow is your baseline — you'll replace it with a GPU shader later and compare.` },
+            { id: "s2", cat: "code", est: 35, label: `Draw a "glow" test: stack many translucent circles at one point and watch the center brighten.`, note: `This stacked-circle glow is your baseline — you'll replace it with a GPU shader later and compare.` },
           ],
           model: `With shapes + colour + time you can already draw anything 2D. A "glowing particle" is just many translucent circles drawn additively — you'll upgrade that to a GPU shader later, but the underlying shape math is the same.`,
           cards: [
@@ -286,16 +353,28 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-10-03", week: "w3", title: "Forces I: Newton's laws & force accumulation",
+      id: "d14", date: "2026-11-10", week: "w7", title: "Forces I: Newton's laws & force accumulation",
       theme: "Nature of Code · thread part 4 — sum the forces, get one acceleration.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 95,
-          lead: `<b>Nature of Code ④</b> — Ch.2 Forces (2.1–2.5).`,
+        { id: "t1", obj: NOC, cat: "read", est: 30,
+          lead: `<b>Nature of Code ④</b> — Ch.2 Forces (2.1–2.5). (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read NoC <a href="https://natureofcode.com/forces/" target="_blank" rel="noopener">Ch.2</a> (2.1–2.5): Newton's 2nd law as <code>a = F/m</code>, force accumulation, mass.` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do Ch.2's <b>exercises in p5.js</b> as you read: wind + gravity on a mover, then give bodies different masses and watch the same force move them differently.` },
-            { id: "s3", cat: "code", est: 30, label: `Add <code>applyForce(Vector2 f){ acc += f/mass; }</code> to your Mover; push it with a couple of forces at once.`,
-              note: `Zero <code>acc</code> at the end of every frame — forces are re-summed fresh each step, not carried over.` },
+            { id: "s1", est: 30, label: `Read NoC <a href="https://natureofcode.com/forces/" target="_blank" rel="noopener">Ch.2</a> 2.1–2.3: Newton’s laws, and <code>a = F/m</code> as code.` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 8 ---------------- */
+    {
+      id: "d15", date: "2026-11-13", week: "w8", title: "Forces I: Newton's laws & force accumulation (cont.)",
+      theme: "Finish “Forces I: Newton's laws & force accumulation” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d14", obj: NOC, cat: "read", est: 90,
+          lead: `<b>Nature of Code ④</b> — Ch.2 Forces (2.1–2.5). (2/2)`,
+          sub: [
+            { id: "s1", est: 25, label: "Then NoC Ch.2 2.4–2.5: force accumulation, and what mass changes." },
+            { id: "s2", cat: "exercise", est: 30, label: `Do Ch.2's <b>exercises in p5.js</b> as you read: wind + gravity on a mover, then give bodies different masses and watch the same force move them differently.` },
+            { id: "s3", cat: "code", est: 35, label: `Add <code>applyForce(Vector2 f){ acc += f/mass; }</code> to your Mover; push it with a couple of forces at once.`, note: `Zero <code>acc</code> at the end of every frame — forces are re-summed fresh each step, not carried over.` },
           ],
           model: `<code>a = F/m</code>, and forces <b>add</b>: each frame sum every force into one net acceleration, integrate, then zero <code>acc</code>. "Accumulate forces → one acceleration" is the heart of the N-body loop.`,
           cards: [
@@ -304,18 +383,27 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 4 ---------------- */
     {
-      id: "d10", date: "2026-10-05", week: "w4", title: "Input: keyboard & mouse",
+      id: "d16", date: "2026-11-16", week: "w8", title: "Input: keyboard & mouse",
       theme: "raylib course · thread part 5 — held vs pressed, the #1 input bug.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 70,
-          lead: `<b>raylib course ⑤</b> — §4 User Input (first half).`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 40,
+          lead: `<b>raylib course ⑤</b> — §4 User Input (first half). (1/2)`,
           sub: [
             { id: "s1", est: 40, label: `Udemy §4: <code>IsKeyDown</code>/<code>IsKeyPressed</code>, <code>GetMousePosition</code>, mouse buttons.` },
-            { id: "s2", cat: "code", est: 30, label: `Move a shape with WASD/arrows (held → <code>IsKeyDown</code>); drag one with the mouse.`,
-              note: `If a toggle fires twice per press, you used <code>IsKeyDown</code> where <code>IsKeyPressed</code> was meant — the #1 input bug.` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 9 ---------------- */
+    {
+      id: "d17", date: "2026-11-21", week: "w9", title: "Input: keyboard & mouse (cont.)",
+      theme: "Finish “Input: keyboard & mouse” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d16", obj: COURSE, cat: "watch", est: 35,
+          lead: `<b>raylib course ⑤</b> — §4 User Input (first half). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Move a shape with WASD/arrows (held → <code>IsKeyDown</code>); drag one with the mouse.`, note: `If a toggle fires twice per press, you used <code>IsKeyDown</code> where <code>IsKeyPressed</code> was meant — the #1 input bug.` },
           ],
           model: `<code>IsKeyDown</code> = held (continuous — movement); <code>IsKeyPressed</code> = the single frame it went down (toggles/actions). Confusing the two is the most common input bug.`,
           cards: [
@@ -325,16 +413,28 @@ registerRoadmap({
       ],
     },
     {
-      id: "d11", date: "2026-10-07", week: "w4", title: "Forces II: gravity, friction & drag",
+      id: "d18", date: "2026-11-24", week: "w9", title: "Forces II: gravity, friction & drag",
       theme: "Nature of Code · thread part 5 — a constant field is NOT attraction.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 110,
-          lead: `<b>Nature of Code ⑤</b> — Ch.2 (2.6–2.8): environmental forces.`,
+        { id: "t1", obj: NOC, cat: "read", est: 85,
+          lead: `<b>Nature of Code ⑤</b> — Ch.2 (2.6–2.8): environmental forces. (1/2)`,
           sub: [
-            { id: "s1", est: 55, label: `Read NoC Ch.2 (2.6–2.8): modeling gravity as weight (<code>m·g</code>), friction, air/fluid resistance.` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do the 2.6–2.8 <b>exercises in p5.js</b>: add friction to a bouncing ball, then drop a body through a "liquid" region and feel the drag switch on.` },
-            { id: "s3", cat: "code", est: 35, label: `Add a global downward force + a drag force to your movers; watch motion settle.`,
-              note: `Note this constant <code>m·g</code> field is NOT gravitational attraction between bodies — that's the next forces day.` },
+            { id: "s1", est: 25, label: "Read NoC Ch.2 2.6: modeling gravity as weight (<code>m·g</code>) — not as attraction." },
+            { id: "s2", est: 30, label: "Then NoC Ch.2 2.7–2.8: friction, and air/fluid resistance." },
+            { id: "s3", cat: "exercise", est: 30, label: `Do the 2.6–2.8 <b>exercises in p5.js</b>: add friction to a bouncing ball, then drop a body through a "liquid" region and feel the drag switch on.` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 10 ---------------- */
+    {
+      id: "d19", date: "2026-11-27", week: "w10", title: "Forces II: gravity, friction & drag (cont.)",
+      theme: "Finish “Forces II: gravity, friction & drag” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d18", obj: NOC, cat: "read", est: 40,
+          lead: `<b>Nature of Code ⑤</b> — Ch.2 (2.6–2.8): environmental forces. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: `Add a global downward force + a drag force to your movers; watch motion settle.`, note: `Note this constant <code>m·g</code> field is NOT gravitational attraction between bodies — that's the next forces day.` },
           ],
           model: `Constant "gravity" (<code>m·g</code> down) is the <b>Earth</b> model — a fixed field. That's different from gravitational <b>attraction</b> between bodies (next forces day). Drag opposes velocity and scales with speed² — it's what makes motion damp.`,
           cards: [
@@ -344,15 +444,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-10-08", week: "w4", title: "The update loop & delta-time, done right",
+      id: "d20", date: "2026-11-29", week: "w10", title: "The update loop & delta-time, done right",
       theme: "raylib course · thread part 6 — split update from draw, scale by dt.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "code", est: 65,
+        { id: "t1", obj: COURSE, cat: "code", est: 75,
           lead: `<b>raylib course ⑥</b> — §4 Update (second half).`,
           sub: [
-            { id: "s1", est: 35, label: `Udemy §4: logic/update vs draw. Use <code>GetFrameTime()</code>; study example <code>core_delta_time</code>.` },
-            { id: "s2", cat: "code", est: 30, label: `Refactor your mover so every motion is multiplied by <code>GetFrameTime()</code>.`,
-              note: `Test it: cap the framerate to 30 then 144 — the mover should cross the screen in the same wall-clock time.` },
+            { id: "s1", est: 40, label: `Udemy §4: logic/update vs draw. Use <code>GetFrameTime()</code>; study example <code>core_delta_time</code>.` },
+            { id: "s2", cat: "code", est: 35, label: `Refactor your mover so every motion is multiplied by <code>GetFrameTime()</code>.`, note: `Test it: cap the framerate to 30 then 144 — the mover should cross the screen in the same wall-clock time.` },
           ],
           model: `Split each frame into <b>UPDATE</b> (advance state by dt) and <b>DRAW</b> (render state). Multiply all motion by <code>GetFrameTime()</code> so physics runs identically on any machine — non-negotiable once the sim has thousands of bodies.`,
           cards: [
@@ -362,18 +461,17 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 5 ---------------- */
+    /* ---------------- Week 11 ---------------- */
     {
-      id: "d13", date: "2026-10-11", week: "w5", title: "Forces III: gravitational attraction — the N-body kernel ⚛️",
+      id: "d21", date: "2026-12-02", week: "w11", title: "Forces III: gravitational attraction — the N-body kernel ⚛️",
       theme: "Nature of Code · thread part 6 — this one formula IS the simulation engine.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "code", est: 70,
+        { id: "t1", obj: NOC, cat: "code", est: 80,
           lead: `<b>Nature of Code ⑥</b> — Ch.2 (2.9–2.10): everything attracts everything.`,
           sub: [
-            { id: "s1", est: 25, label: `Read NoC Ch.2 <b>2.9 Gravitational Attraction</b> + <b>2.10 Everything Attracts Everything</b>: <code>F = G·m₁·m₂/r²</code> along the unit vector between bodies.` },
-            { id: "s2", cat: "code", est: 25, label: `Code an <code>Attractor</code> pulling a few movers; then let two movers attract each other.` },
-            { id: "s3", cat: "code", est: 20, label: `<b>Add softening</b> — divide by <code>(r² + ε²)</code> so near-overlapping pairs don't explode.`,
-              note: `See Philip Mocz's <a href="https://medium.com/swlh/create-your-own-n-body-simulation-with-python-f417234885e9" target="_blank" rel="noopener">N-body write-up</a> for sane constants & the softening length ε. Without ε, a close pair slingshots to infinity.` },
+            { id: "s1", est: 30, label: `Read NoC Ch.2 <b>2.9 Gravitational Attraction</b> + <b>2.10 Everything Attracts Everything</b>: <code>F = G·m₁·m₂/r²</code> along the unit vector between bodies.` },
+            { id: "s2", cat: "code", est: 30, label: `Code an <code>Attractor</code> pulling a few movers; then let two movers attract each other.` },
+            { id: "s3", cat: "code", est: 20, label: `<b>Add softening</b> — divide by <code>(r² + ε²)</code> so near-overlapping pairs don't explode.`, note: `See Philip Mocz's <a href="https://medium.com/swlh/create-your-own-n-body-simulation-with-python-f417234885e9" target="_blank" rel="noopener">N-body write-up</a> for sane constants & the softening length ε. Without ε, a close pair slingshots to infinity.` },
           ],
           model: `For each pair: <code>dir = normalize(b − a)</code>, <code>r = dist(a,b)</code>, <code>F = G·mₐ·m_b/(r² + ε²) · dir</code>. Summed over all pairs = N-body gravity. The <b>ε (softening length)</b> is what keeps the sim finite when <code>r→0</code>.`,
           cards: [
@@ -387,35 +485,48 @@ registerRoadmap({
       ],
     },
     {
-      id: "d14", date: "2026-10-16", week: "w5", title: "Collision detection",
+      id: "d22", date: "2026-12-03", week: "w11", title: "Collision detection",
       theme: "raylib course · thread part 7 — cheap test first, precise test only if it passes.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 80,
-          lead: `<b>raylib course ⑦</b> — begin §5 Collision & Tilemaps.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 50,
+          lead: `<b>raylib course ⑦</b> — begin §5 Collision & Tilemaps. (1/2)`,
           sub: [
             { id: "s1", est: 50, label: `Udemy §5 (first half): <code>CheckCollisionRecs</code>/<code>CheckCollisionCircles</code>/<code>CheckCollisionPointRec</code>.` },
-            { id: "s2", cat: "code", est: 30, label: `Bounce a ball off the walls (invert the velocity component on contact).` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 12 ---------------- */
+    {
+      id: "d23", date: "2026-12-09", week: "w12", title: "Port-along #1: Basics → Movement → Input (Clear Code)",
+      theme: "Examples · thread part 2 — the API is the same in Python and C++.",
+      tasks: [
+        { id: "t1", carried: "d22", obj: COURSE, cat: "watch", est: 35,
+          lead: `<b>raylib course ⑦</b> — begin §5 Collision & Tilemaps. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Bounce a ball off the walls (invert the velocity component on contact).` },
           ],
           model: `raylib ships the common 2D checks (rect/rect, circle/circle, point/rect). The broad idea — cheap bounding test first, precise test only if it passes — is the seed of the spatial optimization you'll need later.`,
           cards: [
             { q: `Which collision checks does raylib give you for free?`, a: `<code>CheckCollisionRecs</code>, <code>CheckCollisionCircles</code>, <code>CheckCollisionPointRec</code> (+ circle/rec).` },
             { q: `The "cheap-then-precise" collision idea?`, a: `Test cheap bounding volumes first; run the exact test only on pairs that pass — the foundation of spatial partitioning.` },
           ] },
+        { id: "t2", obj: EX, cat: "code", est: 40,
+          lead: `<b>Examples ②</b> — start porting the big raylib video to C++. (1/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: `Clear Code <a href="https://www.youtube.com/watch?v=UoAsDlUwjy0" target="_blank" rel="noopener">"The ultimate introduction to Raylib"</a> — <b>Basics</b> (~0:00–0:25): port to C++ into a <code>portalong/</code> project.`, note: `It's Python/pyray, but the API names are identical — translate as you watch instead of copying.` },
+          ] },
       ],
     },
-
-    /* ---------------- Week 6 ---------------- */
     {
-      id: "d15", date: "2026-10-19", week: "w6", title: "Port-along #1: Basics → Movement → Input (Clear Code)",
-      theme: "Examples · thread part 2 — the API is the same in Python and C++.",
+      id: "d24", date: "2026-12-12", week: "w12", title: "Port-along #1: Basics → Movement → Input (Clear Code) (cont.)",
+      theme: "Finish “Port-along #1: Basics → Movement → Input (Clear Code)” — the part that didn't fit its first session.",
       tasks: [
-        { id: "t1", obj: EX, cat: "code", est: 75,
-          lead: `<b>Examples ②</b> — start porting the big raylib video to C++.`,
+        { id: "t1", carried: "d23", obj: EX, cat: "code", est: 80,
+          lead: `<b>Examples ②</b> — start porting the big raylib video to C++. (2/2)`,
           sub: [
-            { id: "s1", cat: "code", est: 25, label: `Clear Code <a href="https://www.youtube.com/watch?v=UoAsDlUwjy0" target="_blank" rel="noopener">"The ultimate introduction to Raylib"</a> — <b>Basics</b> (~0:00–0:25): port to C++ into a <code>portalong/</code> project.`,
-              note: `It's Python/pyray, but the API names are identical — translate as you watch instead of copying.` },
-            { id: "s2", cat: "code", est: 25, label: `<b>Movement</b> (~0:25–0:50): port to C++.` },
-            { id: "s3", cat: "code", est: 25, label: `<b>Input</b> (~0:50–1:09): port to C++.` },
+            { id: "s1", cat: "code", est: 40, label: `<b>Movement</b> (~0:25–0:50): port to C++.` },
+            { id: "s2", cat: "code", est: 40, label: `<b>Input</b> (~0:50–1:09): port to C++.` },
           ],
           model: `The raylib API is identical across bindings — <code>DrawCircle</code> is <code>DrawCircle</code> in Python or C++. Watching Python and typing C++ forces you to understand each call instead of copying it.`,
           cards: [
@@ -424,17 +535,29 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 13 ---------------- */
     {
-      id: "d16", date: "2026-10-20", week: "w6", title: "Oscillation I: angles, trig & polar coordinates",
+      id: "d25", date: "2026-12-17", week: "w13", title: "Oscillation I: angles, trig & polar coordinates",
       theme: "Nature of Code · thread part 7 — the natural language of an explosion.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 95,
-          lead: `<b>Nature of Code ⑦</b> — Ch.3 Oscillation (3.1–3.5).`,
+        { id: "t1", obj: NOC, cat: "read", est: 85,
+          lead: `<b>Nature of Code ⑦</b> — Ch.3 Oscillation (3.1–3.5). (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read NoC <a href="https://natureofcode.com/oscillation/" target="_blank" rel="noopener">Ch.3</a> (3.1–3.5): angles, angular motion, <b>polar ↔ Cartesian</b>.` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do Ch.3's <b>exercises in p5.js</b> as you read: rotate a rectangle by its own angular velocity, then place points on a circle with <code>(r·cosθ, r·sinθ)</code>.` },
-            { id: "s3", cat: "code", est: 30, label: `Convert <code>(angle, radius)</code> → <code>(r·cosθ, r·sinθ)</code>; use it to fire test particles radially outward.`,
-              note: `Random angle + outward speed = a radial burst — you'll reuse this exact seeding for the Big Bang.` },
+            { id: "s1", est: 30, label: `Read NoC <a href="https://natureofcode.com/oscillation/" target="_blank" rel="noopener">Ch.3</a> 3.1–3.3: angles, angular motion, and trig on screen.` },
+            { id: "s2", est: 25, label: "Then NoC Ch.3 3.4–3.5: <b>polar ↔ Cartesian</b>, the conversion the whole burst depends on." },
+            { id: "s3", cat: "exercise", est: 30, label: `Do Ch.3's <b>exercises in p5.js</b> as you read: rotate a rectangle by its own angular velocity, then place points on a circle with <code>(r·cosθ, r·sinθ)</code>.` },
+          ] },
+      ],
+    },
+    {
+      id: "d26", date: "2026-12-21", week: "w13", title: "Oscillation I: angles, trig & polar coordinates (cont.)",
+      theme: "Finish “Oscillation I: angles, trig & polar coordinates” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d25", obj: NOC, cat: "read", est: 35,
+          lead: `<b>Nature of Code ⑦</b> — Ch.3 Oscillation (3.1–3.5). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Convert <code>(angle, radius)</code> → <code>(r·cosθ, r·sinθ)</code>; use it to fire test particles radially outward.`, note: `Random angle + outward speed = a radial burst — you'll reuse this exact seeding for the Big Bang.` },
           ],
           model: `Polar coordinates (angle + radius) are the natural language of a Big Bang: give each particle a random angle and an outward speed, then convert to a Cartesian velocity. A uniform explosion = uniform angles + similar speeds.`,
           cards: [
@@ -443,21 +566,16 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 14 ---------------- */
     {
-      id: "d17", date: "2026-10-21", week: "w6", title: "Tilemaps & the 2D camera 🎮",
+      id: "d27", date: "2026-12-23", week: "w14", title: "Tilemaps & the 2D camera 🎮",
       theme: "raylib course · thread part 8 — Camera2D is a lens; ~half the basics owned.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "code", est: 65,
-          lead: `<b>raylib course ⑧</b> — finish §5 Collision & Tilemaps.`,
+        { id: "t1", obj: COURSE, cat: "code", est: 40,
+          lead: `<b>raylib course ⑧</b> — finish §5 Collision & Tilemaps. (1/2)`,
           sub: [
-            { id: "s1", est: 35, label: `Udemy §5 (second half): draw a tilemap from a 2D grid; <code>Camera2D</code> (target/offset/zoom/rotation); example <code>core_2d_camera</code>.` },
-            { id: "s2", cat: "code", est: 30, label: `Add a pan/zoom camera to a scene and roam it (<code>BeginMode2D(cam)…EndMode2D</code>).`,
-              note: `This is the camera you'll later fly around the particle cloud.` },
-          ],
-          model: `<code>Camera2D</code> is a lens: set <b>target</b> (world point to center), <b>offset</b> (where it lands on screen), and <b>zoom</b>. <code>BeginMode2D(cam)…EndMode2D</code> draws the world through it — you'll fly this camera around your particle cloud.`,
-          cards: [
-            { q: `The four fields of <code>Camera2D</code>?`, a: `target (world focus), offset (screen anchor), rotation, zoom.` },
-            { q: `What do <code>BeginMode2D</code>/<code>EndMode2D</code> do?`, a: `Draw everything between them through the camera transform (world→screen).` },
+            { id: "s1", est: 40, label: `Udemy §5 (second half): draw a tilemap from a 2D grid; <code>Camera2D</code> (target/offset/zoom/rotation); example <code>core_2d_camera</code>.` },
           ] },
       ],
       soft: [
@@ -465,19 +583,45 @@ registerRoadmap({
       ],
       note: "Half the raylib basics owned. Course load now drops; the physics (Nature of Code) and the port-alongs step up.",
     },
-
-    /* ---------------- Week 7 ---------------- */
     {
-      id: "d18", date: "2026-10-25", week: "w7", title: "Oscillation II: waves, pendulums & springs",
+      id: "d28", date: "2026-12-25", week: "w14", title: "Tilemaps & the 2D camera 🎮 (cont.)",
+      theme: "Finish “Tilemaps & the 2D camera 🎮” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d27", obj: COURSE, cat: "code", est: 35,
+          lead: `<b>raylib course ⑧</b> — finish §5 Collision & Tilemaps. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Add a pan/zoom camera to a scene and roam it (<code>BeginMode2D(cam)…EndMode2D</code>).`, note: `This is the camera you'll later fly around the particle cloud.` },
+          ],
+          model: `<code>Camera2D</code> is a lens: set <b>target</b> (world point to center), <b>offset</b> (where it lands on screen), and <b>zoom</b>. <code>BeginMode2D(cam)…EndMode2D</code> draws the world through it — you'll fly this camera around your particle cloud.`,
+          cards: [
+            { q: `The four fields of <code>Camera2D</code>?`, a: `target (world focus), offset (screen anchor), rotation, zoom.` },
+            { q: `What do <code>BeginMode2D</code>/<code>EndMode2D</code> do?`, a: `Draw everything between them through the camera transform (world→screen).` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 15 ---------------- */
+    {
+      id: "d29", date: "2026-12-30", week: "w15", title: "Oscillation II: waves, pendulums & springs",
       theme: "Nature of Code · thread part 8 — restoring forces for soft structure.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 100,
-          lead: `<b>Nature of Code ⑧</b> — Ch.3 (3.6–3.10).`,
+        { id: "t1", obj: NOC, cat: "read", est: 90,
+          lead: `<b>Nature of Code ⑧</b> — Ch.3 (3.6–3.10). (1/2)`,
           sub: [
-            { id: "s1", est: 50, label: `Read NoC Ch.3 (3.6–3.10): amplitude/period, waves, pendulum, <b>spring forces</b> (Hooke's law <code>F = −k·x</code>).` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do the 3.6–3.10 <b>exercises in p5.js</b>: drive motion with a sine wave, build the simple pendulum, then hang a body off a spring and damp it.` },
-            { id: "s3", cat: "code", est: 30, label: `Connect two particles with a spring and watch them settle.`,
-              note: `Springs + attraction + damping are the toolkit if you later want soft structures that hold together instead of flying apart.` },
+            { id: "s1", est: 30, label: "Read NoC Ch.3 3.6–3.8: amplitude, period, and waves." },
+            { id: "s2", est: 30, label: "Then NoC Ch.3 3.9–3.10: the pendulum, and <b>spring forces</b> (Hooke’s law <code>F = −k·x</code>)." },
+            { id: "s3", cat: "exercise", est: 30, label: `Do the 3.6–3.10 <b>exercises in p5.js</b>: drive motion with a sine wave, build the simple pendulum, then hang a body off a spring and damp it.` },
+          ] },
+      ],
+    },
+    {
+      id: "d30", date: "2027-01-03", week: "w15", title: "Oscillation II: waves, pendulums & springs (cont.)",
+      theme: "Finish “Oscillation II: waves, pendulums & springs” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d29", obj: NOC, cat: "read", est: 35,
+          lead: `<b>Nature of Code ⑧</b> — Ch.3 (3.6–3.10). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Connect two particles with a spring and watch them settle.`, note: `Springs + attraction + damping are the toolkit if you later want soft structures that hold together instead of flying apart.` },
           ],
           model: `A spring force pulls proportional to how far it's stretched (<code>F = −k·x</code>). Springs + attraction + damping are the whole toolkit for "soft" clustering if you later want structures to hold together instead of fly apart.`,
           cards: [
@@ -486,16 +630,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 16 ---------------- */
     {
-      id: "d19", date: "2026-10-26", week: "w7", title: "An OOP build: Conway's Game of Life (Nick, C++)",
+      id: "d31", date: "2027-01-07", week: "w16", title: "An OOP build: Conway's Game of Life (Nick, C++)",
       theme: "Examples · thread part 3 — stepping a whole field from state N to N+1.",
       tasks: [
-        { id: "t1", obj: EX, cat: "code", est: 60,
+        { id: "t1", obj: EX, cat: "code", est: 70,
           lead: `<b>Examples ③</b> — build a full C++ raylib program end-to-end.`,
           sub: [
-            { id: "s1", est: 35, label: `Follow Programming With Nick's <a href="https://github.com/educ8s/CPP-Game-Of-Life-with-raylib" target="_blank" rel="noopener">Conway's Game of Life in C++ & raylib (OOP)</a> (repo linked).` },
-            { id: "s2", cat: "code", est: 25, label: `Note the update/draw split and how the grid steps from state N to N+1.`,
-              note: `Compute the next state into a <b>separate buffer</b>, then swap — mid-update reads must see the consistent old state, exactly like stepping a particle field.` },
+            { id: "s1", est: 40, label: `Follow Programming With Nick's <a href="https://github.com/educ8s/CPP-Game-Of-Life-with-raylib" target="_blank" rel="noopener">Conway's Game of Life in C++ & raylib (OOP)</a> (repo linked).` },
+            { id: "s2", cat: "code", est: 30, label: `Note the update/draw split and how the grid steps from state N to N+1.`, note: `Compute the next state into a <b>separate buffer</b>, then swap — mid-update reads must see the consistent old state, exactly like stepping a particle field.` },
           ],
           model: `Game of Life steps a whole grid from state N to N+1 each frame — structurally identical to stepping your particle field: read all current state, compute the next, then swap. Great C++/OOP scaffolding practice.`,
           cards: [
@@ -505,15 +650,27 @@ registerRoadmap({
       ],
     },
     {
-      id: "d20", date: "2026-10-29", week: "w7", title: "Projects I: a guided build (course tapering)",
+      id: "d32", date: "2027-01-09", week: "w16", title: "Projects I: a guided build (course tapering)",
       theme: "raylib course · thread part 9 — the shape every finished program shares.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 85,
-          lead: `<b>raylib course ⑨</b> — §6 Projects (first project). Course load is now light.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 35,
+          lead: `<b>raylib course ⑨</b> — §6 Projects (first project). Course load is now light. (1/2)`,
           sub: [
-            { id: "s1", est: 60, label: `Udemy §6 Projects: follow one guided game start to finish.` },
-            { id: "s2", cat: "review", est: 25, label: `Extract the shape he uses: a state struct, <code>update(state, dt)</code>, <code>draw(state)</code>, and a reset.`,
-              note: `Your simulation will have exactly this shape — internalize it now.` },
+            { id: "s1", est: 35, label: "Udemy §6 Projects: follow the first guided game as far as its core loop." },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 17 ---------------- */
+    {
+      id: "d33", date: "2027-01-13", week: "w17", title: "Projects I: a guided build (course tapering) (cont.)",
+      theme: "Finish “Projects I: a guided build (course tapering)” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d32", obj: COURSE, cat: "watch", est: 55,
+          lead: `<b>raylib course ⑨</b> — §6 Projects (first project). Course load is now light. (2/2)`,
+          sub: [
+            { id: "s1", est: 30, label: "Finish that project — scoring, reset, and the polish pass." },
+            { id: "s2", cat: "review", est: 25, label: `Extract the shape he uses: a state struct, <code>update(state, dt)</code>, <code>draw(state)</code>, and a reset.`, note: `Your simulation will have exactly this shape — internalize it now.` },
           ],
           model: `A finished raylib program is just your loop plus: a state struct, <code>update(state, dt)</code>, <code>draw(state)</code>, and a <code>reset</code>. Your simulation will have exactly this shape.`,
           cards: [
@@ -522,19 +679,29 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 8 ---------------- */
     {
-      id: "d21", date: "2026-11-03", week: "w8", title: "Particle systems I: one particle → a system",
+      id: "d34", date: "2027-01-19", week: "w17", title: "Particle systems I: one particle → a system",
       theme: "Nature of Code · thread part 9 — std::vector is the ArrayList, erase the dead.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "code", est: 95,
-          lead: `<b>Nature of Code ⑨</b> — Ch.4 Particle Systems (4.1–4.5).`,
+        { id: "t1", obj: NOC, cat: "code", est: 80,
+          lead: `<b>Nature of Code ⑨</b> — Ch.4 Particle Systems (4.1–4.5). (1/2)`,
           sub: [
-            { id: "s1", est: 40, label: `Read NoC <a href="https://natureofcode.com/particles/" target="_blank" rel="noopener">Ch.4</a> (4.1–4.5): a Particle (pos/vel/acc/lifespan), the ParticleSystem class, a system of systems.` },
-            { id: "s2", cat: "exercise", est: 20, label: `Do Ch.4's <b>exercises in p5.js</b> as you read: a particle that fades over its lifespan, then an emitter that follows the mouse and a system-of-systems.` },
-            { id: "s3", cat: "code", est: 35, label: `Build an emitter in raylib backed by <code>std::vector&lt;Particle&gt;</code>; spawn a few each frame, remove the dead.`,
-              note: `Use erase–remove_if to cull particles whose lifespan hit zero — the same vector you'll scale to thousands.` },
+            { id: "s1", est: 25, label: `Read NoC <a href="https://natureofcode.com/particles/" target="_blank" rel="noopener">Ch.4</a> 4.1–4.3: a Particle (pos/vel/acc/lifespan), and an array of them.` },
+            { id: "s2", est: 25, label: "Then NoC Ch.4 4.4–4.5: the ParticleSystem class, and a system of systems." },
+            { id: "s3", cat: "exercise", est: 30, label: `Do Ch.4's <b>exercises in p5.js</b> as you read: a particle that fades over its lifespan, then an emitter that follows the mouse and a system-of-systems.` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 18 ---------------- */
+    {
+      id: "d35", date: "2027-01-23", week: "w18", title: "Particle systems I: one particle → a system (cont.)",
+      theme: "Finish “Particle systems I: one particle → a system” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d34", obj: NOC, cat: "code", est: 40,
+          lead: `<b>Nature of Code ⑨</b> — Ch.4 Particle Systems (4.1–4.5). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: `Build an emitter in raylib backed by <code>std::vector&lt;Particle&gt;</code>; spawn a few each frame, remove the dead.`, note: `Use erase–remove_if to cull particles whose lifespan hit zero — the same vector you'll scale to thousands.` },
           ],
           model: `A particle system owns a vector of particles: each frame — spawn a few, update all, draw all, erase the dead (lifespan ≤ 0). Use <code>std::vector</code> where NoC uses ArrayList; erase–remove for the dead.`,
           cards: [
@@ -544,15 +711,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d22", date: "2026-11-06", week: "w8", title: "Particle systems II: forces & repellers",
+      id: "d36", date: "2027-01-24", week: "w18", title: "Particle systems II: forces & repellers",
       theme: "Nature of Code · thread part 10 — one step from N-body already.",
       tasks: [
-        { id: "t1", obj: NOC, cat: "code", est: 70,
+        { id: "t1", obj: NOC, cat: "code", est: 80,
           lead: `<b>Nature of Code ⑩</b> — Ch.4 (4.11–4.12).`,
           sub: [
-            { id: "s1", est: 35, label: `Read NoC Ch.4 (4.11 systems with forces, 4.12 repellers).` },
-            { id: "s2", cat: "code", est: 35, label: `Apply a global force to every particle; add a mouse-controlled attractor and a repeller.`,
-              note: `An attractor is the N-body gravity force with one heavy fixed body; a repeller is the same, sign-flipped. You're one step from full N-body.` },
+            { id: "s1", est: 40, label: `Read NoC Ch.4 (4.11 systems with forces, 4.12 repellers).` },
+            { id: "s2", cat: "code", est: 40, label: `Apply a global force to every particle; add a mouse-controlled attractor and a repeller.`, note: `An attractor is the N-body gravity force with one heavy fixed body; a repeller is the same, sign-flipped. You're one step from full N-body.` },
           ],
           model: `Applying a force to the whole system = loop <code>applyForce</code> over each particle. An attractor is just the gravity force from the N-body day with one heavy fixed body — you're now one step from full N-body.`,
           cards: [
@@ -561,8 +727,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 19 ---------------- */
     {
-      id: "d23", date: "2026-11-07", week: "w8", title: "Projects II: a second build + consolidation",
+      id: "d37", date: "2027-01-28", week: "w19", title: "Projects II: a second build + consolidation",
       theme: "raylib course · thread part 10 — the moment the patterns start repeating.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 75,
@@ -579,23 +747,14 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 9 ---------------- */
     {
-      id: "d24", date: "2026-11-08", week: "w9", title: "🌌 The simulation begins: one particle in the void",
+      id: "d38", date: "2027-02-02", week: "w19", title: "🌌 The simulation begins: one particle in the void",
       theme: "Big Bang · v0 — nail the loop before scale can hide bugs.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
-          lead: `<b>Big Bang v0</b> — a black window, one glowing point, correct integration.`,
+        { id: "t1", obj: PROJ, cat: "project", est: 50,
+          lead: `<b>Big Bang v0</b> — a black window, one glowing point, correct integration. (1/2)`,
           sub: [
-            { id: "s1", est: 40, label: `New <code>bigbang/</code> project (educ8s C++ starter template). Black background; one <code>struct Particle{ Vector2 pos, vel, acc; }</code> at center; give it a velocity.` },
-            { id: "s2", cat: "code", est: 35, label: `Integrate with <code>GetFrameTime()</code>; draw with <code>DrawCircleV</code>. Clean <b>update / draw</b> split.`,
-              note: `Commit this as <b>v0</b>. Every later feature — thousands of bodies, gravity, shaders — hangs off this skeleton, so get the loop right before scale can hide bugs.` },
-          ],
-          model: `Start impossibly small: one particle, correct delta-time integration, a clean update/draw split. Every later feature (thousands of bodies, gravity, shaders) hangs off this skeleton. Get the loop right first.`,
-          cards: [
-            { q: `The smallest correct first version of the sim?`, a: `One particle with pos/vel/acc, integrated by dt, drawn on a black-cleared background.` },
-            { q: `Why start with ONE particle?`, a: `To nail integration + the update/draw structure before scale hides bugs.` },
+            { id: "s1", est: 50, label: `New <code>bigbang/</code> project (educ8s C++ starter template). Black background; one <code>struct Particle{ Vector2 pos, vel, acc; }</code> at center; give it a velocity.` },
           ] },
       ],
       soft: [
@@ -603,16 +762,33 @@ registerRoadmap({
       ],
       note: "The Udemy course is winding down to its final GUI/audio section — the simulation is now the spine of the journey.",
     },
+
+    /* ---------------- Week 20 ---------------- */
     {
-      id: "d25", date: "2026-11-11", week: "w9", title: "Particle systems III: textures & additive blending ✨",
+      id: "d39", date: "2027-02-06", week: "w20", title: "🌌 The simulation begins: one particle in the void (cont.)",
+      theme: "Finish “🌌 The simulation begins: one particle in the void” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d38", obj: PROJ, cat: "project", est: 40,
+          lead: `<b>Big Bang v0</b> — a black window, one glowing point, correct integration. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: `Integrate with <code>GetFrameTime()</code>; draw with <code>DrawCircleV</code>. Clean <b>update / draw</b> split.`, note: `Commit this as <b>v0</b>. Every later feature — thousands of bodies, gravity, shaders — hangs off this skeleton, so get the loop right before scale can hide bugs.` },
+          ],
+          model: `Start impossibly small: one particle, correct delta-time integration, a clean update/draw split. Every later feature (thousands of bodies, gravity, shaders) hangs off this skeleton. Get the loop right first.`,
+          cards: [
+            { q: `The smallest correct first version of the sim?`, a: `One particle with pos/vel/acc, integrated by dt, drawn on a black-cleared background.` },
+            { q: `Why start with ONE particle?`, a: `To nail integration + the update/draw structure before scale hides bugs.` },
+          ] },
+      ],
+    },
+    {
+      id: "d40", date: "2027-02-08", week: "w20", title: "Particle systems III: textures & additive blending ✨",
       theme: "Nature of Code · thread part 11 — the bridge from physics to look.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 80,
           lead: `<b>Nature of Code ⑪</b> — Ch.4 (4.13): the physics→look junction.`,
           sub: [
-            { id: "s1", est: 45, label: `Read NoC Ch.4 (4.13 image textures + additive blending).` },
-            { id: "s2", cat: "code", est: 35, label: `In raylib: <code>BeginBlendMode(BLEND_ADDITIVE)</code>, draw a soft radial texture per particle; study example <code>textures_particles_blending</code>.`,
-              note: `Additive blending sums colours where particles overlap — dense regions glow, sparse ones stay dark. The whole luminous look, before any shader.` },
+            { id: "s1", est: 40, label: `Read NoC Ch.4 (4.13 image textures + additive blending).` },
+            { id: "s2", cat: "code", est: 40, label: `In raylib: <code>BeginBlendMode(BLEND_ADDITIVE)</code>, draw a soft radial texture per particle; study example <code>textures_particles_blending</code>.`, note: `Additive blending sums colours where particles overlap — dense regions glow, sparse ones stay dark. The whole luminous look, before any shader.` },
           ],
           model: `Additive blending <i>adds</i> colours where particles overlap, so dense regions glow white-hot and sparse ones stay dim — the whole "luminous cosmos" look for free, before any shader. This is the junction between Nature of Code and the Book of Shaders.`,
           cards: [
@@ -621,16 +797,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 21 ---------------- */
     {
-      id: "d26", date: "2026-11-12", week: "w9", title: "Big Bang v1: the burst 💥",
+      id: "d41", date: "2027-02-12", week: "w21", title: "Big Bang v1: the burst 💥",
       theme: "Big Bang · v1 — seed the universe with polar velocities.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v1</b> — emit the universe (no forces yet).`,
           sub: [
-            { id: "s1", est: 40, label: `Extend <code>bigbang</code>: spawn N particles at the origin with <b>polar</b> velocities (random angle, Gaussian speed) — combining NoC 3.5 + the Introduction's Gaussian.` },
-            { id: "s2", cat: "code", est: 35, label: `Back it with <code>std::vector&lt;Particle&gt;</code>; apply the additive glow from the last NoC day. No forces yet — just watch it expand.`,
-              note: `Tune μ/σ of the speed until the spread feels right: a dense core with a few fast outliers.` },
+            { id: "s1", est: 50, label: `Extend <code>bigbang</code>: spawn N particles at the origin with <b>polar</b> velocities (random angle, Gaussian speed) — combining NoC 3.5 + the Introduction's Gaussian.` },
+            { id: "s2", cat: "code", est: 40, label: `Back it with <code>std::vector&lt;Particle&gt;</code>; apply the additive glow from the last NoC day. No forces yet — just watch it expand.`, note: `Tune μ/σ of the speed until the spread feels right: a dense core with a few fast outliers.` },
           ],
           model: `The "bang" is one line of seeding: for each particle <code>θ = random(0, 2π)</code>, <code>s = gaussian(μ, σ)</code>, <code>vel = (s·cosθ, s·sinθ)</code>. No forces yet — just watch it expand. Tune μ/σ until the spread feels right.`,
           cards: [
@@ -639,10 +816,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 10 ---------------- */
     {
-      id: "d27", date: "2026-11-15", week: "w10", title: "Music & GUI I: buttons, sliders & a control panel",
+      id: "d42", date: "2027-02-16", week: "w21", title: "Music & GUI I: buttons, sliders & a control panel",
       theme: "raylib course · thread part 11 — immediate-mode widgets for the sim.",
       tasks: [
         { id: "t1", obj: COURSE, cat: "watch", est: 80,
@@ -659,16 +834,29 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 22 ---------------- */
     {
-      id: "d28", date: "2026-11-20", week: "w10", title: "Port-along #2: Cameras → Classes → Timers → Animations",
+      id: "d43", date: "2027-02-21", week: "w22", title: "Port-along #2: Cameras → Classes → Timers → Animations",
       theme: "Examples · thread part 4 — steal the Timer pattern for spawning.",
       tasks: [
         { id: "t1", obj: EX, cat: "code", est: 75,
-          lead: `<b>Examples ④</b> — continue the Clear Code port (to C++).`,
+          lead: `<b>Examples ④</b> — continue the Clear Code port (to C++). (1/2)`,
           sub: [
-            { id: "s1", cat: "code", est: 40, label: `Clear Code 1:17–2:18 (Cameras, Using classes, Collision resolution, Timers, Animations) — port to C++.` },
-            { id: "s2", cat: "code", est: 35, label: `Lift the <b>Timer</b> pattern (duration, elapsed, done) for timed/rate-based particle spawning.`,
-              note: `A reusable Timer is the cleanest way to spawn at a rate, stage the burst, or trigger fast-forward — small utility, used everywhere.` },
+            { id: "s1", cat: "code", est: 40, label: "Clear Code 1:17–1:40 (Cameras, Using classes) — port to C++." },
+            { id: "s2", cat: "code", est: 35, label: "Clear Code 1:40–2:00 (Collision resolution) — port to C++." },
+          ] },
+      ],
+    },
+    {
+      id: "d44", date: "2027-02-22", week: "w22", title: "Port-along #2: Cameras → Classes → Timers → Animations (cont.)",
+      theme: "Finish “Port-along #2: Cameras → Classes → Timers → Animations” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d43", obj: EX, cat: "code", est: 80,
+          lead: `<b>Examples ④</b> — continue the Clear Code port (to C++). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: "Clear Code 2:00–2:18 (Timers, Animations) — port to C++." },
+            { id: "s2", cat: "code", est: 40, label: `Lift the <b>Timer</b> pattern (duration, elapsed, done) for timed/rate-based particle spawning.`, note: `A reusable Timer is the cleanest way to spawn at a rate, stage the burst, or trigger fast-forward — small utility, used everywhere.` },
           ],
           model: `A reusable Timer (duration, elapsed, done) is the cleanest way to spawn particles at a rate, stage the Big Bang, or trigger fast-forward. Small utility, used everywhere.`,
           cards: [
@@ -677,19 +865,19 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 23 ---------------- */
     {
-      id: "d29", date: "2026-11-21", week: "w10", title: "Big Bang v2: gravity switches on — real N-body",
+      id: "d45", date: "2027-02-25", week: "w23", title: "Big Bang v2: gravity switches on — real N-body",
       theme: "Big Bang · v2 — structure emerges from one formula.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v2</b> — every particle pulls every other.`,
           sub: [
-            { id: "s1", est: 40, label: `Apply the N-body kernel (NoC 2.9–2.10) across the system: nested loop summing <code>F = G·m·m/(r²+ε²)</code> for every pair; integrate; <b>watch clumping emerge</b>.`,
-              info: `<p>The <b>ε²</b> ("softening length") in <code>F = G·m·m/(r²+ε²)</code> is the one term that stops the whole simulation from blowing up.</p>
+            { id: "s1", est: 50, label: `Apply the N-body kernel (NoC 2.9–2.10) across the system: nested loop summing <code>F = G·m·m/(r²+ε²)</code> for every pair; integrate; <b>watch clumping emerge</b>.`, info: `<p>The <b>ε²</b> ("softening length") in <code>F = G·m·m/(r²+ε²)</code> is the one term that stops the whole simulation from blowing up.</p>
 <p>Pure Newtonian gravity goes as <code>1/r²</code>: as two particles approach, <code>r → 0</code> and the force → <b>infinity</b>. With a discrete timestep that hands a particle a near-infinite kick and flings it off-screen — the classic "my N-body sim exploded" bug.</p>
 <p>Adding a small constant ε² caps the force at close range (when <code>r ≪ ε</code> the denominator ≈ ε², finite) while leaving distant pairs essentially unchanged — it models particles as soft blobs instead of point singularities. Tune ε to your scale: too small and it still explodes, too large and the structure turns mushy.</p>` },
-            { id: "s2", est: 35, label: `Use <a href="https://github.com/pmocz/nbody-python" target="_blank" rel="noopener">Philip Mocz's N-body</a> for sane constants & softening. Keep N small (≤ ~1000) for now.`,
-              note: `All-pairs is O(n²), so it bogs down before optimization — Barnes–Hut comes later. Structure (clumps, filaments) emerging from one formula is the whole point.` },
+            { id: "s2", est: 40, label: `Use <a href="https://github.com/pmocz/nbody-python" target="_blank" rel="noopener">Philip Mocz's N-body</a> for sane constants & softening. Keep N small (≤ ~1000) for now.`, note: `All-pairs is O(n²), so it bogs down before optimization — Barnes–Hut comes later. Structure (clumps, filaments) emerging from one formula is the whole point.` },
           ],
           model: `Add the pairwise gravity loop and structure appears on its own — particles clump, orbits form, filaments stretch. This emergence, from one formula, is the entire point of the project.`,
           cards: [
@@ -701,37 +889,49 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `📈 Nature of Code's physics core (vectors → forces → particle systems, Intro–Ch.4) is done and the Udemy course is nearly complete. Milestone: the physics engine is real and running.` },
       ],
     },
-
-    /* ---------------- Week 11 ---------------- */
     {
-      id: "d30", date: "2026-11-23", week: "w11", title: "Music & GUI II: audio — the course capstone 🎓",
+      id: "d46", date: "2027-02-26", week: "w23", title: "Music & GUI II: audio — the course capstone 🎓",
       theme: "raylib course · thread part 12 — the whole library, end to end.",
       tasks: [
-        { id: "t1", obj: COURSE, cat: "watch", est: 65,
-          lead: `<b>raylib course ⑫</b> — §7 (second half): audio + finish the course.`,
+        { id: "t1", obj: COURSE, cat: "watch", est: 40,
+          lead: `<b>raylib course ⑫</b> — §7 (second half): audio + finish the course. (1/2)`,
           sub: [
             { id: "s1", est: 40, label: `Udemy §7 (second half): <code>LoadSound</code>/<code>PlaySound</code>, <code>LoadMusicStream</code> + <code>UpdateMusicStream</code> each frame, volume.` },
-            { id: "s2", cat: "project", est: 25, label: `Complete the course's Qur'an-player capstone — that finishes all 7 sections, the Udemy course is <b>done</b>.`,
-              note: `You've now covered the whole library end to end: drawing, input, collision, tilemaps, camera, projects, GUI & audio.` },
+          ] },
+      ],
+      note: "The raylib course is finished. The rest of the journey is Nature of Code's tail, the Book of Shaders, and building the simulation.",
+    },
+
+    /* ---------------- Week 24 ---------------- */
+    {
+      id: "d47", date: "2027-03-03", week: "w24", title: "Integration methods: Euler vs Verlet (stability) 🩹",
+      theme: "Nature of Code · thread part 12 — a one-line change that keeps orbits bound.",
+      tasks: [
+        { id: "t1", carried: "d46", obj: COURSE, cat: "watch", est: 30,
+          lead: `<b>raylib course ⑫</b> — §7 (second half): audio + finish the course. (2/2)`,
+          sub: [
+            { id: "s1", cat: "project", est: 30, label: `Complete the course's Qur'an-player capstone — that finishes all 7 sections, the Udemy course is <b>done</b>.`, note: `You've now covered the whole library end to end: drawing, input, collision, tilemaps, camera, projects, GUI & audio.` },
           ],
           model: `Audio in raylib: <b>Sound</b> = short one-shots (<code>LoadSound</code>/<code>PlaySound</code>); <b>Music</b> = streamed (<code>LoadMusicStream</code> + <code>UpdateMusicStream</code> each frame). Optional for the sim, but you've now covered the whole library end to end.`,
           cards: [
             { q: `Sound vs Music in raylib?`, a: `Sound = short clip loaded fully (PlaySound); Music = streamed from disk, needs <code>UpdateMusicStream()</code> each frame.` },
             { q: `What have you completed at this point?`, a: `The entire Udemy raylib course — 2D drawing, input, collision, tilemaps, camera, projects, GUI & audio.` },
           ] },
-      ],
-      note: "The raylib course is finished. The rest of the journey is Nature of Code's tail, the Book of Shaders, and building the simulation.",
-    },
-    {
-      id: "d31", date: "2026-11-24", week: "w11", title: "Integration methods: Euler vs Verlet (stability) 🩹",
-      theme: "Nature of Code · thread part 12 — a one-line change that keeps orbits bound.",
-      tasks: [
-        { id: "t1", obj: NOC, cat: "read", est: 75,
-          lead: `<b>Nature of Code ⑫</b> — Physics Libraries: §5.14 Integration Methods (skim Verlet).`,
+        { id: "t2", obj: NOC, cat: "read", est: 45,
+          lead: `<b>Nature of Code ⑫</b> — Physics Libraries: §5.14 Integration Methods (skim Verlet). (1/2)`,
           sub: [
             { id: "s1", est: 45, label: `Read NoC <b>"Physics Libraries"</b> — §5.14 (Euler vs Verlet); skim 5.15. Ignore the Box2D-specific API. (Ch.5 in your v1 PDF; the <a href="https://natureofcode.com/physics-libraries/" target="_blank" rel="noopener">online 2nd edition</a> renumbers this chapter as 6.)` },
-            { id: "s2", cat: "code", est: 30, label: `Switch the sim to <b>Verlet/leapfrog</b> for stable orbits (Mocz uses leapfrog).`,
-              note: `Explicit Euler injects energy each step (orbits spiral out); Verlet is symmetric and conserves energy — a one-line change, huge stability win.` },
+          ] },
+      ],
+    },
+    {
+      id: "d48", date: "2027-03-08", week: "w24", title: "Integration methods: Euler vs Verlet (stability) 🩹 (cont.)",
+      theme: "Finish “Integration methods: Euler vs Verlet (stability) 🩹” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d47", obj: NOC, cat: "read", est: 35,
+          lead: `<b>Nature of Code ⑫</b> — Physics Libraries: §5.14 Integration Methods (skim Verlet). (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Switch the sim to <b>Verlet/leapfrog</b> for stable orbits (Mocz uses leapfrog).`, note: `Explicit Euler injects energy each step (orbits spiral out); Verlet is symmetric and conserves energy — a one-line change, huge stability win.` },
           ],
           model: `Explicit Euler (<code>vel += a·dt; pos += vel·dt</code>) silently injects energy — orbits spiral out. Verlet/leapfrog integrates symmetrically and conserves energy far better, so bound structures stay bound. One-line change, huge stability win.`,
           cards: [
@@ -740,16 +940,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 25 ---------------- */
     {
-      id: "d32", date: "2026-11-26", week: "w11", title: "Big Bang v3: thousands of particles",
+      id: "d49", date: "2027-03-13", week: "w25", title: "Big Bang v3: thousands of particles",
       theme: "Big Bang · v3 — scale is a data-layout problem.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v3</b> — push N up without dropping frames.`,
           sub: [
-            { id: "s1", est: 40, label: `Refactor storage to be cache-friendly (parallel arrays / struct-of-arrays), preallocate, and avoid per-frame allocation.` },
-            { id: "s2", est: 35, label: `Raise N; measure FPS. Study <code>textures_bunnymark</code> for draw-count intuition.`,
-              note: `As N grows the first wall you hit is the O(n²) force loop, not drawing — which motivates Barnes–Hut next.` },
+            { id: "s1", est: 50, label: `Refactor storage to be cache-friendly (parallel arrays / struct-of-arrays), preallocate, and avoid per-frame allocation.` },
+            { id: "s2", est: 40, label: `Raise N; measure FPS. Study <code>textures_bunnymark</code> for draw-count intuition.`, note: `As N grows the first wall you hit is the O(n²) force loop, not drawing — which motivates Barnes–Hut next.` },
           ],
           model: `Scale is a data-layout problem: contiguous arrays (SoA) + no per-frame allocation + minimal per-particle draw calls. Measure FPS as you raise N — you'll hit the O(n²) wall, which motivates the next optimization day.`,
           cards: [
@@ -758,17 +959,27 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 12 ---------------- */
     {
-      id: "d33", date: "2026-11-29", week: "w12", title: "Draw-count & blending study",
+      id: "d50", date: "2027-03-14", week: "w25", title: "Draw-count & blending study",
       theme: "Examples · thread part 5 — why particles become textured/instanced.",
       tasks: [
-        { id: "t1", obj: EX, cat: "read", est: 70,
-          lead: `<b>Examples ⑤</b> — learn where drawing gets expensive.`,
+        { id: "t1", obj: EX, cat: "read", est: 40,
+          lead: `<b>Examples ⑤</b> — learn where drawing gets expensive. (1/2)`,
           sub: [
             { id: "s1", est: 40, label: `Study examples <code>textures_bunnymark</code> (how many sprites before FPS drops), <code>textures_blend_modes</code>, <code>shapes_starfield_effect</code>.` },
-            { id: "s2", cat: "review", est: 30, label: `Note batching: many <code>DrawCircleV</code> calls vs one textured/instanced draw.`,
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 26 ---------------- */
+    {
+      id: "d51", date: "2027-03-18", week: "w26", title: "Draw-count & blending study (cont.)",
+      theme: "Finish “Draw-count & blending study” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d50", obj: EX, cat: "read", est: 30,
+          lead: `<b>Examples ⑤</b> — learn where drawing gets expensive. (2/2)`,
+          sub: [
+            { id: "s1", cat: "review", est: 30, label: `Note batching: many <code>DrawCircleV</code> calls vs one textured/instanced draw.`,
               note: `Per-draw-call overhead is why particles become textured/instanced/shader-drawn as N grows.` },
           ],
           model: `Every draw call has overhead; thousands of individual <code>DrawCircle</code> calls cost more than drawing thousands of instances of one texture. This is why particles become textured/instanced/shader-drawn as N grows.`,
@@ -779,15 +990,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d34", date: "2026-12-02", week: "w12", title: "Big Bang v4: the glow look in 2D ✨",
+      id: "d52", date: "2027-03-23", week: "w26", title: "Big Bang v4: the glow look in 2D ✨",
       theme: "Big Bang · v4 — additive blending sells the cosmos.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v4</b> — make it beautiful (still CPU-drawn).`,
           sub: [
-            { id: "s1", est: 40, label: `Apply additive blending (<code>BLEND_ADDITIVE</code>) + a soft radial particle texture to the whole field.` },
-            { id: "s2", est: 35, label: `Colour particles by speed or mass (fast/hot vs slow/cool). Compare against your stacked-circle glow from earlier.`,
-              note: `Colour-by-speed makes the physics legible — you can see where the energy is.` },
+            { id: "s1", est: 50, label: `Apply additive blending (<code>BLEND_ADDITIVE</code>) + a soft radial particle texture to the whole field.` },
+            { id: "s2", est: 40, label: `Colour particles by speed or mass (fast/hot vs slow/cool). Compare against your stacked-circle glow from earlier.`, note: `Colour-by-speed makes the physics legible — you can see where the energy is.` },
           ],
           model: `Additive-blended soft sprites give the luminous look with zero shader code: dense cores glow, sparse space stays dark. Colour-by-speed makes the physics legible — you can <i>see</i> where energy is.`,
           cards: [
@@ -799,16 +1009,17 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🌌 The simulation lives: a 2D gravitational Big Bang that bursts, self-organizes, and glows. Next: scale, optimization, and the third dimension.` },
       ],
     },
+
+    /* ---------------- Week 27 ---------------- */
     {
-      id: "d35", date: "2026-12-05", week: "w12", title: "Big Bang v5: camera, trails & time controls",
+      id: "d53", date: "2027-03-28", week: "w27", title: "Big Bang v5: camera, trails & time controls",
       theme: "Big Bang · v5 — from demo to something you can explore.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v5</b> — roam it, and control time.`,
           sub: [
-            { id: "s1", est: 40, label: `Add a <code>Camera2D</code> pan/zoom to fly the cloud; fading particle trails (short position history, or a slowly-fading render texture).` },
-            { id: "s2", est: 35, label: `Wire the control panel: pause + a <b>time-scale</b> (fast-forward) that multiplies dt. Use <code>core_world_screen</code> for HUD labels.`,
-              note: `Fast-forward is just scaling dt before integration — these turn a physics demo into something you can explore.` },
+            { id: "s1", est: 50, label: `Add a <code>Camera2D</code> pan/zoom to fly the cloud; fading particle trails (short position history, or a slowly-fading render texture).` },
+            { id: "s2", est: 40, label: `Wire the control panel: pause + a <b>time-scale</b> (fast-forward) that multiplies dt. Use <code>core_world_screen</code> for HUD labels.`, note: `Fast-forward is just scaling dt before integration — these turn a physics demo into something you can explore.` },
           ],
           model: `Fast-forward is just multiplying dt by a time-scale before integration; trails are last-N positions or a slowly-fading render texture. These turn a physics demo into something you can <i>explore</i>.`,
           cards: [
@@ -817,10 +1028,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 13 ---------------- */
     {
-      id: "d36", date: "2026-12-08", week: "w13", title: "Optimization: why O(n²) hurts & spatial ideas",
+      id: "d54", date: "2027-03-30", week: "w27", title: "Optimization: why O(n²) hurts & spatial ideas",
       theme: "Nature of Code · thread part 13 — the last physics chapter that matters here.",
       tasks: [
         { id: "t1", obj: NOC, cat: "read", est: 75,
@@ -837,16 +1046,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 28 ---------------- */
     {
-      id: "d37", date: "2026-12-10", week: "w13", title: "Big Bang v6: Barnes–Hut & softening tuning",
+      id: "d55", date: "2027-04-03", week: "w28", title: "Big Bang v6: Barnes–Hut & softening tuning",
       theme: "Big Bang · v6 — O(n²) → O(n log n) via center-of-mass.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 70,
+        { id: "t1", obj: PROJ, cat: "project", est: 85,
           lead: `<b>Big Bang v6</b> — make N-body cheap enough to grow.`,
           sub: [
-            { id: "s1", est: 45, label: `Build a quadtree; approximate distant clusters by their center-of-mass (the θ criterion). See the <a href="https://barneshutalgorithm.com/" target="_blank" rel="noopener">Barnes–Hut visualizer</a>.`,
-              note: `A far cluster becomes one center-of-mass node when <code>size/distance &lt; θ</code> — that's what turns O(n²) into O(n log n).` },
-            { id: "s2", est: 25, label: `Tune softening ε. Read <a href="https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda" target="_blank" rel="noopener">GPU Gems 3 Ch.31</a> as the "all-pairs on the GPU" alternative for later.` },
+            { id: "s1", est: 55, label: `Build a quadtree; approximate distant clusters by their center-of-mass (the θ criterion). See the <a href="https://barneshutalgorithm.com/" target="_blank" rel="noopener">Barnes–Hut visualizer</a>.`, note: `A far cluster becomes one center-of-mass node when <code>size/distance &lt; θ</code> — that's what turns O(n²) into O(n log n).` },
+            { id: "s2", est: 30, label: `Tune softening ε. Read <a href="https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda" target="_blank" rel="noopener">GPU Gems 3 Ch.31</a> as the "all-pairs on the GPU" alternative for later.` },
           ],
           model: `Barnes–Hut groups distant particles into one center-of-mass node (used when <code>size/distance &lt; θ</code>), turning O(n²) into O(n log n). θ trades accuracy for speed; ε (softening) trades close-range realism for stability.`,
           cards: [
@@ -856,7 +1066,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2026-12-11", week: "w13", title: "Into 3D: cameras, point clouds & billboards",
+      id: "d56", date: "2027-04-05", week: "w28", title: "Into 3D: cameras, point clouds & billboards",
       theme: "Examples · thread part 6 — same loop, one more axis.",
       tasks: [
         { id: "t1", obj: EX, cat: "watch", est: 65,
@@ -874,17 +1084,16 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 14 ---------------- */
+    /* ---------------- Week 29 ---------------- */
     {
-      id: "d39", date: "2026-12-13", week: "w14", title: "Big Bang v7: the third dimension",
+      id: "d57", date: "2027-04-08", week: "w29", title: "Big Bang v7: the third dimension",
       theme: "Big Bang · v7 — the physics is dimension-agnostic.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v7</b> — lift the cloud into 3D.`,
           sub: [
-            { id: "s1", est: 40, label: `Extend particles to <code>Vector3</code>; add an orbiting <code>Camera3D</code>; draw as a point cloud or billboards; keep additive blending.` },
-            { id: "s2", est: 35, label: `Port the burst seeding to 3D (spherical, not just circular).`,
-              note: `Going 3D is mostly a type change — the force/integration math is dimension-agnostic, the same code with a z component.` },
+            { id: "s1", est: 50, label: `Extend particles to <code>Vector3</code>; add an orbiting <code>Camera3D</code>; draw as a point cloud or billboards; keep additive blending.` },
+            { id: "s2", est: 40, label: `Port the burst seeding to 3D (spherical, not just circular).`, note: `Going 3D is mostly a type change — the force/integration math is dimension-agnostic, the same code with a z component.` },
           ],
           model: `Going 3D is mostly a type change: <code>Vector2 → Vector3</code>, <code>DrawCircle → billboard/point</code>, <code>Camera2D → Camera3D</code>. The physics (force accumulation, integration, softening) is dimension-agnostic — the same code with a z component.`,
           cards: [
@@ -894,33 +1103,60 @@ registerRoadmap({
       ],
     },
     {
-      id: "d40", date: "2026-12-14", week: "w14", title: "Port-along #3: 3D basics, imports & a peek at shaders",
+      id: "d58", date: "2027-04-11", week: "w29", title: "Port-along #3: 3D basics, imports & a peek at shaders",
       theme: "Examples · thread part 7 — first sight of the shader pipeline.",
       tasks: [
-        { id: "t1", obj: EX, cat: "code", est: 65,
-          lead: `<b>Examples ⑦</b> — finish the Clear Code port (3D + shaders).`,
+        { id: "t1", obj: EX, cat: "code", est: 40,
+          lead: `<b>Examples ⑦</b> — finish the Clear Code port (3D + shaders). (1/3)`,
           sub: [
-            { id: "s1", cat: "code", est: 40, label: `Clear Code 3:21–end (3D basics, 3D imports, 3D collisions, Shaders, 3D game) — port to C++.` },
-            { id: "s2", cat: "code", est: 25, label: `Pay attention to the shader chapter — it previews <code>LoadShader</code>/<code>BeginShaderMode</code>.`,
-              note: `Porting it now means the Book of Shaders chapters land on plumbing you already recognize.` },
+            { id: "s1", cat: "code", est: 40, label: "Clear Code 3:21–3:50 (3D basics, 3D imports) — port to C++." },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 30 ---------------- */
+    {
+      id: "d59", date: "2027-04-14", week: "w30", title: "Port-along #3: 3D basics, imports & a peek at shaders (cont.)",
+      theme: "Finish “Port-along #3: 3D basics, imports & a peek at shaders” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d58", obj: EX, cat: "code", est: 40,
+          lead: `<b>Examples ⑦</b> — finish the Clear Code port (3D + shaders). (2/3)`,
+          sub: [
+            { id: "s1", cat: "code", est: 40, label: "Clear Code 3:50–end (3D collisions, Shaders, the 3D game) — port to C++." },
+          ] },
+      ],
+    },
+    {
+      id: "d60", date: "2027-04-16", week: "w30", title: "Big Bang v8: 3D N-body & orbit cinematics",
+      theme: "Big Bang · v8 — filaments in space you can fly through.",
+      tasks: [
+        { id: "t1", carried: "d58", obj: EX, cat: "code", est: 30,
+          lead: `<b>Examples ⑦</b> — finish the Clear Code port (3D + shaders). (3/3)`,
+          sub: [
+            { id: "s1", cat: "code", est: 30, label: `Pay attention to the shader chapter — it previews <code>LoadShader</code>/<code>BeginShaderMode</code>.`, note: `Porting it now means the Book of Shaders chapters land on plumbing you already recognize.` },
           ],
           model: `The video's shader chapter is your first sight of <code>LoadShader</code>/<code>BeginShaderMode</code> in action — port it now so the Book of Shaders chapters land on familiar plumbing.`,
           cards: [
             { q: `What does this port-along preview that's coming next?`, a: `raylib's shader pipeline (LoadShader/BeginShaderMode) — the plumbing the Book of Shaders will fill with real GLSL.` },
             { q: `How do you load a 3D model in raylib?`, a: `<code>LoadModel(path)</code> → <code>DrawModel(...)</code> (formats like .obj/.gltf).` },
           ] },
+        { id: "t2", obj: PROJ, cat: "project", est: 50,
+          lead: `<b>Big Bang v8</b> — the "wow" build. (1/2)`,
+          sub: [
+            { id: "s1", est: 50, label: `Full pairwise gravity in <code>Vector3</code> (+ softening, Verlet); keep Barnes–Hut (now an octree).` },
+          ] },
       ],
     },
+
+    /* ---------------- Week 31 ---------------- */
     {
-      id: "d41", date: "2026-12-19", week: "w14", title: "Big Bang v8: 3D N-body & orbit cinematics",
-      theme: "Big Bang · v8 — filaments in space you can fly through.",
+      id: "d61", date: "2027-04-21", week: "w31", title: "Big Bang v8: 3D N-body & orbit cinematics (cont.)",
+      theme: "Finish “Big Bang v8: 3D N-body & orbit cinematics” — the part that didn't fit its first session.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
-          lead: `<b>Big Bang v8</b> — the "wow" build.`,
+        { id: "t1", carried: "d60", obj: PROJ, cat: "project", est: 40,
+          lead: `<b>Big Bang v8</b> — the "wow" build. (2/2)`,
           sub: [
-            { id: "s1", est: 40, label: `Full pairwise gravity in <code>Vector3</code> (+ softening, Verlet); keep Barnes–Hut (now an octree).` },
-            { id: "s2", est: 35, label: `Orbiting <code>Camera3D</code>; additive billboards. Measure FPS; keep it interactive.`,
-              note: `Additive particles need no depth sort — addition is order-independent — which keeps 3D blending simple.` },
+            { id: "s1", est: 40, label: `Orbiting <code>Camera3D</code>; additive billboards. Measure FPS; keep it interactive.`, note: `Additive particles need no depth sort — addition is order-independent — which keeps 3D blending simple.` },
           ],
           model: `3D N-body with a roaming camera is the payoff — clusters and filaments in space you can fly through. Additive particles need no depth sort (addition is order-independent), which keeps 3D blending simple.`,
           cards: [
@@ -929,10 +1165,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 15 ---------------- */
     {
-      id: "d42", date: "2026-12-23", week: "w15", title: "Consolidate the physics (Nature of Code ~70–80%)",
+      id: "d62", date: "2027-04-22", week: "w31", title: "Consolidate the physics (Nature of Code ~70–80%)",
       theme: "Nature of Code · thread part 14 — correctness is invariants, not vibes.",
       tasks: [
         { id: "t1", obj: NOC, cat: "review", est: 65,
@@ -952,16 +1186,18 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🎨 The physics is owned. Time to make it beautiful: the Book of Shaders begins next.` },
       ],
     },
+
+    /* ---------------- Week 32 ---------------- */
     {
-      id: "d43", date: "2026-12-24", week: "w15", title: "Book of Shaders I: the fragment shader & uniforms",
+      id: "d63", date: "2027-04-28", week: "w32", title: "Book of Shaders I: the fragment shader & uniforms",
       theme: "Shaders · thread part 1 — one program per pixel, on the GPU.",
       tasks: [
-        { id: "t1", obj: SH, cat: "read", est: 80,
+        { id: "t1", obj: SH, cat: "read", est: 95,
           lead: `<b>Shaders ①</b> — what runs on the GPU, and how raylib feeds it.`,
           sub: [
-            { id: "s1", est: 45, label: `Read <a href="https://thebookofshaders.com/" target="_blank" rel="noopener">The Book of Shaders</a> Ch.1–2 (fragment shader, GLSL, Hello World, uniforms, <code>gl_FragCoord</code>).` },
-            { id: "s2", cat: "code", est: 35, label: `In raylib: <code>LoadShader(0, "glow.fs")</code> (passing <code>0</code>/NULL for the vertex shader uses raylib's default), <code>GetShaderLocation</code>, <code>SetShaderValue</code> for time/resolution; wrap in <code>BeginShaderMode/EndShaderMode</code>. See the <a href="https://deepwiki.com/raysan5/raylib/6.4-shader-examples" target="_blank" rel="noopener">DeepWiki shader notes</a>.`,
-              note: `A fragment shader runs once per pixel, in parallel, on the GPU — colour as a function of coordinate + uniforms.` },
+            { id: "s1", est: 25, label: `Read <a href="https://thebookofshaders.com/" target="_blank" rel="noopener">The Book of Shaders</a> Ch.1: what a fragment shader is — one program, run per pixel.` },
+            { id: "s2", est: 30, label: "Then BoS Ch.2: GLSL, Hello World, uniforms and <code>gl_FragCoord</code>." },
+            { id: "s3", cat: "code", est: 40, label: `In raylib: <code>LoadShader(0, "glow.fs")</code> (passing <code>0</code>/NULL for the vertex shader uses raylib's default), <code>GetShaderLocation</code>, <code>SetShaderValue</code> for time/resolution; wrap in <code>BeginShaderMode/EndShaderMode</code>. See the <a href="https://deepwiki.com/raysan5/raylib/6.4-shader-examples" target="_blank" rel="noopener">DeepWiki shader notes</a>.`, note: `A fragment shader runs once per pixel, in parallel, on the GPU — colour as a function of coordinate + uniforms.` },
           ],
           model: `A fragment shader runs once <b>per pixel, in parallel, on the GPU</b> — you write a pixel's colour as a function of its coordinate + uniforms (time, resolution, your params). raylib bridges CPU→GPU via <code>SetShaderValue</code> on a uniform location.`,
           cards: [
@@ -972,35 +1208,60 @@ registerRoadmap({
       note: "Nature of Code is ~70–80% done; the simulation is 3D. Everything from here is the GPU-side look — glow, nebula, bloom — folded straight into the sim.",
     },
     {
-      id: "d44", date: "2026-12-25", week: "w15", title: "Book of Shaders II: shaping functions & colour",
+      id: "d64", date: "2027-05-01", week: "w32", title: "Book of Shaders II: shaping functions & colour",
       theme: "Shaders · thread part 2 — smoothstep + mix are 80% of pretty.",
       tasks: [
-        { id: "t1", obj: SH, cat: "read", est: 75,
-          lead: `<b>Shaders ②</b> — the two functions behind most effects.`,
+        { id: "t1", obj: SH, cat: "read", est: 25,
+          lead: `<b>Shaders ②</b> — the two functions behind most effects. (1/3)`,
           sub: [
-            { id: "s1", est: 45, label: `Read BoS Ch.3.1 (step, smoothstep, sin/cos shaping) + Ch.3.2 (mix, gradients, HSB).` },
-            { id: "s2", cat: "code", est: 30, label: `Write a shader that fades a colour smoothly across the screen; try an HSB cosmic palette.`,
-              note: `<code>smoothstep</code> (soft 0→1 ramp) + <code>mix</code> (blend) are ~80% of pretty shader effects.` },
+            { id: "s1", est: 25, label: "Read BoS Ch.3.1: step, smoothstep, and sin/cos shaping functions." },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 33 ---------------- */
+    {
+      id: "d65", date: "2027-05-06", week: "w33", title: "Book of Shaders II: shaping functions & colour (cont.)",
+      theme: "Finish “Book of Shaders II: shaping functions & colour” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d64", obj: SH, cat: "read", est: 25,
+          lead: `<b>Shaders ②</b> — the two functions behind most effects. (2/3)`,
+          sub: [
+            { id: "s1", est: 25, label: "Then BoS Ch.3.2: mix, gradients, and HSB colour." },
+          ] },
+      ],
+    },
+    {
+      id: "d66", date: "2027-05-10", week: "w33", title: "Book of Shaders III: distance fields → a glowing particle",
+      theme: "Shaders · thread part 3 — one shader draws a perfect glowing dot.",
+      tasks: [
+        { id: "t1", carried: "d64", obj: SH, cat: "read", est: 35,
+          lead: `<b>Shaders ②</b> — the two functions behind most effects. (3/3)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Write a shader that fades a colour smoothly across the screen; try an HSB cosmic palette.`, note: `<code>smoothstep</code> (soft 0→1 ramp) + <code>mix</code> (blend) are ~80% of pretty shader effects.` },
           ],
           model: `<code>smoothstep(a,b,x)</code> is the workhorse — a smooth 0→1 ramp between two edges, giving soft falloffs and anti-aliased edges. <code>mix(c1,c2,t)</code> blends colours. Together they're ~80% of pretty shader effects.`,
           cards: [
             { q: `What does <code>smoothstep(a,b,x)</code> give you?`, a: `A smooth 0→1 transition as x goes a→b (soft edges/falloff).` },
             { q: `<code>mix(a,b,t)</code> does what?`, a: `Linear blend: <code>a·(1−t) + b·t</code> (interpolate colours/values).` },
           ] },
+        { id: "t2", obj: SH, cat: "code", est: 40,
+          lead: `<b>Shaders ③</b> — draw a soft glow on the GPU. (1/2)`,
+          sub: [
+            { id: "s1", est: 40, label: `Read BoS Ch.3.3 (circles, distance fields, their properties).` },
+          ] },
       ],
     },
 
-    /* ---------------- Week 16 ---------------- */
+    /* ---------------- Week 34 ---------------- */
     {
-      id: "d45", date: "2026-12-27", week: "w16", title: "Book of Shaders III: distance fields → a glowing particle",
-      theme: "Shaders · thread part 3 — one shader draws a perfect glowing dot.",
+      id: "d67", date: "2027-05-15", week: "w34", title: "Book of Shaders III: distance fields → a glowing particle (cont.)",
+      theme: "Finish “Book of Shaders III: distance fields → a glowing particle” — the part that didn't fit its first session.",
       tasks: [
-        { id: "t1", obj: SH, cat: "code", est: 75,
-          lead: `<b>Shaders ③</b> — draw a soft glow on the GPU.`,
+        { id: "t1", carried: "d66", obj: SH, cat: "code", est: 50,
+          lead: `<b>Shaders ③</b> — draw a soft glow on the GPU. (2/2)`,
           sub: [
-            { id: "s1", est: 35, label: `Read BoS Ch.3.3 (circles, distance fields, their properties).` },
-            { id: "s2", cat: "code", est: 40, label: `Write a fragment shader: <code>glow = 1.0 - smoothstep(0.0, radius, length(uv - center)); color * glow;</code> — replacing stacked translucent circles.`,
-              note: `Keep <code>edge0 &lt; edge1</code> in smoothstep — the reversed form is undefined in GLSL. One shader draws a perfect glowing dot at any size.` },
+            { id: "s1", cat: "code", est: 50, label: `Write a fragment shader: <code>glow = 1.0 - smoothstep(0.0, radius, length(uv - center)); color * glow;</code> — replacing stacked translucent circles.`, note: `Keep <code>edge0 &lt; edge1</code> in smoothstep — the reversed form is undefined in GLSL. One shader draws a perfect glowing dot at any size.` },
           ],
           model: `A soft particle is a <b>distance field</b>: brightness = a smoothstep falloff of the distance from the pixel to the particle center. One shader draws a perfect glowing dot at any size — sharper, cheaper, and prettier than layering circles.`,
           cards: [
@@ -1010,15 +1271,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d46", date: "2026-12-29", week: "w16", title: "Big Bang v9: GPU glow on every particle",
+      id: "d68", date: "2027-05-18", week: "w34", title: "Big Bang v9: GPU glow on every particle",
       theme: "Big Bang · v9 — move the look onto the GPU.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v9</b> — shader-lit particles.`,
           sub: [
-            { id: "s1", est: 40, label: `Apply the distance-field glow shader to the sim's particles (as billboards/point sprites).` },
-            { id: "s2", est: 35, label: `Pass per-particle colour (by speed/age) via a uniform or vertex attribute; study <code>shaders_custom_uniform</code>.`,
-              note: `Young = blue-hot, old = red (a redshift-like cue) — reads the physics at a glance.` },
+            { id: "s1", est: 50, label: `Apply the distance-field glow shader to the sim's particles (as billboards/point sprites).` },
+            { id: "s2", est: 40, label: `Pass per-particle colour (by speed/age) via a uniform or vertex attribute; study <code>shaders_custom_uniform</code>.`, note: `Young = blue-hot, old = red (a redshift-like cue) — reads the physics at a glance.` },
           ],
           model: `Move the look to the GPU: each particle is a quad, the fragment shader paints the soft glow, additive blending stacks them. Colour by speed or age (young = blue-hot, old = red) to read the physics at a glance.`,
           cards: [
@@ -1027,16 +1287,28 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 35 ---------------- */
     {
-      id: "d47", date: "2027-01-02", week: "w16", title: "Book of Shaders IV: noise",
+      id: "d69", date: "2027-05-21", week: "w35", title: "Book of Shaders IV: noise",
       theme: "Shaders · thread part 4 — GPU 'random' is a deterministic hash.",
       tasks: [
-        { id: "t1", obj: SH, cat: "read", est: 75,
-          lead: `<b>Shaders ④</b> — controllable randomness on the GPU.`,
+        { id: "t1", obj: SH, cat: "read", est: 60,
+          lead: `<b>Shaders ④</b> — controllable randomness on the GPU. (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read BoS Ch.4.1–4.8 (random, controlling chaos, 2D value/gradient noise, using noise).` },
-            { id: "s2", cat: "code", est: 30, label: `Build a scrolling 2D noise field; compare it with a CPU RNG.`,
-              note: `GPU "random" is a deterministic hash (same input → same output) — stable per pixel, no flicker, the raw material for clouds.` },
+            { id: "s1", est: 30, label: "Read BoS Ch.4.1–4.4: <code>random</code> on the GPU, and controlling chaos." },
+            { id: "s2", est: 30, label: "Then BoS Ch.4.5–4.8: 2D value & gradient noise, and using noise." },
+          ] },
+      ],
+    },
+    {
+      id: "d70", date: "2027-05-23", week: "w35", title: "Book of Shaders IV: noise (cont.)",
+      theme: "Finish “Book of Shaders IV: noise” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d69", obj: SH, cat: "read", est: 35,
+          lead: `<b>Shaders ④</b> — controllable randomness on the GPU. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 35, label: `Build a scrolling 2D noise field; compare it with a CPU RNG.`, note: `GPU "random" is a deterministic hash (same input → same output) — stable per pixel, no flicker, the raw material for clouds.` },
           ],
           model: `GPU "random" is <b>deterministic hashing</b>, not RNG: same input → same output, so it's stable per pixel and cheap. 2D noise gives smooth, controllable randomness across the screen — the raw material for clouds and dust.`,
           cards: [
@@ -1046,17 +1318,26 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 17 ---------------- */
+    /* ---------------- Week 36 ---------------- */
     {
-      id: "d48", date: "2027-01-04", week: "w17", title: "Book of Shaders V: fBm → a nebula",
+      id: "d71", date: "2027-05-27", week: "w36", title: "Book of Shaders V: fBm → a nebula",
       theme: "Shaders · thread part 5 — octaves of noise = clouds.",
       tasks: [
-        { id: "t1", obj: SH, cat: "code", est: 75,
-          lead: `<b>Shaders ⑤</b> — clouds from layered noise.`,
+        { id: "t1", obj: SH, cat: "code", est: 40,
+          lead: `<b>Shaders ⑤</b> — clouds from layered noise. (1/2)`,
           sub: [
-            { id: "s1", est: 35, label: `Read BoS Ch.4.9–4.12 (Fractal Brownian Motion, fractals).` },
-            { id: "s2", cat: "code", est: 40, label: `Layer several octaves of noise (fBm) into a wispy density field; tint with an HSB palette.`,
-              note: `fBm = sum noise at doubling frequencies / halving amplitudes — self-similar detail is exactly what makes cloud/nebula textures.` },
+            { id: "s1", est: 40, label: `Read BoS Ch.4.9–4.12 (Fractal Brownian Motion, fractals).` },
+          ] },
+      ],
+    },
+    {
+      id: "d72", date: "2027-05-29", week: "w36", title: "Book of Shaders V: fBm → a nebula (cont.)",
+      theme: "Finish “Book of Shaders V: fBm → a nebula” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d71", obj: SH, cat: "code", est: 50,
+          lead: `<b>Shaders ⑤</b> — clouds from layered noise. (2/2)`,
+          sub: [
+            { id: "s1", cat: "code", est: 50, label: `Layer several octaves of noise (fBm) into a wispy density field; tint with an HSB palette.`, note: `fBm = sum noise at doubling frequencies / halving amplitudes — self-similar detail is exactly what makes cloud/nebula textures.` },
           ],
           model: `<b>Fractal Brownian Motion</b> sums noise at doubling frequencies and halving amplitudes (octaves). That self-similar layering is exactly what makes cloud, smoke, and nebula textures — the canonical GPU recipe for volumetric-looking gas.`,
           cards: [
@@ -1065,16 +1346,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 37 ---------------- */
     {
-      id: "d49", date: "2027-01-06", week: "w17", title: "Big Bang v10: the cosmos gets a nebula",
+      id: "d73", date: "2027-06-02", week: "w37", title: "Big Bang v10: the cosmos gets a nebula",
       theme: "Big Bang · v10 — couple the art to the physics.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
+        { id: "t1", obj: PROJ, cat: "project", est: 90,
           lead: `<b>Big Bang v10</b> — gas that glows where matter clusters.`,
           sub: [
-            { id: "s1", est: 40, label: `Render an fBm nebula (background or volumetric layer) modulated by particle density; use an HSB cosmic palette.` },
-            { id: "s2", est: 35, label: `Blend it under/over the glowing particles (a low-res density buffer works well).`,
-              note: `Modulating the nebula by particle density makes gas glow where matter clusters — now the physics and the art are the same thing.` },
+            { id: "s1", est: 50, label: `Render an fBm nebula (background or volumetric layer) modulated by particle density; use an HSB cosmic palette.` },
+            { id: "s2", est: 40, label: `Blend it under/over the glowing particles (a low-res density buffer works well).`, note: `Modulating the nebula by particle density makes gas glow where matter clusters — now the physics and the art are the same thing.` },
           ],
           model: `Feed the simulation into the look: use local particle density (or a low-res density texture) to modulate the fBm nebula so gas glows where matter clusters. Now the physics and the art are the same thing.`,
           cards: [
@@ -1084,35 +1366,48 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2027-01-08", week: "w17", title: "Book of Shaders VI: blur & blend → bloom",
+      id: "d74", date: "2027-06-07", week: "w37", title: "Book of Shaders VI: blur & blend → bloom",
       theme: "Shaders · thread part 6 — the recipe for light bleed.",
       tasks: [
-        { id: "t1", obj: SH, cat: "read", est: 85,
-          lead: `<b>Shaders ⑥</b> — the post-process behind every glowing render.`,
+        { id: "t1", obj: SH, cat: "read", est: 55,
+          lead: `<b>Shaders ⑥</b> — the post-process behind every glowing render. (1/2)`,
           sub: [
-            { id: "s1", est: 45, label: `Read BoS Ch.5 (textures, blend modes, kernel convolution / Gaussian blur).` },
-            { id: "s2", cat: "review", est: 40, label: `The bloom recipe: bright-pass → blur → additively composite. Study <code>shaders_postprocessing</code> + <code>core_render_texture</code>.`,
-              note: `Do the blur <b>separable</b> (H then V) — a 2-D Gaussian factorizes into two 1-D passes, O(2n) samples instead of O(n²).` },
+            { id: "s1", est: 25, label: "Read BoS Ch.5 up to kernel convolution: textures and blend modes." },
+            { id: "s2", est: 30, label: "Then the rest of BoS Ch.5: kernel convolution and the Gaussian blur." },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 38 ---------------- */
+    {
+      id: "d75", date: "2027-06-11", week: "w38", title: "Big Bang v11: bloom post-process",
+      theme: "Big Bang · v11 — bright cores bleed light.",
+      tasks: [
+        { id: "t1", carried: "d74", obj: SH, cat: "read", est: 40,
+          lead: `<b>Shaders ⑥</b> — the post-process behind every glowing render. (2/2)`,
+          sub: [
+            { id: "s1", cat: "review", est: 40, label: `The bloom recipe: bright-pass → blur → additively composite. Study <code>shaders_postprocessing</code> + <code>core_render_texture</code>.`, note: `Do the blur <b>separable</b> (H then V) — a 2-D Gaussian factorizes into two 1-D passes, O(2n) samples instead of O(n²).` },
           ],
           model: `Bloom = extract the bright pixels, blur them (a Gaussian kernel convolution, usually two 1-D passes), then add the blurred glow back over the scene. A <b>separable</b> blur (horizontal then vertical) is far cheaper than a 2-D kernel.`,
           cards: [
             { q: `The three steps of a bloom post-process?`, a: `Threshold bright areas → Gaussian blur them → additively composite back over the original.` },
             { q: `Why do a separable (H then V) blur?`, a: `A 2-D Gaussian factorizes into two 1-D passes — O(2n) samples instead of O(n²).` },
           ] },
+        { id: "t2", obj: PROJ, cat: "project", est: 50,
+          lead: `<b>Big Bang v11</b> — real light bloom. (1/2)`,
+          sub: [
+            { id: "s1", est: 50, label: `Render the sim to a <code>RenderTexture2D</code>; run bright-pass + separable blur shaders; composite additively to the screen.` },
+          ] },
       ],
     },
-
-    /* ---------------- Week 18 ---------------- */
     {
-      id: "d51", date: "2027-01-12", week: "w18", title: "Big Bang v11: bloom post-process",
-      theme: "Big Bang · v11 — bright cores bleed light.",
+      id: "d76", date: "2027-06-12", week: "w38", title: "Big Bang v11: bloom post-process (cont.)",
+      theme: "Finish “Big Bang v11: bloom post-process” — the part that didn't fit its first session.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
-          lead: `<b>Big Bang v11</b> — real light bloom.`,
+        { id: "t1", carried: "d75", obj: PROJ, cat: "project", est: 40,
+          lead: `<b>Big Bang v11</b> — real light bloom. (2/2)`,
           sub: [
-            { id: "s1", est: 40, label: `Render the sim to a <code>RenderTexture2D</code>; run bright-pass + separable blur shaders; composite additively to the screen.` },
-            { id: "s2", est: 35, label: `Follow <code>shaders_postprocessing</code> + the <a href="https://buscalaexcusa.com/posts/2025/raylib-how-to-setup-custom-shaders/" target="_blank" rel="noopener">custom-shader setup guide</a>.`,
-              note: `Bloom makes dense cores bleed light like overexposed astrophotography — sells the "cosmic" scale more than any physics tweak.` },
+            { id: "s1", est: 40, label: `Follow <code>shaders_postprocessing</code> + the <a href="https://buscalaexcusa.com/posts/2025/raylib-how-to-setup-custom-shaders/" target="_blank" rel="noopener">custom-shader setup guide</a>.`, note: `Bloom makes dense cores bleed light like overexposed astrophotography — sells the "cosmic" scale more than any physics tweak.` },
           ],
           model: `Post-processing pipeline: draw world → <code>RenderTexture</code>, then draw that texture full-screen through shader passes. Bloom makes dense cores bleed light and sells the "cosmic" scale more than any physics tweak.`,
           cards: [
@@ -1121,8 +1416,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 39 ---------------- */
     {
-      id: "d52", date: "2027-01-14", week: "w18", title: "Finish the physics tail & consider GPU N-body",
+      id: "d77", date: "2027-06-16", week: "w39", title: "Finish the physics tail & consider GPU N-body",
       theme: "Nature of Code · thread part 15 — the path to 100k+ particles.",
       tasks: [
         { id: "t1", obj: NOC, cat: "review", est: 70,
@@ -1140,40 +1437,36 @@ registerRoadmap({
       ],
     },
     {
-      id: "d53", date: "2027-01-16", week: "w18", title: "Big Bang v12: time, colour & cinematics",
+      id: "d78", date: "2027-06-17", week: "w39", title: "Big Bang v12: time, colour & cinematics",
       theme: "Big Bang · v12 — the last 10% that makes it an instrument.",
       tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
-          lead: `<b>Big Bang v12</b> — polish into something you can drive.`,
+        { id: "t1", obj: PROJ, cat: "project", est: 50,
+          lead: `<b>Big Bang v12</b> — polish into something you can drive. (1/2)`,
           sub: [
-            { id: "s1", est: 40, label: `Time controls: pause / fast-forward / reverse (scale dt, incl. negative where stable). Colour by age/redshift.` },
-            { id: "s2", est: 35, label: `Camera keyframes or auto-orbit; screenshot/GIF capture (<code>TakeScreenshot</code>).`,
-              note: `Reverse works cleanly with symmetric/Verlet integration for a while — being able to race through billions of years and orbit turns the sim into an instrument.` },
+            { id: "s1", est: 50, label: `Time controls: pause / fast-forward / reverse (scale dt, incl. negative where stable). Colour by age/redshift.` },
+          ] },
+      ],
+    },
+
+    /* ---------------- Week 40 ---------------- */
+    {
+      id: "d79", date: "2027-06-23", week: "w40", title: "🎓 Capstone: the Big Bang, from void to cosmos",
+      theme: "Big Bang · capstone — the whole pipeline, and what you actually built.",
+      tasks: [
+        { id: "t1", carried: "d78", obj: PROJ, cat: "project", est: 40,
+          lead: `<b>Big Bang v12</b> — polish into something you can drive. (2/2)`,
+          sub: [
+            { id: "s1", est: 40, label: `Camera keyframes or auto-orbit; screenshot/GIF capture (<code>TakeScreenshot</code>).`, note: `Reverse works cleanly with symmetric/Verlet integration for a while — being able to race through billions of years and orbit turns the sim into an instrument.` },
           ],
           model: `The last 10% is controls and framing: being able to pause, race through billions of years, reverse, and orbit turns the sim from a demo into an instrument for <i>seeing</i> the physics. Redshift-by-age makes time legible in colour.`,
           cards: [
             { q: `How do you let the user run time backward?`, a: `Integrate with a negative dt scale (works cleanly with symmetric/Verlet integration for a while).` },
             { q: `What turns the sim from demo into instrument?`, a: `Time controls (pause/fast-forward/reverse) + a controllable/keyframed camera + capture.` },
           ] },
-      ],
-    },
-
-    /* ---------------- Week 19 ---------------- */
-    {
-      id: "d54", date: "2027-01-18", week: "w19", title: "🎓 Capstone: the Big Bang, from void to cosmos",
-      theme: "Big Bang · capstone — the whole pipeline, and what you actually built.",
-      tasks: [
-        { id: "t1", obj: PROJ, cat: "project", est: 75,
-          lead: `<b>Capstone</b> — assemble every layer into the finished simulation.`,
+        { id: "t2", obj: PROJ, cat: "project", est: 50,
+          lead: `<b>Capstone</b> — assemble every layer into the finished simulation. (1/2)`,
           sub: [
-            { id: "s1", est: 40, label: `Integrate the full pipeline: seeded burst → 3D softened Verlet N-body (Barnes–Hut) → additive GPU glow → fBm nebula → bloom → time & camera controls.` },
-            { id: "s2", cat: "review", est: 35, label: `Write a short README: the physics (inverse-square + softening + integration), the render pipeline, and what you learned. Optionally push to GitHub.`,
-              note: `The real deliverable is the graphics-engine + simulation fluency to build the next idea. That was the point.` },
-          ],
-          model: `You set out to "set the formulas and physics and see how it comes out." You now have a real gravitational N-body engine, stable integration, spatial acceleration, and a full render pipeline — and, more importantly, the graphics-engine fluency to build the next idea. <b>That was the point.</b>`,
-          cards: [
-            { q: `The full pipeline of your finished simulation, in order?`, a: `Seed burst → accumulate softened pairwise gravity (Barnes–Hut) → Verlet integrate → draw additive GPU-glow particles → fBm nebula → bloom → present, with time/camera controls.` },
-            { q: `What was the real deliverable beyond the sim?`, a: `Graphics-engine + simulation fluency: vectors/forces/integration, particle-system architecture, 2D→3D rendering, and GLSL shaders (glow/nebula/bloom).` },
+            { id: "s1", est: 50, label: `Integrate the full pipeline: seeded burst → 3D softened Verlet N-body (Barnes–Hut) → additive GPU glow → fBm nebula → bloom → time & camera controls.` },
           ] },
       ],
       soft: [
@@ -1181,20 +1474,36 @@ registerRoadmap({
       ],
       note: "The journey's end — and a foundation for whatever you simulate next.",
     },
+    {
+      id: "d80", date: "2027-06-29", week: "w40", title: "🎓 Capstone: the Big Bang, from void to cosmos (cont.)",
+      theme: "Finish “🎓 Capstone: the Big Bang, from void to cosmos” — the part that didn't fit its first session.",
+      tasks: [
+        { id: "t1", carried: "d79", obj: PROJ, cat: "project", est: 35,
+          lead: `<b>Capstone</b> — assemble every layer into the finished simulation. (2/2)`,
+          sub: [
+            { id: "s1", cat: "review", est: 35, label: `Write a short README: the physics (inverse-square + softening + integration), the render pipeline, and what you learned. Optionally push to GitHub.`, note: `The real deliverable is the graphics-engine + simulation fluency to build the next idea. That was the point.` },
+          ],
+          model: `You set out to "set the formulas and physics and see how it comes out." You now have a real gravitational N-body engine, stable integration, spatial acceleration, and a full render pipeline — and, more importantly, the graphics-engine fluency to build the next idea. <b>That was the point.</b>`,
+          cards: [
+            { q: `The full pipeline of your finished simulation, in order?`, a: `Seed burst → accumulate softened pairwise gravity (Barnes–Hut) → Verlet integrate → draw additive GPU-glow particles → fBm nebula → bloom → present, with time/camera controls.` },
+            { q: `What was the real deliverable beyond the sim?`, a: `Graphics-engine + simulation fluency: vectors/forces/integration, particle-system architecture, 2D→3D rendering, and GLSL shaders (glow/nebula/bloom).` },
+          ] },
+      ],
+    },
   ],
 
   milestones: [
-    { id: "w3.m1", week: "w3", title: "Foundations — shapes, vectors & Newton's laws",
-      rule: { type: "tasks", require: ["d01.t1", "d03.t1", "d04.t1", "d06.t1", "d09.t1"] } },
-    { id: "w6.m1", week: "w6", title: "🎮 Half the raylib basics — Collision & Tilemaps done",
-      rule: { type: "tasks", require: ["d10.t1", "d12.t1", "d13.t1", "d14.t1", "d17.t1"] } },
-    { id: "w11.m1", week: "w11", title: "Nature of Code physics core done (Intro–Ch.4) + Udemy course complete",
-      rule: { type: "tasks", require: ["d21.t1", "d22.t1", "d25.t1", "d29.t1", "d30.t1"] } },
-    { id: "w12.m1", week: "w12", title: "🌌 The simulation lives — a 2D gravitational Big Bang",
-      rule: { type: "tasks", require: ["d24.t1", "d26.t1", "d32.t1", "d34.t1"] } },
-    { id: "w15.m1", week: "w15", title: "Into 3D & shaders begin — Nature of Code ~70–80%",
-      rule: { type: "tasks", require: ["d39.t1", "d41.t1", "d42.t1", "d43.t1"] } },
-    { id: "w19.m1", week: "w19", title: "🎓 Capstone — 3D Big Bang: N-body, glow, nebula & bloom",
-      rule: { type: "tasks", require: ["d48.t1", "d49.t1", "d51.t1", "d53.t1", "d54.t1"] } },
+    { id: "w8.m1", week: "w8", title: "Foundations — shapes, vectors & Newton's laws",
+      rule: { type: "tasks", require: ["d01.t1", "d02.t1", "d05.t1", "d06.t1", "d07.t1", "d08.t1", "d10.t2", "d11.t1", "d14.t1", "d15.t1"] } },
+    { id: "w14.m1", week: "w14", title: "🎮 Half the raylib basics — Collision & Tilemaps done",
+      rule: { type: "tasks", require: ["d16.t1", "d17.t1", "d20.t1", "d21.t1", "d22.t1", "d23.t1", "d27.t1", "d28.t1"] } },
+    { id: "w24.m1", week: "w24", title: "Nature of Code physics core done (Intro–Ch.4) + Udemy course complete",
+      rule: { type: "tasks", require: ["d34.t1", "d35.t1", "d36.t1", "d40.t1", "d45.t1", "d46.t1", "d47.t1"] } },
+    { id: "w26.m1", week: "w26", title: "🌌 The simulation lives — a 2D gravitational Big Bang",
+      rule: { type: "tasks", require: ["d38.t1", "d39.t1", "d41.t1", "d49.t1", "d52.t1"] } },
+    { id: "w32.m1", week: "w32", title: "Into 3D & shaders begin — Nature of Code ~70–80%",
+      rule: { type: "tasks", require: ["d57.t1", "d60.t2", "d61.t1", "d62.t1", "d63.t1"] } },
+    { id: "w40.m1", week: "w40", title: "🎓 Capstone — 3D Big Bang: N-body, glow, nebula & bloom",
+      rule: { type: "tasks", require: ["d71.t1", "d72.t1", "d73.t1", "d75.t2", "d76.t1", "d78.t1", "d79.t1", "d79.t2", "d80.t1"] } },
   ],
 });

@@ -1,0 +1,4 @@
+node_modules/
+pub/
+*.log
+*.txt

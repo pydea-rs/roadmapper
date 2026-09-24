@@ -28,10 +28,10 @@ t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 // shift (exactly like the frozen-now anchors in render.test / insights.test).
 t.group("roadmap date anchors (a bad or asymmetric shift must fail here)");
 const ANCHORS = {
-  "rust-fastapi": { first: "2026-09-13", last: "2027-05-12" },
-  "interp-go":    { first: "2026-09-14", last: "2027-02-27" },
-  "bedrock":      { first: "2026-09-14", last: "2027-04-24" },
-  "raylib":       { first: "2026-09-13", last: "2027-01-18" },
+  "rust-fastapi": { first: "2026-09-23", last: "2027-08-24" },
+  "interp-go":    { first: "2026-09-23", last: "2027-06-28" },
+  "bedrock":      { first: "2026-09-24", last: "2027-08-24" },
+  "raylib":       { first: "2026-09-24", last: "2027-06-29" },
 };
 for (const [slug, a] of Object.entries(ANCHORS)) {
   const rm = registry.getRoadmap(slug);
@@ -195,13 +195,22 @@ const compTasks = bedrock.days.flatMap(d => d.tasks).filter(x => x.obj === "comp
 t.ok(compTasks.length >= 8, "the compilers thread has its full run of tasks (appended + woven)");
 // A day's ANCHOR is its first task of its own: work carried over from an earlier day
 // (`carried`, placed first so the day stays under the daily cap) never defines the topic.
-const anchorOf = d => d.tasks.find(x => !x.carried);
+// A card whose tasks were ALL passed along is a "(cont.)" card and has no topic of
+// its own — it falls back to what it is finishing.
+const anchorOf = d => d.tasks.find(x => !x.carried) || d.tasks[0];
+const isCont = d => /cont\.\)\s*$/.test(d.title);
 // the woven "Compiler lens" seeds live on EARLIER days as a 2nd task, so they must
 // never be a day's anchor (that would perturb the interleaving invariant).
-const wovenComp = bedrock.days.filter(d => bWeek(d) < 30 && d.tasks.some(x => x.obj === "compilers"));
-t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 earlier second-half days");
-t.ok(wovenComp.every(d => anchorOf(d).obj !== "compilers"),
-  "woven compiler tasks are additive (never the day's first/anchor task)");
+// judged against where the appended Compilers BLOCK starts, not a fixed week number:
+// the planner re-flows the calendar, so a literal week index goes stale every re-plan
+const blockStart = bedrock.days.findIndex(d => !isCont(d) && anchorOf(d)?.obj === "compilers");
+const wovenComp = bedrock.days.filter((d, i) => i < blockStart && d.tasks.some(x => x.obj === "compilers"));
+t.ok(blockStart > 0, "the appended Compilers block starts somewhere after the beginning");
+t.ok(wovenComp.length >= 2, "compiler concepts are woven into >= 2 days before that block");
+// Additive means it never DEFINES a day. A "(cont.)" card is the overflow of the day
+// before it and keeps that day's title, so a lens task landing there is still additive.
+t.ok(wovenComp.every(d => isCont(d) || anchorOf(d).obj !== "compilers"),
+  "woven compiler tasks are additive (never the topic of a day they open)");
 
 // no two side-days may share a calendar date (the digest/effort views key off date)
 const bDates = bedrock.days.map(d => d.date);
@@ -209,9 +218,12 @@ t.eq(new Set(bDates).size, bDates.length, "bedrock day dates are unique (no coll
 
 // threads stay INTERLEAVED: consecutive days switch topics, save the one
 // deliberate security capstone pair (d37 → d38). Guards the core design rule.
+// Only cards that OPEN a day carry a topic; a "(cont.)" card is by definition finishing
+// the one before it, so it is skipped rather than counted as a repeat.
+const opening = bedrock.days.filter(d => !isCont(d));
 let sameThread = 0;
-for (let i = 1; i < bedrock.days.length; i++) {
-  const a = anchorOf(bedrock.days[i - 1])?.obj, b = anchorOf(bedrock.days[i])?.obj;
+for (let i = 1; i < opening.length; i++) {
+  const a = anchorOf(opening[i - 1])?.obj, b = anchorOf(opening[i])?.obj;
   if (a && a === b) sameThread++;
 }
 t.ok(sameThread <= 1, `threads interleave — at most the one capstone pair repeats (found ${sameThread})`);
@@ -219,10 +231,17 @@ t.ok(sameThread <= 1, `threads interleave — at most the one capstone pair repe
 // recall cards: EVERY task carries >= 2 well-formed {q, a} cards (the whole point
 // of the recall feature is that no completed task is left without prompts).
 const allBedrockTasks = bedrock.days.flatMap(d => d.tasks);
-t.ok(allBedrockTasks.every(x => x.cards && x.cards.length >= 2),
-  "every bedrock task carries >= 2 recall cards");
-t.ok(allBedrockTasks.every(x => x.cards.every(c => c.q && c.a)),
+// A task the planner split across cards is suffixed "(k/n)"; the recall deck quizzes
+// the WHOLE item, so it rides with the final part only — the earlier parts carry none.
+const nonFinalPart = x => {
+  const m = /\((\d+)\/(\d+)\)\s*$/.exec(x.lead || x.label || "");
+  return !!m && +m[1] < +m[2];
+};
+t.ok(allBedrockTasks.every(x => nonFinalPart(x) || (x.cards && x.cards.length >= 2)),
+  "every bedrock task carries >= 2 recall cards (a split task's deck rides with its last part)");
+t.ok(allBedrockTasks.every(x => (x.cards || []).every(c => c.q && c.a)),
   "every recall card has both a question and an answer");
+t.ok(allBedrockTasks.some(nonFinalPart), "the 2026-09-25 pass did split bedrock tasks across cards");
 
 // milestone task references still resolve (incl. both extensions' milestones)
 t.ok(bedrock.milestones.every(m => (m.rule.require || []).every(id => bedrock.tasksById.has(id))),
@@ -325,5 +344,59 @@ t.ok(!/\.task\.parent\.partial\s+\.checkbox(?![-\w])/.test(cssSrc),
   "no unscoped `.task.parent.partial .checkbox` descendant selector remains");
 t.ok(/\.task\.done\s*>\s*\.checkbox/.test(cssSrc),
   "the done checkbox fill/animation is scoped with `> .checkbox`");
+
+
+t.group("make-it-doable pass (2026-09-25) — the guarantees the owner asked for");
+// 1. No single leaf is a whole evening. This is the thing that made the plan
+//    impossible: a 43-page chapter, or two documents, priced as one sitting.
+const LEAF_CAP = 60;
+for (const rm of roadmaps) {
+  const fat = rm.days.flatMap(d => d.tasks).filter(x => !x.optional)
+    .flatMap(x => (x.subs && x.subs.length ? x.subs : [x]))
+    .filter(l => l.est > LEAF_CAP);
+  t.deep(fat.map(l => `${l.id}=${l.est}`), [], `${rm.slug}: no required leaf passes ${LEAF_CAP} min`);
+}
+// 2. Split parts are complete and in order: "(k/n)" for k = 1..n, on consecutive cards
+//    of the same roadmap, and the later parts are marked as carried from the first.
+for (const rm of roadmaps) {
+  const parts = new Map();                      // base text -> [{k, n, dayIndex}]
+  rm.days.forEach((d, di) => d.tasks.forEach(x => {
+    const txt = x.lead || x.label || "";
+    const m = /^(.*)\s\((\d+)\/(\d+)\)\s*$/.exec(txt);
+    if (!m) return;
+    if (!parts.has(m[1])) parts.set(m[1], []);
+    parts.get(m[1]).push({ k: +m[2], n: +m[3], di, task: x });
+  }));
+  const broken = [];
+  for (const [base, ps] of parts) {
+    const n = ps[0].n;
+    if (ps.length !== n) { broken.push(`${base.slice(0, 40)}: ${ps.length} of ${n} parts`); continue; }
+    if (ps.map(x => x.k).join() !== ps.map((_, i) => i + 1).join()) broken.push(`${base.slice(0, 40)}: parts out of order`);
+    if (ps.some((x, i) => i && x.di <= ps[i - 1].di)) broken.push(`${base.slice(0, 40)}: parts not on later cards`);
+    if (ps.some((x, i) => i && !x.task.carried)) broken.push(`${base.slice(0, 40)}: a later part isn't marked carried`);
+  }
+  t.deep(broken, [], `${rm.slug}: every split task has all its parts, in order, on later cards`);
+  t.ok(parts.size > 0, `${rm.slug}: the pass did split work across cards (${parts.size} tasks)`);
+}
+// 3. A "(cont.)" card holds ONLY passed-along work — that is what makes it a continuation.
+for (const rm of roadmaps) {
+  const wrong = rm.days.filter(d => /cont\.\)\s*$/.test(d.title) && d.tasks.some(x => !x.carried));
+  t.deep(wrong.map(d => d.id), [], `${rm.slug}: a "(cont.)" card carries nothing of its own`);
+}
+// 4. Carried work comes FIRST on its card (it is older than the card's own tasks).
+for (const rm of roadmaps) {
+  const wrong = rm.days.filter(d => {
+    const firstOwn = d.tasks.findIndex(x => !x.carried);
+    return firstOwn >= 0 && d.tasks.slice(firstOwn).some(x => x.carried);
+  });
+  t.deep(wrong.map(d => d.id), [], `${rm.slug}: passed-along tasks sit ahead of the card's own`);
+}
+// 5. Required-hours tripwire. ⚠️ SHIFT-SENSITIVE like the date anchors: a re-price is a
+//    deliberate act, so it must land here and be updated on purpose, never drift.
+const HOURS = { "rust-fastapi": 185.3, "interp-go": 185.8, bedrock: 147.2, raylib: 82.3 };
+for (const rm of roadmaps) {
+  const h = rm.days.flatMap(d => d.tasks).filter(x => !x.optional).reduce((a, x) => a + x.est, 0) / 60;
+  t.eq(Math.round(h * 10) / 10, HOURS[rm.slug], `${rm.slug}: ${HOURS[rm.slug]}h of required work`);
+}
 
 t.done();

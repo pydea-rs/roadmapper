@@ -1,15 +1,15 @@
 // schedule.test.mjs — the owner's CALENDAR rules, asserted across all four roadmaps.
 //
-// Written for the 3-hour cap re-plan (2026-09-13), which replaced the 4–6h re-plan of the
-// same day after the owner read the Horizon view's daily totals. The rules:
+// Updated for the make-it-doable pass (2026-09-25), which re-priced the content honestly,
+// split it at its own seams, and re-flowed it over a longer calendar. The rules:
 //
 //  1. The REQUIRED minutes of every roadmap on one date add up to at most 3h (180 min).
-//     It is a ceiling, never a target. A few 4h dates are allowed when a roadmap would
-//     otherwise run far past its extension allowance; nothing ever goes beyond 4h.
-//  2. Every roadmap restarted on 2026-09-13, on one shared week frame.
-//  3. Days per week follow the phase of the content: rust's two-book core 4–5, its RWP arc
-//     2 (a 3rd only when the other roadmaps are light), interp-go 4, bedrock 2–4, raylib
-//     2–3. Weekdays change from week to week, and no roadmap goes quiet for over a week.
+//     It is a ceiling, never a target — and this plan never reaches for the exception.
+//  2. Every roadmap starts on 2026-09-23, on one shared week frame.
+//  3. Days per week come from a weekly minutes BUDGET (work left ÷ weeks left) divided by
+//     a per-card ceiling, so each roadmap lands on its target week count: rust 3 a week
+//     (4 in the closing weeks), interp-go 3–4, bedrock 2–3, raylib a steady 2. Weekdays
+//     change from week to week, and no roadmap goes quiet for over a week.
 //  4. When a date would overflow, tasks are passed along IN ORDER into the roadmap's next
 //     card, ahead of that card's own tasks (`carried`); a card left with only carried work
 //     is "(cont.)"; a task too big to share a date is split into "(k/n)" parts.
@@ -49,14 +49,14 @@ t.ok(peak <= RARE, `busiest date ${peak} min`);
 t.eq(stats.dailyBudget(), CAP,
   "the app's daily ceiling (Horizon gauge, projections) is the same 3h");
 
-t.group("rule 2 — every roadmap restarted on 2026-09-13, on one shared week frame");
+t.group("rule 2 — every roadmap starts on 2026-09-23, on one shared week frame");
 // ⚠️ SHIFT-SENSITIVE: bump by +N with every uniform date shift (like content.test's ANCHORS).
-const FRAME = "2026-09-13";
+const FRAME = "2026-09-23";
 for (const rm of roadmaps) {
   t.ok(rm.weeks.every((w, i) => w.start === util.addDays(FRAME, 7 * i)), `${rm.slug}: week i starts on ${FRAME} + 7·i`);
   t.eq(rm.weeksById.get(rm.days[0].week).index, 0, `${rm.slug}: starts in week 1 (${rm.days[0].date})`);
 }
-t.eq(roadmaps.map(rm => rm.days[0].date).sort()[0], FRAME, "the restart opens on the frame's first day");
+t.eq(roadmaps.map(rm => rm.days[0].date).sort()[0], FRAME, "day 1 opens on the frame's first day");
 
 t.group("rule 3 — how many days each roadmap gets per week");
 const weekDays = rm => {                       // week index -> its days, in order
@@ -68,35 +68,44 @@ const counts = rm => weekDays(rm).map(ds => ds.length);
 const ig = registry.getRoadmap("interp-go"), br = registry.getRoadmap("bedrock"),
       ry = registry.getRoadmap("raylib"), ru = registry.getRoadmap("rust-fastapi");
 const allButLast = (c, lo, hi) => c.slice(0, -1).every(n => n >= lo && n <= hi) && c.at(-1) >= 1 && c.at(-1) <= hi;
-t.ok(allButLast(counts(ig), 4, 4), `interp-go: 4 days in every week but a shorter last one (${counts(ig).join("")})`);
-t.ok(allButLast(counts(br), 2, 4), `bedrock: 2–4 side-days a week (${counts(br).join("")})`);
-t.ok(allButLast(counts(ry), 2, 3), `raylib: 2–3 side-days a week (${counts(ry).join("")})`);
-// rust: a week holding any two-book-core work is a core week (4–5 days); after that the RWP arc runs 2–3
+t.ok(allButLast(counts(ig), 3, 4), `interp-go: 3–4 days a week (${counts(ig).join("")})`);
+t.ok(allButLast(counts(br), 2, 3), `bedrock: 2–3 side-days a week (${counts(br).join("")})`);
+t.ok(allButLast(counts(ry), 2, 2), `raylib: a steady 2 side-days a week (${counts(ry).join("")})`);
+t.ok(allButLast(counts(ru), 3, 4), `rust-fastapi: 3–4 days a week (${counts(ru).join("")})`);
+// rust still runs its two-book core first and the RWP arc after it, without interleaving
 const ruWeeks = weekDays(ru);
 const isCore = ds => ds.some(d => d.tasks.some(x => !x.optional && x.obj !== "rwp"));
 const firstTail = ruWeeks.findIndex(ds => !isCore(ds));
 t.ok(firstTail > 0 && ruWeeks.slice(firstTail).every(ds => !isCore(ds)), `rust-fastapi: the core comes first, then only RWP (from week ${firstTail + 1})`);
-t.ok(ruWeeks.slice(0, firstTail).every(ds => ds.length >= 4 && ds.length <= 5), `rust-fastapi: core weeks hold 4–5 days (${counts(ru).slice(0, firstTail).join("")})`);
-t.ok(allButLast(counts(ru).slice(firstTail), 2, 3), `rust-fastapi: the RWP arc runs 2 or 3 days a week (${counts(ru).slice(firstTail).join("")})`);
 
-t.group("rule 3 — rust takes a 3rd RWP day only in a light week");
-const LIGHT = 600;   // combined required minutes of the OTHER roadmaps that week
-const otherLoad = i => [ig, br, ry].reduce((s, rm) => s + (weekDays(rm)[i] || []).reduce((a, d) => a + reqMins(d), 0), 0);
-const rc = counts(ru);
-const threeDayWeeks = rc.map((n, i) => ({ n, i })).filter(x => x.i >= firstTail && x.n === 3);
-t.ok(threeDayWeeks.length > 0, `the arc does use 3-day weeks (${threeDayWeeks.length})`);
-t.deep(threeDayWeeks.filter(x => otherLoad(x.i) >= LIGHT).map(x => `w${x.i + 1}:${otherLoad(x.i)}`), [],
-  `every 3-day RWP week falls where the other roadmaps total < ${LIGHT} min`);
-t.deep(rc.map((n, i) => ({ n, i })).filter(x => x.i >= firstTail && x.i < rc.length - 1 && x.n === 2 && otherLoad(x.i) < LIGHT)
-  .map(x => `w${x.i + 1}`), [], "and no light week is left at 2 (the arc never idles when there's room)");
+t.group("rule 3 — every roadmap lands on its target week count");
+// the planner is given a target and a weekly budget of "work left ÷ weeks left"; hitting
+// the target exactly is what proves the budget loop converged rather than drifted
+const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 40, bedrock: 48, raylib: 40 };
+for (const rm of roadmaps) t.eq(rm.weeks.length, TARGET_WEEKS[rm.slug], `${rm.slug}: ${TARGET_WEEKS[rm.slug]} weeks, as planned`);
+
+t.group("rule 3 — a single card is one sitting, not a day's worth");
+// the per-CARD ceiling is the change the owner actually asked for: a card holds one or
+// two items and the rest is passed along, rather than a card absorbing the whole date
+const CARD_CAP = { "rust-fastapi": 105, "interp-go": 105, bedrock: 95, raylib: 95 };
+for (const rm of roadmaps) {
+  const mins = rm.days.map(reqMins);
+  const worst = Math.max(...mins);
+  t.ok(worst <= CARD_CAP[rm.slug], `${rm.slug}: no card passes its ${CARD_CAP[rm.slug]} min ceiling (worst ${worst})`);
+  const median = mins.slice().sort((a, b) => a - b)[mins.length >> 1];
+  t.ok(median <= CARD_CAP[rm.slug] * 0.85, `${rm.slug}: the typical card is well under it (median ${median})`);
+}
 
 t.group("rule 3 — weekdays vary week to week, and no roadmap goes quiet for a week");
 const pattern = (rm, ds, i) => ds.map(d => gapDays(rm.weeks[i].start, d.date)).join(",");
 for (const rm of roadmaps) {
   const pats = weekDays(rm).map((ds, i) => pattern(rm, ds, i));
   t.eq(pats.filter((p, i) => i > 0 && p === pats[i - 1]).length, 0, `${rm.slug}: no week reuses the previous week's exact weekdays`);
-  t.ok(new Set(pats).size >= Math.ceil(pats.length * 0.75),
-    `${rm.slug}: most weeks have their own weekday pattern (${new Set(pats).size} distinct of ${pats.length})`);
+  // a roadmap sitting 2 days a week has only 21 possible patterns, so "most weeks are
+  // distinct" is measured against what is reachable, not against the week count
+  const reach = Math.min(pats.length, ...weekDays(rm).map(ds => ds.length).map(k => [1, 7, 21, 35, 35, 21, 7, 1][k] || 1));
+  t.ok(new Set(pats).size >= Math.ceil(Math.min(pats.length, reach) * 0.75),
+    `${rm.slug}: most weeks have their own weekday pattern (${new Set(pats).size} distinct of ${pats.length}, ${reach} reachable)`);
   t.eq(new Set(rm.days.map(d => util.parseDate(d.date).getDay())).size, 7, `${rm.slug}: over its arc it lands on all seven weekdays`);
   let worst = 0;
   for (let i = 1; i < rm.days.length; i++) worst = Math.max(worst, gapDays(rm.days[i - 1].date, rm.days[i].date));
@@ -117,7 +126,7 @@ for (const rm of roadmaps) {
       if (!x.optional) { if (from < lastOrigin) bad.chain.push(x.id); lastOrigin = Math.max(lastOrigin, from); }
     }
     const allCarried = d.tasks.length > 0 && carried.every(Boolean);
-    if (/\(cont\.\)$/.test(d.title) !== allCarried) bad.cont.push(d.id);
+    if (/cont\.\)$/.test(d.title) !== allCarried) bad.cont.push(d.id);
   });
   t.deep(bad.order, [], `${rm.slug}: carried tasks come before a card's own tasks`);
   t.deep(bad.origin, [], `${rm.slug}: a task is only ever carried FROM an earlier card`);

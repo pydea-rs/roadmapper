@@ -3,7 +3,7 @@
 // (enabled vs a disabled "no free day"), and the move→apply→rerender round-trip.
 // jsdom-gated like the other DOM suites; SKIPS cleanly when jsdom is absent.
 import { suite } from "./_harness.mjs";
-import { store, loadFixture } from "./_load.mjs";
+import { registry, store, loadFixture, loadRoadmap } from "./_load.mjs";
 
 const t = suite("daymenu");
 
@@ -153,6 +153,78 @@ const time = openItem(/Time on tasks/);
 t.ok(time && /Required/.test(time.textContent) && /Invested so far/.test(time.textContent), "the Time modal shows required time and invested so far");
 const refs = openItem(/References/);
 t.ok(refs && /No links or references on this day|dm-link/.test(refs.innerHTML), "the References modal opens (links or an empty note)");
+ui.closeAllModals();
+store.resetAll();
+
+/* ---------------- the reading list (roadmap source library) ---------------- */
+t.group("Reading list — offered only by a roadmap that catalogues its sources");
+store.resetAll();
+// the fixture declares no `library:`, so the item must not appear at all
+daymenu.openDayMenu(rm, day("d02"), fakeEv(), () => {});
+t.ok(!menuItems().some(b => /Reading list/.test(b.textContent)),
+  "a roadmap with no source library gets no Reading list item");
+ui.closeContextMenu();
+
+await loadRoadmap("bedrock.js");
+const bd = registry.getRoadmap("bedrock");
+t.ok(bd.library.length >= 20, `bedrock catalogues its sources (${bd.library.length} entries)`);
+t.ok(bd.library.every(x => x.id && x.title && x.match.length),
+  "every entry has an id, a title and at least one match string");
+t.eq(new Set(bd.library.map(x => x.id)).size, bd.library.length, "library ids are unique");
+t.ok(bd.library.some(x => x.free) && bd.library.some(x => !x.free),
+  "the catalogue distinguishes free sources from paid ones");
+
+t.group("daySources — groups a card's work by the source it reads from");
+// The point of the feature: nothing you are asked to READ is left uncatalogued. A card
+// can legitimately name no source — a "(cont.)" card holding only the absorb-this-idea
+// leaves has nothing to read — but a card carrying a link must always resolve to one.
+const hasLink = d => d.tasks.some(x => [x.label, x.lead, ...(x.refs || [])]
+  .concat((x.subs || []).flatMap(sb => [sb.label, sb.note]))
+  .some(v => typeof v === "string" && v.includes("href=")));
+const uncatalogued = bd.days.filter(d => !daymenu.daySources(bd, d).length);
+t.deep(uncatalogued.filter(hasLink).map(d => d.id), [],
+  "every bedrock card that links to something names the source it comes from");
+t.ok(uncatalogued.length <= bd.days.length * 0.1,
+  `nearly every card names a source (${bd.days.length - uncatalogued.length}/${bd.days.length})`);
+const sample = bd.days.find(d => daymenu.daySources(bd, d).length >= 2) || bd.days[0];
+const groups = daymenu.daySources(bd, sample);
+t.ok(groups.every(g => g.src && Array.isArray(g.items)), "each group carries its source and its items");
+t.ok(groups.some(g => g.items.length), "at least one group lists the items read from it");
+t.ok(groups.every(g => g.items.every(i => i.id && typeof i.est === "number")),
+  "every listed item keeps its leaf id and its minutes");
+// a source is only listed when something on the card actually reads from it
+t.deep(bd.days.flatMap(d => daymenu.daySources(bd, d).filter(g => !g.items.length).map(g => `${d.id}:${g.src.id}`)),
+  [], "no card lists a source with nothing to read from it");
+// a leaf that names no source of its own continues the one before it in the same task
+const contTask = bd.days.flatMap(d => d.tasks).find(x => (x.subs || []).length >= 2
+  && !/href=|DDIA|CS:APP|OSTEP/.test(x.subs[1].label || ""));
+if (contTask) {
+  const owner = bd.days.find(d => d.tasks.includes(contTask));
+  const ids = daymenu.daySources(bd, owner).flatMap(g => g.items.map(i => i.id));
+  t.ok(ids.includes(contTask.subs[1].id),
+    "a continuation leaf inherits the source of the leaf it follows");
+}
+// ticking a leaf shows through to the reading list
+const tickable = groups.flatMap(g => g.items)[0];
+t.ok(tickable, "the sample card lists at least one readable item");
+if (tickable) {
+  store.setTask("bedrock", tickable.id, true);
+  const after = daymenu.daySources(bd, sample).flatMap(g => g.items).filter(i => i.id === tickable.id);
+  t.ok(after.length && after.every(i => i.done), "a ticked leaf reads as done in the reading list");
+  store.setTask("bedrock", tickable.id, false);
+}
+
+t.group("the Reading list modal renders one card per source");
+daymenu.openDayMenu(bd, sample, fakeEv(), () => {});
+const readItem = menuItems().find(b => /Reading list/.test(b.textContent));
+t.ok(readItem, "bedrock's menu offers the Reading list item");
+click(readItem);
+const rl = curModal();
+t.ok(rl && /Reading list/.test(rl.textContent), "it opens a Reading list modal");
+t.eq(rl.querySelectorAll(".dm-src").length, groups.length, "one source card per group");
+t.ok(rl.querySelector(".dm-src-title").textContent.length > 2, "each card names its source");
+t.ok(rl.querySelectorAll(".dm-src-tag").length === groups.length, "each card says whether the source is free");
+t.ok(rl.querySelectorAll(".dm-src-item").length >= 1, "the items read from it are listed");
 ui.closeAllModals();
 store.resetAll();
 
