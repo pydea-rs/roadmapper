@@ -196,10 +196,21 @@ function normalize(def) {
   }));
   const libraryById = new Map(library.map(x => [x.id, x]));
 
+  // Milestones are rendered as a rail/slideshow in ARRAY order, and the slideshow
+  // opens on the first not-yet-met one — so the order has to be the calendar's, not
+  // the author's. A re-plan re-anchors milestones onto new weeks without reordering
+  // the array, which is exactly how "Week 9" ends up sitting before "Week 8". Sort by
+  // the week's own chronological index (weeks are already ordered by earliest day);
+  // the sort is stable, so same-week milestones keep their authored order, and a
+  // milestone with no week sorts last rather than jumping to the front.
   const milestones = (def.milestones || []).map(m => ({
     id: m.id, week: m.week || null, title: m.title || m.id,
     rule: m.rule || { type: "weekPct", min: 80 },
-  }));
+  })).sort((a, b) => {
+    const ai = a.week && weeksById.has(a.week) ? weeksById.get(a.week).index : Infinity;
+    const bi = b.week && weeksById.has(b.week) ? weeksById.get(b.week).index : Infinity;
+    return ai - bi;
+  });
 
   return {
     slug, title: def.title || slug, icon: def.icon || "🗺️",

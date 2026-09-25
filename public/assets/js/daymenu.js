@@ -120,28 +120,66 @@ export function daySources(rm, day) {
     byId.get(src.id).items.push({ id: it.id, label: it.label || it.lead || "",
       est: it.est || 0, done: store.isDone(rm.slug, it.id) });
   };
+  const hitsIn = text => text ? lib.filter(src => src.match.some(m => text.includes(m))) : [];
   // A leaf that names no source of its own is the continuation of the one before it
   // inside the same task ("Finish DDIA Ch 7", "Then entries #6–#10") — the planner
   // splits long readings that way, so it inherits that item's sources.
   const visit = (it, carry) => {
     if (!it) return carry;
-    const text = textOf(it);
-    const hits = text ? lib.filter(src => src.match.some(m => text.includes(m))) : [];
+    const hits = hitsIn(textOf(it));
     const use = hits.length ? hits : carry;
     for (const src of use) add(src, it);
     return hits.length ? hits : carry;
   };
+  const fam = familySources(rm, lib, textOf);
   for (const t of day.tasks) {
     const leaves = t.subs && t.subs.length ? t.subs : [t];
     let carry = [];
     // the parent's own lead/refs can name the source its first sub continues from
     if (t.subs && t.subs.length) {
       const ptext = [t.lead, ...(t.refs || [])].filter(x => typeof x === "string").join(" ");
-      carry = lib.filter(src => src.match.some(m => ptext.includes(m)));
+      carry = hitsIn(ptext);
+    }
+    // Nothing anywhere in this task names a source — which is what a later "(k/n)" part
+    // looks like when it holds only the takeaway ("the planner is cost-based, not
+    // rule-based"). Borrow what the task's OTHER parts read from, so the card you are
+    // meant to finish a reading on still tells you which book to pick back up.
+    if (!carry.length && !leaves.some(l => hitsIn(textOf(l)).length)) {
+      const key = familyKey(t);
+      carry = (key && fam.get(key)) || [];
     }
     for (const leaf of leaves) carry = visit(leaf, carry);
   }
   return order.map(id => byId.get(id));
+}
+
+// "… (2/3)" → "…" : the identity a split task's parts share. Only a task that carries a
+// part marker takes part; an unsplit task must never donate its sources to a namesake.
+const PART_MARK = /\s*\(\s*\d+\s*\/\s*\d+\s*(?:,\s*cont\.)?\s*\)\s*$/;
+function familyKey(t) {
+  const text = String(t.lead || t.label || "");
+  return PART_MARK.test(text) ? text.replace(PART_MARK, "").trim() : null;
+}
+
+// base text → every source its parts read from, built once per roadmap. Keyed on the
+// roadmap object so it is discarded with it and never goes stale against a reload.
+const familyCache = new WeakMap();
+function familySources(rm, lib, textOf) {
+  let map = familyCache.get(rm);
+  if (map) return map;
+  map = new Map();
+  for (const d of rm.days) for (const t of d.tasks) {
+    const key = familyKey(t);
+    if (!key) continue;
+    const text = [textOf(t), ...(t.subs || []).map(textOf)].join(" ");
+    const hits = lib.filter(src => src.match.some(m => text.includes(m)));
+    if (!hits.length) continue;
+    const cur = map.get(key) || [];
+    for (const h of hits) if (!cur.includes(h)) cur.push(h);
+    map.set(key, cur);
+  }
+  familyCache.set(rm, map);
+  return map;
 }
 
 /* ---------------------------------------------------------------- *

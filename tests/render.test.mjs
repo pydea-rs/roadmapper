@@ -48,6 +48,30 @@ for (const rm of reg.getRoadmaps()) {
   t.ok(view.querySelector(".timeline"), `${rm.slug}: timeline rendered`);
 }
 
+t.group("the hero's projection leads with the PLAN's own end date");
+// The pace estimate assumes the whole 3h daily ceiling is spent every active day, while
+// the plan averages well under it — so it lands months early. Read first it looks like it
+// contradicts the calendar, so the plan's own date leads and the estimate follows as the
+// what-if it is.
+for (const rm of reg.getRoadmaps()) {
+  render.renderRoadmap(rm, view);
+  const line = view.querySelector(".projection");
+  t.ok(line, `${rm.slug}: the hero carries a projection line`);
+  const planEnd = [...rm.days].map(d => d.date).sort().pop();
+  const chip = line && line.querySelector(".chip");
+  t.ok(chip && chip.textContent.includes(planEnd.slice(0, 4)),
+    `${rm.slug}: the leading chip carries the plan's end year`);
+  t.ok(line && line.textContent.startsWith("Plan ends "),
+    `${rm.slug}: the line opens with the plan's own end date`);
+  const pace = line.querySelector(".proj-pace");
+  t.ok(pace, `${rm.slug}: the pace estimate is still offered`);
+  t.ok(pace && /what-if/i.test(pace.getAttribute("title") || ""),
+    `${rm.slug}: …and says, on hover, that it is a what-if rather than the plan`);
+  // the plan's date must come FIRST in the DOM, not after the estimate
+  t.ok(chip && pace && (chip.compareDocumentPosition(pace) & 4),
+    `${rm.slug}: the plan's date precedes the pace estimate`);
+}
+
 t.group("day cards show three progress rings (actual / original / on-time)");
 render.renderRoadmap(reg.getRoadmap("interp-go"), view);   // has past days at the frozen now
 t.ok(view.querySelector(".day-ring.actual"), "the Actual ring renders");

@@ -120,6 +120,22 @@ for (const rm of roadmaps) {
   }
 }
 t.ok(interludeTotal >= 15, `all four roadmaps carry a spread of interludes (${interludeTotal})`);
+
+// An interlude is a "commercial between phases": it must sit AFTER the topic it
+// comments on, never inside it. When the planner splits a topic across cards and the
+// interlude is re-anchored to the FIRST of them, the card lands mid-chapter and its
+// "you just built X" note is premature. The tell is structural: the next card
+// continues the same topic (same title, bar the "(k/n)"/"(cont.)" part marker).
+const topicOf = s => String(s || "").replace(/\s*\(\s*(cont\.|\d+\s*\/\s*\d+(\s*,\s*cont\.)?)\s*\)\s*$/, "").trim();
+for (const rm of roadmaps) {
+  for (const il of getInterludes(rm.slug)) {
+    const i = rm.days.findIndex(d => d.id === il.afterDay);
+    const here = rm.days[i], next = rm.days[i + 1];
+    const midSplit = here && next && topicOf(next.title) === topicOf(here.title);
+    t.ok(!midSplit, `${rm.slug}/${il.id}: anchored after the LAST card of "${topicOf(here && here.title)}"`
+      + (midSplit ? ` — but ${next.id} still continues it` : ""));
+  }
+}
 // fixtures / any other roadmap without curated interludes must simply yield none
 t.deep(getInterludes("does-not-exist"), [], "an unknown slug yields no interludes");
 

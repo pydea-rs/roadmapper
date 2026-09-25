@@ -473,12 +473,18 @@ prose, its distinctive title (`DDIA`, `CS:APP`). Matching on the **text** rather
 - the planner re-flows tasks onto different cards on every re-plan, and text travels with the task;
 - there is no second place to keep in step, so the tie can't rot.
 
-`daymenu.daySources(rm, day)` groups a card's leaves by source, in the order they appear. A leaf that
-names no source of its own **inherits the one before it inside the same task** — the planner splits a
-long reading into "… (1/2)" / "… (2/2)", and the second part often reads "Finish DDIA Ch 7". A card
-that names no source at all is legitimate: a "(cont.)" card holding only absorb-this-idea leaves has
-nothing to read. What is *not* allowed, and is asserted in `daymenu.test`, is a card that links to
-something without naming where it comes from.
+`daymenu.daySources(rm, day)` groups a card's leaves by source, in the order they appear. Inheritance
+runs at two levels, because a split reading loses its citation twice over:
+- **within a task** — a leaf that names no source takes the previous leaf's ("Finish DDIA Ch 7",
+  "Then entries #6–#10");
+- **across a task's `(k/n)` parts** — when *nothing* in a part names a source, it borrows what the
+  task's other parts read from. This is the card that holds only the takeaway ("the planner is
+  cost-based, not rule-based"), and it is exactly the card you are meant to *finish* a reading on,
+  so it must still say which book to pick back up. Keyed on the part's base text with the marker
+  stripped; a task with no `(k/n)` marker never donates, so a same-named neighbour can't leak in.
+
+The result, asserted in `daymenu.test`: **every bedrock card names at least one source**, and no
+card lists a source with nothing to read from it.
 
 ---
 
@@ -707,11 +713,19 @@ All derived at runtime from `structure + journey`; never stored; always truthful
   Optional/bonus tasks are **not** included, so they never inflate the remaining figure or the ETA;
   their done/undone time is reported separately as bonus-invested / bonus-remaining.
 - **Weekly capacity** = active-days/week × per-day budget − overlap tax.
-- **Projection** = today + ceil(remaining ÷ capacity), refined by a rolling average of **actual**
-  recent pace (tasks/day, minutes/day). Surfaced as "≈ finish <date>" + an ahead/on/behind delta vs a
-  straight-line expectation, and as the sidebar **on-track dot**.
-- Because the budget is *flexible ~3h*, the projection is a **range** (optimistic/expected) and clearly
-  labeled as an estimate that self-corrects.
+- **Projection** = today + ceil(remaining ÷ capacity). Because the budget is *flexible ~3h*, it is a
+  **range** (optimistic/expected).
+- **The plan's own end date leads the readout.** `stats.planEndDate()` is the last card's *effective*
+  date — the roadmap's own answer to "when am I done" — and the hero prints it first: *"Plan ends
+  24 Aug 2027 · at ~6h/week you'd finish around 17 May 2027"*. The two disagree by design: capacity
+  assumes the whole daily ceiling is spent on every active day, while the plan deliberately averages
+  well under it (§9.1), so the projection lands months early. Shown first it reads as contradicting
+  the calendar; shown second, as what a harder week would buy. The estimate carries a hover note
+  saying it is a what-if, and the optimistic end of the range lives there too.
+- **Ahead / on track / behind** is a *separate* judgement and never uses the projected date: it
+  compares completion against the share of required work the plan itself schedules by today
+  (`plannedByToday`), so keeping exactly to a front-loaded plan reads "On track". This is also what
+  the sidebar **on-track dot** shows, and Insights derives its own pace readout the same way.
 
 ### 13.4 Extra stats (dataviz skill for any charts)
 - **Streak** (consecutive active days with the day's **original** required tasks done).
@@ -818,7 +832,15 @@ deprecated / see also"** callouts (older-edition books), **project & tryout idea
 
 ## 15. The two concrete roadmaps — content plan
 
-Source files verified on disk; page counts from `pdfinfo`. Start anchor **2026-07-16 (Thu)**.
+> **This section is the ORIGINAL authoring brief, kept as the record of what each roadmap was
+> researched to contain — the books, the chapters, the gaps worth supplementing, the style.**
+> Its *scheduling* figures (start anchor, active days/week, "≈ 6–10 weeks") are design-time
+> guesses that later re-plans superseded; two side roadmaps were added after it was written.
+> **§9.1 and §9.2 are authoritative for the calendar** — cadence, per-card ceiling, week counts
+> and the current start/finish anchors. Read this section for *what* is studied, §9 for *when*.
+
+Source files verified on disk; page counts from `pdfinfo`. Start anchor at the time of writing:
+**2026-07-16 (Thu)** — see §9.2 for the live one.
 
 ### 15.1 Roadmap 1 — **Rust + FastAPI** (slug `rust-fastapi`) · priority HIGH · 4–5 active days/week
 Two **primary** objectives.

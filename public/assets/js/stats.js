@@ -243,6 +243,10 @@ export function computeAll(rm) {
   // ---- projection (primary) ----
   const projection = project(rm, remainingReqMins, overallReqDone, overallReqTotal, plannedByToday);
   const secProjection = projectSecondary(rm, remainingSecMins);
+  // The date the PLAN itself ends — the last card's effective date, so a postponed
+  // final card moves it. This is the roadmap's own answer to "when am I done", and
+  // the projection above is only a what-if beside it (see projectionLine in render).
+  const planEnd = planEndDate(rm, slug);
 
   // ---- extra stats ----
   const softStats = computeSoft(rm, slug);
@@ -257,7 +261,7 @@ export function computeAll(rm) {
     },
     objectives, primary, secondary,
     days, weeks, months, milestones,
-    projection, secProjection,
+    projection, secProjection, planEnd,
     invested: investedMins, remaining: remainingReqMins, remainingSecondary: remainingSecMins,
     bonusInvested: bonusEstDone, bonusRemaining: bonusEstRemaining,
     softStats, streak, catDist,
@@ -427,6 +431,17 @@ function project(rm, remainingMins, done, total, plannedByToday = 0) {
     done: total > 0 && done === total,
   };
 }
+/** The last date the plan actually occupies (effective dates, so a moved final card
+ *  counts). Null for a roadmap with no dated days. */
+export function planEndDate(rm, slug = rm.slug) {
+  let end = null;
+  for (const d of rm.days) {
+    const eff = dayDate(rm, slug, d);
+    if (eff && (!end || eff > end)) end = eff;
+  }
+  return end;
+}
+
 function projectSecondary(rm, remainingMins) {
   if (remainingMins <= 0) return null;
   const active = 1.2;                  // secondary gets little time

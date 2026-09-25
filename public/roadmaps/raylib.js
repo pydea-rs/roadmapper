@@ -23,7 +23,7 @@
 //
 // Cadence: 2 side-days/week, on weekdays that change from week to week and are chosen
 // so the combined day across all roadmaps stays light — see the 2026-09-25 note.
-// One ~40–95 min card each.
+// One ~25–95 min card each.
 // Progress/effort stay OFF the main track (kind:"side"); they combine only with the
 // other side track (Bedrock) and in the Today panel's "Main + Side" line.
 //
@@ -66,6 +66,10 @@
 // practised AND ported in a single task on a single day. Each chapter is now split at
 // its section boundaries, and the p5.js exercises and the raylib port are separate
 // sittings that the planner is free to place on separate cards.
+
+// REVIEW PASS (2026-09-25, after the make-it-doable re-plan): the header claimed
+// "~40–95 min" cards; the re-flow put 13 of the 80 below 40, so it reads ~25–95 now.
+// No structural change — anchors, ids and the 40-week calendar are untouched.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 

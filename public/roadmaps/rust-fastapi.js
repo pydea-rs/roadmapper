@@ -80,6 +80,16 @@
 // 106.7h → 185.3h. 3 cards a week, 4 in the closing weeks; 91 tasks carried, 49
 // continuation cards, 66 split parts.
 
+// REVIEW PASS (2026-09-25, after the make-it-doable re-plan) — content-only corrections:
+//  • Two 3-card topics ("Patterns & matching" d15–d17, "Async Rust II" d48–d50) had cards 2
+//    and 3 BOTH titled "(cont.)", so the timeline showed the same heading twice with nothing
+//    to tell them apart. They now number the real run — (1/3) / (2/3, cont.) / (3/3, cont.).
+//  • Five interludes sat one card past the topic they comment on (il10, il12, il14, il16,
+//    il18 in interludes.js) — re-anchored to the card whose work they follow up.
+//  • Stale prose: d05 pointed at "Week 13" for async SQLAlchemy (it is d41, week 14); d09's
+//    note read "End of week 1" (it closes week 3); d44 said the books finish "two weeks"
+//    before the core closes at d56 (it is four).
+
 import { registerRoadmap } from "../assets/js/registry.js";
 
 const R = "rust", F = "fastapi", W = "rwp";
@@ -236,7 +246,7 @@ registerRoadmap({
       ],
       soft: [
         { id: "s1", type: "callout", label: `🆕 The official FastAPI SQL tutorial now uses <b>SQLModel</b> (Pydantic+SQLAlchemy). The book is raw SQLAlchemy — fine to learn, but know the modern default. <a href="https://fastapi.tiangolo.com/tutorial/sql-databases/" target="_blank" rel="noopener">docs</a>` },
-        { id: "s2", type: "hint", label: `💡 The book is SQLAlchemy-<b>sync</b> only. We'll add an async 2.0-style router later (see Week 13).` },
+        { id: "s2", type: "hint", label: `💡 The book is SQLAlchemy-<b>sync</b> only. We'll add an async 2.0-style router later (see Week 14).` },
       ],
     },
     {
@@ -293,7 +303,7 @@ registerRoadmap({
       soft: [
         { id: "s1", type: "hint", label: `💡 <code>response_model_exclude</code> and separate input/output Pydantic models are how you keep secrets out of responses without hand-filtering dicts.` },
       ],
-      note: "End of week 1 — smart pointers done, FastAPI DB layer + structure in place.",
+      note: "End of week 3 — smart pointers done, FastAPI DB layer + structure in place.",
     },
 
     /* ---------------- Week 4 ---------------- */
@@ -367,7 +377,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d15", date: "2026-10-27", week: "w5", title: "Patterns & matching",
+      id: "d15", date: "2026-10-27", week: "w5", title: "Patterns & matching (1/3)",
       theme: "Ch19 is reference-y — so we build one thing that uses it all.",
       tasks: [
         { id: "t1", carried: "d13", obj: F, cat: "api", est: 40, group: "g1-d13",
@@ -389,8 +399,8 @@ registerRoadmap({
 
     /* ---------------- Week 6 ---------------- */
     {
-      id: "d16", date: "2026-10-29", week: "w6", title: "Patterns & matching (cont.)",
-      theme: "Finish “Patterns & matching” — the part that didn't fit its first session.",
+      id: "d16", date: "2026-10-29", week: "w6", title: "Patterns & matching (2/3, cont.)",
+      theme: "Finish “Patterns & matching (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d15", obj: R, cat: "read", est: 30, group: "g1-d15",
           label: `Rust — <b>Ch19</b>: all pattern places, refutability, and the full syntax (destructuring, ranges, guards, <code>@</code>, <code>ref</code>). <a href="https://doc.rust-lang.org/stable/book/ch19-00-patterns.html" target="_blank" rel="noopener">Book §19</a> (2/2)`,
@@ -400,8 +410,8 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-10-31", week: "w6", title: "Patterns & matching (cont.)",
-      theme: "Finish “Patterns & matching” — the part that didn't fit its first session.",
+      id: "d17", date: "2026-10-31", week: "w6", title: "Patterns & matching (3/3, cont.)",
+      theme: "Finish “Patterns & matching (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d15", obj: R, cat: "project", est: 90, group: "g1-d15",
           label: `<b>Tryout:</b> a tiny command parser — <code>match</code> on an enum of commands using destructuring, ranges, match guards, and <code>@</code> bindings in one cohesive example.`,
@@ -840,7 +850,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 The books are finished a full two weeks before the two-book core closes (d56) — that slack is intentional. Weeks 15–19 read the Book's async chapter (Ch17) for real and build the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
+        { id: "s1", type: "hint", label: `💡 The books are finished a full four weeks before the two-book core closes (d56) — that slack is intentional. Weeks 15–19 read the Book's async chapter (Ch17) for real and build the capstone that fuses both stacks. If you slipped anywhere, this is where you catch up guilt-free.` },
       ],
       note: "Milestone checkpoint — the core is done; weeks 15–19 are deepening + buffer.",
     },
@@ -897,7 +907,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d48", date: "2027-01-10", week: "w16", title: "Async Rust II — an async web server",
+      id: "d48", date: "2027-01-10", week: "w16", title: "Async Rust II — an async web server (1/3)",
       theme: "Rebuild the Ch21 server the async way — the payoff of d45.",
       tasks: [
         { id: "t1", carried: "d47", obj: F, cat: "read", est: 40, group: "g1-d47",
@@ -921,8 +931,8 @@ registerRoadmap({
 
     /* ---------------- Week 17 ---------------- */
     {
-      id: "d49", date: "2027-01-13", week: "w17", title: "Async Rust II — an async web server (cont.)",
-      theme: "Finish “Async Rust II — an async web server” — the part that didn't fit its first session.",
+      id: "d49", date: "2027-01-13", week: "w17", title: "Async Rust II — an async web server (2/3, cont.)",
+      theme: "Finish “Async Rust II — an async web server (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d48", obj: R, cat: "read", est: 30, group: "g1-d48",
           label: `Rust — <b>Ch17.4–17.6</b>: streams, a closer look at the async traits, and futures-vs-tasks-vs-threads; then skim <a href="https://docs.rs/axum" target="_blank" rel="noopener">axum</a>'s hello-world for a real async framework. <a href="https://doc.rust-lang.org/stable/book/ch17-04-streams.html" target="_blank" rel="noopener">Book §17.4</a> (2/2)`,
@@ -932,8 +942,8 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2027-01-14", week: "w17", title: "Async Rust II — an async web server (cont.)",
-      theme: "Finish “Async Rust II — an async web server” — the part that didn't fit its first session.",
+      id: "d50", date: "2027-01-14", week: "w17", title: "Async Rust II — an async web server (3/3, cont.)",
+      theme: "Finish “Async Rust II — an async web server (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d48", obj: R, cat: "project", est: 95, group: "g1-d48",
           label: `<b>Build:</b> re-implement your Ch21 web server on <code>tokio</code> (async <code>TcpListener</code>, a task per connection). Compare it to the thread-pool version — no pool needed, the runtime multiplexes.`,

@@ -1,7 +1,7 @@
 // registry.test.mjs — normalization + boot validator guards. Registers throwaway
 // roadmaps (unique slugs) and inspects validateAll()/registryErrors(); no DOM.
 import { suite } from "./_harness.mjs";
-import { registry } from "./_load.mjs";
+import { registry, loadRoadmap } from "./_load.mjs";
 
 const t = suite("registry");
 const { registerRoadmap, validateAll } = registry;
@@ -142,5 +142,42 @@ t.ok(pl.some(x => /library entry "badurl" has a non-http url/.test(x)), "a non-h
 registerRoadmap({ slug: "lib-none", title: "T", objectives: OBJ,
   days: [{ id: "d01", date: "2026-09-01", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] }]});
 t.deep(registry.getRoadmap("lib-none").library, [], "a roadmap with no library declares an empty one");
+
+t.group("milestones come back in CALENDAR order, whatever order they were authored in");
+// The milestone rail renders the array as-is and the slideshow opens on the first
+// not-yet-met entry, so authored order is user-visible. A re-plan re-anchors
+// milestones onto new weeks without reordering the array — that is how a "Week 9"
+// milestone ends up displayed before "Week 8". Normalization sorts them.
+registerRoadmap({ slug: "ms-order", title: "T", objectives: OBJ,
+  days: [
+    { id: "d01", date: "2026-09-01", week: "wA", tasks: [{ id: "t1", obj: "o1", label: "a" }], soft: [] },
+    { id: "d02", date: "2026-09-08", week: "wB", tasks: [{ id: "t1", obj: "o1", label: "b" }], soft: [] },
+    { id: "d03", date: "2026-09-15", week: "wC", tasks: [{ id: "t1", obj: "o1", label: "c" }], soft: [] },
+  ],
+  milestones: [
+    { id: "mC", week: "wC", title: "third" },
+    { id: "mA", week: "wA", title: "first" },
+    { id: "mNo", title: "no week at all" },
+    { id: "mB", week: "wB", title: "second" },
+    { id: "mA2", week: "wA", title: "first, authored later" },
+  ]});
+const mo = registry.getRoadmap("ms-order");
+t.deep(mo.milestones.map(m => m.id), ["mA", "mA2", "mB", "mC", "mNo"],
+  "sorted by the week's chronological index; a week-less milestone sorts last");
+t.deep(validateAll().filter(x => x.startsWith("[ms-order]")), [], "reordering raises no validation problem");
+// stability: two milestones on the SAME week keep the order their author gave them
+t.ok(mo.milestones.findIndex(m => m.id === "mA") < mo.milestones.findIndex(m => m.id === "mA2"),
+  "same-week milestones keep their authored order (stable sort)");
+
+t.group("the shipped roadmaps' milestones are in calendar order");
+for (const file of ["rust-fastapi.js", "interp-go.js", "bedrock.js", "raylib.js"]) {
+  await loadRoadmap(file);
+  const rm = registry.getRoadmap(file.replace(".js", ""));
+  const idx = m => (rm.weeksById.get(m.week) || {}).index ?? Infinity;
+  const ms = rm.milestones;
+  let ok = true;
+  for (let i = 1; i < ms.length; i++) if (idx(ms[i]) < idx(ms[i - 1])) ok = false;
+  t.ok(ok, `${rm.slug}: ${ms.length} milestones render in week order`);
+}
 
 t.done();

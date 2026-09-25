@@ -187,6 +187,26 @@ t.eq(s.days["d01"].ontime.done, 1, "on-time credit stays on the ORIGIN day (d01)
 t.eq(s.days["d05"].ontime.done, 0, "the move destination earns no on-time credit");
 t.eq(s.overall.ontime.done, 1, "still exactly one on-time overall");
 
+t.group("planEnd — the date the PLAN itself ends, and it follows a moved last card");
+// The hero leads with this date; the pace projection is only a what-if beside it, so
+// this must be the roadmap's own calendar, not a budget-derived guess.
+reset();
+const lastDay = [...rm.days].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))[0];
+t.eq(stats.planEndDate(rm), lastDay.date, "planEnd = the last card's date");
+t.eq(compute().planEnd, lastDay.date, "…and computeAll surfaces it");
+// a postponed FINAL card really does end the plan later
+const gap = lastDay.nextDate;
+t.eq(gap, null, "the fixture's last card has no next card (nothing to bound a move)");
+// so move the card BEFORE it instead and confirm planEnd is unmoved by a non-final move
+const prev = [...rm.days].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))[1];
+const free = prev.nextDate && util.addDays(prev.date, 1) < prev.nextDate ? util.addDays(prev.date, 1) : null;
+if (free) {
+  store.setDayDate(S, prev.id, free);
+  t.eq(stats.planEndDate(rm), lastDay.date, "moving a non-final card leaves planEnd alone");
+  store.setDayDate(S, prev.id, null);
+}
+t.eq(stats.planEndDate(rm), lastDay.date, "…and resetting restores it");
+
 t.group("sidebarStats summary");
 reset();
 const sb = stats.sidebarStats(rm);

@@ -46,6 +46,10 @@
 .projection { margin-top: var(--s4); display: flex; align-items: center; gap: var(--s3);
   flex-wrap: wrap; font-size: var(--t-sm); color: var(--text-2); }
 .projection .chip { font-weight: 700; color: var(--text); }
+/* the pace estimate is a what-if beside the plan's own date — quieter, and marked as
+   carrying an explanation on hover */
+.proj-pace { color: var(--text-3); text-decoration: underline dotted
+  color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 3px; cursor: help; }
 .proj-delta { font-weight: 700; padding: 3px 10px; border-radius: var(--r-pill); font-size: var(--t-xs); }
 .proj-delta.ahead { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
 .proj-delta.on { color: var(--info); background: color-mix(in srgb, var(--info) 14%, transparent); }

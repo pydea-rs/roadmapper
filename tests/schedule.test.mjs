@@ -143,6 +143,43 @@ for (const rm of roadmaps) {
     if (!x.carried || prev.m[1] !== m[1] || +prev.m[2] !== +m[2] - 1 || prev.m[3] !== m[3] || !(prev.d.date < d.date)) okParts = false;
   }
   t.ok(okParts, `${rm.slug}: split task parts run (1/n) → (n/n) across consecutive sessions`);
-}
 
+  // DAY TITLES. Two roadmaps number a multi-card topic differently — interp-go marks
+  // every card of a run "(k/n)", the others leave a 2-card pair as "X" / "X (cont.)" —
+  // and both read fine. What must hold either way:
+  //   1. a "(k/n)" on a card, where present, describes the REAL run it sits in. An
+  //      inherited marker from an older pacing is how three different cards all ended
+  //      up reading "(1/2)".
+  //   2. no two cards share a title, or the timeline shows the same heading twice with
+  //      no way to tell them apart (a 3-card run numbered only by "(cont.)" does this).
+  // "(cont.)" keeps its own meaning — all work here was carried in — and rides
+  // alongside the number: "(2/5, cont.)".
+  const TITLE_MARK = /\s*\(\s*(?:cont\.|\d+\s*\/\s*\d+(?:\s*,\s*cont\.)?)\s*\)\s*$/;
+  const topicOf = x => String(x || "").replace(TITLE_MARK, "").trim();
+  const runs = [];
+  for (const d of rm.days) {
+    const last = runs[runs.length - 1];
+    if (last && last.topic === topicOf(d.title)) last.days.push(d);
+    else runs.push({ topic: topicOf(d.title), days: [d] });
+  }
+  const wrongMark = [];
+  for (const r of runs) r.days.forEach((d, i) => {
+    const m = /\((\d+)\/(\d+)(?:, cont\.)?\)\s*$/.exec(d.title);
+    if (!m) return;                                  // unnumbered is allowed
+    if (+m[1] !== i + 1 || +m[2] !== r.days.length)
+      wrongMark.push(`${d.id} says (${m[1]}/${m[2]}) but is card ${i + 1} of ${r.days.length}`);
+  });
+  t.deep(wrongMark, [], `${rm.slug}: a card's "(k/n)" describes the real run it sits in`);
+  const titles = rm.days.map(d => d.title);
+  const dupTitles = titles.filter((x, i) => titles.indexOf(x) !== i);
+  t.deep([...new Set(dupTitles)], [], `${rm.slug}: no two day cards share a title`);
+  // a "(cont.)" card's theme names the card it continues — which must still exist
+  const badTheme = rm.days.filter(d => {
+    const m = /^Finish “(.+?)” — the part that didn't fit its first session\.$/.exec(d.theme || "");
+    if (!m) return false;
+    const origin = rm.daysById.get((d.tasks.find(x => x.carried) || {}).carried);
+    return !origin || origin.title !== m[1];
+  }).map(d => d.id);
+  t.deep(badTheme, [], `${rm.slug}: a continuation card's theme quotes its origin card's current title`);
+}
 t.done();

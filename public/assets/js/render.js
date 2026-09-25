@@ -981,15 +981,31 @@ function dualBlock(cap, figure, bonus, kind) {
   return b;
 }
 
+// The plan's OWN end date leads; the pace estimate follows as the what-if it is.
+// `projection.expectedFinish` assumes the full daily ceiling (180 min, split between
+// whichever roadmaps run that day) is spent every day, while the plan deliberately
+// averages well under it — so it lands months early and, read first, looks like it
+// contradicts the calendar. The honest order is: here is when the plan ends; here is
+// what a harder week would buy you.
+function withYear(date) { return fmtDateHuman(date) + " " + date.slice(0, 4); }
+
 function projectionLine(rm, S) {
   const p = S.projection;
   const line = el("div.projection");
   if (p.done) {
     line.append(el("span", { html: "🎉 <b class='chip'>Primary goals complete</b>" }));
   } else {
-    line.append(el("span", { html: `At ~${Math.round(p.perWeekMins/60)}h/week you'll finish around ` }));
-    line.append(el("span.chip", { text: fmtDateHuman(p.expectedFinish) + " " + p.expectedFinish.slice(0, 4) }));
-    line.append(el("span", { text: `(optimistic ${fmtDateHuman(p.optimisticFinish)})`, style: "color:var(--text-3)" }));
+    if (S.planEnd) {
+      line.append(el("span", { text: "Plan ends " }));
+      line.append(el("span.chip", { text: withYear(S.planEnd) }));
+    }
+    const hrs = Math.round(p.perWeekMins / 60);
+    const pace = el("span.proj-pace", {
+      text: `${S.planEnd ? "· " : ""}at ~${hrs}h/week you'd finish around ${withYear(p.expectedFinish)}`,
+      title: `A what-if, not the plan: ~${hrs}h/week is this roadmap's share of the 3h daily ceiling `
+        + `spent in full every active day. Flat out, ${withYear(p.optimisticFinish)}.`,
+    });
+    line.append(pace);
     const delta = el("span.proj-delta." + p.track, { text: trackText(p.track) });
     line.append(delta);
   }

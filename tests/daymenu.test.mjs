@@ -175,17 +175,32 @@ t.ok(bd.library.some(x => x.free) && bd.library.some(x => !x.free),
   "the catalogue distinguishes free sources from paid ones");
 
 t.group("daySources — groups a card's work by the source it reads from");
-// The point of the feature: nothing you are asked to READ is left uncatalogued. A card
-// can legitimately name no source — a "(cont.)" card holding only the absorb-this-idea
-// leaves has nothing to read — but a card carrying a link must always resolve to one.
+// The point of the feature: nothing you are asked to READ is left uncatalogued — and
+// that includes the card you are meant to FINISH a reading on. A later "(k/n)" part
+// often holds only the takeaway and names no source in its own text; it borrows the
+// sources of the task's other parts, so no card comes up empty.
 const hasLink = d => d.tasks.some(x => [x.label, x.lead, ...(x.refs || [])]
   .concat((x.subs || []).flatMap(sb => [sb.label, sb.note]))
   .some(v => typeof v === "string" && v.includes("href=")));
 const uncatalogued = bd.days.filter(d => !daymenu.daySources(bd, d).length);
 t.deep(uncatalogued.filter(hasLink).map(d => d.id), [],
   "every bedrock card that links to something names the source it comes from");
-t.ok(uncatalogued.length <= bd.days.length * 0.1,
-  `nearly every card names a source (${bd.days.length - uncatalogued.length}/${bd.days.length})`);
+t.deep(uncatalogued.map(d => d.id), [],
+  `every bedrock card names at least one source (${bd.days.length} cards)`);
+
+// a split part that names no source of its own inherits the family's — and only the
+// family's: an UNSPLIT task must never donate its sources to a same-named neighbour
+const splitPart = bd.days.flatMap(d => d.tasks.map(x => ({ d, x })))
+  .find(({ x }) => /\(\s*[2-9]\s*\/\s*\d+\s*\)\s*$/.test(String(x.lead || x.label || ""))
+    && !(x.subs || [x]).some(l => /href=/.test(String(l.label || l.lead || ""))));
+if (splitPart) {
+  const base = String(splitPart.x.lead || splitPart.x.label).replace(/\s*\(\s*\d+\s*\/\s*\d+\s*\)\s*$/, "").trim();
+  const sibling = bd.days.flatMap(d => d.tasks)
+    .find(x => x !== splitPart.x && String(x.lead || x.label || "").startsWith(base));
+  const mine = daymenu.daySources(bd, splitPart.d).map(g => g.src.id);
+  t.ok(mine.length > 0, `a later split part still names its source (${splitPart.x.id})`);
+  t.ok(!!sibling, "…because an earlier part of the same task named it");
+}
 const sample = bd.days.find(d => daymenu.daySources(bd, d).length >= 2) || bd.days[0];
 const groups = daymenu.daySources(bd, sample);
 t.ok(groups.every(g => g.src && Array.isArray(g.items)), "each group carries its source and its items");

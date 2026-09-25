@@ -6,12 +6,13 @@
 // (Networking A→B→C…, DevOps 1→2→3…, Databases…), but the threads are
 // INTERLEAVED across the calendar, so consecutive side-days switch topics (TCP
 // one day, containers the next, a chain the next). A thread always advances in
-// order when it reappears. First 3 months (this 12-week core) front-load the
-// most important backend/blockchain foundations, with Networking + DevOps from
-// week 1; deeper "under the hood" material continues in a later extension.
+// order when it reappears. The core (weeks 1–20, closing with the security capstone)
+// front-loads the most important backend/blockchain foundations, with Networking +
+// DevOps from week 1; deeper "under the hood" material continues in three extensions
+// that run to week 48.
 //
 // Cadence: 2–3 focused side-days per week, on weekdays that change from week to week
-// — see the 2026-09-25 note — one ~40–95 min card each, alongside the main roadmaps. Progress/effort stay OFF the main track's
+// — see the 2026-09-25 note — one ~25–95 min card each, alongside the main roadmaps. Progress/effort stay OFF the main track's
 // totals (kind:"side") — only the Today panel's "Main + Side" line combines them.
 //
 // Tasks use the STRUCTURED form (lead / refs / model): a headline, a scannable
@@ -56,6 +57,14 @@
 // from, with author, edition, whether it is free and where to get it. A day card's
 // right-click menu has a "Reading list — sources" entry that groups that card's work by
 // the source it comes from (DESIGN §7.6). Bedrock is the only roadmap that has one.
+
+// REVIEW PASS (2026-09-25, after the make-it-doable re-plan) — content-only corrections:
+//  • The `library` carried a GPU Gems entry that only raylib ever reads; removed (79 now).
+//  • il5 (the Raft talk) was anchored to d69 "TOAST & HOT updates" — a Postgres storage
+//    card — instead of d68, the Paxos/Raft/Byzantine card its note refers to.
+//  • Stale prose: the security capstone lands in week 20, not 19; the "Month-1"/"Month 2"
+//    checkpoint labels and the header's "12-week core" were written for the old 12-week
+//    calendar and now read in weeks; cards run down to ~25 min, not 40.
 
 import { registerRoadmap } from "../assets/js/registry.js";
 
@@ -114,7 +123,6 @@ registerRoadmap({
     {"id":"dataflow","title":"The Dataflow Model","kind":"paper","by":"Tyler Akidau et al. (Google)","edition":"VLDB 2015","free":true,"url":"https://www.vldb.org/pvldb/vol8/p1792-Akidau.pdf","get":"","match":["vldb.org/pvldb"]},
     {"id":"drepper","title":"What Every Programmer Should Know About Memory","kind":"paper","by":"Ulrich Drepper","edition":"2007","free":true,"url":"https://www.akkadia.org/drepper/cpumemory.pdf","get":"Long (~114 pp) and still the best free substitute for CS:APP Ch 6. Read the parts a day asks for, not the whole thing.","match":["akkadia.org/drepper","lwn.net/Articles/250967"]},
     {"id":"goldberg","title":"What Every Computer Scientist Should Know About Floating-Point Arithmetic","kind":"paper","by":"David Goldberg","edition":"1991","free":true,"url":"https://docs.oracle.com/cd/E19957-01/806-3568/ncg_goldberg.html","get":"","match":["docs.oracle.com/cd/E19957-01"]},
-    {"id":"gpugems","title":"GPU Gems 3, Ch 31: Fast N-Body Simulation with CUDA","kind":"paper","by":"Lars Nyland, Mark Harris & Jan Prins (NVIDIA)","edition":"","free":true,"url":"https://developer.nvidia.com/gpugems/gpugems3/part-v-physics-simulation/chapter-31-fast-n-body-simulation-cuda","get":"","match":["developer.nvidia.com/gpugems"]},
     {"id":"rfc","title":"IETF RFCs","kind":"spec","by":"","edition":"","free":true,"url":"https://www.rfc-editor.org/","get":"Normative and dry. Read the section a day names, not the whole document.","match":["rfc-editor.org","datatracker.ietf.org"]},
     {"id":"eips","title":"Ethereum EIPs / ERCs","kind":"spec","by":"","edition":"","free":true,"url":"https://eips.ethereum.org/","get":"The Specification section is normative; Rationale and Security Considerations are usually the readable part.","match":["eips.ethereum.org"]},
     {"id":"oci-image-spec","title":"OCI Image Format Specification","kind":"spec","by":"Open Container Initiative","edition":"","free":true,"url":"https://github.com/opencontainers/image-spec/blob/main/spec.md","get":"Read it for the shape (manifest + config + layers), not to memorise field names.","match":["opencontainers/image-spec"]},
@@ -622,10 +630,10 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 19. Today is the map.` },
+        { id: "s1", type: "callout", label: `🧭 Security is threaded through the core (auth → OAuth/JWT → hashing → smart-contract vulns) and lands the capstone in week 20. Today is the map.` },
         { id: "s2", type: "hint", label: `💡 "Security misconfiguration" climbing to #2 is a DevOps overlap: default creds, open S3 buckets, verbose errors, missing headers. Config <i>is</i> attack surface.` },
       ],
-      note: "🏁 Month-1 checkpoint week: Networking + DevOps foundations laid, plus Systems, DB and the security map.",
+      note: "🏁 Week-7 checkpoint: Networking + DevOps foundations laid, plus Systems, DB and the security map.",
     },
     {
       id: "d20", date: "2026-11-09", week: "w7", title: "Security foundations: OWASP 2025 + authn vs authz (cont.)",
@@ -836,7 +844,7 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🧠 Postgres names are confusing: PG "Repeatable Read" is actually <b>Snapshot Isolation</b>, and PG never shows dirty reads even at Read Committed.` },
         { id: "s2", type: "hint", label: `💡 Cheapest correctness fix for lost updates: an atomic <code>UPDATE … SET x = x + 1</code> or <code>SELECT … FOR UPDATE</code>, not a read-then-write in app code.` },
       ],
-      note: "Month 2 underway — data, HTTP, caching and blockchain now interleaving with DevOps.",
+      note: "Week 10 — data, HTTP, caching and blockchain now interleaving with DevOps.",
     },
 
     /* ---------------- Week 11 ---------------- */
