@@ -14,7 +14,7 @@
 import { registry } from "../../tests/_load.mjs";
 
 export const SLUGS = ["rust-fastapi", "interp-go", "bedrock", "raylib"];
-export const FRAME = "2026-09-23";   // owner moved day 1 here on 2026-09-25 (was 09-13)
+export const FRAME = "2026-10-24";   // owner moved day 1 to 09-23 on 2026-09-25 (was 09-13), then +31 on 2026-10-14
 export const CAP = 180, MIN_PART = 25;
 // owner's answer (2026-09-25): go past the limits he first named, by 8 weeks
 export const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 40, bedrock: 48, raylib: 40 };

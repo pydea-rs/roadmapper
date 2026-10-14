@@ -563,9 +563,10 @@ grouping is derived from `date`. Explicit dates make weekday variation, overlaps
 milestone-by-calendar-week unambiguous. Day **ids** (`d01…`) stay stable regardless of date, so moves
 and progress never depend on dates.
 
-All four roadmaps share **one week frame**: week *i* starts `2026-09-23 + 7i`. Current anchors —
-Rust + FastAPI **2026-09-23 → 2027-08-24**, Go + interpreters **2026-09-23 → 2027-06-28**, Bedrock
-**2026-09-24 → 2027-08-24**, Big Bang **2026-09-24 → 2027-06-29**. The calendar is produced by
+All four roadmaps share **one week frame**: week *i* starts `2026-10-24 + 7i` (shifted +31 days on
+2026-10-14 from `2026-09-23`; nothing else changed). Current anchors —
+Rust + FastAPI **2026-10-24 → 2027-09-24**, Go + interpreters **2026-10-24 → 2027-07-29**, Bedrock
+**2026-10-25 → 2027-09-24**, Big Bang **2026-10-25 → 2027-07-30**. The calendar is produced by
 `scratchpad/cap4/` (reprice → engine → builder) and asserted by `tests/schedule.test.mjs` and the
 date anchors in `tests/content.test.mjs`.
 
@@ -717,7 +718,7 @@ All derived at runtime from `structure + journey`; never stored; always truthful
   **range** (optimistic/expected).
 - **The plan's own end date leads the readout.** `stats.planEndDate()` is the last card's *effective*
   date — the roadmap's own answer to "when am I done" — and the hero prints it first: *"Plan ends
-  24 Aug 2027 · at ~6h/week you'd finish around 17 May 2027"*. The two disagree by design: capacity
+  24 Sep 2027 · at ~6h/week you'd finish around 17 May 2027"*. The two disagree by design: capacity
   assumes the whole daily ceiling is spent on every active day, while the plan deliberately averages
   well under it (§9.1), so the projection lands months early. Shown first it reads as contradicting
   the calendar; shown second, as what a harder week would buy. The estimate carries a hover note

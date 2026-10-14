@@ -4,7 +4,7 @@
 // Pure date arithmetic on YYYY-MM-DD (UTC parse) — relative structure invariant.
 import { readFileSync, writeFileSync } from "node:fs";
 
-const N = 4;
+const N = 31;
 const DIR = new URL("../public/roadmaps/", import.meta.url);
 const FILES = ["rust-fastapi.js", "interp-go.js", "bedrock.js", "raylib.js"];
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

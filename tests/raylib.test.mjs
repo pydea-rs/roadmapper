@@ -28,7 +28,7 @@ t.deep(rm.objectives.map(o => o.id).sort(),
   "the five interleaved threads are present");
 t.ok(rm.days.length >= 50, `the whole arc is authored (${rm.days.length} days)`);
 // ⚠️ SHIFT-SENSITIVE: bump with every uniform date shift (like content.test's ANCHORS).
-t.ok(rm.days[0].date === "2026-09-24", "the journey starts on 2026-09-24, its first day in week 1");
+t.ok(rm.days[0].date === "2026-10-25", "the journey starts on 2026-10-25, its first day in week 1");
 
 t.group("recall cards — every task carries >= 2 well-formed {q,a}");
 // A task the planner split across cards is suffixed "(k/n)"; the recall deck quizzes

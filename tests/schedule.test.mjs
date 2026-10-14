@@ -5,7 +5,7 @@
 //
 //  1. The REQUIRED minutes of every roadmap on one date add up to at most 3h (180 min).
 //     It is a ceiling, never a target — and this plan never reaches for the exception.
-//  2. Every roadmap starts on 2026-09-23, on one shared week frame.
+//  2. Every roadmap starts on 2026-10-24, on one shared week frame.
 //  3. Days per week come from a weekly minutes BUDGET (work left ÷ weeks left) divided by
 //     a per-card ceiling, so each roadmap lands on its target week count: rust 3 a week
 //     (4 in the closing weeks), interp-go 3–4, bedrock 2–3, raylib a steady 2. Weekdays
@@ -49,9 +49,9 @@ t.ok(peak <= RARE, `busiest date ${peak} min`);
 t.eq(stats.dailyBudget(), CAP,
   "the app's daily ceiling (Horizon gauge, projections) is the same 3h");
 
-t.group("rule 2 — every roadmap starts on 2026-09-23, on one shared week frame");
+t.group("rule 2 — every roadmap starts on 2026-10-24, on one shared week frame");
 // ⚠️ SHIFT-SENSITIVE: bump by +N with every uniform date shift (like content.test's ANCHORS).
-const FRAME = "2026-09-23";
+const FRAME = "2026-10-24";
 for (const rm of roadmaps) {
   t.ok(rm.weeks.every((w, i) => w.start === util.addDays(FRAME, 7 * i)), `${rm.slug}: week i starts on ${FRAME} + 7·i`);
   t.eq(rm.weeksById.get(rm.days[0].week).index, 0, `${rm.slug}: starts in week 1 (${rm.days[0].date})`);
