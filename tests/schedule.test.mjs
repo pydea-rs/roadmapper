@@ -8,7 +8,7 @@
 //  2. Every roadmap starts on 2026-11-07, on one shared week frame.
 //  3. Days per week come from a weekly minutes BUDGET (work left ÷ weeks left) divided by
 //     a per-card ceiling, so each roadmap lands on its target week count: rust 3 a week
-//     (4 in the closing weeks), interp-go 3–4, bedrock 2–3, raylib a steady 2. Weekdays
+//     (4 in the closing weeks), interp-go 3, bedrock 2, raylib a steady 2. Weekdays
 //     change from week to week, and no roadmap goes quiet for over a week.
 //  4. When a date would overflow, tasks are passed along IN ORDER into the roadmap's next
 //     card, ahead of that card's own tasks (`carried`); a card left with only carried work
@@ -68,8 +68,8 @@ const counts = rm => weekDays(rm).map(ds => ds.length);
 const ig = registry.getRoadmap("interp-go"), br = registry.getRoadmap("bedrock"),
       ry = registry.getRoadmap("raylib"), ru = registry.getRoadmap("rust-fastapi");
 const allButLast = (c, lo, hi) => c.slice(0, -1).every(n => n >= lo && n <= hi) && c.at(-1) >= 1 && c.at(-1) <= hi;
-t.ok(allButLast(counts(ig), 3, 4), `interp-go: 3–4 days a week (${counts(ig).join("")})`);
-t.ok(allButLast(counts(br), 2, 3), `bedrock: 2–3 side-days a week (${counts(br).join("")})`);
+t.ok(allButLast(counts(ig), 3, 3), `interp-go: 3 days a week (${counts(ig).join("")})`);
+t.ok(allButLast(counts(br), 2, 2), `bedrock: 2 side-days a week (${counts(br).join("")})`);
 t.ok(allButLast(counts(ry), 2, 2), `raylib: a steady 2 side-days a week (${counts(ry).join("")})`);
 t.ok(allButLast(counts(ru), 3, 4), `rust-fastapi: 3–4 days a week (${counts(ru).join("")})`);
 // rust still runs its two-book core first and the RWP arc after it, without interleaving
@@ -81,7 +81,7 @@ t.ok(firstTail > 0 && ruWeeks.slice(firstTail).every(ds => !isCore(ds)), `rust-f
 t.group("rule 3 — every roadmap lands on its target week count");
 // the planner is given a target and a weekly budget of "work left ÷ weeks left"; hitting
 // the target exactly is what proves the budget loop converged rather than drifted
-const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 40, bedrock: 48, raylib: 40 };
+const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 49, bedrock: 67, raylib: 40 };
 for (const rm of roadmaps) t.eq(rm.weeks.length, TARGET_WEEKS[rm.slug], `${rm.slug}: ${TARGET_WEEKS[rm.slug]} weeks, as planned`);
 
 t.group("rule 3 — a single card is one sitting, not a day's worth");

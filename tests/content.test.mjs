@@ -29,8 +29,8 @@ t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 t.group("roadmap date anchors (a bad or asymmetric shift must fail here)");
 const ANCHORS = {
   "rust-fastapi": { first: "2026-11-07", last: "2027-10-08" },
-  "interp-go":    { first: "2026-11-07", last: "2027-08-12" },
-  "bedrock":      { first: "2026-11-08", last: "2027-10-08" },
+  "interp-go":    { first: "2026-11-07", last: "2027-10-15" },
+  "bedrock":      { first: "2026-11-08", last: "2028-02-17" },
   "raylib":       { first: "2026-11-08", last: "2027-08-13" },
 };
 for (const [slug, a] of Object.entries(ANCHORS)) {

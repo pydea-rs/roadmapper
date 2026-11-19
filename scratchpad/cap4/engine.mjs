@@ -17,10 +17,10 @@ export const SLUGS = ["rust-fastapi", "interp-go", "bedrock", "raylib"];
 export const FRAME = "2026-11-07";   // owner moved day 1 to 09-23 on 2026-09-25 (was 09-13), +31 on 2026-10-14, +14 on 2026-11-19
 export const CAP = 180, MIN_PART = 25;
 // owner's answer (2026-09-25): go past the limits he first named, by 8 weeks
-export const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 40, bedrock: 48, raylib: 40 };
+export const TARGET_WEEKS = { "rust-fastapi": 48, "interp-go": 49, bedrock: 67, raylib: 40 };
 // one sitting's worth of work on one card, and how many cards a week may hold
 export const CARD_CAP  = { "rust-fastapi": 105, "interp-go": 105, bedrock: 95, raylib: 95 };
-export const CARDS     = { "rust-fastapi": [2, 4], "interp-go": [3, 5], bedrock: [2, 4], raylib: [2, 3] };
+export const CARDS     = { "rust-fastapi": [2, 4], "interp-go": [3, 3], bedrock: [2, 2], raylib: [2, 3] };
 export const add = (s, n) => { const d = new Date(s + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
 export const SRC = new URL("./pub/roadmaps/", import.meta.url).pathname;
 for (const s of SLUGS) await import(SRC + s + ".js");

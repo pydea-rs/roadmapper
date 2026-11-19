@@ -539,8 +539,8 @@ target however the material splits. Current shape (2026-09-25):
 | roadmap | cards/week | per-card ceiling | weeks | required work |
 |---|---|---|---|---|
 | Rust + FastAPI | 3 (4 in the closing weeks) | 105 min | 48 | 185.3 h |
-| Go + interpreters | 3–4 | 105 min | 40 | 185.8 h |
-| Bedrock (side) | 2–3 | 95 min | 48 | 147.2 h |
+| Go + interpreters | 3 | 105 min | 49 | 185.8 h |
+| Bedrock (side) | 2 | 95 min | 67 | 147.2 h |
 | Big Bang (side) | 2 | 95 min | 40 | 82.3 h |
 
 Two ceilings apply at once:
@@ -564,9 +564,10 @@ milestone-by-calendar-week unambiguous. Day **ids** (`d01…`) stay stable regar
 and progress never depend on dates.
 
 All four roadmaps share **one week frame**: week *i* starts `2026-11-07 + 7i` (shifted +31 days on
-2026-10-14 from `2026-09-23`, and +14 days on 2026-11-19; nothing else changed). Current anchors —
-Rust + FastAPI **2026-11-07 → 2027-10-08**, Go + interpreters **2026-11-07 → 2027-08-12**, Bedrock
-**2026-11-08 → 2027-10-08**, Big Bang **2026-11-08 → 2027-08-13**. The calendar is produced by
+2026-10-14 from `2026-09-23`, shifted +14 days on 2026-11-19, and rebalanced `interp-go` to 3/wk
+and `bedrock` to 2/wk). Current anchors —
+Rust + FastAPI **2026-11-07 → 2027-10-08**, Go + interpreters **2026-11-07 → 2027-10-15**, Bedrock
+**2026-11-08 → 2028-02-17**, Big Bang **2026-11-08 → 2027-08-13**. The calendar is produced by
 `scratchpad/cap4/` (reprice → engine → builder) and asserted by `tests/schedule.test.mjs` and the
 date anchors in `tests/content.test.mjs`.
 

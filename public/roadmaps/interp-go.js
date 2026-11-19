@@ -1,4 +1,4 @@
-// interp-go.js — Roadmap 2 (priority MEDIUM, 3–4 active days/week).
+// interp-go.js — Roadmap 2 (priority MEDIUM, 3 active days/week).
 // PRIMARY: `ci` (Crafting Interpreters, resume Ch9/PDF133 — front-loaded so it
 // finishes sooner) and `go` (Go web-dev video course, resume video 27, paired
 // with Calhoun's book which ends at v164, then Let's Go). SECONDARY: `gointerp`
@@ -46,9 +46,9 @@
 // compatibility needed); day/week references inside the content point at the new ids.
 // Ids quoted in the dated notes ABOVE use their own day's numbering.
 // The re-pricer, planner and file builder live in scratchpad/cap4/.
-// For this file: 88 → 147 cards, 22 → 40 weeks, 2026-11-07 → 2027-08-12. Required work
-// 141.6h → 185.8h. 3–4 cards a week; 74 tasks carried, 59 continuation cards, 69 split
-// parts.
+// For this file: 88 → 147 cards, 22 → 49 weeks (rebalanced to 3 cards/week on 2026-11-19),
+// 2026-11-07 → 2027-10-15. Required work 141.6h → 185.8h. 3 cards a week; 74 tasks carried,
+// 59 continuation cards, 69 split parts.
 
 // REVIEW PASS (2026-09-25, after the make-it-doable re-plan) — content-only corrections:
 //  • DAY TITLES renumbered over the REAL card run. The "(k/n)" markers were inherited from
@@ -74,7 +74,7 @@ registerRoadmap({
   subtitle: "Finish Crafting Interpreters (all challenges) + the Go web-dev course; then Writing an Interpreter in Go.",
   accent: "#00add8",
   schemaVersion: 1,
-  cadence: { activeDaysPerWeek: [3, 4] },
+  cadence: { activeDaysPerWeek: [3] },
 
   objectives: [
     { id: CI, title: "Crafting Interpreters", tier: "primary", weight: 1.2 },
@@ -86,43 +86,52 @@ registerRoadmap({
     { id: "w1", title: "Week 1 — CI Ch9 — Control Flow (jlox)", start: "2026-11-07" },
     { id: "w2", title: "Week 2 — Go — Templates (videos 27–36)", start: "2026-11-14" },
     { id: "w3", title: "Week 3 — Go — Templates (videos 27–36); CI Ch10 — Functions (jlox)", start: "2026-11-21" },
-    { id: "w4", title: "Week 4 — CI Ch11 — Resolving & Binding (jlox)", start: "2026-11-28" },
-    { id: "w5", title: "Week 5 — Go — Code Org & MVC (videos 37–54)", start: "2026-12-05" },
-    { id: "w6", title: "Week 6 — CI Ch12 — Classes I (jlox); CI Ch12 — Classes II + challenges (jlox)", start: "2026-12-12" },
-    { id: "w7", title: "Week 7 — Let's Go — read chunk 1 + starter; CI Ch13 — Inheritance (jlox done!)", start: "2026-12-19" },
-    { id: "w8", title: "Week 8 — CI Ch13 — Inheritance (jlox done!); Go — Signup & REST (videos 55–62); …", start: "2026-12-26" },
-    { id: "w9", title: "Week 9 — CI Ch14 — Chunks of Bytecode (clox); CI Ch15 — A Virtual Machine (clox)", start: "2027-01-02" },
-    { id: "w10", title: "Week 10 — CI Ch15 — A Virtual Machine (clox); Go — Databases (videos 63–89)", start: "2027-01-09" },
-    { id: "w11", title: "Week 11 — Go — Databases (videos 63–89)", start: "2027-01-16" },
-    { id: "w12", title: "Week 12 — CI Ch16 — Scanning on Demand (clox); CI Ch17 — Compiling Expressions I (clox, Pratt)", start: "2027-01-23" },
-    { id: "w13", title: "Week 13 — CI Ch17 — Pratt parser II + challenges (clox); CI Ch18 — Types of Values (clox)", start: "2027-01-30" },
-    { id: "w14", title: "Week 14 — CI Ch18 — Types of Values (clox); CI Ch19 — Strings (clox)", start: "2027-02-06" },
-    { id: "w15", title: "Week 15 — CI Ch19 — Strings (clox); Let's Go — read chunk 2 + Go forms tryout", start: "2027-02-13" },
-    { id: "w16", title: "Week 16 — Calhoun Ch11–12 review + Go forms tryout; Go — Passwords & bcrypt (videos 90–106); …", start: "2027-02-20" },
-    { id: "w17", title: "Week 17 — CI Ch20 — Hash Tables (clox); CI Ch21 — Global Variables (clox)", start: "2027-02-27" },
-    { id: "w18", title: "Week 18 — CI Ch21 — Global Variables (clox); Go — SQL relations & migrations (videos 138–155)", start: "2027-03-06" },
-    { id: "w19", title: "Week 19 — CI Ch22 — Local Variables (clox)", start: "2027-03-13" },
-    { id: "w20", title: "Week 20 — CI Ch23 — Jumping Back and Forth (clox)", start: "2027-03-20" },
-    { id: "w21", title: "Week 21 — Go — Cookies, Sessions & CSRF (videos 107–137)", start: "2027-03-27" },
-    { id: "w22", title: "Week 22 — CI Ch24 — Calls and Functions I (clox); CI Ch24 — Calls II", start: "2027-04-03" },
-    { id: "w23", title: "Week 23 — CI Ch24 — Calls II: natives + challenges (clox); CI Ch25 — Closures I (clox)", start: "2027-04-10" },
-    { id: "w24", title: "Week 24 — CI Ch25 — Closures II; CI Ch26 — Garbage Collection I (clox)", start: "2027-04-17" },
-    { id: "w25", title: "Week 25 — CI Ch26 — GC II: sweep + challenges (clox)", start: "2027-04-24" },
-    { id: "w26", title: "Week 26 — CI Ch27 — Classes and Instances (clox); CI Ch28 — Methods & Initializers I (clox)", start: "2027-05-01" },
-    { id: "w27", title: "Week 27 — CI Ch28 — Initializers + invoke opt + challenges", start: "2027-05-08" },
-    { id: "w28", title: "Week 28 — Go — Password reset & email (videos 165–194)", start: "2027-05-15" },
-    { id: "w29", title: "Week 29 — CI Ch29 — Superclasses (clox)", start: "2027-05-22" },
-    { id: "w30", title: "Week 30 — CI Ch30 — Optimization → 🎉 CI DONE", start: "2027-05-29" },
-    { id: "w31", title: "Week 31 — Monkey Ch1 — Lexing (secondary); Go — Galleries CRUD (videos 195–217)", start: "2027-06-05" },
-    { id: "w32", title: "Week 32 — Go — Galleries CRUD (videos 195–217); Monkey Ch2 — Parsing (secondary, Pratt)", start: "2027-06-12" },
-    { id: "w33", title: "Week 33 — Let's Go — read chunk 4 (auth + testing); Go — Images & config (videos 218–248)", start: "2027-06-19" },
-    { id: "w34", title: "Week 34 — Go — Images & config (videos 218–248); Monkey Ch3 — Evaluation (secondary)", start: "2027-06-26" },
-    { id: "w35", title: "Week 35 — Monkey Ch3 — Evaluation (secondary); Go — Deployment (videos 249–263)", start: "2027-07-03" },
-    { id: "w36", title: "Week 36 — Go — Deployment (videos 249–263); Go — OAuth & finish → 🎉 course DONE; …", start: "2027-07-10" },
-    { id: "w37", title: "Week 37 — Monkey — extend it (secondary); Let's Go — guided exercises (project)", start: "2027-07-17" },
-    { id: "w38", title: "Week 38 — Checkpoint — everything shipped; clox challenge catch-up + review; …", start: "2027-07-24" },
-    { id: "w39", title: "Week 39 — Writing a Compiler in Go — the bridge (secondary); …", start: "2027-07-31" },
-    { id: "w40", title: "Week 40 — Capstone II — ship the playground; …", start: "2027-08-07" },
+    { id: "w4", title: "Week 4 — CI Ch10 — Functions (jlox); CI Ch11 — Resolving & Binding (jlox)", start: "2026-11-28" },
+    { id: "w5", title: "Week 5 — CI Ch11 — Resolving & Binding (jlox); Go — Code Org & MVC (videos 37–54)", start: "2026-12-05" },
+    { id: "w6", title: "Week 6 — Go — Code Org & MVC (videos 37–54); CI Ch12 — Classes I (jlox)", start: "2026-12-12" },
+    { id: "w7", title: "Week 7 — CI Ch12 — Classes I (jlox); CI Ch12 — Classes II + challenges (jlox)", start: "2026-12-19" },
+    { id: "w8", title: "Week 8 — Let's Go — read chunk 1 + starter; CI Ch13 — Inheritance (jlox done!)", start: "2026-12-26" },
+    { id: "w9", title: "Week 9 — CI Ch13 — Inheritance (jlox done!); Go — Signup & REST (videos 55–62)", start: "2027-01-02" },
+    { id: "w10", title: "Week 10 — Go — Signup & REST (videos 55–62); CI Ch14 — Chunks of Bytecode (clox)", start: "2027-01-09" },
+    { id: "w11", title: "Week 11 — CI Ch14 — Chunks of Bytecode (clox); CI Ch15 — A Virtual Machine (clox)", start: "2027-01-16" },
+    { id: "w12", title: "Week 12 — CI Ch15 — A Virtual Machine (clox); Go — Databases (videos 63–89)", start: "2027-01-23" },
+    { id: "w13", title: "Week 13 — Go — Databases (videos 63–89)", start: "2027-01-30" },
+    { id: "w14", title: "Week 14 — CI Ch16 — Scanning on Demand (clox)", start: "2027-02-06" },
+    { id: "w15", title: "Week 15 — CI Ch17 — Compiling Expressions I (clox, Pratt); …", start: "2027-02-13" },
+    { id: "w16", title: "Week 16 — CI Ch17 — Pratt parser II + challenges (clox); CI Ch18 — Types of Values (clox)", start: "2027-02-20" },
+    { id: "w17", title: "Week 17 — CI Ch18 — Types of Values (clox); CI Ch19 — Strings (clox)", start: "2027-02-27" },
+    { id: "w18", title: "Week 18 — CI Ch19 — Strings (clox); Let's Go — read chunk 2 + Go forms tryout", start: "2027-03-06" },
+    { id: "w19", title: "Week 19 — Let's Go — read chunk 2 + Go forms tryout; …", start: "2027-03-13" },
+    { id: "w20", title: "Week 20 — Go — Passwords & bcrypt (videos 90–106); CI Ch20 — Hash Tables (clox)", start: "2027-03-20" },
+    { id: "w21", title: "Week 21 — CI Ch20 — Hash Tables (clox); CI Ch21 — Global Variables (clox)", start: "2027-03-27" },
+    { id: "w22", title: "Week 22 — CI Ch21 — Global Variables (clox); Go — SQL relations & migrations (videos 138–155)", start: "2027-04-03" },
+    { id: "w23", title: "Week 23 — CI Ch22 — Local Variables (clox)", start: "2027-04-10" },
+    { id: "w24", title: "Week 24 — CI Ch23 — Jumping Back and Forth (clox)", start: "2027-04-17" },
+    { id: "w25", title: "Week 25 — Go — Cookies, Sessions & CSRF (videos 107–137)", start: "2027-04-24" },
+    { id: "w26", title: "Week 26 — Go — Cookies, Sessions & CSRF (videos 107–137); …", start: "2027-05-01" },
+    { id: "w27", title: "Week 27 — CI Ch24 — Calls and Functions I (clox); CI Ch24 — Calls II", start: "2027-05-08" },
+    { id: "w28", title: "Week 28 — CI Ch24 — Calls II: natives + challenges (clox); CI Ch25 — Closures I (clox)", start: "2027-05-15" },
+    { id: "w29", title: "Week 29 — CI Ch25 — Closures II; CI Ch26 — Garbage Collection I (clox)", start: "2027-05-22" },
+    { id: "w30", title: "Week 30 — CI Ch26 — Garbage Collection I (clox); CI Ch26 — GC II: sweep + challenges (clox)", start: "2027-05-29" },
+    { id: "w31", title: "Week 31 — CI Ch26 — GC II: sweep + challenges (clox); CI Ch27 — Classes and Instances (clox)", start: "2027-06-05" },
+    { id: "w32", title: "Week 32 — CI Ch28 — Methods & Initializers I (clox); …", start: "2027-06-12" },
+    { id: "w33", title: "Week 33 — CI Ch28 — Initializers + invoke opt + challenges; …", start: "2027-06-19" },
+    { id: "w34", title: "Week 34 — Go — Password reset & email (videos 165–194)", start: "2027-06-26" },
+    { id: "w35", title: "Week 35 — CI Ch29 — Superclasses (clox)", start: "2027-07-03" },
+    { id: "w36", title: "Week 36 — CI Ch29 — Superclasses (clox); CI Ch30 — Optimization → 🎉 CI DONE", start: "2027-07-10" },
+    { id: "w37", title: "Week 37 — CI Ch30 — Optimization → 🎉 CI DONE; Monkey Ch1 — Lexing (secondary)", start: "2027-07-17" },
+    { id: "w38", title: "Week 38 — Go — Galleries CRUD (videos 195–217)", start: "2027-07-24" },
+    { id: "w39", title: "Week 39 — Monkey Ch2 — Parsing (secondary, Pratt)", start: "2027-07-31" },
+    { id: "w40", title: "Week 40 — Monkey Ch2 — Parsing (secondary, Pratt); Let's Go — read chunk 4 (auth + testing)", start: "2027-08-07" },
+    { id: "w41", title: "Week 41 — Go — Images & config (videos 218–248)", start: "2027-08-14" },
+    { id: "w42", title: "Week 42 — Go — Images & config (videos 218–248); Monkey Ch3 — Evaluation (secondary)", start: "2027-08-21" },
+    { id: "w43", title: "Week 43 — Monkey Ch3 — Evaluation (secondary); Go — Deployment (videos 249–263)", start: "2027-08-28" },
+    { id: "w44", title: "Week 44 — Go — OAuth & finish → 🎉 course DONE; Monkey Ch4 — Extending (secondary)", start: "2027-09-04" },
+    { id: "w45", title: "Week 45 — Monkey Ch4 — Extending (secondary); Monkey — extend it (secondary)", start: "2027-09-11" },
+    { id: "w46", title: "Week 46 — Let's Go — guided exercises (project); Checkpoint — everything shipped; …", start: "2027-09-18" },
+    { id: "w47", title: "Week 47 — Writing a Compiler in Go — the bridge (secondary)", start: "2027-09-25" },
+    { id: "w48", title: "Week 48 — Go — production hardening (pick one); Capstone I — a Monkey web playground", start: "2027-10-02" },
+    { id: "w49", title: "Week 49 — Capstone II — ship the playground; …", start: "2027-10-09" },
   ],
 
   days: [
@@ -211,7 +220,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-11-22", week: "w3", title: "CI Ch10 — Functions (jlox) (1/3)",
+      id: "d08", date: "2026-11-23", week: "w3", title: "CI Ch10 — Functions (jlox) (1/3)",
       theme: `First-class functions, closures, return values.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 100, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/functions.html" target="_blank" rel="noopener">Ch10 Functions</a></b> (jlox): function objects, call semantics, native functions, <code>return</code>, closures (pp 147–167).`,
@@ -239,7 +248,7 @@ registerRoadmap({
 
     /* ---------------- Week 4 ---------------- */
     {
-      id: "d10", date: "2026-11-30", week: "w4", title: "CI Ch10 — Functions (jlox) (3/3, cont.)",
+      id: "d10", date: "2026-11-29", week: "w4", title: "CI Ch10 — Functions (jlox) (3/3, cont.)",
       theme: "Finish “CI Ch10 — Functions (jlox) (2/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d09", obj: CI, cat: "challenge", est: 90, label: `<b>Ch10 Challenges (all 3)</b> — incl. anonymous function expressions (p 166).`,
@@ -266,7 +275,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-12-02", week: "w4", title: "CI Ch11 — Resolving & Binding (jlox) (2/4, cont.)",
+      id: "d12", date: "2026-12-04", week: "w4", title: "CI Ch11 — Resolving & Binding (jlox) (2/4, cont.)",
       theme: "Finish “CI Ch11 — Resolving & Binding (jlox) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d11", obj: CI, cat: "code", est: 45, group: "g1-d11", label: `Implement the <code>Resolver</code> and wire it before interpretation. (1/2)`,
@@ -275,8 +284,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 5 ---------------- */
     {
-      id: "d13", date: "2026-12-04", week: "w4", title: "CI Ch11 — Resolving & Binding (jlox) (3/4)",
+      id: "d13", date: "2026-12-07", week: "w5", title: "CI Ch11 — Resolving & Binding (jlox) (3/4)",
       theme: `The static resolution pass — the subtle one.`,
       tasks: [
         { id: "t1", carried: "d11", obj: CI, cat: "code", est: 45, group: "g1-d11", label: `Implement the <code>Resolver</code> and wire it before interpretation. (2/2)`,
@@ -289,10 +300,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 5 ---------------- */
     {
-      id: "d14", date: "2026-12-05", week: "w5", title: "CI Ch11 — Resolving & Binding (jlox) (4/4, cont.)",
+      id: "d14", date: "2026-12-09", week: "w5", title: "CI Ch11 — Resolving & Binding (jlox) (4/4, cont.)",
       theme: "Finish “CI Ch11 — Resolving & Binding (jlox) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d13", obj: CI, cat: "challenge", est: 80, label: `<b>Ch11 Challenges (all 4)</b> — incl. reporting unused locals (p 188). (2/2)`,
@@ -304,7 +313,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d15", date: "2026-12-06", week: "w5", title: "Go — Code Org & MVC (videos 37–54) (1/3)",
+      id: "d15", date: "2026-12-10", week: "w5", title: "Go — Code Org & MVC (videos 37–54) (1/3)",
       theme: `Package structure, MVC, views, layouts, Tailwind.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 105, group: "g1", label: `Watch <b>videos 37–54</b> — “Code Organization” → “Exercises”: MVC, the views package, template validation at startup, embedding, named templates, reusable layouts, Tailwind, nav bar. (1/2)`,
@@ -322,8 +331,10 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🔗 See also — <i>Let's Go</i> Ch2–3 (skeleton + config/DI/errors) covers the same structural ideas with a different app; we start reading it in week 7.` },
       ],
     },
+
+    /* ---------------- Week 6 ---------------- */
     {
-      id: "d16", date: "2026-12-07", week: "w5", title: "Go — Code Org & MVC (videos 37–54) (2/3, cont.)",
+      id: "d16", date: "2026-12-12", week: "w6", title: "Go — Code Org & MVC (videos 37–54) (2/3, cont.)",
       theme: "Finish “Go — Code Org & MVC (videos 37–54) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d15", obj: GO, cat: "watch", est: 30, group: "g1-d15", label: `Watch <b>videos 37–54</b> — “Code Organization” → “Exercises”: MVC, the views package, template validation at startup, embedding, named templates, reusable layouts, Tailwind, nav bar. (2/2)`,
@@ -333,16 +344,14 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-12-10", week: "w5", title: "Go — Code Org & MVC (videos 37–54) (3/3)",
+      id: "d17", date: "2026-12-15", week: "w6", title: "Go — Code Org & MVC (videos 37–54) (3/3)",
       theme: `Package structure, MVC, views, layouts, Tailwind.`,
       tasks: [
         { id: "t1", obj: GO, cat: "review", est: 55, group: "g1", label: `Review <b>Calhoun Ch5–7</b> (PDF pp 133–224) alongside.` },
       ],
     },
-
-    /* ---------------- Week 6 ---------------- */
     {
-      id: "d18", date: "2026-12-15", week: "w6", title: "CI Ch12 — Classes I (jlox) (1/2)",
+      id: "d18", date: "2026-12-18", week: "w6", title: "CI Ch12 — Classes I (jlox) (1/2)",
       theme: `The 27-page chapter, split across two days. Today: declarations → methods.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 80, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/classes.html" target="_blank" rel="noopener">Ch12 Classes, part 1</a></b> (jlox): class declarations, instances, properties, methods (pp 190–205).`,
@@ -354,8 +363,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 7 ---------------- */
     {
-      id: "d19", date: "2026-12-16", week: "w6", title: "CI Ch12 — Classes I (jlox) (2/2, cont.)",
+      id: "d19", date: "2026-12-20", week: "w7", title: "CI Ch12 — Classes I (jlox) (2/2, cont.)",
       theme: "Finish “CI Ch12 — Classes I (jlox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d18", obj: CI, cat: "code", est: 75, group: "g1-d18", label: `Implement <code>LoxClass</code>/<code>LoxInstance</code>, property get/set, and method binding.`,
@@ -367,7 +378,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d20", date: "2026-12-17", week: "w6", title: "CI Ch12 — Classes II + challenges (jlox) (1/2)",
+      id: "d20", date: "2026-12-23", week: "w7", title: "CI Ch12 — Classes II + challenges (jlox) (1/2)",
       theme: `Finish Classes: \`this\`, initializers, and all three challenges.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 45, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/classes.html" target="_blank" rel="noopener">Ch12 Classes, part 2</a></b> (jlox): <code>this</code> and constructors/initializers (pp 206–216).`,
@@ -387,7 +398,7 @@ registerRoadmap({
       note: `Continuation of Ch12 on the next calendar day — lighter than one 27-page sprint.`,
     },
     {
-      id: "d21", date: "2026-12-18", week: "w6", title: "CI Ch12 — Classes II + challenges (jlox) (2/2, cont.)",
+      id: "d21", date: "2026-12-25", week: "w7", title: "CI Ch12 — Classes II + challenges (jlox) (2/2, cont.)",
       theme: "Finish “CI Ch12 — Classes II + challenges (jlox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d20", obj: CI, cat: "challenge", est: 90, label: `<b>Ch12 Challenges (all 3)</b> — incl. static methods & getters (p 214).`,
@@ -399,9 +410,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 7 ---------------- */
+    /* ---------------- Week 8 ---------------- */
     {
-      id: "d22", date: "2026-12-20", week: "w7", title: "Let's Go — read chunk 1 + starter (1/2)",
+      id: "d22", date: "2026-12-26", week: "w8", title: "Let's Go — read chunk 1 + starter (1/2)",
       theme: `Mandatory read; SnippetBox skeleton.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 105, label: `<b>Mandatory read — <a href="https://lets-go.alexedwards.net/" target="_blank" rel="noopener"><i>Let's Go</i></a> pp 11–85</b> (Ch2 Foundations + Ch3 config/logging/DI/error handling): build the runnable SnippetBox skeleton. (1/2)`,
@@ -418,7 +429,7 @@ registerRoadmap({
       note: "A full reading session — the SnippetBox skeleton is the week's anchor.",
     },
     {
-      id: "d23", date: "2026-12-21", week: "w7", title: "Let's Go — read chunk 1 + starter (2/2, cont.)",
+      id: "d23", date: "2026-12-28", week: "w8", title: "Let's Go — read chunk 1 + starter (2/2, cont.)",
       theme: "Finish “Let's Go — read chunk 1 + starter (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d22", obj: GO, cat: "book", est: 35, label: `<b>Mandatory read — <a href="https://lets-go.alexedwards.net/" target="_blank" rel="noopener"><i>Let's Go</i></a> pp 11–85</b> (Ch2 Foundations + Ch3 config/logging/DI/error handling): build the runnable SnippetBox skeleton. (2/2)`,
@@ -428,7 +439,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d24", date: "2026-12-22", week: "w7", title: "CI Ch13 — Inheritance (jlox done!) (1/3)",
+      id: "d24", date: "2026-12-30", week: "w8", title: "CI Ch13 — Inheritance (jlox done!) (1/3)",
       theme: `Superclasses, super calls — finishes the tree-walker.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/inheritance.html" target="_blank" rel="noopener">Ch13 Inheritance</a></b> (jlox): superclasses, method inheritance, <code>super</code> (pp 217–232).`,
@@ -442,8 +453,10 @@ registerRoadmap({
         { id: "s1", type: "hint", label: `💡 Half the book is now behind you and you have a working interpreter. Part III (clox) rebuilds all of it in C as a <b>bytecode VM</b> — faster, lower-level, and where the real systems learning is.` },
       ],
     },
+
+    /* ---------------- Week 9 ---------------- */
     {
-      id: "d25", date: "2026-12-23", week: "w7", title: "CI Ch13 — Inheritance (jlox done!) (2/3, cont.)",
+      id: "d25", date: "2027-01-03", week: "w9", title: "CI Ch13 — Inheritance (jlox done!) (2/3, cont.)",
       theme: "Finish “CI Ch13 — Inheritance (jlox done!) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d24", obj: CI, cat: "code", est: 80, group: "g1-d24", label: `Implement inheritance + <code>super</code>. 🎉 <b>jlox is complete</b> — a full tree-walk Lox.`,
@@ -453,10 +466,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 8 ---------------- */
     {
-      id: "d26", date: "2026-12-26", week: "w8", title: "CI Ch13 — Inheritance (jlox done!) (3/3)",
+      id: "d26", date: "2027-01-05", week: "w9", title: "CI Ch13 — Inheritance (jlox done!) (3/3)",
       theme: `Superclasses, super calls — finishes the tree-walker.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 90, label: `<b>Ch13 Challenges (all 3)</b> — incl. the class-method-resolution puzzle (p 230).`,
@@ -468,7 +479,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d27", date: "2026-12-30", week: "w8", title: "Go — Signup & REST (videos 55–62) (1/2)",
+      id: "d27", date: "2027-01-07", week: "w9", title: "Go — Signup & REST (videos 55–62) (1/2)",
       theme: `Signup page, REST intro, controllers, form parsing.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 60, group: "g1", label: `Watch <b>videos 55–62</b> — “Creating the Signup Page” → “Exercises”: styling, REST intro, users controller, decoupling with interfaces, form parsing, query params.`,
@@ -482,15 +493,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 10 ---------------- */
     {
-      id: "d28", date: "2026-12-31", week: "w8", title: "Go — Signup & REST (videos 55–62) (2/2, cont.)",
+      id: "d28", date: "2027-01-09", week: "w10", title: "Go — Signup & REST (videos 55–62) (2/2, cont.)",
       theme: "Finish “Go — Signup & REST (videos 55–62) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d27", obj: GO, cat: "review", est: 50, group: "g1-d27", label: `Review <b>Calhoun Ch8 The Signup Page</b> (PDF pp 225–260).` },
       ],
     },
     {
-      id: "d29", date: "2027-01-01", week: "w8", title: "CI Ch14 — Chunks of Bytecode (clox) (1/3)",
+      id: "d29", date: "2027-01-11", week: "w10", title: "CI Ch14 — Chunks of Bytecode (clox) (1/3)",
       theme: `clox begins — the C bytecode VM.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 100, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/chunks-of-bytecode.html" target="_blank" rel="noopener">Ch14 Chunks of Bytecode</a></b> (clox): dynamic arrays, op codes, constants, line info, disassembler (pp 233–256).`,
@@ -506,10 +519,8 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🔗 See also — clox is a <b>stack-based</b> VM; Lua is register-based. Worth a skim: <a href="https://arxiv.org/abs/1611.00467" target="_blank" rel="noopener">stack vs register VMs</a>.` },
       ],
     },
-
-    /* ---------------- Week 9 ---------------- */
     {
-      id: "d30", date: "2027-01-03", week: "w9", title: "CI Ch14 — Chunks of Bytecode (clox) (2/3)",
+      id: "d30", date: "2027-01-15", week: "w10", title: "CI Ch14 — Chunks of Bytecode (clox) (2/3)",
       theme: `clox begins — the C bytecode VM.`,
       tasks: [
         { id: "t1", obj: CI, cat: "code", est: 100, group: "g1", label: `Build <code>chunk.c</code>, the <code>OpCode</code> set, constant pool, and disassembler in C.`,
@@ -521,8 +532,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 11 ---------------- */
     {
-      id: "d31", date: "2027-01-04", week: "w9", title: "CI Ch14 — Chunks of Bytecode (clox) (3/3, cont.)",
+      id: "d31", date: "2027-01-18", week: "w11", title: "CI Ch14 — Chunks of Bytecode (clox) (3/3, cont.)",
       theme: "Finish “CI Ch14 — Chunks of Bytecode (clox) (2/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d30", obj: CI, cat: "challenge", est: 90, label: `<b>Ch14 Challenges (all 3)</b> — incl. run-length encoding line numbers & <code>OP_CONSTANT_LONG</code> (p 254).`,
@@ -534,7 +547,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2027-01-05", week: "w9", title: "CI Ch15 — A Virtual Machine (clox) (1/3)",
+      id: "d32", date: "2027-01-19", week: "w11", title: "CI Ch15 — A Virtual Machine (clox) (1/3)",
       theme: `The interpreter loop, the value stack.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/a-virtual-machine.html" target="_blank" rel="noopener">Ch15 A Virtual Machine</a></b> (clox): the <code>run()</code> loop, the value stack, arithmetic (pp 257–276).`,
@@ -545,10 +558,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 10 ---------------- */
     {
-      id: "d33", date: "2027-01-09", week: "w10", title: "CI Ch15 — A Virtual Machine (clox) (2/3, cont.)",
+      id: "d33", date: "2027-01-20", week: "w11", title: "CI Ch15 — A Virtual Machine (clox) (2/3, cont.)",
       theme: "Finish “CI Ch15 — A Virtual Machine (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d32", obj: CI, cat: "code", est: 90, group: "g1-d32", label: `Implement the VM dispatch loop and stack; get arithmetic executing.`,
@@ -558,8 +569,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 12 ---------------- */
     {
-      id: "d34", date: "2027-01-11", week: "w10", title: "CI Ch15 — A Virtual Machine (clox) (3/3)",
+      id: "d34", date: "2027-01-24", week: "w12", title: "CI Ch15 — A Virtual Machine (clox) (3/3)",
       theme: `The interpreter loop, the value stack.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 105, label: `<b>Ch15 Challenges (all 4)</b> — incl. the stack-manipulation & negation-in-place questions (p 274).`,
@@ -572,7 +585,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d35", date: "2027-01-14", week: "w10", title: "Go — Databases (videos 63–89) (1/5)",
+      id: "d35", date: "2027-01-28", week: "w12", title: "Go — Databases (videos 63–89) (1/5)",
       theme: `Postgres, SQL, querying with Go — a big cluster.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 70, group: "g1", label: `Watch <b>videos 63–89</b>, <b>part 1</b> — from “Intro to Databases”: Postgres, tables/types/constraints, CRUD, connecting from Go. (1/3)`,
@@ -587,7 +600,7 @@ registerRoadmap({
       note: `Video day — no CI block. The cluster runs across both halves; part 2 is on d38.`,
     },
     {
-      id: "d36", date: "2027-01-15", week: "w10", title: "Go — Databases (videos 63–89) (2/5, cont.)",
+      id: "d36", date: "2027-01-29", week: "w12", title: "Go — Databases (videos 63–89) (2/5, cont.)",
       theme: "Finish “Go — Databases (videos 63–89) (1/5)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d35", obj: GO, cat: "watch", est: 35, group: "g1-d35", label: `Watch <b>videos 63–89</b>, <b>part 1</b> — from “Intro to Databases”: Postgres, tables/types/constraints, CRUD, connecting from Go. (2/3)`,
@@ -597,9 +610,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 11 ---------------- */
+    /* ---------------- Week 13 ---------------- */
     {
-      id: "d37", date: "2027-01-17", week: "w11", title: "Go — Databases (videos 63–89) (3/5, cont.)",
+      id: "d37", date: "2027-01-30", week: "w13", title: "Go — Databases (videos 63–89) (3/5, cont.)",
       theme: "Finish “Go — Databases (videos 63–89) (1/5)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d35", obj: GO, cat: "watch", est: 35, group: "g1-d35", label: `Watch <b>videos 63–89</b>, <b>part 1</b> — from “Intro to Databases”: Postgres, tables/types/constraints, CRUD, connecting from Go. (3/3)`,
@@ -609,7 +622,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2027-01-19", week: "w11", title: "Go — Databases (videos 63–89) (4/5)",
+      id: "d38", date: "2027-02-02", week: "w13", title: "Go — Databases (videos 63–89) (4/5)",
       theme: `Postgres, SQL, querying with Go — a big cluster.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 85, group: "g1", label: `Watch <b>videos 63–89</b>, <b>part 2</b> — through to “Syncing the Book and Screencasts Source Code”: SQL injection, querying single/multiple records, ORMs vs SQL.`,
@@ -621,7 +634,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d39", date: "2027-01-20", week: "w11", title: "Go — Databases (videos 63–89) (5/5, cont.)",
+      id: "d39", date: "2027-02-03", week: "w13", title: "Go — Databases (videos 63–89) (5/5, cont.)",
       theme: "Finish “Go — Databases (videos 63–89) (4/5)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d38", obj: GO, cat: "review", est: 70, group: "g1-d38",
@@ -632,9 +645,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 12 ---------------- */
+    /* ---------------- Week 14 ---------------- */
     {
-      id: "d40", date: "2027-01-24", week: "w12", title: "CI Ch16 — Scanning on Demand (clox) (1/3)",
+      id: "d40", date: "2027-02-07", week: "w14", title: "CI Ch16 — Scanning on Demand (clox) (1/3)",
       theme: `The clox scanner — no separate token list.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 85, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/scanning-on-demand.html" target="_blank" rel="noopener">Ch16 Scanning on Demand</a></b> (clox): the pull-based scanner, tokens without heap allocation (pp 277–296).`,
@@ -648,7 +661,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2027-01-25", week: "w12", title: "CI Ch16 — Scanning on Demand (clox) (2/3, cont.)",
+      id: "d41", date: "2027-02-08", week: "w14", title: "CI Ch16 — Scanning on Demand (clox) (2/3, cont.)",
       theme: "Finish “CI Ch16 — Scanning on Demand (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d40", obj: CI, cat: "code", est: 80, group: "g1-d40",
@@ -659,7 +672,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d42", date: "2027-01-28", week: "w12", title: "CI Ch16 — Scanning on Demand (clox) (3/3)",
+      id: "d42", date: "2027-02-12", week: "w14", title: "CI Ch16 — Scanning on Demand (clox) (3/3)",
       theme: `The clox scanner — no separate token list.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 85, label: `<b>Ch16 Challenges (all 3)</b> (p 295).`,
@@ -670,8 +683,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 15 ---------------- */
     {
-      id: "d43", date: "2027-01-29", week: "w12", title: "CI Ch17 — Compiling Expressions I (clox, Pratt) (1/2)",
+      id: "d43", date: "2027-02-16", week: "w15", title: "CI Ch17 — Compiling Expressions I (clox, Pratt) (1/2)",
       theme: `The dense idea — the Pratt parser — split over two days. Today: the core.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 85, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">Ch17 Compiling Expressions, part 1</a></b> (clox): single-pass compilation, the <b>Pratt parser</b> — the precedence table and how prefix/infix rules dispatch (pp 297–310).`,
@@ -685,10 +700,8 @@ registerRoadmap({
         { id: "s2", type: "hint", label: `💡 This is <b>the</b> chapter that maps to <i>Writing an Interpreter in Go</i> §2.6 — Monkey's parser is Pratt too, while jlox used recursive descent. You'll recognize this technique when you start Monkey.` },
       ],
     },
-
-    /* ---------------- Week 13 ---------------- */
     {
-      id: "d44", date: "2027-01-30", week: "w13", title: "CI Ch17 — Compiling Expressions I (clox, Pratt) (2/2, cont.)",
+      id: "d44", date: "2027-02-17", week: "w15", title: "CI Ch17 — Compiling Expressions I (clox, Pratt) (2/2, cont.)",
       theme: "Finish “CI Ch17 — Compiling Expressions I (clox, Pratt) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d43", obj: CI, cat: "code", est: 90, group: "g1-d43", label: `Implement the core of the Pratt <code>compiler.c</code> — the precedence-climbing loop and the parse-rule table.`,
@@ -699,7 +712,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d45", date: "2027-02-02", week: "w13", title: "CI Ch17 — Pratt parser II + challenges (clox) (1/2)",
+      id: "d45", date: "2027-02-19", week: "w15", title: "CI Ch17 — Pratt parser II + challenges (clox) (1/2)",
       theme: `Finish the compiler: the remaining rules, then all three challenges.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 40, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/compiling-expressions.html" target="_blank" rel="noopener">Ch17, part 2</a></b> (clox): unary/grouping/number/literal parse fns and how the table wires them (pp 311–317).`,
@@ -715,8 +728,10 @@ registerRoadmap({
       ],
       note: `Continuation of the Pratt chapter — the challenges get a fresh head instead of a tired one.`,
     },
+
+    /* ---------------- Week 16 ---------------- */
     {
-      id: "d46", date: "2027-02-03", week: "w13", title: "CI Ch17 — Pratt parser II + challenges (clox) (2/2, cont.)",
+      id: "d46", date: "2027-02-21", week: "w16", title: "CI Ch17 — Pratt parser II + challenges (clox) (2/2, cont.)",
       theme: "Finish “CI Ch17 — Pratt parser II + challenges (clox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d45", obj: CI, cat: "challenge", est: 90, label: `<b>Ch17 Challenges (all 3)</b> (p 316).`,
@@ -728,7 +743,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d47", date: "2027-02-04", week: "w13", title: "CI Ch18 — Types of Values (clox) (1/4)",
+      id: "d47", date: "2027-02-22", week: "w16", title: "CI Ch18 — Types of Values (clox) (1/4)",
       theme: `A tagged union for Lox values.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 35, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/types-of-values.html" target="_blank" rel="noopener">Ch18 Types of Values</a></b> (clox): the tagged-union <code>Value</code>, booleans, nil, comparisons (pp 318–331). (1/2)`,
@@ -738,10 +753,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 14 ---------------- */
     {
-      id: "d48", date: "2027-02-06", week: "w14", title: "CI Ch18 — Types of Values (clox) (2/4, cont.)",
+      id: "d48", date: "2027-02-25", week: "w16", title: "CI Ch18 — Types of Values (clox) (2/4, cont.)",
       theme: "Finish “CI Ch18 — Types of Values (clox) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d47", obj: CI, cat: "read", est: 40, group: "g1-d47", label: `CI — <b><a href="https://craftinginterpreters.com/types-of-values.html" target="_blank" rel="noopener">Ch18 Types of Values</a></b> (clox): the tagged-union <code>Value</code>, booleans, nil, comparisons (pp 318–331). (2/2)`,
@@ -751,8 +764,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 17 ---------------- */
     {
-      id: "d49", date: "2027-02-07", week: "w14", title: "CI Ch18 — Types of Values (clox) (3/4, cont.)",
+      id: "d49", date: "2027-02-27", week: "w17", title: "CI Ch18 — Types of Values (clox) (3/4, cont.)",
       theme: "Finish “CI Ch18 — Types of Values (clox) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d47", obj: CI, cat: "code", est: 70, group: "g1-d47", label: `Implement the <code>Value</code> union and equality/comparison ops.`,
@@ -763,7 +778,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2027-02-08", week: "w14", title: "CI Ch18 — Types of Values (clox) (4/4)",
+      id: "d50", date: "2027-03-03", week: "w17", title: "CI Ch18 — Types of Values (clox) (4/4)",
       theme: `A tagged union for Lox values.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 80, label: `<b>Ch18 Challenges (both)</b> (p 331).`,
@@ -774,7 +789,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d51", date: "2027-02-12", week: "w14", title: "CI Ch19 — Strings (clox) (1/3)",
+      id: "d51", date: "2027-03-04", week: "w17", title: "CI Ch19 — Strings (clox) (1/3)",
       theme: `Heap-allocated objects enter the VM.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 80, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/strings.html" target="_blank" rel="noopener">Ch19 Strings</a></b> (clox): the <code>Obj</code> heap type, string objects, concatenation, the object linked-list (pp 332–348).`,
@@ -787,9 +802,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 15 ---------------- */
+    /* ---------------- Week 18 ---------------- */
     {
-      id: "d52", date: "2027-02-15", week: "w15", title: "CI Ch19 — Strings (clox) (2/3, cont.)",
+      id: "d52", date: "2027-03-08", week: "w18", title: "CI Ch19 — Strings (clox) (2/3, cont.)",
       theme: "Finish “CI Ch19 — Strings (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d51", obj: CI, cat: "code", est: 80, group: "g1-d51", label: `Implement <code>ObjString</code> and string concatenation; track objects for later GC.`,
@@ -800,7 +815,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d53", date: "2027-02-16", week: "w15", title: "CI Ch19 — Strings (clox) (3/3)",
+      id: "d53", date: "2027-03-09", week: "w18", title: "CI Ch19 — Strings (clox) (3/3)",
       theme: `Heap-allocated objects enter the VM.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 85, label: `<b>Ch19 Challenges (all 3)</b> (p 346).`,
@@ -812,7 +827,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d54", date: "2027-02-17", week: "w15", title: `Let's Go — read chunk 2 + Go forms tryout (1/2)`,
+      id: "d54", date: "2027-03-12", week: "w18", title: `Let's Go — read chunk 2 + Go forms tryout (1/2)`,
       theme: `Mandatory read; DB + dynamic templates.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 105, label: `<b>Mandatory read — <i>Let's Go</i> pp 86–161</b> (Ch4 DB layer + Ch5 dynamic templates): SnippetBox now reads/writes MySQL and renders live data safely. (1/2)`,
@@ -826,8 +841,10 @@ registerRoadmap({
         { id: "s1", type: "hint", label: `💡 Two Go stacks side by side: Calhoun rolls more by hand; <i>Let's Go</i> is more idiomatic/production-shaped. Noticing where they differ (routing, DI, templates) teaches you the design space.` },
       ],
     },
+
+    /* ---------------- Week 19 ---------------- */
     {
-      id: "d55", date: "2027-02-18", week: "w15", title: "Let's Go — read chunk 2 + Go forms tryout (2/2, cont.)",
+      id: "d55", date: "2027-03-16", week: "w19", title: "Let's Go — read chunk 2 + Go forms tryout (2/2, cont.)",
       theme: "Finish “Let's Go — read chunk 2 + Go forms tryout (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d54", obj: GO, cat: "book", est: 35, label: `<b>Mandatory read — <i>Let's Go</i> pp 86–161</b> (Ch4 DB layer + Ch5 dynamic templates): SnippetBox now reads/writes MySQL and renders live data safely. (2/2)`,
@@ -836,10 +853,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 16 ---------------- */
     {
-      id: "d56", date: "2027-02-20", week: "w16", title: "Calhoun Ch11–12 review + Go forms tryout",
+      id: "d56", date: "2027-03-17", week: "w19", title: "Calhoun Ch11–12 review + Go forms tryout",
       theme: `Consolidate the book behind the videos, then try a Let's Go pattern in your own app.`,
       tasks: [
         { id: "t1", obj: GO, cat: "review", est: 50, label: `Review <b>Calhoun Ch11–12</b> (PDF pp 347–400).` },
@@ -847,7 +862,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d57", date: "2027-02-21", week: "w16", title: "Go — Passwords & bcrypt (videos 90–106) (1/2)",
+      id: "d57", date: "2027-03-18", week: "w19", title: "Go — Passwords & bcrypt (videos 90–106) (1/2)",
       theme: `Hashing, salting, bcrypt, sign-in.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1", label: `Watch <b>videos 90–106</b> — “Steps for Securing Passwords” → “Process Sign In Attempts”: hash functions, salting, bcrypt CLI + in Go, UserService, sign-in flow. (1/2)`,
@@ -861,8 +876,10 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🔗 Cross-roadmap echo — this is the same bcrypt you used in the Roadmaps app's own login. Note how identical the hash/verify shape is across Go and PHP.` },
       ],
     },
+
+    /* ---------------- Week 20 ---------------- */
     {
-      id: "d58", date: "2027-02-23", week: "w16", title: "Go — Passwords & bcrypt (videos 90–106) (2/2, cont.)",
+      id: "d58", date: "2027-03-21", week: "w20", title: "Go — Passwords & bcrypt (videos 90–106) (2/2, cont.)",
       theme: "Finish “Go — Passwords & bcrypt (videos 90–106) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d57", obj: GO, cat: "watch", est: 60, group: "g1-d57", label: `Watch <b>videos 90–106</b> — “Steps for Securing Passwords” → “Process Sign In Attempts”: hash functions, salting, bcrypt CLI + in Go, UserService, sign-in flow. (2/2)`,
@@ -873,7 +890,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d59", date: "2027-02-26", week: "w16", title: "CI Ch20 — Hash Tables (clox) (1/3)",
+      id: "d59", date: "2027-03-24", week: "w20", title: "CI Ch20 — Hash Tables (clox) (1/3)",
       theme: `Build a hash table from scratch in C.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 80, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/hash-tables.html" target="_blank" rel="noopener">Ch20 Hash Tables</a></b> (clox): open addressing, FNV-1a hashing, tombstones, string interning setup (pp 349–372).`,
@@ -885,10 +902,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 17 ---------------- */
     {
-      id: "d60", date: "2027-02-27", week: "w17", title: "CI Ch20 — Hash Tables (clox) (2/3, cont.)",
+      id: "d60", date: "2027-03-25", week: "w20", title: "CI Ch20 — Hash Tables (clox) (2/3, cont.)",
       theme: "Finish “CI Ch20 — Hash Tables (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d59", obj: CI, cat: "code", est: 90, group: "g1-d59", label: `Implement <code>table.c</code> with linear probing and tombstones.`,
@@ -898,8 +913,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 21 ---------------- */
     {
-      id: "d61", date: "2027-03-01", week: "w17", title: "CI Ch20 — Hash Tables (clox) (3/3)",
+      id: "d61", date: "2027-03-28", week: "w21", title: "CI Ch20 — Hash Tables (clox) (3/3)",
       theme: `Build a hash table from scratch in C.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 85, label: `<b>Ch20 Challenges (all 3)</b> (p 371).`,
@@ -911,7 +928,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d62", date: "2027-03-03", week: "w17", title: "CI Ch21 — Global Variables (clox) (1/3)",
+      id: "d62", date: "2027-03-29", week: "w21", title: "CI Ch21 — Global Variables (clox) (1/3)",
       theme: `Global variable statements and the string-intern table.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/global-variables.html" target="_blank" rel="noopener">Ch21 Global Variables</a></b> (clox): global declarations, the globals table, string interning (pp 373–390).`,
@@ -923,7 +940,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d63", date: "2027-03-04", week: "w17", title: "CI Ch21 — Global Variables (clox) (2/3, cont.)",
+      id: "d63", date: "2027-03-30", week: "w21", title: "CI Ch21 — Global Variables (clox) (2/3, cont.)",
       theme: "Finish “CI Ch21 — Global Variables (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d62", obj: CI, cat: "code", est: 80, group: "g1-d62", label: `Implement globals + interning; wire the compiler to emit define/get/set.`,
@@ -934,9 +951,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 18 ---------------- */
+    /* ---------------- Week 22 ---------------- */
     {
-      id: "d64", date: "2027-03-06", week: "w18", title: "CI Ch21 — Global Variables (clox) (3/3)",
+      id: "d64", date: "2027-04-03", week: "w22", title: "CI Ch21 — Global Variables (clox) (3/3)",
       theme: `Global variable statements and the string-intern table.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 75, label: `<b>Ch21 Challenges (all 3)</b> (p 389).`,
@@ -948,7 +965,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d65", date: "2027-03-07", week: "w18", title: `Go — SQL relations & migrations (videos 138–155) (1/2)`,
+      id: "d65", date: "2027-04-07", week: "w22", title: `Go — SQL relations & migrations (videos 138–155) (1/2)`,
       theme: `Foreign keys, joins, indexes, schema migrations (goose).`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 100, group: "g1", label: `Watch <b>videos 138–155</b> — “SQL Relationships” → “Removing Old SQL Files”: FKs, ON DELETE CASCADE, joins, indexes, ON CONFLICT, schema migrations with <code>goose</code>, embedding migrations. (1/2)`,
@@ -962,7 +979,7 @@ registerRoadmap({
       note: `Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d73–d76 (week 21); this week jumps to the SQL cluster to balance load — reorder freely.`,
     },
     {
-      id: "d66", date: "2027-03-09", week: "w18", title: `Go — SQL relations & migrations (videos 138–155) (2/2)`,
+      id: "d66", date: "2027-04-09", week: "w22", title: `Go — SQL relations & migrations (videos 138–155) (2/2)`,
       theme: `Foreign keys, joins, indexes, schema migrations (goose).`,
       tasks: [
         { id: "t1", carried: "d65", obj: GO, cat: "watch", est: 60, group: "g1-d65", label: `Watch <b>videos 138–155</b> — “SQL Relationships” → “Removing Old SQL Files”: FKs, ON DELETE CASCADE, joins, indexes, ON CONFLICT, schema migrations with <code>goose</code>, embedding migrations. (2/2)`,
@@ -975,9 +992,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 19 ---------------- */
+    /* ---------------- Week 23 ---------------- */
     {
-      id: "d67", date: "2027-03-13", week: "w19", title: "CI Ch22 — Local Variables (clox) (1/3)",
+      id: "d67", date: "2027-04-13", week: "w23", title: "CI Ch22 — Local Variables (clox) (1/3)",
       theme: `Locals on the stack, scope resolution at compile time.`,
       tasks: [
         { id: "t1", carried: "d66", obj: GO, cat: "review", est: 25, group: "g1-d66", label: `Review <b>Calhoun Ch15–16</b> (PDF pp 529–574). (2/2)` },
@@ -990,7 +1007,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d68", date: "2027-03-15", week: "w19", title: "CI Ch22 — Local Variables (clox) (2/3)",
+      id: "d68", date: "2027-04-15", week: "w23", title: "CI Ch22 — Local Variables (clox) (2/3)",
       theme: `Locals on the stack, scope resolution at compile time.`,
       tasks: [
         { id: "t1", carried: "d67", obj: CI, cat: "code", est: 80, group: "g1-d67", label: `Implement local slots and scope depth in the compiler.`,
@@ -1005,7 +1022,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d69", date: "2027-03-19", week: "w19", title: "CI Ch22 — Local Variables (clox) (3/3, cont.)",
+      id: "d69", date: "2027-04-16", week: "w23", title: "CI Ch22 — Local Variables (clox) (3/3, cont.)",
       theme: "Finish “CI Ch22 — Local Variables (clox) (2/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d68", obj: CI, cat: "challenge", est: 75, label: `<b>Ch22 Challenges (all 4)</b> (p 404). (2/2)`,
@@ -1017,9 +1034,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 20 ---------------- */
+    /* ---------------- Week 24 ---------------- */
     {
-      id: "d70", date: "2027-03-23", week: "w20", title: "CI Ch23 — Jumping Back and Forth (clox) (1/3)",
+      id: "d70", date: "2027-04-17", week: "w24", title: "CI Ch23 — Jumping Back and Forth (clox) (1/3)",
       theme: `Control flow via jump bytecodes + backpatching.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/jumping-back-and-forth.html" target="_blank" rel="noopener">Ch23 Jumping Back and Forth</a></b> (clox): <code>if</code>/<code>while</code>/<code>for</code> via jumps, backpatching, logical operators (pp 405–424).`,
@@ -1034,7 +1051,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d71", date: "2027-03-24", week: "w20", title: "CI Ch23 — Jumping Back and Forth (clox) (2/3, cont.)",
+      id: "d71", date: "2027-04-18", week: "w24", title: "CI Ch23 — Jumping Back and Forth (clox) (2/3, cont.)",
       theme: "Finish “CI Ch23 — Jumping Back and Forth (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d70", obj: CI, cat: "code", est: 90, group: "g1-d70", label: `Implement jump emission + backpatching; get loops running on the VM.`,
@@ -1045,7 +1062,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d72", date: "2027-03-25", week: "w20", title: "CI Ch23 — Jumping Back and Forth (clox) (3/3)",
+      id: "d72", date: "2027-04-21", week: "w24", title: "CI Ch23 — Jumping Back and Forth (clox) (3/3)",
       theme: `Control flow via jump bytecodes + backpatching.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 85, label: `<b>Ch23 Challenges (all 3)</b> — incl. adding <code>switch</code>/<code>continue</code> (p 420).`,
@@ -1058,9 +1075,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 21 ---------------- */
+    /* ---------------- Week 25 ---------------- */
     {
-      id: "d73", date: "2027-03-28", week: "w21", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (1/4)",
+      id: "d73", date: "2027-04-26", week: "w25", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (1/4)",
       theme: `The big auth-state cluster.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 85, group: "g1", label: `Watch <b>videos 107–137</b>, <b>part 1</b> — from “Stateless Servers”: cookies, XSS/theft, CSRF middleware, secure tokens (<code>crypto/rand</code>). (1/2)`,
@@ -1075,7 +1092,7 @@ registerRoadmap({
       note: `A heavy video day — no CI block. Part 2 continues on d75.`,
     },
     {
-      id: "d74", date: "2027-03-30", week: "w21", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (2/4, cont.)",
+      id: "d74", date: "2027-04-29", week: "w25", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (2/4, cont.)",
       theme: "Finish “Go — Cookies, Sessions & CSRF (videos 107–137) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d73", obj: GO, cat: "watch", est: 90, group: "g1-d73", label: `Watch <b>videos 107–137</b>, <b>part 1</b> — from “Stateless Servers”: cookies, XSS/theft, CSRF middleware, secure tokens (<code>crypto/rand</code>). (2/2)`,
@@ -1086,7 +1103,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d75", date: "2027-04-01", week: "w21", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (3/4)",
+      id: "d75", date: "2027-04-30", week: "w25", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (3/4)",
       theme: `The big auth-state cluster.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 80, group: "g1", label: `Watch <b>videos 107–137</b>, <b>part 2</b> — through to “Sign Out Link”: the sessions table & service, sign-out.`,
@@ -1096,8 +1113,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 26 ---------------- */
     {
-      id: "d76", date: "2027-04-02", week: "w21", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (4/4, cont.)",
+      id: "d76", date: "2027-05-02", week: "w26", title: "Go — Cookies, Sessions & CSRF (videos 107–137) (4/4, cont.)",
       theme: "Finish “Go — Cookies, Sessions & CSRF (videos 107–137) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d75", obj: GO, cat: "review", est: 35, group: "g1-d75",
@@ -1106,10 +1125,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 22 ---------------- */
     {
-      id: "d77", date: "2027-04-03", week: "w22", title: "CI Ch24 — Calls and Functions I (clox) (1/3)",
+      id: "d77", date: "2027-05-04", week: "w26", title: "CI Ch24 — Calls and Functions I (clox) (1/3)",
       theme: `The 32-page chapter, split over two days. Today: function objects + call frames.`,
       tasks: [
         { id: "t1", carried: "d75", obj: GO, cat: "review", est: 35, group: "g1-d75",
@@ -1124,7 +1141,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d78", date: "2027-04-04", week: "w22", title: "CI Ch24 — Calls and Functions I (clox) (2/3, cont.)",
+      id: "d78", date: "2027-05-05", week: "w26", title: "CI Ch24 — Calls and Functions I (clox) (2/3, cont.)",
       theme: "Finish “CI Ch24 — Calls and Functions I (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d77", obj: CI, cat: "read", est: 25, group: "g1-d77", label: `CI — <b><a href="https://craftinginterpreters.com/calls-and-functions.html" target="_blank" rel="noopener">Ch24 Calls and Functions, part 1</a></b> (clox): function objects, compiling a function body, and the <code>CallFrame</code> model (pp 425–445). (2/2)`,
@@ -1133,8 +1150,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 27 ---------------- */
     {
-      id: "d79", date: "2027-04-05", week: "w22", title: "CI Ch24 — Calls and Functions I (clox) (3/3, cont.)",
+      id: "d79", date: "2027-05-08", week: "w27", title: "CI Ch24 — Calls and Functions I (clox) (3/3, cont.)",
       theme: "Finish “CI Ch24 — Calls and Functions I (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d77", obj: CI, cat: "code", est: 95, group: "g1-d77", label: `Implement <code>ObjFunction</code>, the compiler's function scaffolding, and the <code>CallFrame</code> array on the VM.`,
@@ -1146,7 +1165,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d80", date: "2027-04-07", week: "w22", title: "CI Ch24 — Calls II: natives + challenges (clox) (1/3)",
+      id: "d80", date: "2027-05-09", week: "w27", title: "CI Ch24 — Calls II: natives + challenges (clox) (1/3)",
       theme: `Finish calls: arguments, native functions, stack overflow, then all four challenges.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/calls-and-functions.html" target="_blank" rel="noopener">Ch24, part 2</a></b> (clox): calling functions, argument passing, native functions, and stack-overflow detection (pp 446–456).`,
@@ -1159,10 +1178,8 @@ registerRoadmap({
       ],
       note: `Continuation of the heavy Ch24 — call frames last session (d77), the tricky call/return glue today.`,
     },
-
-    /* ---------------- Week 23 ---------------- */
     {
-      id: "d81", date: "2027-04-12", week: "w23", title: "CI Ch24 — Calls II: natives + challenges (clox) (2/3, cont.)",
+      id: "d81", date: "2027-05-14", week: "w27", title: "CI Ch24 — Calls II: natives + challenges (clox) (2/3, cont.)",
       theme: "Finish “CI Ch24 — Calls II: natives + challenges (clox) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d80", obj: CI, cat: "code", est: 60, group: "g1-d80", label: `Wire up <code>OP_CALL</code>, argument checking, a native (<code>clock()</code>), and the call-depth guard.`,
@@ -1174,8 +1191,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 28 ---------------- */
     {
-      id: "d82", date: "2027-04-13", week: "w23", title: "CI Ch24 — Calls II: natives + challenges (clox) (3/3)",
+      id: "d82", date: "2027-05-17", week: "w28", title: "CI Ch24 — Calls II: natives + challenges (clox) (3/3)",
       theme: `Finish calls: arguments, native functions, stack overflow, then all four challenges.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 100, label: `<b>Ch24 Challenges (all 4)</b> (p 455).`,
@@ -1188,7 +1207,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d83", date: "2027-04-15", week: "w23", title: "CI Ch25 — Closures I (clox) (1/2)",
+      id: "d83", date: "2027-05-18", week: "w28", title: "CI Ch25 — Closures I (clox) (1/2)",
       theme: `The longest clox chapter (35pp), split over two days. Today: upvalues + capture.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">Ch25 Closures, part 1</a></b> (clox): <code>ObjClosure</code>, upvalues, and capturing local variables (pp 457–478).`,
@@ -1204,7 +1223,7 @@ registerRoadmap({
       note: "Split day 1 of the longest chapter — capture today, closing-over-the-stack on d85.",
     },
     {
-      id: "d84", date: "2027-04-16", week: "w23", title: "CI Ch25 — Closures I (clox) (2/2, cont.)",
+      id: "d84", date: "2027-05-20", week: "w28", title: "CI Ch25 — Closures I (clox) (2/2, cont.)",
       theme: "Finish “CI Ch25 — Closures I (clox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d83", obj: CI, cat: "code", est: 90, group: "g1-d83", label: `Implement <code>ObjClosure</code> and open upvalues; get a closure that reads a captured local while it's still on the stack.`,
@@ -1215,9 +1234,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 24 ---------------- */
+    /* ---------------- Week 29 ---------------- */
     {
-      id: "d85", date: "2027-04-17", week: "w24", title: `CI Ch25 — Closures II: closing upvalues + challenges (1/2)`,
+      id: "d85", date: "2027-05-24", week: "w29", title: `CI Ch25 — Closures II: closing upvalues + challenges (1/2)`,
       theme: `The subtle half: closing upvalues when a local leaves the stack.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 50, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/closures.html" target="_blank" rel="noopener">Ch25 Closures, part 2</a></b> (clox): closing upvalues when the variable pops off the stack, the open-upvalue list (pp 479–491).`,
@@ -1234,7 +1253,7 @@ registerRoadmap({
       note: `Continuation of the longest CI chapter — the part where closures actually get hard.`,
     },
     {
-      id: "d86", date: "2027-04-18", week: "w24", title: `CI Ch25 — Closures II: closing upvalues + challenges (2/2)`,
+      id: "d86", date: "2027-05-26", week: "w29", title: `CI Ch25 — Closures II: closing upvalues + challenges (2/2)`,
       theme: `The subtle half: closing upvalues when a local leaves the stack.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 90, label: `<b>Ch25 Challenges (all 3)</b> (p 487).`,
@@ -1246,7 +1265,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d87", date: "2027-04-21", week: "w24", title: "CI Ch26 — Garbage Collection I (clox) (1/2)",
+      id: "d87", date: "2027-05-28", week: "w29", title: "CI Ch26 — Garbage Collection I (clox) (1/2)",
       theme: `The toughest chapter, split in two. Today: the mark phase and roots.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/garbage-collection.html" target="_blank" rel="noopener">Ch26 GC, part 1</a></b> (clox): reachability, the tricolor abstraction, marking roots and tracing references (pp 492–508).`,
@@ -1262,9 +1281,9 @@ registerRoadmap({
       note: `Split day 1 of the hardest chapter — mark today, sweep + 'collect during allocation' bugs next session (d89).`,
     },
 
-    /* ---------------- Week 25 ---------------- */
+    /* ---------------- Week 30 ---------------- */
     {
-      id: "d88", date: "2027-04-26", week: "w25", title: "CI Ch26 — Garbage Collection I (clox) (2/2, cont.)",
+      id: "d88", date: "2027-05-29", week: "w30", title: "CI Ch26 — Garbage Collection I (clox) (2/2, cont.)",
       theme: "Finish “CI Ch26 — Garbage Collection I (clox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d87", obj: CI, cat: "code", est: 80, group: "g1-d87", label: `Implement <code>markRoots</code> + the mark/tracing phase and the gray stack; verify live objects go black.`,
@@ -1275,7 +1294,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d89", date: "2027-04-28", week: "w25", title: "CI Ch26 — GC II: sweep + challenges (clox) (1/3)",
+      id: "d89", date: "2027-05-30", week: "w30", title: "CI Ch26 — GC II: sweep + challenges (clox) (1/3)",
       theme: `The dangerous half: sweep, when to collect, and the allocation-time bugs.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/garbage-collection.html" target="_blank" rel="noopener">Ch26 GC, part 2</a></b> (clox): the sweep phase, weak references (the string table), and the collection-frequency heuristic (pp 509–518).`,
@@ -1288,7 +1307,7 @@ registerRoadmap({
       note: `Continuation of GC — the part where a wrong root eats a live object. Fresh head recommended.`,
     },
     {
-      id: "d90", date: "2027-04-29", week: "w25", title: "CI Ch26 — GC II: sweep + challenges (clox) (2/3)",
+      id: "d90", date: "2027-06-01", week: "w30", title: "CI Ch26 — GC II: sweep + challenges (clox) (2/3)",
       theme: `The dangerous half: sweep, when to collect, and the allocation-time bugs.`,
       tasks: [
         { id: "t1", carried: "d89", obj: CI, cat: "code", est: 70, group: "g1-d89", label: `Implement sweep + the grow-heap heuristic; chase down the "collect during allocation" bugs that make GC infamous.`,
@@ -1302,8 +1321,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 31 ---------------- */
     {
-      id: "d91", date: "2027-04-30", week: "w25", title: "CI Ch26 — GC II: sweep + challenges (clox) (3/3, cont.)",
+      id: "d91", date: "2027-06-06", week: "w31", title: "CI Ch26 — GC II: sweep + challenges (clox) (3/3, cont.)",
       theme: "Finish “CI Ch26 — GC II: sweep + challenges (clox) (2/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d90", obj: CI, cat: "challenge", est: 60, label: `<b>Ch26 Challenges (all 3)</b> (p 517). (2/2)`,
@@ -1313,10 +1334,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 26 ---------------- */
     {
-      id: "d92", date: "2027-05-01", week: "w26", title: `CI Ch27 — Classes and Instances (clox) (1/2)`,
+      id: "d92", date: "2027-06-07", week: "w31", title: `CI Ch27 — Classes and Instances (clox) (1/2)`,
       theme: `Lightest clox chapter — classes and fields.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 60, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/classes-and-instances.html" target="_blank" rel="noopener">Ch27 Classes and Instances</a></b> (clox): class objects, instances, fields (pp 519–531).`,
@@ -1332,7 +1351,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d93", date: "2027-05-04", week: "w26", title: `CI Ch27 — Classes and Instances (clox) (2/2)`,
+      id: "d93", date: "2027-06-09", week: "w31", title: `CI Ch27 — Classes and Instances (clox) (2/2)`,
       theme: `Lightest clox chapter — classes and fields.`,
       tasks: [
         { id: "t1", carried: "d92", obj: CI, cat: "code", est: 35, group: "g1-d92", label: `Implement <code>ObjClass</code>/<code>ObjInstance</code> and property get/set. (2/2)`,
@@ -1346,8 +1365,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 32 ---------------- */
     {
-      id: "d94", date: "2027-05-05", week: "w26", title: "CI Ch28 — Methods & Initializers I (clox) (1/2)",
+      id: "d94", date: "2027-06-14", week: "w32", title: "CI Ch28 — Methods & Initializers I (clox) (1/2)",
       theme: `26-page chapter, split in two. Today: methods and bound methods.`,
       tasks: [
         { id: "t1", carried: "d93", obj: CI, cat: "challenge", est: 50, label: `<b>Ch27 Challenges (all 4)</b> (p 531). (2/2)`,
@@ -1362,10 +1383,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 27 ---------------- */
     {
-      id: "d95", date: "2027-05-10", week: "w27", title: "CI Ch28 — Methods & Initializers I (clox) (2/2, cont.)",
+      id: "d95", date: "2027-06-15", week: "w32", title: "CI Ch28 — Methods & Initializers I (clox) (2/2, cont.)",
       theme: "Finish “CI Ch28 — Methods & Initializers I (clox) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d94", obj: CI, cat: "read", est: 25, group: "g1-d94", label: `CI — <b><a href="https://craftinginterpreters.com/methods-and-initializers.html" target="_blank" rel="noopener">Ch28 Methods, part 1</a></b> (clox): method declarations, <code>ObjBoundMethod</code>, and <code>this</code> on the VM (pp 532–547). (2/2)`,
@@ -1379,7 +1398,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d96", date: "2027-05-13", week: "w27", title: "CI Ch28 — Initializers + invoke opt + challenges (1/3)",
+      id: "d96", date: "2027-06-17", week: "w32", title: "CI Ch28 — Initializers + invoke opt + challenges (1/3)",
       theme: `Finish: initializers and the OP_INVOKE fast path, then all three challenges.`,
       tasks: [
         { id: "t1", carried: "d94", obj: CI, cat: "code", est: 45, group: "g1-d94", label: `Implement methods and bound methods; calling <code>instance.method()</code> now binds <code>this</code> correctly. (2/2)`,
@@ -1394,8 +1413,10 @@ registerRoadmap({
       ],
       note: `Continuation of Ch28 — the optimization half lands better on a fresh day.`,
     },
+
+    /* ---------------- Week 33 ---------------- */
     {
-      id: "d97", date: "2027-05-14", week: "w27", title: "CI Ch28 — Initializers + invoke opt + challenges (2/3, cont.)",
+      id: "d97", date: "2027-06-19", week: "w33", title: "CI Ch28 — Initializers + invoke opt + challenges (2/3, cont.)",
       theme: "Finish “CI Ch28 — Initializers + invoke opt + challenges (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d96", obj: CI, cat: "code", est: 50, group: "g1-d96", label: `Implement <code>init()</code> and the invoke optimization; benchmark a method-heavy loop before/after.`,
@@ -1405,10 +1426,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 28 ---------------- */
     {
-      id: "d98", date: "2027-05-15", week: "w28", title: "CI Ch28 — Initializers + invoke opt + challenges (3/3, cont.)",
+      id: "d98", date: "2027-06-24", week: "w33", title: "CI Ch28 — Initializers + invoke opt + challenges (3/3, cont.)",
       theme: "Finish “CI Ch28 — Initializers + invoke opt + challenges (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d96", obj: CI, cat: "challenge", est: 85, label: `<b>Ch28 Challenges (all 3)</b> (p 555).`,
@@ -1420,7 +1439,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d99", date: "2027-05-16", week: "w28", title: "Go — Password reset & email (videos 165–194) (1/4)",
+      id: "d99", date: "2027-06-25", week: "w33", title: "Go — Password reset & email (videos 165–194) (1/4)",
       theme: `Video-only cluster (Calhoun ended) — pair with Let's Go.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 80, group: "g1", label: `Watch <b>videos 165–194</b>, <b>part 1</b> — from “Password Reset Overview”: SMTP, email service, reset tokens & flow, async email. (1/2)`,
@@ -1433,8 +1452,10 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `⚠️ From here the video course goes beyond the Calhoun book (which ends at Ch17 / video 164). <i>Let's Go</i> becomes the book companion for the remaining clusters.` },
       ],
     },
+
+    /* ---------------- Week 34 ---------------- */
     {
-      id: "d100", date: "2027-05-17", week: "w28", title: "Go — Password reset & email (videos 165–194) (2/4, cont.)",
+      id: "d100", date: "2027-06-26", week: "w34", title: "Go — Password reset & email (videos 165–194) (2/4, cont.)",
       theme: "Finish “Go — Password reset & email (videos 165–194) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d99", obj: GO, cat: "watch", est: 80, group: "g1-d99", label: `Watch <b>videos 165–194</b>, <b>part 1</b> — from “Password Reset Overview”: SMTP, email service, reset tokens & flow, async email. (2/2)`,
@@ -1445,7 +1466,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d101", date: "2027-05-18", week: "w28", title: "Go — Password reset & email (videos 165–194) (3/4)",
+      id: "d101", date: "2027-06-27", week: "w34", title: "Go — Password reset & email (videos 165–194) (3/4)",
       theme: `Video-only cluster (Calhoun ended) — pair with Let's Go.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 40, group: "g1", label: `Watch <b>videos 165–194</b>, <b>part 2</b> — through to “Using Public Errors”: public vs internal errors, alerts. (1/2)`,
@@ -1454,10 +1475,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 29 ---------------- */
     {
-      id: "d102", date: "2027-05-23", week: "w29", title: "Go — Password reset & email (videos 165–194) (4/4, cont.)",
+      id: "d102", date: "2027-06-28", week: "w34", title: "Go — Password reset & email (videos 165–194) (4/4, cont.)",
       theme: "Finish “Go — Password reset & email (videos 165–194) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d101", obj: GO, cat: "watch", est: 50, group: "g1-d101", label: `Watch <b>videos 165–194</b>, <b>part 2</b> — through to “Using Public Errors”: public vs internal errors, alerts. (2/2)`,
@@ -1466,8 +1485,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 35 ---------------- */
     {
-      id: "d103", date: "2027-05-26", week: "w29", title: "CI Ch29 — Superclasses (clox) (1/4)",
+      id: "d103", date: "2027-07-03", week: "w35", title: "CI Ch29 — Superclasses (clox) (1/4)",
       theme: `Inheritance and super calls in the VM.`,
       tasks: [
         { id: "t1", carried: "d101", obj: GO, cat: "book", est: 65, group: "g1-d101",
@@ -1482,7 +1503,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d104", date: "2027-05-27", week: "w29", title: "CI Ch29 — Superclasses (clox) (2/4, cont.)",
+      id: "d104", date: "2027-07-07", week: "w35", title: "CI Ch29 — Superclasses (clox) (2/4, cont.)",
       theme: "Finish “CI Ch29 — Superclasses (clox) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d103", obj: CI, cat: "read", est: 50, group: "g1-d103", label: `CI — <b><a href="https://craftinginterpreters.com/superclasses.html" target="_blank" rel="noopener">Ch29 Superclasses</a></b> (clox): inheritance, method copy-down, <code>super</code> invocation (pp 558–573). (2/2)`,
@@ -1497,7 +1518,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d105", date: "2027-05-28", week: "w29", title: "CI Ch29 — Superclasses (clox) (3/4)",
+      id: "d105", date: "2027-07-08", week: "w35", title: "CI Ch29 — Superclasses (clox) (3/4)",
       theme: `Inheritance and super calls in the VM.`,
       tasks: [
         { id: "t1", carried: "d103", obj: CI, cat: "code", est: 40, group: "g1-d103", label: `Implement inheritance + <code>super</code> on the VM. (2/2)`,
@@ -1511,9 +1532,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 30 ---------------- */
+    /* ---------------- Week 36 ---------------- */
     {
-      id: "d106", date: "2027-05-29", week: "w30", title: "CI Ch29 — Superclasses (clox) (4/4, cont.)",
+      id: "d106", date: "2027-07-12", week: "w36", title: "CI Ch29 — Superclasses (clox) (4/4, cont.)",
       theme: "Finish “CI Ch29 — Superclasses (clox) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d105", obj: CI, cat: "challenge", est: 60, label: `<b>Ch29 Challenges (all 3)</b> (p 571). (2/2)`,
@@ -1524,7 +1545,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d107", date: "2027-05-31", week: "w30", title: "CI Ch30 — Optimization → 🎉 CI DONE (1/3)",
+      id: "d107", date: "2027-07-15", week: "w36", title: "CI Ch30 — Optimization → 🎉 CI DONE (1/3)",
       theme: `Final chapter — hashing & NaN boxing. Crafting Interpreters complete.`,
       tasks: [
         { id: "t1", obj: CI, cat: "read", est: 75, group: "g1", label: `CI — <b><a href="https://craftinginterpreters.com/optimization.html" target="_blank" rel="noopener">Ch30 Optimization</a></b> (clox): faster hashing, NaN boxing, benchmarking (pp 574–597).`,
@@ -1540,7 +1561,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d108", date: "2027-06-01", week: "w30", title: "CI Ch30 — Optimization → 🎉 CI DONE (2/3, cont.)",
+      id: "d108", date: "2027-07-16", week: "w36", title: "CI Ch30 — Optimization → 🎉 CI DONE (2/3, cont.)",
       theme: "Finish “CI Ch30 — Optimization → 🎉 CI DONE (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d107", obj: CI, cat: "code", est: 90, group: "g1-d107", label: `Implement NaN boxing (guarded by a flag) and benchmark before/after. 🎉 <b>Crafting Interpreters finished — both interpreters, all 71 challenges.</b>`,
@@ -1550,8 +1571,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 37 ---------------- */
     {
-      id: "d109", date: "2027-06-03", week: "w30", title: "CI Ch30 — Optimization → 🎉 CI DONE (3/3)",
+      id: "d109", date: "2027-07-17", week: "w37", title: "CI Ch30 — Optimization → 🎉 CI DONE (3/3)",
       theme: `Final chapter — hashing & NaN boxing. Crafting Interpreters complete.`,
       tasks: [
         { id: "t1", obj: CI, cat: "challenge", est: 75, label: `<b>Ch30 Challenges (all 3)</b> (p 597).`,
@@ -1562,10 +1585,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 31 ---------------- */
     {
-      id: "d110", date: "2027-06-06", week: "w31", title: "Monkey Ch1 — Lexing (secondary) (1/2)",
+      id: "d110", date: "2027-07-18", week: "w37", title: "Monkey Ch1 — Lexing (secondary) (1/2)",
       theme: `Phase B: the Go interpreter book activates.`,
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 80, group: "g1", label: `<a href="https://interpreterbook.com/" target="_blank" rel="noopener"><i>Writing an Interpreter in Go</i></a> — <b>Ch1 Lexing</b>: tokens, the lexer, extending the token set, REPL start (pp 11–29).`,
@@ -1582,7 +1603,7 @@ registerRoadmap({
       note: `Secondary work — shows on the muted meter, excluded from primary %.`,
     },
     {
-      id: "d111", date: "2027-06-08", week: "w31", title: "Monkey Ch1 — Lexing (secondary) (2/2, cont.)",
+      id: "d111", date: "2027-07-20", week: "w37", title: "Monkey Ch1 — Lexing (secondary) (2/2, cont.)",
       theme: "Finish “Monkey Ch1 — Lexing (secondary) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d110", obj: GX, cat: "code", est: 80, group: "g1-d110", label: `Build Monkey's lexer + a REPL in Go.`,
@@ -1592,8 +1613,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 38 ---------------- */
     {
-      id: "d112", date: "2027-06-09", week: "w31", title: "Go — Galleries CRUD (videos 195–217) (1/3)",
+      id: "d112", date: "2027-07-24", week: "w38", title: "Go — Galleries CRUD (videos 195–217) (1/3)",
       theme: `Video-only — the galleries feature.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1", label: `Watch <b>videos 195–217</b>, <b>part 1</b> — from “Galleries Overview”: gallery model & migrations, CRUD handlers, routing/CSRF fixes. (1/2)`,
@@ -1604,7 +1627,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d113", date: "2027-06-11", week: "w31", title: "Go — Galleries CRUD (videos 195–217) (2/3, cont.)",
+      id: "d113", date: "2027-07-25", week: "w38", title: "Go — Galleries CRUD (videos 195–217) (2/3, cont.)",
       theme: "Finish “Go — Galleries CRUD (videos 195–217) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d112", obj: GO, cat: "watch", est: 45, group: "g1-d112", label: `Watch <b>videos 195–217</b>, <b>part 1</b> — from “Galleries Overview”: gallery model & migrations, CRUD handlers, routing/CSRF fixes. (2/2)`,
@@ -1613,10 +1636,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 32 ---------------- */
     {
-      id: "d114", date: "2027-06-12", week: "w32", title: "Go — Galleries CRUD (videos 195–217) (3/3)",
+      id: "d114", date: "2027-07-29", week: "w38", title: "Go — Galleries CRUD (videos 195–217) (3/3)",
       theme: `Video-only — the galleries feature.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 60, group: "g1", label: `Watch <b>videos 195–217</b>, <b>part 2</b> — through to “Delete Gallery Handler”: functional options.`,
@@ -1626,8 +1647,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 39 ---------------- */
     {
-      id: "d115", date: "2027-06-13", week: "w32", title: "Monkey Ch2 — Parsing (secondary, Pratt) (1/4)",
+      id: "d115", date: "2027-08-02", week: "w39", title: "Monkey Ch2 — Parsing (secondary, Pratt) (1/4)",
       theme: `Ball's Pratt parser — you just built one in CI Ch17.`,
       tasks: [
         { id: "t1", carried: "d114", obj: GO, cat: "book", est: 65, group: "g1-d114",
@@ -1645,7 +1668,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d116", date: "2027-06-15", week: "w32", title: "Monkey Ch2 — Parsing (secondary, Pratt) (2/4, cont.)",
+      id: "d116", date: "2027-08-03", week: "w39", title: "Monkey Ch2 — Parsing (secondary, Pratt) (2/4, cont.)",
       theme: "Finish “Monkey Ch2 — Parsing (secondary, Pratt) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d115", obj: GX, cat: "read", est: 75, group: "g1-d115", label: `<i>Writing an Interpreter in Go</i> — <b>Ch2 Parsing</b>: AST, <code>let</code>/<code>return</code>, Pratt expression parsing, extending to bool/if/fn/call (pp 30–104). (2/2)`,
@@ -1657,7 +1680,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d117", date: "2027-06-17", week: "w32", title: "Monkey Ch2 — Parsing (secondary, Pratt) (3/4)",
+      id: "d117", date: "2027-08-04", week: "w39", title: "Monkey Ch2 — Parsing (secondary, Pratt) (3/4)",
       theme: `Ball's Pratt parser — you just built one in CI Ch17.`,
       tasks: [
         { id: "t1", obj: GX, cat: "code", est: 55, group: "g1", label: `Build Monkey's Pratt parser and AST. (1/2)`,
@@ -1667,9 +1690,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 33 ---------------- */
+    /* ---------------- Week 40 ---------------- */
     {
-      id: "d118", date: "2027-06-20", week: "w33", title: "Monkey Ch2 — Parsing (secondary, Pratt) (4/4, cont.)",
+      id: "d118", date: "2027-08-08", week: "w40", title: "Monkey Ch2 — Parsing (secondary, Pratt) (4/4, cont.)",
       theme: "Finish “Monkey Ch2 — Parsing (secondary, Pratt) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d117", obj: GX, cat: "code", est: 55, group: "g1-d117", label: `Build Monkey's Pratt parser and AST. (2/2)`,
@@ -1679,7 +1702,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d119", date: "2027-06-21", week: "w33", title: "Let's Go — read chunk 4 (auth + testing) (1/2)",
+      id: "d119", date: "2027-08-12", week: "w40", title: "Let's Go — read chunk 4 (auth + testing) (1/2)",
       theme: `Mandatory read; user accounts + full test suite.`,
       tasks: [
         { id: "t1", obj: GO, cat: "book", est: 80, label: `<b>Mandatory read — <i>Let's Go</i> pp 260–388</b> (Ch11 Auth+CSRF, Ch12 request context, Ch13 embed/generics, Ch14 Testing): SnippetBox gets accounts and a real test suite. (1/2)`,
@@ -1693,7 +1716,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d120", date: "2027-06-23", week: "w33", title: "Let's Go — read chunk 4 (auth + testing) (2/2, cont.)",
+      id: "d120", date: "2027-08-13", week: "w40", title: "Let's Go — read chunk 4 (auth + testing) (2/2, cont.)",
       theme: "Finish “Let's Go — read chunk 4 (auth + testing) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d119", obj: GO, cat: "book", est: 80, label: `<b>Mandatory read — <i>Let's Go</i> pp 260–388</b> (Ch11 Auth+CSRF, Ch12 request context, Ch13 embed/generics, Ch14 Testing): SnippetBox gets accounts and a real test suite. (2/2)`,
@@ -1703,8 +1726,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 41 ---------------- */
     {
-      id: "d121", date: "2027-06-25", week: "w33", title: "Go — Images & config (videos 218–248) (1/4)",
+      id: "d121", date: "2027-08-14", week: "w41", title: "Go — Images & config (videos 218–248) (1/4)",
       theme: `Image uploads + config/Docker/Tailwind.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 75, group: "g1", label: `Watch <b>videos 218–248</b>, <b>part 1</b> — from “Images Overview”: file uploads, content-type detection, filename vulns, ENV config. (1/2)`,
@@ -1718,10 +1743,8 @@ registerRoadmap({
       ],
       note: `Video day — part 2 continues on d123.`,
     },
-
-    /* ---------------- Week 34 ---------------- */
     {
-      id: "d122", date: "2027-06-26", week: "w34", title: "Go — Images & config (videos 218–248) (2/4, cont.)",
+      id: "d122", date: "2027-08-16", week: "w41", title: "Go — Images & config (videos 218–248) (2/4, cont.)",
       theme: "Finish “Go — Images & config (videos 218–248) (1/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d121", obj: GO, cat: "watch", est: 80, group: "g1-d121", label: `Watch <b>videos 218–248</b>, <b>part 1</b> — from “Images Overview”: file uploads, content-type detection, filename vulns, ENV config. (2/2)`,
@@ -1732,7 +1755,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d123", date: "2027-06-29", week: "w34", title: "Go — Images & config (videos 218–248) (3/4)",
+      id: "d123", date: "2027-08-17", week: "w41", title: "Go — Images & config (videos 218–248) (3/4)",
       theme: `Image uploads + config/Docker/Tailwind.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 105, group: "g1", label: `Watch <b>videos 218–248</b>, <b>part 2</b> — through to “Caddy Server via Docker”: Docker Compose, Tailwind build, static assets.`,
@@ -1743,15 +1766,17 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 42 ---------------- */
     {
-      id: "d124", date: "2027-07-01", week: "w34", title: "Go — Images & config (videos 218–248) (4/4, cont.)",
+      id: "d124", date: "2027-08-22", week: "w42", title: "Go — Images & config (videos 218–248) (4/4, cont.)",
       theme: "Finish “Go — Images & config (videos 218–248) (3/4)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d123", obj: GO, cat: "book", est: 50, group: "g1-d123", label: `<b>Companion:</b> <i>Let's Go</i> Ch10 Security improvements / TLS (pp 242–259).` },
       ],
     },
     {
-      id: "d125", date: "2027-07-02", week: "w34", title: "Monkey Ch3 — Evaluation (secondary) (1/3)",
+      id: "d125", date: "2027-08-24", week: "w42", title: "Monkey Ch3 — Evaluation (secondary) (1/3)",
       theme: `Tree-walking eval, environments, closures in Go.`,
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 75, group: "g1", label: `<i>Writing an Interpreter in Go</i> — <b>Ch3 Evaluation</b>: object system, evaluating expressions, conditionals, <code>return</code>, errors, environments, functions & closures (pp 105–153). (1/2)`,
@@ -1767,10 +1792,8 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🔗 Bridge — Ball §3.9 Environment ↔ CI jlox Ch8; §3.10 closures ↔ jlox Ch10 + Ch11 resolver. You solved this exact problem three ways now (jlox env, clox upvalues, Monkey env).` },
       ],
     },
-
-    /* ---------------- Week 35 ---------------- */
     {
-      id: "d126", date: "2027-07-05", week: "w35", title: "Monkey Ch3 — Evaluation (secondary) (2/3, cont.)",
+      id: "d126", date: "2027-08-26", week: "w42", title: "Monkey Ch3 — Evaluation (secondary) (2/3, cont.)",
       theme: "Finish “Monkey Ch3 — Evaluation (secondary) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d125", obj: GX, cat: "read", est: 30, group: "g1-d125", label: `<i>Writing an Interpreter in Go</i> — <b>Ch3 Evaluation</b>: object system, evaluating expressions, conditionals, <code>return</code>, errors, environments, functions & closures (pp 105–153). (2/2)`,
@@ -1780,8 +1803,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 43 ---------------- */
     {
-      id: "d127", date: "2027-07-07", week: "w35", title: "Monkey Ch3 — Evaluation (secondary) (3/3)",
+      id: "d127", date: "2027-08-28", week: "w43", title: "Monkey Ch3 — Evaluation (secondary) (3/3)",
       theme: `Tree-walking eval, environments, closures in Go.`,
       tasks: [
         { id: "t1", obj: GX, cat: "code", est: 100, group: "g1", label: `Build Monkey's evaluator; get closures & environments working.`,
@@ -1792,7 +1817,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d128", date: "2027-07-08", week: "w35", title: `Go — Deployment (videos 249–263) (1/2)`,
+      id: "d128", date: "2027-09-01", week: "w43", title: `Go — Deployment (videos 249–263) (1/2)`,
       theme: `Ship it: droplet, DNS, prod env, deploy via git.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 100, group: "g1", label: `Watch <b>videos 249–263</b> — “Creating a Digital Ocean Droplet” → “Logging Services”: server setup, DNS, bare git repo deploy, prod <code>.env</code>/Caddyfile, post-receive deploy hooks. (1/2)`,
@@ -1804,10 +1829,8 @@ registerRoadmap({
           ] },
       ],
     },
-
-    /* ---------------- Week 36 ---------------- */
     {
-      id: "d129", date: "2027-07-11", week: "w36", title: `Go — Deployment (videos 249–263) (2/2)`,
+      id: "d129", date: "2027-09-03", week: "w43", title: `Go — Deployment (videos 249–263) (2/2)`,
       theme: `Ship it: droplet, DNS, prod env, deploy via git.`,
       tasks: [
         { id: "t1", carried: "d128", obj: GO, cat: "watch", est: 35, group: "g1-d128", label: `Watch <b>videos 249–263</b> — “Creating a Digital Ocean Droplet” → “Logging Services”: server setup, DNS, bare git repo deploy, prod <code>.env</code>/Caddyfile, post-receive deploy hooks. (2/2)`,
@@ -1817,8 +1840,10 @@ registerRoadmap({
         { id: "t2", obj: GO, cat: "project", est: 50, optional: true, label: `<b>Try this:</b> deploy your app (or SnippetBox) to a real host following the video steps.` },
       ],
     },
+
+    /* ---------------- Week 44 ---------------- */
     {
-      id: "d130", date: "2027-07-12", week: "w36", title: "Go — OAuth & finish → 🎉 course DONE (1/2)",
+      id: "d130", date: "2027-09-05", week: "w44", title: "Go — OAuth & finish → 🎉 course DONE (1/2)",
       theme: `OAuth/Dropbox + the final videos. 285/285.`,
       tasks: [
         { id: "t1", obj: GO, cat: "watch", est: 90, group: "g1", label: `Watch <b>videos 264–285</b> — “Intro to OAuth” → “Page Specific JS”: OAuth flow, Dropbox app + chooser, images via URL, concurrent downloads with <code>errgroup</code>. 🎉 <b>All 285 videos done.</b> (1/2)`,
@@ -1832,7 +1857,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d131", date: "2027-07-13", week: "w36", title: "Go — OAuth & finish → 🎉 course DONE (2/2, cont.)",
+      id: "d131", date: "2027-09-06", week: "w44", title: "Go — OAuth & finish → 🎉 course DONE (2/2, cont.)",
       theme: "Finish “Go — OAuth & finish → 🎉 course DONE (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d130", obj: GO, cat: "watch", est: 90, group: "g1-d130", label: `Watch <b>videos 264–285</b> — “Intro to OAuth” → “Page Specific JS”: OAuth flow, Dropbox app + chooser, images via URL, concurrent downloads with <code>errgroup</code>. 🎉 <b>All 285 videos done.</b> (2/2)`,
@@ -1843,7 +1868,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d132", date: "2027-07-16", week: "w36", title: "Monkey Ch4 — Extending (secondary) (1/2)",
+      id: "d132", date: "2027-09-09", week: "w44", title: "Monkey Ch4 — Extending (secondary) (1/2)",
       theme: `Phase C: strings, built-ins, arrays, hashes — finishes Ball's book.`,
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 100, group: "g1", label: `<i>Writing an Interpreter in Go</i> — <b>Ch4 Extending the Interpreter</b>: strings, built-in functions (<code>len</code>), arrays + index expressions, hashes, the grand finale (pp 154–199).`,
@@ -1860,9 +1885,9 @@ registerRoadmap({
       ],
     },
 
-    /* ---------------- Week 37 ---------------- */
+    /* ---------------- Week 45 ---------------- */
     {
-      id: "d133", date: "2027-07-17", week: "w37", title: "Monkey Ch4 — Extending (secondary) (2/2, cont.)",
+      id: "d133", date: "2027-09-14", week: "w45", title: "Monkey Ch4 — Extending (secondary) (2/2, cont.)",
       theme: "Finish “Monkey Ch4 — Extending (secondary) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d132", obj: GX, cat: "code", est: 90, group: "g1-d132", label: `Implement strings, built-ins, arrays, and hashes. 🎉 <b>Monkey is complete.</b>`,
@@ -1875,7 +1900,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d134", date: "2027-07-18", week: "w37", title: "Monkey — extend it (secondary) (1/2)",
+      id: "d134", date: "2027-09-15", week: "w45", title: "Monkey — extend it (secondary) (1/2)",
       theme: `Make Monkey yours.`,
       tasks: [
         { id: "t1", obj: GX, cat: "project", est: 80, group: "g1", label: `<b>Secondary capstone:</b> add a feature Ball leaves out — e.g. a <code>while</code> loop, a standard-library function, or postfix operators. Compare the effort to doing the same in Lox. (1/2)`,
@@ -1889,7 +1914,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d135", date: "2027-07-22", week: "w37", title: "Monkey — extend it (secondary) (2/2, cont.)",
+      id: "d135", date: "2027-09-17", week: "w45", title: "Monkey — extend it (secondary) (2/2, cont.)",
       theme: "Finish “Monkey — extend it (secondary) (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d134", obj: GX, cat: "project", est: 45, group: "g1-d134", label: `<b>Secondary capstone:</b> add a feature Ball leaves out — e.g. a <code>while</code> loop, a standard-library function, or postfix operators. Compare the effort to doing the same in Lox. (2/2)`,
@@ -1898,8 +1923,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 46 ---------------- */
     {
-      id: "d136", date: "2027-07-23", week: "w37", title: `Let's Go — guided exercises (project)`,
+      id: "d136", date: "2027-09-18", week: "w46", title: `Let's Go — guided exercises (project)`,
       theme: `Turn the side-book's exercises into real practice.`,
       tasks: [
         { id: "t1", obj: GO, cat: "project", est: 100, group: "g1", label: `<b><i>Let's Go</i> guided exercises (pp 392–426):</b> pick two — e.g. an About page + a "Change Password" flow — and implement them in SnippetBox.`,
@@ -1912,10 +1939,8 @@ registerRoadmap({
         { id: "s1", type: "tryout", label: `Tryout: add the post-login redirect exercise; it's a small but real UX + security detail.` },
       ],
     },
-
-    /* ---------------- Week 38 ---------------- */
     {
-      id: "d137", date: "2027-07-26", week: "w38", title: `Checkpoint — everything shipped`,
+      id: "d137", date: "2027-09-20", week: "w46", title: `Checkpoint — everything shipped`,
       theme: `Both primaries + Monkey are done. Consolidate before the capstone weeks.`,
       tasks: [
         { id: "t1", obj: CI, cat: "review", est: 40, group: "g1", label: `Write a one-page comparison: <b>jlox vs clox vs Monkey</b> — scanning, parsing (recursive-descent vs Pratt), eval (tree-walk vs bytecode), memory (GC vs Go's runtime).`,
@@ -1936,7 +1961,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d138", date: "2027-07-27", week: "w38", title: `clox challenge catch-up + review`,
+      id: "d138", date: "2027-09-23", week: "w46", title: `clox challenge catch-up + review`,
       theme: `Buffer + mastery: revisit the clox challenges that fought back.`,
       tasks: [
         { id: "t1", obj: CI, cat: "review", est: 50, group: "g1", label: `Re-read your notes on the three hardest clox chapters (Ch24 Calls, Ch25 Closures, Ch26 GC) and re-run their challenges in your head — can you explain each without the book?`,
@@ -1951,8 +1976,10 @@ registerRoadmap({
       ],
       note: `Buffer / consolidation — required load is light on purpose.`,
     },
+
+    /* ---------------- Week 47 ---------------- */
     {
-      id: "d139", date: "2027-07-28", week: "w38", title: "Writing a Compiler in Go — the bridge (secondary) (1/3)",
+      id: "d139", date: "2027-09-26", week: "w47", title: "Writing a Compiler in Go — the bridge (secondary) (1/3)",
       theme: `Ball's sequel turns Monkey into a bytecode VM — clox, reborn in Go.`,
       tasks: [
         { id: "t1", obj: GX, cat: "read", est: 75, group: "g1", label: `<a href="https://compilerbook.com/" target="_blank" rel="noopener"><i>Writing a Compiler in Go</i></a> — read the intro + compiler/VM basics: how Monkey's AST becomes bytecode, the stack machine, and how it mirrors what you built in clox. (1/2)`,
@@ -1966,10 +1993,8 @@ registerRoadmap({
       ],
       note: `Secondary — on the muted meter, excluded from primary %.`,
     },
-
-    /* ---------------- Week 39 ---------------- */
     {
-      id: "d140", date: "2027-07-31", week: "w39", title: "Writing a Compiler in Go — the bridge (secondary) (2/3, cont.)",
+      id: "d140", date: "2027-09-28", week: "w47", title: "Writing a Compiler in Go — the bridge (secondary) (2/3, cont.)",
       theme: "Finish “Writing a Compiler in Go — the bridge (secondary) (1/3)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d139", obj: GX, cat: "read", est: 35, group: "g1-d139", label: `<a href="https://compilerbook.com/" target="_blank" rel="noopener"><i>Writing a Compiler in Go</i></a> — read the intro + compiler/VM basics: how Monkey's AST becomes bytecode, the stack machine, and how it mirrors what you built in clox. (2/2)`,
@@ -1979,7 +2004,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d141", date: "2027-08-02", week: "w39", title: "Writing a Compiler in Go — the bridge (secondary) (3/3)",
+      id: "d141", date: "2027-09-29", week: "w47", title: "Writing a Compiler in Go — the bridge (secondary) (3/3)",
       theme: `Ball's sequel turns Monkey into a bytecode VM — clox, reborn in Go.`,
       tasks: [
         { id: "t1", obj: GX, cat: "code", est: 100, group: "g1", label: `Build the first slice: compile integer + arithmetic expressions to bytecode and execute them on a tiny Monkey VM. You now have <b>two</b> bytecode VMs — one in C (clox), one in Go.`,
@@ -1989,8 +2014,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 48 ---------------- */
     {
-      id: "d142", date: "2027-08-03", week: "w39", title: `Go — production hardening (pick one)`,
+      id: "d142", date: "2027-10-02", week: "w48", title: `Go — production hardening (pick one)`,
       theme: `Turn the course knowledge into one production-grade improvement.`,
       tasks: [
         { id: "t1", obj: GO, cat: "project", est: 105, group: "g1",
@@ -2005,7 +2032,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d143", date: "2027-08-06", week: "w39", title: "Capstone I — a Monkey web playground (1/2)",
+      id: "d143", date: "2027-10-04", week: "w48", title: "Capstone I — a Monkey web playground (1/2)",
       theme: `One project that uses both primaries: a Go web app that runs Monkey.`,
       tasks: [
         { id: "t1", obj: GO, cat: "project", est: 80, group: "g1", label: `<b>Build (web side):</b> a small Go web app (MVC + templates from the course) with a code box that POSTs a Monkey snippet and renders the result.`,
@@ -2018,10 +2045,8 @@ registerRoadmap({
         { id: "s1", type: "tryout", label: `Tryout: sandbox it — cap execution steps/time so an infinite Monkey loop can't hang the server. You built the evaluator, so you know exactly where to put the guard.` },
       ],
     },
-
-    /* ---------------- Week 40 ---------------- */
     {
-      id: "d144", date: "2027-08-08", week: "w40", title: "Capstone I — a Monkey web playground (2/2, cont.)",
+      id: "d144", date: "2027-10-08", week: "w48", title: "Capstone I — a Monkey web playground (2/2, cont.)",
       theme: "Finish “Capstone I — a Monkey web playground (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d143", obj: GX, cat: "code", est: 80, group: "g1-d143", label: `<b>Wire the interpreter:</b> feed the submitted source through your Monkey lexer → parser → evaluator and return the output (or a parse/eval error) safely.`,
@@ -2031,8 +2056,10 @@ registerRoadmap({
           ] },
       ],
     },
+
+    /* ---------------- Week 49 ---------------- */
     {
-      id: "d145", date: "2027-08-10", week: "w40", title: `Capstone II — ship the playground`,
+      id: "d145", date: "2027-10-13", week: "w49", title: `Capstone II — ship the playground`,
       theme: `Deploy it with the course's deployment skills.`,
       tasks: [
         { id: "t1", obj: GO, cat: "project", est: 105, group: "g1", label: `Deploy the playground: build it, put it behind Caddy/HTTPS on a droplet (or a container host), and load it from a real URL — reuse the bare-git / post-receive deploy from d128.`,
@@ -2048,7 +2075,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d146", date: "2027-08-11", week: "w40", title: "Grand retro — three languages, two interpreters, one web stack (1/2)",
+      id: "d146", date: "2027-10-14", week: "w49", title: "Grand retro — three languages, two interpreters, one web stack (1/2)",
       theme: `Close it out; capture the whole arc and choose what's next.`,
       tasks: [
         { id: "t1", obj: CI, cat: "review", est: 60, group: "g1", label: `Write the finale note: tree-walk (jlox, Monkey) vs bytecode (clox, Monkey-compiler) — when each wins; and the Go web patterns you'll carry into real work.`,
@@ -2062,7 +2089,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d147", date: "2027-08-12", week: "w40", title: "Grand retro — three languages, two interpreters, one web stack (2/2, cont.)",
+      id: "d147", date: "2027-10-15", week: "w49", title: "Grand retro — three languages, two interpreters, one web stack (2/2, cont.)",
       theme: "Finish “Grand retro — three languages, two interpreters, one web stack (1/2)” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d146", obj: GO, cat: "review", est: 45, group: "g1-d146", label: `Pick the <b>one</b> next real project and write its first three tasks. 🎉 Roadmap complete — three languages, two interpreters, a compiler, and a shipped web app.`,
@@ -2077,31 +2104,31 @@ registerRoadmap({
   milestones: [
     { id: "w3.m1", week: "w3", title: `jlox control flow + functions`,
       rule: { type: "tasks", require: ["d02.t1", "d09.t1"] } },
-    { id: "w6.m1", week: "w6", title: `jlox classes done`,
+    { id: "w7.m1", week: "w7", title: `jlox classes done`,
       rule: { type: "tasks", require: ["d12.t1", "d13.t1", "d19.t1"] } },
-    { id: "w9.m1", week: "w9", title: `🏁 jlox complete; clox started`,
+    { id: "w10.m1", week: "w10", title: `🏁 jlox complete; clox started`,
       rule: { type: "tasks", require: ["d25.t1", "d30.t1"] } },
-    { id: "w8.m1", week: "w8", title: "clox VM running",
+    { id: "w11.m1", week: "w11", title: "clox VM running",
       rule: { type: "weekPct", min: 70 } },
-    { id: "w14.m1", week: "w14", title: `Pratt compiler + values`,
+    { id: "w17.m1", week: "w17", title: `Pratt compiler + values`,
       rule: { type: "tasks", require: ["d44.t1", "d49.t1"] } },
-    { id: "w18.m1", week: "w18", title: "Globals done; SQL relations + locals started",
+    { id: "w22.m1", week: "w22", title: "Globals done; SQL relations + locals started",
       rule: { type: "weekPct", min: 70 } },
-    { id: "w22.m1", week: "w22", title: `clox calls & functions`,
+    { id: "w27.m1", week: "w27", title: `clox calls & functions`,
       rule: { type: "tasks", require: ["d79.t1"] } },
-    { id: "w25.m1", week: "w25", title: `Closures + GC survived`,
+    { id: "w30.m1", week: "w30", title: `Closures + GC survived`,
       rule: { type: "tasks", require: ["d84.t1", "d88.t1"] } },
-    { id: "w30.m1", week: "w30", title: `🎓 Crafting Interpreters finished`,
+    { id: "w36.m1", week: "w36", title: `🎓 Crafting Interpreters finished`,
       rule: { type: "tasks", require: ["d108.t1"] } },
-    { id: "w32.m1", week: "w32", title: "Go course ≥ video 248",
+    { id: "w42.m1", week: "w42", title: "Go course ≥ video 248",
       rule: { type: "weekPct", min: 60 } },
-    { id: "w36.m1", week: "w36", title: `🏁 Go web-dev course complete`,
+    { id: "w44.m1", week: "w44", title: `🏁 Go web-dev course complete`,
       rule: { type: "tasks", require: ["d130.t1", "d131.t1"] } },
-    { id: "w37.m1", week: "w37", title: `🎓 Monkey (secondary) finished`,
+    { id: "w45.m1", week: "w45", title: `🎓 Monkey (secondary) finished`,
       rule: { type: "tasks", require: ["d133.t1"] } },
-    { id: "w39.m1", week: "w39", title: `Compiler bridge: Monkey → bytecode`,
+    { id: "w47.m1", week: "w47", title: `Compiler bridge: Monkey → bytecode`,
       rule: { type: "tasks", require: ["d141.t1"] } },
-    { id: "w40.m1", week: "w40", title: `🏁 Monkey web playground shipped`,
+    { id: "w49.m1", week: "w49", title: `🏁 Monkey web playground shipped`,
       rule: { type: "tasks", require: ["d144.t1", "d145.t1"] } },
   ],
 
