@@ -190,7 +190,17 @@ t.group("bonus tasks update Insights bonus KPI and summarize without changing re
   const bonusKpi = kpis.find(k => k.textContent.includes("Bonus"));
   t.ok(bonusKpi && bonusKpi.textContent.includes(`1/${afterSum.bonusTotal}`),
     "Insights renders Bonus KPI showing 1/total bonus");
-  store.setTask(rm.slug, bonusLeaf.id, false);
+
+  // zero required done + 1 bonus done must not yield NaN anywhere in KPIs/charts
+  store.resetAll();
+  doneOnDate(rm.slug, bonusLeaf.id, TODAY);
+  localStorage.setItem("roadmaps_insights_scope", rm.slug);
+  insights.renderInsights(view);
+  t.ok(!/\bNaN\b/.test(view.innerHTML), "bonus-only state (0 required done) renders without NaN");
+  const zeroCompleteKpi = [...view.querySelectorAll(".ins-kpis .kpi")].find(k => k.querySelector(".k")?.textContent === "Complete");
+  t.ok(zeroCompleteKpi && /0%/.test(zeroCompleteKpi.textContent) && /\+1 bonus/.test(zeroCompleteKpi.textContent),
+    "Complete stays 0% while surfacing (+1 bonus) subtext");
+  store.resetAll();
 }
 
 t.done();

@@ -182,4 +182,30 @@ for (const rm of roadmaps) {
   }).map(d => d.id);
   t.deep(badTheme, [], `${rm.slug}: a continuation card's theme quotes its origin card's current title`);
 }
+
+t.group("rule 5 — declared cadence, dow labels, and milestone anchors stay aligned");
+for (const rm of roadmaps) {
+  const band = rm.cadence && rm.cadence.activeDaysPerWeek;
+  if (band && band.length) {
+    const lo = Math.min(...band), hi = Math.max(...band);
+    const c = counts(rm);
+    t.ok(c.slice(0, -1).every(n => n >= lo && n <= hi) && c.at(-1) >= 1 && c.at(-1) <= hi,
+      `${rm.slug}: declared cadence [${band.join(",")}] matches actual per-week counts (${c.join("")})`);
+  }
+  const badDow = rm.days.filter(d => d.dow && d.dow !== util.DOW[util.parseDate(d.date).getDay()]).map(d => d.id);
+  t.deep(badDow, [], `${rm.slug}: any dow label matches the card's actual date`);
+  const badMs = [];
+  for (const m of rm.milestones) {
+    if (m.rule && m.rule.type === "tasks") {
+      const mIdx = rm.weeksById.get(m.week)?.index ?? -1;
+      const reqMax = Math.max(...(m.rule.require || []).map(id => {
+        const task = rm.tasksById.get(id);
+        const day = task && rm.daysById.get(task.day);
+        return day ? (rm.weeksById.get(day.week)?.index ?? -1) : -1;
+      }));
+      if (mIdx !== reqMax) badMs.push(`${m.id}@w${mIdx + 1} (gating max w${reqMax + 1})`);
+    }
+  }
+  t.deep(badMs, [], `${rm.slug}: tasks milestones sit in the week of their final gating task`);
+}
 t.done();

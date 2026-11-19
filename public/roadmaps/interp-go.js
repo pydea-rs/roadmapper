@@ -328,7 +328,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "callout", label: `🔗 See also — <i>Let's Go</i> Ch2–3 (skeleton + config/DI/errors) covers the same structural ideas with a different app; we start reading it in week 7.` },
+        { id: "s1", type: "callout", label: `🔗 See also — <i>Let's Go</i> Ch2–3 (skeleton + config/DI/errors) covers the same structural ideas with a different app; we start reading it in week 8.` },
       ],
     },
 
@@ -976,7 +976,7 @@ registerRoadmap({
             { id: "s4", est: 25, label: `Indexes.` },
           ] },
       ],
-      note: `Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d73–d76 (week 21); this week jumps to the SQL cluster to balance load — reorder freely.`,
+      note: `Note: videos 107–137 (Cookies/Sessions/CSRF) are covered on d73–d76 (weeks 25–26); this week jumps to the SQL cluster to balance load — reorder freely.`,
     },
     {
       id: "d66", date: "2027-04-09", week: "w22", title: `Go — SQL relations & migrations (videos 138–155) (2/2)`,
@@ -1957,7 +1957,7 @@ registerRoadmap({
           ] },
       ],
       soft: [
-        { id: "s1", type: "hint", label: `💡 You finished two interpreters and a production-shaped Go web app — with two weeks still on the plan. Weeks 38–40 spend that runway on the natural sequel (a compiler) and a capstone that fuses the interpreter with the web stack.` },
+        { id: "s1", type: "hint", label: `💡 You finished two interpreters and a production-shaped Go web app — with three weeks still on the plan. Weeks 47–49 spend that runway on the natural sequel (a compiler) and a capstone that fuses the interpreter with the web stack.` },
       ],
     },
     {

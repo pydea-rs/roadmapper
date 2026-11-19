@@ -69,6 +69,14 @@ t.eq(s.weeks["w1"].bonus.done, 1, "week w1 tracks its 1 completed bonus task");
 t.eq(s.weeks["w1"].bonus.total, 1, "week w1 bonus total = 1");
 t.eq(s.weeks["w2"].bonus.done, 0, "week w2 bonus done = 0");
 t.eq(s.weeks["w2"].bonus.total, 1, "week w2 bonus total = 1");
+store.setMove(S, "d02.b1", "d04");            // move done bonus task from d02 (w1) to d04 (w2)
+s = compute();
+t.eq(s.days["d02"].bonus.total, 0, "moved bonus task leaves origin day bonus count");
+t.eq(s.days["d04"].bonus.done, 1, "moved bonus task adds 1 done to destination day");
+t.eq(s.days["d04"].bonus.total, 1, "destination day d04 now holds 1 bonus task");
+t.eq(s.weeks["w1"].bonus.total, 0, "week w1 bonus total updates after move");
+t.eq(s.weeks["w2"].bonus.done, 1, "week w2 bonus done updates to 1 after move");
+t.eq(s.weeks["w2"].bonus.total, 2, "week w2 bonus total updates to 2 after move");
 
 t.group("secondary work lives on its own meter (but is 'required' time)");
 reset();

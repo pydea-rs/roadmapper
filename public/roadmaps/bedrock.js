@@ -282,7 +282,7 @@ registerRoadmap({
         { id: "s1", type: "hint", label: `💡 The cargo-cult mistake is reciting all 7 OSI layers as if each is real and present in every packet. Interview answer: encapsulation + which header a device reads.` },
         { id: "s2", type: "callout", label: `🧭 This is thread <b>Networking</b>, part 1 of 7 in the core. Each time it reappears it continues in order (subnets → TCP → DNS → TLS → HTTP → load balancers).` },
       ],
-      note: "Bedrock begins. 2–3 short days a week, one topic each — separate from your main roadmaps.",
+      note: "Bedrock begins. 2 short days a week, one topic each — separate from your main roadmaps.",
     },
     {
       id: "d02", date: "2026-11-09", week: "w1", title: "What a container actually is",
@@ -1442,7 +1442,7 @@ registerRoadmap({
         { id: "s1", type: "callout", label: `🏁 Core complete — and the <b>extension</b> continues right below (weeks 29–55): every thread picks up in order and goes <i>deeper under the hood</i> — Raft/CAP/quorums, VACUUM/TOAST/joins/LSM, rollups/blobs/MEV/ZK, io_uring/page cache, and Go/Python/C++/Rust runtime reviews.` },
         { id: "s2", type: "hint", label: `💡 The through-line of the whole security thread: never trust input you didn't verify — an <code>alg</code> header, a spot price, or the timing of an external call are all "input". Verify, then act.` },
       ],
-      note: "🎓 12-week core finished — the essentials a backend/blockchain engineer is expected to own.",
+      note: "🎓 Core finished — the essentials a backend/blockchain engineer is expected to own.",
     },
     /* ================================================================== *
      *  EXTENSION — "deepen your knowledge": the under-the-hood internals.
@@ -3068,7 +3068,7 @@ registerRoadmap({
     { title: "How this track works", items: [
       `Each domain is an ordered <b>thread</b>; threads are <b>interleaved</b> across days, so consecutive side-days switch topics but each thread advances in order.`,
       `Progress, streak and effort are <b>separate from your main roadmaps</b> — only the Today panel's "Main + Side" line combines them.`,
-      `<b>Core</b> (weeks 1–12) lays the foundations; <b>Extension I</b> (weeks 13–25) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 26–29) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters); <b>Extension III</b> (weeks 30–32) closes with a <b>Compilers & interpreters</b> thread — how real implementations (CPython, the Go compiler, the JVM, V8, LLVM) turn your code into behavior, interleaved with language-implementation reviews.`,
+      `<b>Core</b> (weeks 1–29) lays the foundations; <b>Extension I</b> (weeks 29–55) goes deeper under the hood — every thread continues in order, plus a <b>Distributed systems</b> thread (Raft, CAP, quorums…); <b>Extension II</b> (weeks 56–62) is the "cool internals" — a <b>Data-structure & runtime internals</b> thread (why hash maps are O(1), garbage collection, the JS heap, floats, Unicode, Bloom filters); <b>Extension III</b> (weeks 63–67) closes with a <b>Compilers & interpreters</b> thread — how real implementations (CPython, the Go compiler, the JVM, V8, LLVM) turn your code into behavior, interleaved with language-implementation reviews.`,
       `Complete a task to <b>unlock its recall cards</b> 🎴 — short Q/A prompts you can re-test yourself on; the Today view resurfaces a few from earlier days so knowledge sticks.`,
     ] },
   ],
