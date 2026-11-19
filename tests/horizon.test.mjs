@@ -211,6 +211,35 @@ t.group("ticking from Horizon");
   t.ok(/\d+\/\d+/.test(again.closest(".hz-ticket").querySelector(".hz-tcount").textContent), "the ticket's count updates");
   click(again.querySelector(".brick-tick"));
   t.ok(leaves(task).every(l => !store.isDone(slug, l.id)), "ticking again clears it");
+
+  // bonus-only ticket in Horizon updates its count & complete state when ticked
+  const bonusDay = reg.getRoadmap("interp-go").daysById.get("d07");
+  localStorage.setItem("roadmaps_horizon_hidden", JSON.stringify(["rust-fastapi", "bedrock", "raylib"]));
+  setToday(bonusDay.date);
+  hz.renderHorizon(view);
+  const bTicket = $(`.hz-ticket[data-ticket="interp-go/d07"]`);
+  t.eq(bTicket.querySelector(".hz-tcount").textContent, "0/1 bonus", "Horizon bonus-only ticket shows 0/1 bonus");
+  t.ok(/0 of 1 bonus tasks done/.test(bTicket.querySelector(".hz-thead").getAttribute("aria-label")),
+    "bonus-only ticket aria-label names bonus tasks (never '0 of 0')");
+  click(bTicket.querySelector(".brick.bonus .brick-tick"));
+  const bAfter = $(`.hz-ticket[data-ticket="interp-go/d07"]`);
+  t.ok(bAfter.classList.contains("complete") && bAfter.querySelector(".hz-tcount").textContent === "1/1 bonus",
+    "ticking it marks the Horizon ticket complete (1/1 bonus)");
+  t.ok($(`.hz-day[data-from="${bonusDay.date}"]`).classList.contains("complete"),
+    "when a date has only bonus tasks and all are done, its Horizon day row marks complete");
+
+  // mixed day in Horizon: ticking bonus adds "+1" beside required count
+  const mixedDay = reg.getRoadmap("interp-go").days.find(d => d.tasks.some(x => !x.optional) && d.tasks.some(x => x.optional));
+  setToday(mixedDay.date);
+  hz.renderHorizon(view);
+  click($(`.hz-ticket[data-ticket="interp-go/${mixedDay.id}"] .brick.bonus .brick-tick`));
+  t.ok(/\+1$/.test($(`.hz-ticket[data-ticket="interp-go/${mixedDay.id}"] .hz-tcount`).textContent),
+    "mixed Horizon ticket displays +1 bonus next to required count");
+
+  localStorage.removeItem("roadmaps_horizon_hidden");
+  store.resetRoadmap("interp-go");
+  setToday(today);
+  hz.renderHorizon(view);
 }
 
 t.group("the lens from a ticket");

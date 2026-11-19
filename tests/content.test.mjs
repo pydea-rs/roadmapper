@@ -28,10 +28,10 @@ t.deep(registry.validateAll(), [], "validateAll() reports no problems");
 // shift (exactly like the frozen-now anchors in render.test / insights.test).
 t.group("roadmap date anchors (a bad or asymmetric shift must fail here)");
 const ANCHORS = {
-  "rust-fastapi": { first: "2026-10-24", last: "2027-09-24" },
-  "interp-go":    { first: "2026-10-24", last: "2027-07-29" },
-  "bedrock":      { first: "2026-10-25", last: "2027-09-24" },
-  "raylib":       { first: "2026-10-25", last: "2027-07-30" },
+  "rust-fastapi": { first: "2026-11-07", last: "2027-10-08" },
+  "interp-go":    { first: "2026-11-07", last: "2027-08-12" },
+  "bedrock":      { first: "2026-11-08", last: "2027-10-08" },
+  "raylib":       { first: "2026-11-08", last: "2027-08-13" },
 };
 for (const [slug, a] of Object.entries(ANCHORS)) {
   const rm = registry.getRoadmap(slug);

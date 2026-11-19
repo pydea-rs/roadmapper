@@ -322,9 +322,21 @@ function drawDayLens(panel, rm, slot, o) {
   panel.append(head);
 
   const sum = el("div.lens-sum");
-  const bar = el("div.lens-bar"); bar.append(el("i", { style: `width:${mins ? Math.round(done / mins * 100) : 0}%` }));
+  const bTotal = slot.bonus.length;
+  const bDone = slot.bonus.filter(t => taskProgress(slug, t).complete).length;
+  const bEst = slot.bonus.reduce((n, t) => n + (t.est || 0), 0);
+  const bDoneEst = slot.bonus.reduce((n, t) => n + (taskProgress(slug, t).complete ? (t.est || 0) : 0), 0);
+  const bar = el("div.lens-bar");
+  const fillPct = slot.required.length
+    ? (mins ? Math.round(done / mins * 100) : 0)
+    : (bEst ? Math.round(bDoneEst / bEst * 100) : (bTotal ? Math.round(bDone / bTotal * 100) : 0));
+  bar.append(el("i", { style: `width:${fillPct}%` }));
   sum.append(bar);
-  sum.append(el("span", { text: `${doneTasks}/${slot.required.length} tasks · ${fmtMins(Math.max(0, mins - done))} left of ${fmtMins(mins)}` }));
+  const sumText = slot.required.length
+    ? `${doneTasks}/${slot.required.length} tasks · ${fmtMins(Math.max(0, mins - done))} left of ${fmtMins(mins)}` +
+      (bDone ? ` · +${bDone} bonus` : "")
+    : `${bDone}/${bTotal} bonus · ${fmtMins(Math.max(0, bEst - bDoneEst))} left of ${fmtMins(bEst)}`;
+  sum.append(el("span", { text: sumText }));
   panel.append(sum);
 
   if (day.note) panel.append(el("p.lens-note", { text: day.note }));
@@ -464,7 +476,7 @@ function plate(rm, S, week, slots, ctx) {
   const { today, hooks } = ctx;
   const start = week.start || slots[0].date;
   const end = addDays(start, 6);
-  const wf = S.weeks[week.id] || { actual: { pct: 0 }, original: { pct: 0 }, ontime: { pct: 0 } };
+  const wf = S.weeks[week.id] || { actual: { pct: 0 }, original: { pct: 0 }, ontime: { pct: 0 }, bonus: { done: 0, total: 0 } };
   const isNow = start <= today && today <= end;
   const isPast = end < today;
   const title = String(week.title || week.id).replace(/^Week\s+\d+\s*[—–:-]\s*/i, "");
@@ -478,6 +490,10 @@ function plate(rm, S, week, slots, ctx) {
   head.append(el("span.plate-range", { text: `${shortDate(start)} – ${shortDate(end)}` }));
   if (isNow) head.append(el("span.plate-now", { text: "This week" }));
   head.append(el("span.plate-pct", { text: `${wf.actual.pct}%`, title: `actual ${wf.actual.pct}% · original ${wf.original.pct}% · on-time ${(wf.ontime || {}).pct || 0}%` }));
+  if (wf.bonus && wf.bonus.done > 0) {
+    head.append(el("span.plate-bonus", { text: `+${wf.bonus.done}★`,
+      title: `${wf.bonus.done}/${wf.bonus.total} bonus done` + (wf.bonus.estDone ? ` · +${fmtMins(wf.bonus.estDone)}` : "") }));
+  }
   node.append(head);
   node.append(el("div.plate-title", { text: title, title: week.title || "" }));
 
@@ -508,10 +524,13 @@ function dayColumn(rm, S, slot, ctx) {
   const { today, spot, hooks } = ctx;
   const slug = rm.slug;
   const { day, date } = slot;
-  const df = S.days[day.id] || { actual: { pct: 0, total: 0 } };
+  const df = S.days[day.id] || { actual: { pct: 0, total: 0 }, bonus: { pct: 0, done: 0, total: 0, estTotal: 0 } };
+  const bon = df.bonus || { pct: 0, done: 0, total: 0, estTotal: 0 };
+  const bonusOnly = df.actual.total === 0 && bon.total > 0;
   const isToday = date === today, isPast = date < today;
   const { mins } = slotMinutes(slug, slot);
-  const complete = df.actual.total > 0 && df.actual.pct >= 100;
+  const complete = bonusOnly ? (bon.done > 0 && bon.done >= bon.total) : (df.actual.total > 0 && df.actual.pct >= 100);
+  const ringPct = bonusOnly ? bon.pct : (df.actual.pct || 0);
   const d = parseDate(date);
 
   const col = el("div.aday" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (complete ? ".complete" : "") +
@@ -527,8 +546,8 @@ function dayColumn(rm, S, slot, ctx) {
     title: `${day.title} — ${fmtDateHuman(date)}`, "aria-label": `${fmtDateHuman(date)}: ${day.title}. Show the day` });
   const top = el("span.aday-top");
   top.append(el("span.aday-dow", { text: isToday ? "Today" : DOW[d.getDay()] }), el("span.aday-num", { text: String(d.getDate()) }));
-  top.append(el("span.aday-load", { text: fmtMins(mins) }));
-  top.append(el("span.aday-ring", { style: `--p:${df.actual.pct || 0}`, title: `${df.actual.pct || 0}% done` }));
+  top.append(el("span.aday-load", { text: mins ? fmtMins(mins) : (bon.estTotal ? `+${fmtMins(bon.estTotal)}` : "0m") }));
+  top.append(el("span.aday-ring", { style: `--p:${ringPct}`, title: `${ringPct}% done` + (!bonusOnly && bon.done ? ` · +${bon.done} bonus` : "") }));
   head.append(top);
   head.append(el("span.aday-title", { text: day.title }));
   head.addEventListener("click", () => open(null));

@@ -88,7 +88,7 @@
   transition: width var(--dur-slow) var(--ease); }
 .meter.secondary .mbar > i { background: var(--text-3); }
 .meter .mval { font-size: var(--t-sm); font-weight: 700; font-variant-numeric: tabular-nums; min-width: 46px;
-  text-align: right; }
+  text-align: right; display: inline-flex; align-items: center; justify-content: flex-end; }
 @media (max-width: 620px) { .meter { grid-template-columns: 1fr auto; } .meter .mbar { grid-column: 1 / -1; order: 3; } }
 
 /* ------------------------------------------------------------------ *
@@ -296,7 +296,10 @@
 .day-date .dow { font-size: var(--t-xs); text-transform: uppercase; color: var(--text-3); font-weight: 700; }
 .day-date .dnum { font-size: var(--t-lg); font-weight: 700; line-height: 1; }
 .day-info { flex: 1; min-width: 0; }
-.day-title { font-weight: 700; letter-spacing: -.01em; }
+.day-title { font-weight: 700; letter-spacing: -.01em; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.day-bonus { font-size: var(--t-xs); font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--text-3); background: var(--surface-3); padding: 1px 7px; border-radius: var(--r-pill); }
+.day-bonus.on { color: var(--accent-ink, var(--accent)); background: var(--accent-soft); }
 .day-theme { color: var(--text-3); font-size: var(--t-sm); white-space: nowrap; overflow: hidden;
   text-overflow: ellipsis; }
 .today-badge { font-size: var(--t-xs); font-weight: 700; color: var(--accent);
@@ -313,8 +316,9 @@
   transition: --p var(--dur-slow) var(--ease); }
 .day-ring i { width: 30px; height: 30px; border-radius: 50%; background: var(--surface); display: grid;
   place-items: center; transition: color var(--dur-fast); font-size: var(--t-xs); }
-/* colour per meter — accent (actual), grey (original), gold (on-time) */
+/* colour per meter — accent (actual), grey (original), gold (on-time), accent (bonus-only) */
 .day-ring.actual { --ring: var(--accent); }
+.day-ring.bonus  { --ring: var(--accent); }
 .day-ring.orig   { --ring: var(--text-3); }
 .day-ring.ontime { --ring: var(--ontime); }
 /* minis ride alongside the headline actual ring */
@@ -331,6 +335,9 @@
 .week-dual .wd-actual b { color: var(--accent); }
 .week-dual .wd-orig b { color: var(--text-2); }
 .week-dual .wd-ontime b { color: var(--ontime); }
+.week-dual .wd-bonus { color: var(--text-3); }
+.week-dual .wd-bonus b { color: var(--text-2); }
+.week-dual .wd-bonus.on b { color: var(--accent-ink, var(--accent)); }
 
 .day-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--dur) var(--ease); }
 .day.open .day-body { grid-template-rows: 1fr; }

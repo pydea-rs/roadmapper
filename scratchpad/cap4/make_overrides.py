@@ -33,10 +33,10 @@ COMMON = '''// MAKE-IT-DOABLE PASS (2026-09-25) — the owner tried to follow th
 //     honest re-price outgrows that — chose eight weeks beyond those limits. Result: the
 //     busiest stretch averages ~2h/day against the 3h ceiling, where the plan it replaces
 //     really wanted ~3h every day while claiming 2.
-//  5. RE-DATED. Day 1 is **2026-10-24** (a Saturday). The owner first moved it to 2026-09-23
+//  5. RE-DATED. Day 1 is **2026-11-07** (a Saturday). The owner first moved it to 2026-09-23
 //     on 2026-09-25 so that a fresh start (old database deleted) opens with nothing already
-//     overdue, then on 2026-10-14 shifted every date +31 days and changed nothing else. All
-//     four roadmaps share one week frame: week i starts 2026-10-24 + 7i.
+//     overdue, shifted +31 days on 2026-10-14, and shifted +14 days on 2026-11-19. All
+//     four roadmaps share one week frame: week i starts 2026-11-07 + 7i.
 // Day ids were renumbered and milestones/interludes re-anchored (no DB backward
 // compatibility needed); day/week references inside the content point at the new ids.
 // Ids quoted in the dated notes ABOVE use their own day's numbering.
@@ -44,13 +44,13 @@ COMMON = '''// MAKE-IT-DOABLE PASS (2026-09-25) — the owner tried to follow th
 '''
 
 TAIL = {
- 'rust-fastapi': '''// For this file: 98 → 147 cards, 34 → 48 weeks, 2026-10-24 → 2027-09-24. Required work
+ 'rust-fastapi': '''// For this file: 98 → 147 cards, 34 → 48 weeks, 2026-11-07 → 2027-10-08. Required work
 // 106.7h → 185.3h. 3 cards a week, 4 in the closing weeks; 91 tasks carried, 49
 // continuation cards, 66 split parts.''',
- 'interp-go': '''// For this file: 88 → 147 cards, 22 → 40 weeks, 2026-10-24 → 2027-07-29. Required work
+ 'interp-go': '''// For this file: 88 → 147 cards, 22 → 40 weeks, 2026-11-07 → 2027-08-12. Required work
 // 141.6h → 185.8h. 3–4 cards a week; 74 tasks carried, 59 continuation cards, 69 split
 // parts.''',
- 'bedrock': '''// For this file: 97 → 134 cards, 32 → 48 weeks, 2026-10-25 → 2027-09-24. Required work
+ 'bedrock': '''// For this file: 97 → 134 cards, 32 → 48 weeks, 2026-11-08 → 2027-10-08. Required work
 // 132.3h → 147.2h — a smaller rise than the other roadmaps because the fix here was
 // mostly SPLITTING: 203 reading leaves became 289, one source each. 2–3 cards a week;
 // 49 tasks carried, 37 continuation cards, 91 split parts.
@@ -58,7 +58,7 @@ TAIL = {
 // from, with author, edition, whether it is free and where to get it. A day card's
 // right-click menu has a "Reading list — sources" entry that groups that card's work by
 // the source it comes from (DESIGN §7.6). Bedrock is the only roadmap that has one.''',
- 'raylib': '''// For this file: 54 → 80 cards, 19 → 40 weeks, 2026-10-25 → 2027-07-30. Required work
+ 'raylib': '''// For this file: 54 → 80 cards, 19 → 40 weeks, 2026-11-08 → 2027-08-13. Required work
 // 69.8h → 82.3h. 2 cards a week; 33 tasks carried, 26 continuation cards, 64 split
 // parts. The owner's own example drove this one: a Nature of Code chapter was read AND
 // practised AND ported in a single task on a single day. Each chapter is now split at

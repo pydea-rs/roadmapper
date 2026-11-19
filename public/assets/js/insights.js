@@ -159,8 +159,14 @@ export function summarize(leaves, today) {
   const overdueTaskIds = new Set();
   for (const l of leaves)
     if (!l.optional && !l.done && (l.curDate || l.origDate) < today) overdueTaskIds.add(l.task || l.id);
+  let bonusDone = 0, bonusTotal = 0, bonusInvested = 0;
+  for (const l of leaves) if (l.optional) {
+    bonusTotal++;
+    if (l.done) { bonusDone++; bonusInvested += l.est; }
+  }
   return {
     total, done, ontime, lateDone, overdue, pending, invested, overdueTasks: overdueTaskIds.size,
+    bonusDone, bonusTotal, bonusInvested,
     // Shared pct(): never rounds an incomplete scope up to 100% (199/200 → 99%),
     // keeping the KPI/donut/readout in step with the count-based rings elsewhere.
     pct: pct(done, total),
@@ -295,13 +301,17 @@ function buildBody(scope) {
   const lastW = rangeMins(effort, addDays(today, -13), addDays(today, -7));
   const delta = thisW - lastW;
   strip.append(
-    kpi("Complete", `${sum.pct}%`, `${sum.done}/${sum.total} tasks`),
+    kpi("Complete", `${sum.pct}%`, `${sum.done}/${sum.total} tasks` + (sum.bonusDone ? ` (+${sum.bonusDone} bonus)` : "")),
     kpi("On-time rate", `${sum.puncRate}%`, `${sum.ontime} of ${sum.done} done`, sum.puncRate >= 70 ? "good" : sum.puncRate >= 40 ? "warn" : "bad"),
     kpi("Streak", `${streak}`, streak === 1 ? "day" : "days", streak > 0 ? "good" : null),
     kpi("Overdue", `${sum.overdueTasks}`, "tasks", sum.overdueTasks ? "bad" : "good"),
-    kpi("Invested", fmtMins(sum.invested), "of effort"),
+    kpi("Invested", fmtMins(sum.invested), sum.bonusInvested ? `+${fmtMins(sum.bonusInvested)} bonus` : "of effort"),
     kpi("This week", fmtMins(thisW), momentumSub(delta), delta > 0 ? "good" : delta < 0 ? "warn" : null),
   );
+  if (sum.bonusTotal) {
+    strip.append(kpi("Bonus", `${sum.bonusDone}/${sum.bonusTotal}`,
+      sum.bonusInvested ? `+${fmtMins(sum.bonusInvested)}` : "optional"));
+  }
   out.push(strip);
 
   // ---- highlights pills ----
@@ -551,7 +561,7 @@ function objectiveBars(scope) {
     .map(o => ({
       label: o.title, value: o.actual.pct,
       color: (rm.objById.get(o.id) && rm.objById.get(o.id).color) || (o.tier === "secondary" ? "var(--text-3)" : "var(--accent)"),
-      sub: `${o.actual.done}/${o.actual.total} · ${o.ontime.pct}% on time`,
+      sub: `${o.actual.done}/${o.actual.total}${o.bonus && o.bonus.done ? ` (+${o.bonus.done} bonus)` : ""} · ${o.ontime.pct}% on time`,
     }));
   return rows.length ? hbars(rows) : emptyChart("No objectives with tasks.");
 }
@@ -563,7 +573,7 @@ function roadmapBars() {
     rows.push({
       label: `${rm.icon} ${rm.title}`, value: s.overall.actual.pct,
       color: rm.accent || "var(--accent)",
-      sub: `${s.overall.actual.done}/${s.overall.actual.total} · ${s.overall.ontime.pct}% on time`,
+      sub: `${s.overall.actual.done}/${s.overall.actual.total}${s.overall.bonus.done ? ` (+${s.overall.bonus.done} bonus)` : ""} · ${s.overall.ontime.pct}% on time`,
     });
   }
   return rows.length ? hbars(rows) : emptyChart("No roadmaps.");

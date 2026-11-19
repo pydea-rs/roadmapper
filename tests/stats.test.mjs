@@ -62,6 +62,13 @@ t.eq(s.overall.actual.done, 0, "bonus does NOT count toward primary progress");
 t.eq(s.overall.actual.total, PRIMARY_N, "bonus is NOT in the primary denominator");
 t.eq(s.invested, 0, "bonus time is EXCLUDED from invested");
 t.eq(s.remaining, PRIMARY_MINS, "undone-or-done bonus does NOT change required remaining/ETA");
+t.eq(s.days["d02"].bonus.done, 1, "day d02 tracks its 1 completed bonus task");
+t.eq(s.days["d02"].bonus.total, 1, "day d02 bonus total = 1");
+t.eq(s.days["d02"].bonus.pct, 100, "day d02 bonus pct = 100");
+t.eq(s.weeks["w1"].bonus.done, 1, "week w1 tracks its 1 completed bonus task");
+t.eq(s.weeks["w1"].bonus.total, 1, "week w1 bonus total = 1");
+t.eq(s.weeks["w2"].bonus.done, 0, "week w2 bonus done = 0");
+t.eq(s.weeks["w2"].bonus.total, 1, "week w2 bonus total = 1");
 
 t.group("secondary work lives on its own meter (but is 'required' time)");
 reset();

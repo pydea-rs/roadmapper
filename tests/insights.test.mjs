@@ -20,13 +20,13 @@ global.localStorage = dom.window.localStorage;
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-10-29 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-11-12 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 9, 29, 12, 0, 0); }
-  static now() { return new RealDate(2026, 9, 29, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 10, 12, 12, 0, 0); }
+  static now() { return new RealDate(2026, 10, 12, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
-const TODAY = "2026-10-29";
+const TODAY = "2026-11-12";
 
 const base = new URL("../public/assets/js/", import.meta.url);
 const rmBase = new URL("../public/roadmaps/", import.meta.url);
@@ -170,5 +170,27 @@ sel.dispatchEvent(new dom.window.Event("change"));
 t.eq(localStorage.getItem("roadmaps_insights_scope"), "__all__", "scope choice persisted");
 t.ok(view.querySelector(".hbars .hbar-row"), "Total shows per-roadmap progress bars");
 t.ok(view.querySelector(".linechart .line"), "burn-up still renders under Total");
+
+t.group("bonus tasks update Insights bonus KPI and summarize without changing required headline stats");
+{
+  const bonusLeaf = rm.leaves.find(l => l.optional);
+  t.ok(!!bonusLeaf, "interp-go has a bonus leaf");
+  const beforeSum = insights.summarize(insights.collectLeaves(rm.slug), TODAY);
+  t.eq(beforeSum.bonusDone, 0, "0 bonus done initially");
+  t.ok(beforeSum.bonusTotal > 0, "bonusTotal > 0");
+  doneOnDate(rm.slug, bonusLeaf.id, TODAY);
+  const afterSum = insights.summarize(insights.collectLeaves(rm.slug), TODAY);
+  t.eq(afterSum.bonusDone, 1, "bonusDone increments to 1");
+  t.eq(afterSum.bonusInvested, bonusLeaf.est || 0, "bonusInvested records bonus est");
+  t.eq(afterSum.done, beforeSum.done, "required headline done stays unchanged");
+  t.eq(afterSum.pct, beforeSum.pct, "required headline pct stays unchanged");
+  localStorage.setItem("roadmaps_insights_scope", rm.slug);
+  insights.renderInsights(view);
+  const kpis = [...view.querySelectorAll(".ins-kpis .kpi")];
+  const bonusKpi = kpis.find(k => k.textContent.includes("Bonus"));
+  t.ok(bonusKpi && bonusKpi.textContent.includes(`1/${afterSum.bonusTotal}`),
+    "Insights renders Bonus KPI showing 1/total bonus");
+  store.setTask(rm.slug, bonusLeaf.id, false);
+}
 
 t.done();

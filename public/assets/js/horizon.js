@@ -429,8 +429,11 @@ function freeRow(r, today) {
 function dayRow(mount, d, lanes, today) {
   const isToday = d.date === today, isPast = d.date < today;
   const dt = parseDate(d.date);
+  const allComplete = d.tasks > 0
+    ? d.tasksDone === d.tasks
+    : (d.entries.length > 0 && d.entries.every(e => e.slot.bonus.length > 0 && e.slot.bonus.every(t => taskProgress(e.rm.slug, t).complete)));
   const row = el("div.hz-day" + (isToday ? ".today" : isPast ? ".past" : ".ahead") +
-    (d.tasks && d.tasksDone === d.tasks ? ".complete" : ""), { dataset: { from: d.date, to: d.date } });
+    (allComplete ? ".complete" : ""), { dataset: { from: d.date, to: d.date } });
 
   const when = el("div.hz-when");
   const date = el("div.hz-date");
@@ -464,16 +467,18 @@ function ticket(mount, e, isPast) {
   const { rm, slot } = e;
   const day = slot.day;
   const key = `${rm.slug}/${day.id}`;
-  const complete = e.tasks > 0 && e.tasksDone === e.tasks;
+  const bTotal = slot.bonus.length;
+  const bDone = slot.bonus.filter(t => taskProgress(rm.slug, t).complete).length;
+  const complete = e.tasks > 0 ? (e.tasksDone === e.tasks) : (bTotal > 0 && bDone === bTotal);
   const node = el("div.hz-ticket" + (complete ? ".complete" : ""), { dataset: { ticket: key, lensOpen: "" }, style: accentVars(rm) });
   const open = focusTaskId => openDayLens(rm, slot, {
     anchorSel: `.hz [data-ticket="${key}"]`, focusTaskId, onChange: () => redraw(mount),
     openLabel: `Open in ${rm.title}`, onOpenDay: () => { location.hash = `#/${rm.slug}/${day.id}`; },
   });
   const head = el("button.hz-thead", { type: "button", title: `${rm.title} — ${day.title}`,
-    "aria-label": `${rm.title}: ${day.title}. ${e.tasksDone} of ${e.tasks} tasks done. Show the day` });
+    "aria-label": `${rm.title}: ${day.title}. ${e.tasks ? `${e.tasksDone} of ${e.tasks} tasks` : `${bDone} of ${bTotal} bonus tasks`} done. Show the day` });
   head.append(el("span.hz-tico", { text: rm.icon }), el("span.hz-ttitle", { text: day.title }),
-    el("span.hz-tcount", { text: e.tasks ? `${e.tasksDone}/${e.tasks}` : "bonus" }));
+    el("span.hz-tcount", { text: e.tasks ? `${e.tasksDone}/${e.tasks}${bDone ? ` +${bDone}` : ""}` : `${bDone}/${bTotal} bonus` }));
   head.addEventListener("click", () => open(null));
   head.addEventListener("contextmenu", ev => openDayMenu(rm, day, ev, () => redraw(mount)));
   node.append(head);

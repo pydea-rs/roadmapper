@@ -96,6 +96,8 @@
 .plate-range { color: var(--text-3); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .plate-now { font-weight: 700; color: var(--accent-ink, var(--accent)); white-space: nowrap; }
 .plate-pct { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+.plate-bonus { font-weight: 700; font-size: 10px; color: var(--accent-ink, var(--accent));
+  background: var(--accent-soft); padding: 1px 6px; border-radius: var(--r-pill); font-variant-numeric: tabular-nums; }
 .plate.complete .plate-pct { color: var(--ok); }
 .plate-title { font-size: var(--t-sm); font-weight: 650; line-height: 1.3; color: var(--text);
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance; }

@@ -370,6 +370,18 @@ for (const r of reg.getRoadmaps()) {
   const bricks = view.querySelectorAll(".brick").length;
   t.eq(bricks, r.days.reduce((n, d) => n + d.tasks.length, 0), `${r.slug}: every task is a brick`);
 }
+{
+  const igo = reg.getRoadmap("interp-go");
+  render.renderRoadmap(igo, view, { animate: false });
+  const b = view.querySelector(`[data-atlas-day="d07"] .brick.bonus .brick-tick`);
+  click(b);
+  const col = view.querySelector(`[data-atlas-day="d07"]`);
+  t.ok(col.classList.contains("complete") && col.querySelector(".aday-ring").style.getPropertyValue("--p") === "100",
+    "Atlas: completing a bonus-only day marks it complete with a 100% ring");
+  t.eq(col.closest(".plate").querySelector(".plate-bonus")?.textContent, "+1★",
+    "Atlas: its week plate shows the completed bonus count");
+  store.resetRoadmap("interp-go");
+}
 ui.setSetting("timelineView", "cards");
 
 t.done();

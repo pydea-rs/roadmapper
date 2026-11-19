@@ -23,10 +23,10 @@ global.getComputedStyle = (...a) => dom.window.getComputedStyle(...a);   // slid
 global.requestAnimationFrame = fn => setTimeout(fn, 0);
 dom.window.matchMedia = () => ({ matches: false, addEventListener() {}, removeEventListener() {} });
 
-const RealDate = Date;                       // freeze "now" = 2026-10-26 12:00 local
+const RealDate = Date;                       // freeze "now" = 2026-11-09 12:00 local
 class FakeDate extends RealDate {
-  constructor(...a) { if (a.length) super(...a); else super(2026, 9, 26, 12, 0, 0); }
-  static now() { return new RealDate(2026, 9, 26, 12, 0, 0).getTime(); }
+  constructor(...a) { if (a.length) super(...a); else super(2026, 10, 9, 12, 0, 0); }
+  static now() { return new RealDate(2026, 10, 9, 12, 0, 0).getTime(); }
 }
 global.Date = FakeDate; globalThis.Date = FakeDate;
 
@@ -303,8 +303,56 @@ t.eq(view.querySelector(".bonus-track .bonus-head").nextElementSibling.style.dis
   "collapsing it and rerendering keeps it collapsed too");
 render.renderToday(view);                                     // restore the Today view for the next group
 
+t.group("bonus tasks & bonus-only cards update day, week and general stats");
+{
+  const igo = reg.getRoadmap("interp-go");
+  // d07 in w3 ("Go — Templates: bonus exercises") is a bonus-only day card (0 required, 1 optional)
+  const bonusDay = igo.daysById.get("d07");
+  const bonusTask = bonusDay.tasks[0];
+  render.renderRoadmap(igo, view);
+  const w3Dual = () => [...view.querySelectorAll(".week-group")].find(g => g.querySelector(".day[data-day=\"d07\"]"))?.querySelector(".week-dual");
+  const d07Card = () => view.querySelector(".day[data-day=\"d07\"]");
+  t.ok(d07Card().querySelector(".day-ring.bonus"), "a bonus-only day card renders a bonus ring");
+  t.eq(d07Card().querySelector(".day-ring.bonus i").textContent, "0%", "…starting at 0%");
+  t.ok(/bonus \+0\/1/.test(w3Dual().textContent), "week header surfaces bonus count (0/1) before ticking");
+  t.ok([...view.querySelectorAll(".stats-strip .kpi")].some(k => k.querySelector(".k").textContent === "Bonus" && /0\/6/.test(k.querySelector(".v").textContent)),
+    "general stats strip includes a Bonus KPI");
+
+  // tick the bonus task directly in the card
+  const cb = d07Card().querySelector(".bonus-track .task.bonus .checkbox");
+  cb.onclick();
+  t.eq(d07Card().querySelector(".day-ring.bonus i").textContent, "100%", "ticking the bonus-only card updates its ring to 100%");
+  t.ok(d07Card().classList.contains("complete"), "…and marks the card complete");
+  t.ok(/bonus \+1\/1/.test(w3Dual().textContent) && w3Dual().querySelector(".wd-bonus.on"),
+    "ticking it updates the week header bonus stats (1/1)");
+  t.ok([...view.querySelectorAll(".stats-strip .kpi")].some(k => k.querySelector(".k").textContent === "Bonus" && /1\/6/.test(k.querySelector(".v").textContent)),
+    "general stats strip Bonus KPI updates to 1/6");
+  t.ok(view.querySelector(`.meter[data-obj="${bonusTask.obj}"] .mval .bonus-plus`)?.textContent === "+1",
+    "its objective meter shows +1 bonus");
+  t.ok(view.querySelector(".hero-progress .dual.actual .bonus-plus")?.textContent === "+1",
+    "hero progress block surfaces +1 bonus inline");
+
+  // mixed card (required + optional on the same card): ticking bonus leaves required % unchanged
+  const mixedDay = igo.days.find(d => d.tasks.some(x => !x.optional) && d.tasks.some(x => x.optional));
+  const mixedCard = () => view.querySelector(`.day[data-day="${mixedDay.id}"]`);
+  const mixedWeek = () => [...view.querySelectorAll(".week-group")].find(g => g.querySelector(`.day[data-day="${mixedDay.id}"]`))?.querySelector(".week-dual");
+  const reqPctBefore = mixedCard().querySelector(".day-ring.actual i").textContent;
+  t.ok(/★ 0\/1/.test(mixedCard().querySelector(".day-bonus")?.textContent || ""), "mixed card shows ★ 0/1 bonus pill");
+  mixedCard().querySelector(".bonus-track .task.bonus .checkbox").onclick();
+  t.eq(mixedCard().querySelector(".day-ring.actual i").textContent, reqPctBefore,
+    "mixed card required ring stays unchanged when only bonus is ticked");
+  t.ok(mixedCard().querySelector(".day-bonus.on")?.textContent === "★ 1/1",
+    "mixed card bonus pill updates to ★ 1/1 (.on)");
+  t.ok(mixedWeek()?.querySelector(".wd-bonus.on b")?.textContent === "+1/1",
+    "mixed day's week header updates bonus count to +1/1 (.on)");
+  t.ok([...view.querySelectorAll(".stats-strip .kpi")].some(k => k.querySelector(".k").textContent === "Bonus" && /2\/6/.test(k.querySelector(".v").textContent)),
+    "general stats strip Bonus KPI advances to 2/6");
+  store.resetRoadmap("interp-go");
+  render.renderToday(view);
+}
+
 t.group("Today digest: a completed parent drops off the outstanding list");
-// "now" is frozen at 2026-10-26, so raylib d01.t1 (2026-10-25) is OVERDUE. A
+// "now" is frozen at 2026-11-09, so raylib d01.t1 (2026-11-08) is OVERDUE. A
 // parent holds no done-state of its own — completing every sub must make the
 // digest treat it as done (guards the collectDue parent-completeness fix). Scope
 // to the RAYLIB card: data-task ids are per-roadmap, so several roadmaps share id

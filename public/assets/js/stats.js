@@ -102,9 +102,9 @@ export function computeAll(rm) {
 
   // Per-scope accumulators for actual (by current), original (by origin), and
   // on-time (by origin, only leaves finished on/before their original date).
-  const dayA = new Map(), dayO = new Map();
-  const weekA = new Map(), weekO = new Map();
-  const monthA = new Map(), monthO = new Map();
+  const dayA = new Map(), dayO = new Map(), dayB = new Map();
+  const weekA = new Map(), weekO = new Map(), weekB = new Map();
+  const monthA = new Map(), monthO = new Map(), monthB = new Map();
   const dayT = new Map(), weekT = new Map(), monthT = new Map();   // on-time done counts
   const objAcc = new Map();            // objId -> {req:{a,o}, bonus:{done,total,est}}
   const catDist = {};
@@ -147,8 +147,15 @@ export function computeAll(rm) {
           // undone bonus work does NOT inflate the required Remaining / finish ETA.
           // Completed bonus time is reported as bonusInvested, kept out of `invested`.
           bonusTotal++; oa.bonus.total++; oa.bonus.estTot += est;
-          if (done) { bonusDone++; oa.bonus.done++; bonusEstDone += est; oa.bonus.estDone += est; }
-          else bonusEstRemaining += est;
+          const dB = get(dayB, cur); dB.total++; dB.estTotal += est;
+          const wB = get(weekB, curDay.week); wB.total++; wB.estTotal += est;
+          const mB = get(monthB, curDay.month); mB.total++; mB.estTotal += est;
+          if (done) {
+            bonusDone++; oa.bonus.done++; bonusEstDone += est; oa.bonus.estDone += est;
+            dB.done++; dB.estDone += est;
+            wB.done++; wB.estDone += est;
+            mB.done++; mB.estDone += est;
+          } else bonusEstRemaining += est;
           continue;
         }
 
@@ -220,21 +227,27 @@ export function computeAll(rm) {
   for (const day of rm.days) {
     const a = dayA.get(day.id) || blank();
     const o = dayO.get(day.id) || blank();
+    const b = dayB.get(day.id) || blank();
     days[day.id] = { actual: withPct(a), original: withPct(o),
-      ontime: withPct({ done: dayT.get(day.id) || 0, total: o.total }), off: day.off,
+      ontime: withPct({ done: dayT.get(day.id) || 0, total: o.total }),
+      bonus: withPct(b), off: day.off,
       hasCurrent: a.total > 0, hasOrigin: o.total > 0 };
   }
   const weeks = {};
   for (const w of rm.weeks) {
     const o = weekO.get(w.id) || blank();
+    const b = weekB.get(w.id) || blank();
     weeks[w.id] = { actual: withPct(weekA.get(w.id) || blank()), original: withPct(o),
-      ontime: withPct({ done: weekT.get(w.id) || 0, total: o.total }) };
+      ontime: withPct({ done: weekT.get(w.id) || 0, total: o.total }),
+      bonus: withPct(b) };
   }
   const months = {};
   for (const m of rm.months) {
     const o = monthO.get(m.key) || blank();
+    const b = monthB.get(m.key) || blank();
     months[m.key] = { actual: withPct(monthA.get(m.key) || blank()), original: withPct(o),
-      ontime: withPct({ done: monthT.get(m.key) || 0, total: o.total }) };
+      ontime: withPct({ done: monthT.get(m.key) || 0, total: o.total }),
+      bonus: withPct(b) };
   }
 
   // ---- milestones ----

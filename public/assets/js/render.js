@@ -871,20 +871,27 @@ function paint(rm, mount, open, animateIn = false) {
 
 /* All PRIMARY, non-optional tasks whose CURRENT day is `hostId` are done. Skips
  * secondary-tier tasks so this matches the day ring / stats (which roll up primary
- * only) — otherwise the celebration and the "100%" ring could disagree. */
+ * only) — otherwise the celebration and the "100%" ring could disagree.
+ * For a bonus-only card (no primary required tasks), all bonus tasks done counts. */
 function isDayComplete(rm, hostId) {
-  let any = false;
+  let any = false, bonusAny = false, bonusAll = true;
   for (const d of rm.days) for (const t of d.tasks) {
-    if (t.optional) continue;
+    if (currentDay(rm, rm.slug, t) !== hostId) continue;
+    if (t.optional) {
+      for (const leaf of (t.subs || [t])) {
+        bonusAny = true;
+        if (!store.isDone(rm.slug, leaf.id)) bonusAll = false;
+      }
+      continue;
+    }
     const obj = rm.objById.get(t.obj);
     if (obj && obj.tier === "secondary") continue;
-    if (currentDay(rm, rm.slug, t) !== hostId) continue;
     for (const leaf of (t.subs || [t])) {
       any = true;
       if (!store.isDone(rm.slug, leaf.id)) return false;
     }
   }
-  return any;
+  return any || (bonusAny && bonusAll);
 }
 
 /* A few confetti dots flung from (x,y); auto-removed. */
@@ -1025,22 +1032,31 @@ function statsStrip(rm, S) {
   const strip = el("div.stats-strip");
   const kpi = (k, v, sub) => { const c = el("div.kpi"); c.append(el("div.k", { text: k }));
     const val = el("div.v", { text: v }); if (sub) val.append(el("small", { text: " " + sub })); c.append(val); return c; };
-  strip.append(kpi("Actual", S.overall.actual.pct + "%"));
+  strip.append(kpi("Actual", S.overall.actual.pct + "%",
+    S.overall.bonus.done ? `+${S.overall.bonus.done} bonus` : null));
   strip.append(kpi("Original", S.overall.original.pct + "%"));
   strip.append(kpi("On-time", ((S.overall.ontime || {}).pct || 0) + "%"));
-  const wk = currentWeekFigure(rm, S);
-  strip.append(kpi("This week", wk));
+  const wk = currentWeekStats(rm, S);
+  strip.append(kpi("This week", wk.label, wk.sub));
   strip.append(kpi("Streak", S.streak, S.streak === 1 ? "day" : "days"));
   strip.append(kpi("Invested", fmtMins(S.invested), S.bonusInvested ? `+${fmtMins(S.bonusInvested)} bonus` : null));
   strip.append(kpi("Remaining", fmtMins(S.remaining)));
+  if (S.overall.bonus.total) strip.append(kpi("Bonus", `${S.overall.bonus.done}/${S.overall.bonus.total}`,
+    S.bonusInvested ? `+${fmtMins(S.bonusInvested)}` : null));
   if (S.softStats.total) strip.append(kpi("Tryouts", `${S.softStats.done}/${S.softStats.total}`));
   return strip;
 }
-function currentWeekFigure(rm, S) {
+function currentWeekStats(rm, S) {
   const today = todayStr();
   const wk = rm.weeks.find(w => w.start && daysBetween(w.start, today) >= 0 && daysBetween(w.start, today) <= 6);
-  if (!wk) return "—";
-  const f = S.weeks[wk.id]; return f ? `${f.actual.pct}%` : "—";
+  if (!wk) return { label: "—", sub: null };
+  const f = S.weeks[wk.id];
+  if (!f) return { label: "—", sub: null };
+  const b = f.bonus;
+  if (f.actual.total === 0 && b && b.total > 0) {
+    return { label: `${b.done}/${b.total}`, sub: "bonus" };
+  }
+  return { label: `${f.actual.pct}%`, sub: b && b.done ? `+${b.done} bonus` : null };
 }
 
 function meters(rm, S) {
@@ -1052,7 +1068,15 @@ function meters(rm, S) {
     m.append(name);
     const bar = el("div.mbar"); bar.append(el("i", { style: `width:${Math.min(100, o.actual.pct)}%` }));
     m.append(bar);
-    m.append(el("div.mval", { text: o.actual.pct + "%" }));
+    const mval = el("div.mval");
+    mval.append(document.createTextNode(o.actual.pct + "%"));
+    if (o.bonus && o.bonus.done) {
+      mval.append(el("span.bonus-plus", {
+        text: `+${o.bonus.done}`,
+        title: `${o.bonus.done}/${o.bonus.total} bonus done` + (o.bonus.estDone ? ` · +${fmtMins(o.bonus.estDone)}` : ""),
+      }));
+    }
+    m.append(mval);
     wrap.append(m);
   }
   return wrap;
@@ -1376,6 +1400,13 @@ function weekGroup(rm, S, weekId, days, open, cont = false) {
   dual.append(el("span.wd-actual", { html: `actual <b>${f.actual.pct}%</b>`, title: "Current progress after any moves" }));
   dual.append(el("span.wd-orig", { html: `original <b>${f.original.pct}%</b>`, title: "Tasks done regardless of when" }));
   dual.append(el("span.wd-ontime", { html: `on-time <b>${(f.ontime || {}).pct || 0}%</b>`, title: "Done on or before the original date" }));
+  if (f.bonus && f.bonus.total > 0) {
+    const time = f.bonus.estDone ? ` · +${fmtMins(f.bonus.estDone)}` : "";
+    dual.append(el("span.wd-bonus" + (f.bonus.done ? ".on" : ""), {
+      html: `bonus <b>+${f.bonus.done}/${f.bonus.total}</b>`,
+      title: `${f.bonus.done} of ${f.bonus.total} bonus task${f.bonus.total === 1 ? "" : "s"} done${time} (counts past 100%)`,
+    }));
+  }
   head.append(dual);
   // week milestone chip
   const wm = S.milestones.filter(m => m.week === weekId);
@@ -1443,10 +1474,11 @@ function interludeCard(rm, il) {
 function progRing(figure, { kind, label, full = false, big = false }) {
   const f = figure || { pct: 0, done: 0, total: 0 };
   const pctv = f.pct || 0;
-  const cap = { actual: "Actual", orig: "Original", ontime: "On-time" }[kind] || label;
+  const cap = { actual: "Actual", orig: "Original", ontime: "On-time", bonus: "Bonus" }[kind] || label;
   const hint = { actual: "current progress (after any moves)",
     orig: "tasks done regardless of when",
-    ontime: "done on or before the original date" }[kind] || "";
+    ontime: "done on or before the original date",
+    bonus: "optional bonus work (counts past 100%)" }[kind] || "";
   const cell = el("div.ring-cell");
   const ring = el("div.day-ring." + kind + (big ? ".big" : ".mini") + (full ? ".full" : ""),
     { style: `--p:${pctv}`, title: `${cap} — ${f.done || 0}/${f.total || 0} (${pctv}%)${hint ? " · " + hint : ""}` });
@@ -1466,9 +1498,14 @@ function dayCard(rm, S, day, open) {
   const isPast = eff < today;
   const isOpen = open.has(day.id);
   const df = S.days[day.id] || { actual: { pct: 0, done: 0, total: 0 },
-    original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0, done: 0, total: 0 } };
+    original: { pct: 0, done: 0, total: 0 }, ontime: { pct: 0, done: 0, total: 0 },
+    bonus: { pct: 0, done: 0, total: 0, estDone: 0, estTotal: 0 } };
+  const bon = df.bonus || { pct: 0, done: 0, total: 0, estDone: 0, estTotal: 0 };
+  const bonusOnly = df.actual.total === 0 && bon.total > 0;
 
-  const isComplete = df.actual.total > 0 && df.actual.pct >= 100;
+  const isComplete = bonusOnly
+    ? (bon.done > 0 && bon.done >= bon.total)
+    : (df.actual.total > 0 && df.actual.pct >= 100);
   const card = el("div.day" + (isToday ? ".today" : "") + (isPast ? ".past" : "") + (isOpen ? ".open" : "") +
     (isComplete ? ".complete" : "") + (isMoved ? ".moved" : ""), { dataset: { day: day.id } });
 
@@ -1485,22 +1522,32 @@ function dayCard(rm, S, day, open) {
   if (isToday) titleRow.append(el("span.today-badge", { text: "Today" }));
   if (isMoved) titleRow.append(el("span.t-moved", { text: `moved · was ${relDay(day.date)}`,
     title: `Originally ${fmtDateHuman(day.date)}` }));
+  if (!bonusOnly && bon.total > 0) {
+    titleRow.append(el("span.day-bonus" + (bon.done ? ".on" : ""), {
+      text: `★ ${bon.done}/${bon.total}`,
+      title: `${bon.done}/${bon.total} bonus done` + (bon.estDone ? ` · +${fmtMins(bon.estDone)}` : ""),
+    }));
+  }
   info.append(titleRow);
   if (day.theme) info.append(el("div.day-theme", { text: day.theme }));
   head.append(info);
 
   // Three circular meters: Actual (headline), Original, and On-time. Original +
   // On-time appear once a day is reached or has any progress, so untouched future
-  // days stay clean. All three are colour-coded and captioned.
+  // days stay clean. A bonus-only card shows its bonus completion ring directly.
   const figs = el("div.day-figs");
-  const on = df.ontime || { pct: 0, done: 0, total: 0 };
-  figs.append(progRing(df.actual, { kind: "actual", label: "actual", big: true, full: isComplete }));
-  const reached = isPast || isToday;
-  if (df.original.total && (reached || df.actual.done > 0 || df.original.done > 0)) {
-    figs.append(progRing(df.original, { kind: "orig", label: "orig",
-      full: df.original.total > 0 && df.original.pct >= 100 }));
-    figs.append(progRing(on, { kind: "ontime", label: "on-time",
-      full: on.total > 0 && on.pct >= 100 }));
+  if (bonusOnly) {
+    figs.append(progRing(bon, { kind: "bonus", label: "bonus", big: true, full: isComplete }));
+  } else {
+    const on = df.ontime || { pct: 0, done: 0, total: 0 };
+    figs.append(progRing(df.actual, { kind: "actual", label: "actual", big: true, full: isComplete }));
+    const reached = isPast || isToday;
+    if (df.original.total && (reached || df.actual.done > 0 || df.original.done > 0)) {
+      figs.append(progRing(df.original, { kind: "orig", label: "orig",
+        full: df.original.total > 0 && df.original.pct >= 100 }));
+      figs.append(progRing(on, { kind: "ontime", label: "on-time",
+        full: on.total > 0 && on.pct >= 100 }));
+    }
   }
   head.append(figs);
 
@@ -1787,18 +1834,24 @@ function bonusTrack(rm, bonus, dayId) {
     if (shown) openBonus.delete(key); else openBonus.add(key);
   };
   for (const t of bonus) {
-    const row = bonusRow(rm, t);
+    const row = bonusRow(rm, t, dayId);
     box.append(row);
   }
   wrap.append(head, box);
   return wrap;
 }
-function bonusRow(rm, task) {
+function bonusRow(rm, task, hostId) {
   const slug = rm.slug;
   const done = store.isDone(slug, task.id);
   const row = el("div.task.bonus" + (done ? ".done" : ""), { dataset: { task: task.id } });
   const cb = el("button.checkbox", { role: "checkbox", "aria-checked": done ? "true" : "false", html: checkIcon() });
-  cb.onclick = () => { lastToggled = task.id; store.setTask(slug, task.id, !store.isDone(slug, task.id)); rerender(); };
+  cb.onclick = () => {
+    lastToggled = task.id; lastToggledHost = hostId;
+    const willDo = !store.isDone(slug, task.id);
+    store.setTask(slug, task.id, willDo);
+    if (willDo && hostId && currentDay(rm, slug, task) === hostId && isDayComplete(rm, hostId)) celebrateDay = hostId;
+    rerender();
+  };
   row.append(cb);
   const bodyEl = el("div.t-body");
   bodyEl.append(taskLabelBlock(task));

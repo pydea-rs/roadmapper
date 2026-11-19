@@ -42,15 +42,15 @@
 //     honest re-price outgrows that — chose eight weeks beyond those limits. Result: the
 //     busiest stretch averages ~2h/day against the 3h ceiling, where the plan it replaces
 //     really wanted ~3h every day while claiming 2.
-//  5. RE-DATED. Day 1 is **2026-10-24** (a Saturday). The owner first moved it to 2026-09-23
+//  5. RE-DATED. Day 1 is **2026-11-07** (a Saturday). The owner first moved it to 2026-09-23
 //     on 2026-09-25 so that a fresh start (old database deleted) opens with nothing already
-//     overdue, then on 2026-10-14 shifted every date +31 days and changed nothing else. All
-//     four roadmaps share one week frame: week i starts 2026-10-24 + 7i.
+//     overdue, shifted +31 days on 2026-10-14, and shifted +14 days on 2026-11-19. All
+//     four roadmaps share one week frame: week i starts 2026-11-07 + 7i.
 // Day ids were renumbered and milestones/interludes re-anchored (no DB backward
 // compatibility needed); day/week references inside the content point at the new ids.
 // Ids quoted in the dated notes ABOVE use their own day's numbering.
 // The re-pricer, planner and file builder live in scratchpad/cap4/.
-// For this file: 97 → 134 cards, 32 → 48 weeks, 2026-10-25 → 2027-09-24. Required work
+// For this file: 97 → 134 cards, 32 → 48 weeks, 2026-11-08 → 2027-10-08. Required work
 // 132.3h → 147.2h — a smaller rise than the other roadmaps because the fix here was
 // mostly SPLITTING: 203 reading leaves became 289, one source each. 2–3 cards a week;
 // 49 tasks carried, 37 continuation cards, 91 split parts.
@@ -184,60 +184,60 @@ registerRoadmap({
   ],
 
   weeks: [
-    { id: "w1", title: "Week 1 — The wire, the container, the process", start: "2026-10-24" },
-    { id: "w2", title: "Week 2 — IP addressing, subnets & CIDR; Images, layers & the Dockerfile that actually caches", start: "2026-10-31" },
-    { id: "w3", title: "Week 3 — The B-tree index; TCP vs UDP — handshake, flow, congestion, HOL", start: "2026-11-07" },
-    { id: "w4", title: "Week 4 — Kubernetes: the reconciliation loop + core objects; Memory hierarchy", start: "2026-11-14" },
-    { id: "w5", title: "Week 5 — EXPLAIN: reading the query planner's mind", start: "2026-11-21" },
-    { id: "w6", title: "Week 6 — DNS resolution, end to end; k8s scheduling, probes, requests/limits & HPA", start: "2026-11-28" },
-    { id: "w7", title: "Week 7 — Security foundations: OWASP 2025 + authn vs authz; The TLS 1.3 handshake & PKI", start: "2026-12-05" },
-    { id: "w8", title: "Week 8 — MVCC: how Postgres lets readers not block writers; Getting it out the door", start: "2026-12-12" },
-    { id: "w9", title: "Week 9 — Crypto primitives; HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC", start: "2026-12-19" },
-    { id: "w10", title: "Week 10 — Redis internals; Isolation levels & the anomalies they prevent", start: "2026-12-26" },
-    { id: "w11", title: "Week 11 — Observability: golden signals, histograms & why p99; Inside the EVM", start: "2027-01-02" },
-    { id: "w12", title: "Week 12 — Message queues vs logs — the core distinction", start: "2027-01-09" },
-    { id: "w13", title: "Week 13 — Load balancers (L4 vs L7), reverse proxies & CDNs; …", start: "2027-01-16" },
-    { id: "w14", title: "Week 14 — Locking, deadlocks & the write-ahead log; …", start: "2027-01-23" },
-    { id: "w15", title: "Week 15 — SLIs, SLOs, error budgets & tracing; How a server accepts 10k connections; …", start: "2027-01-30" },
-    { id: "w16", title: "Week 16 — Kafka's model: partitions, offsets, consumer groups, ISR", start: "2027-02-06" },
-    { id: "w17", title: "Week 17 — Review: Rust ownership & the borrow checker; …", start: "2027-02-13" },
-    { id: "w18", title: "Week 18 — Sealevel, PDAs & CPIs — Solana's parallel runtime; …", start: "2027-02-20" },
-    { id: "w19", title: "Week 19 — Consensus: PoW, longest chain & what 'finality' means; …", start: "2027-02-27" },
-    { id: "w20", title: "Week 20 — 🎓 Capstone: smart-contract security — reentrancy & oracle manipulation; …", start: "2027-03-06" },
-    { id: "w21", title: "Week 21 — VACUUM, autovacuum & the xmin horizon; Virtual memory: page tables & the TLB", start: "2027-03-13" },
-    { id: "w22", title: "Week 22 — Rollups: optimistic vs ZK — when do you pay for trust?", start: "2027-03-20" },
-    { id: "w23", title: "Week 23 — BGP & Anycast: how the internet actually routes; Kafka exactly-once", start: "2027-03-27" },
-    { id: "w24", title: "Week 24 — Consensus II: Paxos vs Raft, and Byzantine faults (PBFT); TOAST & HOT updates", start: "2027-04-03" },
-    { id: "w25", title: "Week 25 — Service mesh, mTLS & workload identity (SPIFFE); Data availability & EIP-4844 blobs", start: "2027-04-10" },
-    { id: "w26", title: "Week 26 — Review: Go's scheduler (G-M-P) & async preemption; …", start: "2027-04-17" },
-    { id: "w27", title: "Week 27 — CAP done right — and PACELC; Join algorithms & how the planner picks; …", start: "2027-04-24" },
-    { id: "w28", title: "Week 28 — MEV & Proposer-Builder Separation", start: "2027-05-01" },
-    { id: "w29", title: "Week 29 — Kafka consumer rebalances & log compaction; Upgradeable contracts", start: "2027-05-08" },
-    { id: "w30", title: "Week 30 — Logical clocks; Partitioning & sharding; QUIC internals beyond HTTP/3", start: "2027-05-15" },
-    { id: "w31", title: "Week 31 — Account abstraction; Review: the Python GIL & free-threading (3.14)", start: "2027-05-22" },
-    { id: "w32", title: "Week 32 — Supply-chain security; Distributed transactions; …", start: "2027-05-29" },
-    { id: "w33", title: "Week 33 — CDC & the transactional outbox", start: "2027-06-05" },
-    { id: "w34", title: "Week 34 — ZK proofs: SNARKs vs STARKs (intuition); Distributed locks & the Redlock debate", start: "2027-06-12" },
-    { id: "w35", title: "Week 35 — io_uring vs epoll; Quorums (R + W > N) & tunable consistency; …", start: "2027-06-19" },
-    { id: "w36", title: "Week 36 — eBPF & XDP: programmable packets in the kernel", start: "2027-06-26" },
-    { id: "w37", title: "Week 37 — Solana under the hood; Review: C++ memory model & std::atomic ordering", start: "2027-07-03" },
-    { id: "w38", title: "Week 38 — Stream processing; Performance analysis; Signature replay & EIP-712 typed signing", start: "2027-07-10" },
-    { id: "w39", title: "Week 39 — 🎓 Review: Rust async — Future, Pin & the state machine", start: "2027-07-17" },
-    { id: "w40", title: "Week 40 — Amortized O(1); NUMA, cache coherence (MESI) & false sharing", start: "2027-07-24" },
-    { id: "w41", title: "Week 41 — Hash maps: why O(1), collisions & Swiss tables; …", start: "2027-07-31" },
-    { id: "w42", title: "Week 42 — Garbage collection; The heap allocator", start: "2027-08-07" },
-    { id: "w43", title: "Week 43 — IEEE 754: why 0.1 + 0.2 ≠ 0.3; …", start: "2027-08-14" },
-    { id: "w44", title: "Week 44 — Branch prediction & speculative execution (Spectre); …", start: "2027-08-21" },
-    { id: "w45", title: "Week 45 — A map of the territory; …", start: "2027-08-28" },
-    { id: "w46", title: "Week 46 — Lexing & parsing; …", start: "2027-09-04" },
-    { id: "w47", title: "Week 47 — Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt; …", start: "2027-09-11" },
-    { id: "w48", title: "Week 48 — Review: LLVM — IR, SSA & the shared backend behind Clang & rustc; …", start: "2027-09-18" },
+    { id: "w1", title: "Week 1 — The wire, the container, the process", start: "2026-11-07" },
+    { id: "w2", title: "Week 2 — IP addressing, subnets & CIDR; Images, layers & the Dockerfile that actually caches", start: "2026-11-14" },
+    { id: "w3", title: "Week 3 — The B-tree index; TCP vs UDP — handshake, flow, congestion, HOL", start: "2026-11-21" },
+    { id: "w4", title: "Week 4 — Kubernetes: the reconciliation loop + core objects; Memory hierarchy", start: "2026-11-28" },
+    { id: "w5", title: "Week 5 — EXPLAIN: reading the query planner's mind", start: "2026-12-05" },
+    { id: "w6", title: "Week 6 — DNS resolution, end to end; k8s scheduling, probes, requests/limits & HPA", start: "2026-12-12" },
+    { id: "w7", title: "Week 7 — Security foundations: OWASP 2025 + authn vs authz; The TLS 1.3 handshake & PKI", start: "2026-12-19" },
+    { id: "w8", title: "Week 8 — MVCC: how Postgres lets readers not block writers; Getting it out the door", start: "2026-12-26" },
+    { id: "w9", title: "Week 9 — Crypto primitives; HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC", start: "2027-01-02" },
+    { id: "w10", title: "Week 10 — Redis internals; Isolation levels & the anomalies they prevent", start: "2027-01-09" },
+    { id: "w11", title: "Week 11 — Observability: golden signals, histograms & why p99; Inside the EVM", start: "2027-01-16" },
+    { id: "w12", title: "Week 12 — Message queues vs logs — the core distinction", start: "2027-01-23" },
+    { id: "w13", title: "Week 13 — Load balancers (L4 vs L7), reverse proxies & CDNs; …", start: "2027-01-30" },
+    { id: "w14", title: "Week 14 — Locking, deadlocks & the write-ahead log; …", start: "2027-02-06" },
+    { id: "w15", title: "Week 15 — SLIs, SLOs, error budgets & tracing; How a server accepts 10k connections; …", start: "2027-02-13" },
+    { id: "w16", title: "Week 16 — Kafka's model: partitions, offsets, consumer groups, ISR", start: "2027-02-20" },
+    { id: "w17", title: "Week 17 — Review: Rust ownership & the borrow checker; …", start: "2027-02-27" },
+    { id: "w18", title: "Week 18 — Sealevel, PDAs & CPIs — Solana's parallel runtime; …", start: "2027-03-06" },
+    { id: "w19", title: "Week 19 — Consensus: PoW, longest chain & what 'finality' means; …", start: "2027-03-13" },
+    { id: "w20", title: "Week 20 — 🎓 Capstone: smart-contract security — reentrancy & oracle manipulation; …", start: "2027-03-20" },
+    { id: "w21", title: "Week 21 — VACUUM, autovacuum & the xmin horizon; Virtual memory: page tables & the TLB", start: "2027-03-27" },
+    { id: "w22", title: "Week 22 — Rollups: optimistic vs ZK — when do you pay for trust?", start: "2027-04-03" },
+    { id: "w23", title: "Week 23 — BGP & Anycast: how the internet actually routes; Kafka exactly-once", start: "2027-04-10" },
+    { id: "w24", title: "Week 24 — Consensus II: Paxos vs Raft, and Byzantine faults (PBFT); TOAST & HOT updates", start: "2027-04-17" },
+    { id: "w25", title: "Week 25 — Service mesh, mTLS & workload identity (SPIFFE); Data availability & EIP-4844 blobs", start: "2027-04-24" },
+    { id: "w26", title: "Week 26 — Review: Go's scheduler (G-M-P) & async preemption; …", start: "2027-05-01" },
+    { id: "w27", title: "Week 27 — CAP done right — and PACELC; Join algorithms & how the planner picks; …", start: "2027-05-08" },
+    { id: "w28", title: "Week 28 — MEV & Proposer-Builder Separation", start: "2027-05-15" },
+    { id: "w29", title: "Week 29 — Kafka consumer rebalances & log compaction; Upgradeable contracts", start: "2027-05-22" },
+    { id: "w30", title: "Week 30 — Logical clocks; Partitioning & sharding; QUIC internals beyond HTTP/3", start: "2027-05-29" },
+    { id: "w31", title: "Week 31 — Account abstraction; Review: the Python GIL & free-threading (3.14)", start: "2027-06-05" },
+    { id: "w32", title: "Week 32 — Supply-chain security; Distributed transactions; …", start: "2027-06-12" },
+    { id: "w33", title: "Week 33 — CDC & the transactional outbox", start: "2027-06-19" },
+    { id: "w34", title: "Week 34 — ZK proofs: SNARKs vs STARKs (intuition); Distributed locks & the Redlock debate", start: "2027-06-26" },
+    { id: "w35", title: "Week 35 — io_uring vs epoll; Quorums (R + W > N) & tunable consistency; …", start: "2027-07-03" },
+    { id: "w36", title: "Week 36 — eBPF & XDP: programmable packets in the kernel", start: "2027-07-10" },
+    { id: "w37", title: "Week 37 — Solana under the hood; Review: C++ memory model & std::atomic ordering", start: "2027-07-17" },
+    { id: "w38", title: "Week 38 — Stream processing; Performance analysis; Signature replay & EIP-712 typed signing", start: "2027-07-24" },
+    { id: "w39", title: "Week 39 — 🎓 Review: Rust async — Future, Pin & the state machine", start: "2027-07-31" },
+    { id: "w40", title: "Week 40 — Amortized O(1); NUMA, cache coherence (MESI) & false sharing", start: "2027-08-07" },
+    { id: "w41", title: "Week 41 — Hash maps: why O(1), collisions & Swiss tables; …", start: "2027-08-14" },
+    { id: "w42", title: "Week 42 — Garbage collection; The heap allocator", start: "2027-08-21" },
+    { id: "w43", title: "Week 43 — IEEE 754: why 0.1 + 0.2 ≠ 0.3; …", start: "2027-08-28" },
+    { id: "w44", title: "Week 44 — Branch prediction & speculative execution (Spectre); …", start: "2027-09-04" },
+    { id: "w45", title: "Week 45 — A map of the territory; …", start: "2027-09-11" },
+    { id: "w46", title: "Week 46 — Lexing & parsing; …", start: "2027-09-18" },
+    { id: "w47", title: "Week 47 — Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt; …", start: "2027-09-25" },
+    { id: "w48", title: "Week 48 — Review: LLVM — IR, SSA & the shared backend behind Clang & rustc; …", start: "2027-10-02" },
   ],
 
   days: [
     /* ---------------- Week 1 ---------------- */
     {
-      id: "d01", date: "2026-10-25", week: "w1", title: "The OSI myth vs how the internet really layers",
+      id: "d01", date: "2026-11-08", week: "w1", title: "The OSI myth vs how the internet really layers",
       theme: "Networking · thread part 1 — encapsulation is the load-bearing idea, not the number 7.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 70,
@@ -268,7 +268,7 @@ registerRoadmap({
       note: "Bedrock begins. 2–3 short days a week, one topic each — separate from your main roadmaps.",
     },
     {
-      id: "d02", date: "2026-10-26", week: "w1", title: "What a container actually is",
+      id: "d02", date: "2026-11-09", week: "w1", title: "What a container actually is",
       theme: "DevOps · thread part 1 — a container is a Linux process with a restricted view, not a VM.",
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 75, lead: `<b>DevOps ①</b> — see a container built from raw kernel primitives.`, model: `There is <b>no "container" object in the kernel</b>. <b>Namespaces</b> limit what a process can <i>see</i> (PID, mount, net, UTS, IPC, user); <b>cgroups</b> limit what it can <i>use</i> (CPU, memory, IO). That's the whole trick.`, cards: [
@@ -286,7 +286,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d03", date: "2026-10-28", week: "w1", title: "Processes vs threads vs coroutines",
+      id: "d03", date: "2026-11-11", week: "w1", title: "Processes vs threads vs coroutines",
       theme: "Systems · thread part 1 — who schedules it, and what's shared.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 40,
@@ -303,7 +303,7 @@ registerRoadmap({
 
     /* ---------------- Week 2 ---------------- */
     {
-      id: "d04", date: "2026-10-31", week: "w2", title: "Processes vs threads vs coroutines (cont.)",
+      id: "d04", date: "2026-11-14", week: "w2", title: "Processes vs threads vs coroutines (cont.)",
       theme: "Finish “Processes vs threads vs coroutines” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d03", obj: SYS, cat: "read", est: 75,
@@ -320,7 +320,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d05", date: "2026-11-03", week: "w2", title: "IP addressing, subnets & CIDR",
+      id: "d05", date: "2026-11-17", week: "w2", title: "IP addressing, subnets & CIDR",
       theme: "Networking · part 2 — stop CIDR from being magic.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 65,
@@ -349,7 +349,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d06", date: "2026-11-06", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
+      id: "d06", date: "2026-11-20", week: "w2", title: "Images, layers & the Dockerfile that actually caches",
       theme: "DevOps · part 2 — an image is a manifest + content-addressed layers.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 45,
@@ -366,7 +366,7 @@ registerRoadmap({
 
     /* ---------------- Week 3 ---------------- */
     {
-      id: "d07", date: "2026-11-08", week: "w3", title: "Images, layers & the Dockerfile that actually caches (cont.)",
+      id: "d07", date: "2026-11-22", week: "w3", title: "Images, layers & the Dockerfile that actually caches (cont.)",
       theme: "Finish “Images, layers & the Dockerfile that actually caches” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d06", obj: OPS, cat: "read", est: 55,
@@ -383,7 +383,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d08", date: "2026-11-09", week: "w3", title: "The B-tree index: how it works, when it hurts",
+      id: "d08", date: "2026-11-23", week: "w3", title: "The B-tree index: how it works, when it hurts",
       theme: "Databases · part 1 — an index is a second, sorted copy kept balanced.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 80,
@@ -410,7 +410,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d09", date: "2026-11-12", week: "w3", title: "TCP vs UDP — handshake, flow, congestion, HOL",
+      id: "d09", date: "2026-11-26", week: "w3", title: "TCP vs UDP — handshake, flow, congestion, HOL",
       theme: "Networking · part 3 — reliability is a feature you pay for.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 55,
@@ -428,7 +428,7 @@ registerRoadmap({
 
     /* ---------------- Week 4 ---------------- */
     {
-      id: "d10", date: "2026-11-14", week: "w4", title: "Kubernetes: the reconciliation loop + core objects",
+      id: "d10", date: "2026-11-28", week: "w4", title: "Kubernetes: the reconciliation loop + core objects",
       theme: "DevOps · part 3 — everything in k8s is a controller driving current → desired.",
       tasks: [
         { id: "t1", carried: "d09", obj: NET, cat: "read", est: 40,
@@ -460,7 +460,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d11", date: "2026-11-18", week: "w4", title: "Kubernetes: the reconciliation loop + core objects (cont.)",
+      id: "d11", date: "2026-12-02", week: "w4", title: "Kubernetes: the reconciliation loop + core objects (cont.)",
       theme: "Finish “Kubernetes: the reconciliation loop + core objects” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d10", obj: OPS, cat: "read", est: 30,
@@ -471,7 +471,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d12", date: "2026-11-20", week: "w4", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
+      id: "d12", date: "2026-12-04", week: "w4", title: "Memory hierarchy: CPU cache, virtual memory & the page cache",
       theme: "Systems · part 2 — cache lines, page tables, and why a warm read never hits disk.",
       tasks: [
         { id: "t1", carried: "d10", obj: OPS, cat: "read", est: 30,
@@ -498,7 +498,7 @@ registerRoadmap({
 
     /* ---------------- Week 5 ---------------- */
     {
-      id: "d13", date: "2026-11-23", week: "w5", title: "Memory hierarchy: CPU cache, virtual memory & the page cache (cont.)",
+      id: "d13", date: "2026-12-07", week: "w5", title: "Memory hierarchy: CPU cache, virtual memory & the page cache (cont.)",
       theme: "Finish “Memory hierarchy: CPU cache, virtual memory & the page cache” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d12", obj: SYS, cat: "read", est: 70,
@@ -518,7 +518,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d14", date: "2026-11-24", week: "w5", title: "EXPLAIN: reading the query planner's mind",
+      id: "d14", date: "2026-12-08", week: "w5", title: "EXPLAIN: reading the query planner's mind",
       theme: "Databases · part 2 — estimated vs actual rows is the #1 diagnostic.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -536,7 +536,7 @@ registerRoadmap({
       note: "The first week where all four threads are in motion at once — Networking + DevOps + Systems + DB.",
     },
     {
-      id: "d15", date: "2026-11-26", week: "w5", title: "EXPLAIN: reading the query planner's mind (cont.)",
+      id: "d15", date: "2026-12-10", week: "w5", title: "EXPLAIN: reading the query planner's mind (cont.)",
       theme: "Finish “EXPLAIN: reading the query planner's mind” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d14", obj: DATA, cat: "read", est: 25,
@@ -554,7 +554,7 @@ registerRoadmap({
 
     /* ---------------- Week 6 ---------------- */
     {
-      id: "d16", date: "2026-11-28", week: "w6", title: "DNS resolution, end to end",
+      id: "d16", date: "2026-12-12", week: "w6", title: "DNS resolution, end to end",
       theme: "Networking · part 4 — the recursive resolver as middleman.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 60,
@@ -584,7 +584,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d17", date: "2026-11-29", week: "w6", title: "k8s scheduling, probes, requests/limits & HPA",
+      id: "d17", date: "2026-12-13", week: "w6", title: "k8s scheduling, probes, requests/limits & HPA",
       theme: "DevOps · part 4 — the operational levers you get asked about.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 70,
@@ -601,7 +601,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d18", date: "2026-12-02", week: "w6", title: "k8s scheduling, probes, requests/limits & HPA (cont.)",
+      id: "d18", date: "2026-12-16", week: "w6", title: "k8s scheduling, probes, requests/limits & HPA (cont.)",
       theme: "Finish “k8s scheduling, probes, requests/limits & HPA” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d17", obj: OPS, cat: "read", est: 45,
@@ -620,7 +620,7 @@ registerRoadmap({
 
     /* ---------------- Week 7 ---------------- */
     {
-      id: "d19", date: "2026-12-07", week: "w7", title: "Security foundations: OWASP 2025 + authn vs authz",
+      id: "d19", date: "2026-12-21", week: "w7", title: "Security foundations: OWASP 2025 + authn vs authz",
       theme: "Security · part 1 — the vocabulary you're measured against.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 60,
@@ -637,7 +637,7 @@ registerRoadmap({
       note: "🏁 Week-7 checkpoint: Networking + DevOps foundations laid, plus Systems, DB and the security map.",
     },
     {
-      id: "d20", date: "2026-12-10", week: "w7", title: "Security foundations: OWASP 2025 + authn vs authz (cont.)",
+      id: "d20", date: "2026-12-24", week: "w7", title: "Security foundations: OWASP 2025 + authn vs authz (cont.)",
       theme: "Finish “Security foundations: OWASP 2025 + authn vs authz” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d19", obj: SEC, cat: "read", est: 40,
@@ -653,7 +653,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d21", date: "2026-12-11", week: "w7", title: "The TLS 1.3 handshake & PKI",
+      id: "d21", date: "2026-12-25", week: "w7", title: "The TLS 1.3 handshake & PKI",
       theme: "Networking · part 5 — how two strangers agree a secret over a wiretap.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 75,
@@ -676,7 +676,7 @@ registerRoadmap({
 
     /* ---------------- Week 8 ---------------- */
     {
-      id: "d22", date: "2026-12-13", week: "w8", title: "MVCC: how Postgres lets readers not block writers",
+      id: "d22", date: "2026-12-27", week: "w8", title: "MVCC: how Postgres lets readers not block writers",
       theme: "Databases · part 3 — every row carries its own version stamps.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 55,
@@ -692,7 +692,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d23", date: "2026-12-16", week: "w8", title: "MVCC: how Postgres lets readers not block writers (cont.)",
+      id: "d23", date: "2026-12-30", week: "w8", title: "MVCC: how Postgres lets readers not block writers (cont.)",
       theme: "Finish “MVCC: how Postgres lets readers not block writers” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d22", obj: DATA, cat: "read", est: 50,
@@ -714,7 +714,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d24", date: "2026-12-17", week: "w8", title: "Getting it out the door: deploys, GitOps & 12-factor",
+      id: "d24", date: "2026-12-31", week: "w8", title: "Getting it out the door: deploys, GitOps & 12-factor",
       theme: "DevOps · part 5 — rolling vs blue-green vs canary, and config in the environment.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -739,7 +739,7 @@ registerRoadmap({
 
     /* ---------------- Week 9 ---------------- */
     {
-      id: "d25", date: "2026-12-19", week: "w9", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
+      id: "d25", date: "2027-01-02", week: "w9", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees",
       theme: "Blockchain · part 1 — get the three-way distinction exactly right.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 70,
@@ -755,7 +755,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d26", date: "2026-12-21", week: "w9", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees (cont.)",
+      id: "d26", date: "2027-01-04", week: "w9", title: "Crypto primitives: hash vs sign vs encrypt, Merkle trees (cont.)",
       theme: "Finish “Crypto primitives: hash vs sign vs encrypt, Merkle trees” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d25", obj: CHAIN, cat: "read", est: 45,
@@ -771,7 +771,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d27", date: "2026-12-22", week: "w9", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
+      id: "d27", date: "2027-01-05", week: "w9", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC",
       theme: "Networking · part 6 — each version fixes the last one's bottleneck.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 60,
@@ -789,7 +789,7 @@ registerRoadmap({
 
     /* ---------------- Week 10 ---------------- */
     {
-      id: "d28", date: "2026-12-27", week: "w10", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC (cont.)",
+      id: "d28", date: "2027-01-10", week: "w10", title: "HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC (cont.)",
       theme: "Finish “HTTP/1.1 → HTTP/2 → HTTP/3 & QUIC” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d27", obj: NET, cat: "read", est: 50,
@@ -806,7 +806,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d29", date: "2026-12-31", week: "w10", title: "Redis internals: why single-threaded is fast",
+      id: "d29", date: "2027-01-14", week: "w10", title: "Redis internals: why single-threaded is fast",
       theme: "Caching · part 1 — one event loop, atomic commands, no locks.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 85,
@@ -831,7 +831,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d30", date: "2027-01-01", week: "w10", title: "Isolation levels & the anomalies they prevent",
+      id: "d30", date: "2027-01-15", week: "w10", title: "Isolation levels & the anomalies they prevent",
       theme: "Databases · part 4 — and the one everyone misses: write skew.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 70,
@@ -850,7 +850,7 @@ registerRoadmap({
 
     /* ---------------- Week 11 ---------------- */
     {
-      id: "d31", date: "2027-01-02", week: "w11", title: "Isolation levels & the anomalies they prevent (cont.)",
+      id: "d31", date: "2027-01-16", week: "w11", title: "Isolation levels & the anomalies they prevent (cont.)",
       theme: "Finish “Isolation levels & the anomalies they prevent” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d30", obj: DATA, cat: "read", est: 45,
@@ -866,7 +866,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d32", date: "2027-01-04", week: "w11", title: "Observability: golden signals, histograms & why p99",
+      id: "d32", date: "2027-01-18", week: "w11", title: "Observability: golden signals, histograms & why p99",
       theme: "DevOps · part 6 — averages lie; you live at the tail.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 60,
@@ -882,7 +882,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d33", date: "2027-01-06", week: "w11", title: "Inside the EVM: stack machine, storage, gas",
+      id: "d33", date: "2027-01-20", week: "w11", title: "Inside the EVM: stack machine, storage, gas",
       theme: "Blockchain · part 2 — what your Solidity actually compiles down to.",
       tasks: [
         { id: "t1", carried: "d32", obj: OPS, cat: "read", est: 40,
@@ -910,7 +910,7 @@ registerRoadmap({
 
     /* ---------------- Week 12 ---------------- */
     {
-      id: "d34", date: "2027-01-10", week: "w12", title: "Inside the EVM: stack machine, storage, gas (cont.)",
+      id: "d34", date: "2027-01-24", week: "w12", title: "Inside the EVM: stack machine, storage, gas (cont.)",
       theme: "Finish “Inside the EVM: stack machine, storage, gas” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d33", obj: CHAIN, cat: "read", est: 70,
@@ -934,7 +934,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d35", date: "2027-01-12", week: "w12", title: "Message queues vs logs — the core distinction",
+      id: "d35", date: "2027-01-26", week: "w12", title: "Message queues vs logs — the core distinction",
       theme: "Messaging · part 1 — delete-on-ack vs retain-and-offset.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 70,
@@ -950,7 +950,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d36", date: "2027-01-14", week: "w12", title: "Message queues vs logs — the core distinction (cont.)",
+      id: "d36", date: "2027-01-28", week: "w12", title: "Message queues vs logs — the core distinction (cont.)",
       theme: "Finish “Message queues vs logs — the core distinction” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d35", obj: MSG, cat: "read", est: 35,
@@ -968,7 +968,7 @@ registerRoadmap({
 
     /* ---------------- Week 13 ---------------- */
     {
-      id: "d37", date: "2027-01-18", week: "w13", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
+      id: "d37", date: "2027-02-01", week: "w13", title: "Load balancers (L4 vs L7), reverse proxies & CDNs",
       theme: "Networking · part 7 — what nginx and your ALB really do.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 70,
@@ -990,7 +990,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d38", date: "2027-01-20", week: "w13", title: "OAuth 2.0, OIDC, PKCE & JWT the right way",
+      id: "d38", date: "2027-02-03", week: "w13", title: "OAuth 2.0, OIDC, PKCE & JWT the right way",
       theme: "Security · part 2 — and the alg:none footgun.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 90,
@@ -1007,7 +1007,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d39", date: "2027-01-22", week: "w13", title: "OAuth 2.0, OIDC, PKCE & JWT the right way (cont.)",
+      id: "d39", date: "2027-02-05", week: "w13", title: "OAuth 2.0, OIDC, PKCE & JWT the right way (cont.)",
       theme: "Finish “OAuth 2.0, OIDC, PKCE & JWT the right way” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d38", obj: SEC, cat: "read", est: 40,
@@ -1031,7 +1031,7 @@ registerRoadmap({
 
     /* ---------------- Week 14 ---------------- */
     {
-      id: "d40", date: "2027-01-23", week: "w14", title: "Locking, deadlocks & the write-ahead log",
+      id: "d40", date: "2027-02-06", week: "w14", title: "Locking, deadlocks & the write-ahead log",
       theme: "Databases · part 5 — log the change before you touch the page.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -1052,7 +1052,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d41", date: "2027-01-24", week: "w14", title: "Solana's account model — everything is an account",
+      id: "d41", date: "2027-02-07", week: "w14", title: "Solana's account model — everything is an account",
       theme: "Blockchain · part 3 — stateless programs + separate data accounts.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 40,
@@ -1068,7 +1068,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d42", date: "2027-01-28", week: "w14", title: "Solana's account model — everything is an account (cont.)",
+      id: "d42", date: "2027-02-11", week: "w14", title: "Solana's account model — everything is an account (cont.)",
       theme: "Finish “Solana's account model — everything is an account” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d41", obj: CHAIN, cat: "read", est: 55,
@@ -1087,7 +1087,7 @@ registerRoadmap({
 
     /* ---------------- Week 15 ---------------- */
     {
-      id: "d43", date: "2027-02-01", week: "w15", title: "SLIs, SLOs, error budgets & tracing",
+      id: "d43", date: "2027-02-15", week: "w15", title: "SLIs, SLOs, error budgets & tracing",
       theme: "DevOps · part 7 — turn reliability into a number you can spend.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 80,
@@ -1109,7 +1109,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d44", date: "2027-02-02", week: "w15", title: "How a server accepts 10k connections: epoll & the event loop",
+      id: "d44", date: "2027-02-16", week: "w15", title: "How a server accepts 10k connections: epoll & the event loop",
       theme: "Systems · part 3 — the pattern behind nginx, Node, tokio & Go's netpoller.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 75,
@@ -1137,7 +1137,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d45", date: "2027-02-03", week: "w15", title: "A transaction's life & EIP-1559 fees",
+      id: "d45", date: "2027-02-17", week: "w15", title: "A transaction's life & EIP-1559 fees",
       theme: "Blockchain · part 4 — base fee burned, tip to the proposer.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 30,
@@ -1154,7 +1154,7 @@ registerRoadmap({
 
     /* ---------------- Week 16 ---------------- */
     {
-      id: "d46", date: "2027-02-06", week: "w16", title: "A transaction's life & EIP-1559 fees (cont.)",
+      id: "d46", date: "2027-02-20", week: "w16", title: "A transaction's life & EIP-1559 fees (cont.)",
       theme: "Finish “A transaction's life & EIP-1559 fees” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d45", obj: CHAIN, cat: "read", est: 70,
@@ -1172,7 +1172,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d47", date: "2027-02-11", week: "w16", title: "Kafka's model: partitions, offsets, consumer groups, ISR",
+      id: "d47", date: "2027-02-25", week: "w16", title: "Kafka's model: partitions, offsets, consumer groups, ISR",
       theme: "Messaging · part 2 — the unit of parallelism is the partition.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 65,
@@ -1188,7 +1188,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d48", date: "2027-02-12", week: "w16", title: "Kafka's model: partitions, offsets, consumer groups, ISR (cont.)",
+      id: "d48", date: "2027-02-26", week: "w16", title: "Kafka's model: partitions, offsets, consumer groups, ISR (cont.)",
       theme: "Finish “Kafka's model: partitions, offsets, consumer groups, ISR” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d47", obj: MSG, cat: "read", est: 85,
@@ -1208,7 +1208,7 @@ registerRoadmap({
 
     /* ---------------- Week 17 ---------------- */
     {
-      id: "d49", date: "2027-02-15", week: "w17", title: "Review: Rust ownership & the borrow checker",
+      id: "d49", date: "2027-03-01", week: "w17", title: "Review: Rust ownership & the borrow checker",
       theme: "Review · a deliberate re-grounding in a hard model you already use.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -1230,7 +1230,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d50", date: "2027-02-16", week: "w17", title: "Cache patterns, the stampede & invalidation",
+      id: "d50", date: "2027-03-02", week: "w17", title: "Cache patterns, the stampede & invalidation",
       theme: "Caching · part 2 — the hard part isn't caching, it's invalidating.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 90,
@@ -1261,7 +1261,7 @@ registerRoadmap({
 
     /* ---------------- Week 18 ---------------- */
     {
-      id: "d51", date: "2027-02-21", week: "w18", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
+      id: "d51", date: "2027-03-07", week: "w18", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime",
       theme: "Blockchain · part 5 — why declaring accounts up front buys parallelism.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 60,
@@ -1277,7 +1277,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d52", date: "2027-02-24", week: "w18", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime (cont.)",
+      id: "d52", date: "2027-03-10", week: "w18", title: "Sealevel, PDAs & CPIs — Solana's parallel runtime (cont.)",
       theme: "Finish “Sealevel, PDAs & CPIs — Solana's parallel runtime” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d51", obj: CHAIN, cat: "read", est: 45,
@@ -1294,7 +1294,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d53", date: "2027-02-26", week: "w18", title: "Load & stress testing without fooling yourself",
+      id: "d53", date: "2027-03-12", week: "w18", title: "Load & stress testing without fooling yourself",
       theme: "DevOps · part 8 — coordinated omission and the USE method.",
       tasks: [
         { id: "t1", obj: OPS, cat: "watch", est: 85,
@@ -1312,7 +1312,7 @@ registerRoadmap({
 
     /* ---------------- Week 19 ---------------- */
     {
-      id: "d54", date: "2027-02-27", week: "w19", title: "Consensus: PoW, longest chain & what 'finality' means",
+      id: "d54", date: "2027-03-13", week: "w19", title: "Consensus: PoW, longest chain & what 'finality' means",
       theme: "Blockchain · part 6 — agreement without a coordinator.",
       tasks: [
         { id: "t1", carried: "d53", obj: OPS, cat: "watch", est: 25,
@@ -1337,7 +1337,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d55", date: "2027-03-02", week: "w19", title: "Consensus: PoW, longest chain & what 'finality' means (cont.)",
+      id: "d55", date: "2027-03-16", week: "w19", title: "Consensus: PoW, longest chain & what 'finality' means (cont.)",
       theme: "Finish “Consensus: PoW, longest chain & what 'finality' means” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d54", obj: CHAIN, cat: "read", est: 80,
@@ -1355,7 +1355,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d56", date: "2027-03-04", week: "w19", title: "Password hashing, sessions vs tokens & TLS recap",
+      id: "d56", date: "2027-03-18", week: "w19", title: "Password hashing, sessions vs tokens & TLS recap",
       theme: "Security · part 3 — store secrets like they'll be stolen.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 65,
@@ -1385,7 +1385,7 @@ registerRoadmap({
 
     /* ---------------- Week 20 ---------------- */
     {
-      id: "d57", date: "2027-03-07", week: "w20", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
+      id: "d57", date: "2027-03-21", week: "w20", title: "🎓 Capstone: smart-contract security — reentrancy & oracle manipulation",
       theme: "Security · part 4 — the two bug classes that drain DeFi, in your domain.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 80,
@@ -1419,7 +1419,7 @@ registerRoadmap({
      *  Python free-threading). Dates 2027-03-12 → 2027-07-21.
      * ================================================================== */
     {
-      id: "d58", date: "2027-03-12", week: "w20", title: "Consensus I: Raft — leader election & log replication",
+      id: "d58", date: "2027-03-26", week: "w20", title: "Consensus I: Raft — leader election & log replication",
       theme: "Distributed systems · part 1 — one strong leader makes agreement tractable.",
       tasks: [
         { id: "t1", carried: "d57", obj: SEC, cat: "read", est: 25,
@@ -1447,7 +1447,7 @@ registerRoadmap({
 
     /* ---------------- Week 21 ---------------- */
     {
-      id: "d59", date: "2027-03-16", week: "w21", title: "Consensus I: Raft — leader election & log replication (cont.)",
+      id: "d59", date: "2027-03-30", week: "w21", title: "Consensus I: Raft — leader election & log replication (cont.)",
       theme: "Finish “Consensus I: Raft — leader election & log replication” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d58", obj: DIST, cat: "read", est: 65,
@@ -1464,7 +1464,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d60", date: "2027-03-17", week: "w21", title: "VACUUM, autovacuum & the xmin horizon",
+      id: "d60", date: "2027-03-31", week: "w21", title: "VACUUM, autovacuum & the xmin horizon",
       theme: "Databases · part 6 — why one idle transaction can bloat the whole cluster.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -1485,7 +1485,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d61", date: "2027-03-18", week: "w21", title: "Virtual memory: page tables & the TLB",
+      id: "d61", date: "2027-04-01", week: "w21", title: "Virtual memory: page tables & the TLB",
       theme: "Systems · part 4 — every memory access is secretly two accesses.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 40,
@@ -1502,7 +1502,7 @@ registerRoadmap({
 
     /* ---------------- Week 22 ---------------- */
     {
-      id: "d62", date: "2027-03-21", week: "w22", title: "Virtual memory: page tables & the TLB (cont.)",
+      id: "d62", date: "2027-04-04", week: "w22", title: "Virtual memory: page tables & the TLB (cont.)",
       theme: "Finish “Virtual memory: page tables & the TLB” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d61", obj: SYS, cat: "read", est: 75,
@@ -1519,7 +1519,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d63", date: "2027-03-22", week: "w22", title: "Rollups: optimistic vs ZK — when do you pay for trust?",
+      id: "d63", date: "2027-04-05", week: "w22", title: "Rollups: optimistic vs ZK — when do you pay for trust?",
       theme: "Blockchain · part 7 — both post to L1; they differ in how they prove correctness.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 30,
@@ -1534,7 +1534,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d64", date: "2027-03-26", week: "w22", title: "Rollups: optimistic vs ZK — when do you pay for trust? (cont.)",
+      id: "d64", date: "2027-04-09", week: "w22", title: "Rollups: optimistic vs ZK — when do you pay for trust? (cont.)",
       theme: "Finish “Rollups: optimistic vs ZK — when do you pay for trust?” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d63", obj: CHAIN, cat: "read", est: 75,
@@ -1553,7 +1553,7 @@ registerRoadmap({
 
     /* ---------------- Week 23 ---------------- */
     {
-      id: "d65", date: "2027-03-31", week: "w23", title: "BGP & Anycast: how the internet actually routes",
+      id: "d65", date: "2027-04-14", week: "w23", title: "BGP & Anycast: how the internet actually routes",
       theme: "Networking · part 8 — routing is policy and assertion, not shortest path.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 95,
@@ -1574,7 +1574,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d66", date: "2027-04-01", week: "w23", title: "Kafka exactly-once: idempotent producer + transactions",
+      id: "d66", date: "2027-04-15", week: "w23", title: "Kafka exactly-once: idempotent producer + transactions",
       theme: "Messaging · part 3 — 'exactly-once' is at-least-once + dedupe, done right.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 65,
@@ -1590,7 +1590,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d67", date: "2027-04-02", week: "w23", title: "Kafka exactly-once: idempotent producer + transactions (cont.)",
+      id: "d67", date: "2027-04-16", week: "w23", title: "Kafka exactly-once: idempotent producer + transactions (cont.)",
       theme: "Finish “Kafka exactly-once: idempotent producer + transactions” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d66", obj: MSG, cat: "read", est: 35,
@@ -1608,7 +1608,7 @@ registerRoadmap({
 
     /* ---------------- Week 24 ---------------- */
     {
-      id: "d68", date: "2027-04-04", week: "w24", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
+      id: "d68", date: "2027-04-18", week: "w24", title: "Consensus II: Paxos vs Raft, and Byzantine faults (PBFT)",
       theme: "Distributed systems · part 2 — from 'nodes crash' to 'nodes lie'.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 65,
@@ -1624,7 +1624,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d69", date: "2027-04-05", week: "w24", title: "TOAST & HOT updates: storage internals that bite",
+      id: "d69", date: "2027-04-19", week: "w24", title: "TOAST & HOT updates: storage internals that bite",
       theme: "Databases · part 7 — 8 KB pages, big values, and cheap updates.",
       tasks: [
         { id: "t1", carried: "d68", obj: DIST, cat: "read", est: 45,
@@ -1650,7 +1650,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d70", date: "2027-04-06", week: "w24", title: "TOAST & HOT updates: storage internals that bite (cont.)",
+      id: "d70", date: "2027-04-20", week: "w24", title: "TOAST & HOT updates: storage internals that bite (cont.)",
       theme: "Finish “TOAST & HOT updates: storage internals that bite” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d69", obj: DATA, cat: "read", est: 45,
@@ -1668,7 +1668,7 @@ registerRoadmap({
 
     /* ---------------- Week 25 ---------------- */
     {
-      id: "d71", date: "2027-04-10", week: "w25", title: "Service mesh, mTLS & workload identity (SPIFFE)",
+      id: "d71", date: "2027-04-24", week: "w25", title: "Service mesh, mTLS & workload identity (SPIFFE)",
       theme: "DevOps · part 9 — who a service IS, proved cryptographically, auto-rotated.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 85,
@@ -1690,7 +1690,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d72", date: "2027-04-16", week: "w25", title: "Data availability & EIP-4844 blobs",
+      id: "d72", date: "2027-04-30", week: "w25", title: "Data availability & EIP-4844 blobs",
       theme: "Blockchain · part 8 — why L2 fees fell 10–100× in 2024.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 85,
@@ -1714,7 +1714,7 @@ registerRoadmap({
 
     /* ---------------- Week 26 ---------------- */
     {
-      id: "d73", date: "2027-04-20", week: "w26", title: "Review: Go's scheduler (G-M-P) & async preemption",
+      id: "d73", date: "2027-05-04", week: "w26", title: "Review: Go's scheduler (G-M-P) & async preemption",
       theme: "Review · re-derive the runtime under every goroutine you spawn.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -1735,7 +1735,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d74", date: "2027-04-22", week: "w26", title: "Redis Cluster & consistent hashing",
+      id: "d74", date: "2027-05-06", week: "w26", title: "Redis Cluster & consistent hashing",
       theme: "Caching · part 3 — 16384 slots, and moving keys without moving all of them.",
       tasks: [
         { id: "t1", obj: CACHE, cat: "read", est: 95,
@@ -1759,7 +1759,7 @@ registerRoadmap({
 
     /* ---------------- Week 27 ---------------- */
     {
-      id: "d75", date: "2027-04-24", week: "w27", title: "CAP done right — and PACELC",
+      id: "d75", date: "2027-05-08", week: "w27", title: "CAP done right — and PACELC",
       theme: "Distributed systems · part 3 — you don't 'choose' partition tolerance.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 95,
@@ -1781,7 +1781,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d76", date: "2027-04-25", week: "w27", title: "Join algorithms & how the planner picks",
+      id: "d76", date: "2027-05-09", week: "w27", title: "Join algorithms & how the planner picks",
       theme: "Databases · part 8 — nested loop, hash, merge — and why it chose that.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 75,
@@ -1802,7 +1802,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d77", date: "2027-04-30", week: "w27", title: "The page cache & why fsync is the durability line",
+      id: "d77", date: "2027-05-14", week: "w27", title: "The page cache & why fsync is the durability line",
       theme: "Systems · part 5 — 'write() returned' is not 'on disk'.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 45,
@@ -1819,7 +1819,7 @@ registerRoadmap({
 
     /* ---------------- Week 28 ---------------- */
     {
-      id: "d78", date: "2027-05-04", week: "w28", title: "The page cache & why fsync is the durability line (cont.)",
+      id: "d78", date: "2027-05-18", week: "w28", title: "The page cache & why fsync is the durability line (cont.)",
       theme: "Finish “The page cache & why fsync is the durability line” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d77", obj: SYS, cat: "read", est: 30,
@@ -1835,7 +1835,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d79", date: "2027-05-05", week: "w28", title: "MEV & Proposer-Builder Separation",
+      id: "d79", date: "2027-05-19", week: "w28", title: "MEV & Proposer-Builder Separation",
       theme: "Blockchain · part 9 — who orders your transaction, and what they extract.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 90,
@@ -1859,7 +1859,7 @@ registerRoadmap({
 
     /* ---------------- Week 29 ---------------- */
     {
-      id: "d80", date: "2027-05-08", week: "w29", title: "Kafka consumer rebalances & log compaction",
+      id: "d80", date: "2027-05-22", week: "w29", title: "Kafka consumer rebalances & log compaction",
       theme: "Messaging · part 4 — don't stop the world to add one consumer.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75,
@@ -1880,7 +1880,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d81", date: "2027-05-09", week: "w29", title: "Upgradeable contracts: proxies & delegatecall collisions",
+      id: "d81", date: "2027-05-23", week: "w29", title: "Upgradeable contracts: proxies & delegatecall collisions",
       theme: "Security · part 5 — storage is addressed by slot, not by name.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 30,
@@ -1895,7 +1895,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d82", date: "2027-05-10", week: "w29", title: "Upgradeable contracts: proxies & delegatecall collisions (cont.)",
+      id: "d82", date: "2027-05-24", week: "w29", title: "Upgradeable contracts: proxies & delegatecall collisions (cont.)",
       theme: "Finish “Upgradeable contracts: proxies & delegatecall collisions” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d81", obj: SEC, cat: "read", est: 60,
@@ -1914,7 +1914,7 @@ registerRoadmap({
 
     /* ---------------- Week 30 ---------------- */
     {
-      id: "d83", date: "2027-05-15", week: "w30", title: "Logical clocks: Lamport timestamps & vector clocks",
+      id: "d83", date: "2027-05-29", week: "w30", title: "Logical clocks: Lamport timestamps & vector clocks",
       theme: "Distributed systems · part 4 — ordering events with no shared clock.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 75,
@@ -1935,7 +1935,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d84", date: "2027-05-19", week: "w30", title: "Partitioning & sharding",
+      id: "d84", date: "2027-06-02", week: "w30", title: "Partitioning & sharding",
       theme: "Databases · part 9 — the win is pruning, and it needs the partition key.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 90,
@@ -1957,7 +1957,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d85", date: "2027-05-20", week: "w30", title: "QUIC internals beyond HTTP/3",
+      id: "d85", date: "2027-06-03", week: "w30", title: "QUIC internals beyond HTTP/3",
       theme: "Networking · part 9 — connection IDs, streams, per-space loss recovery.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 40,
@@ -1974,7 +1974,7 @@ registerRoadmap({
 
     /* ---------------- Week 31 ---------------- */
     {
-      id: "d86", date: "2027-05-22", week: "w31", title: "QUIC internals beyond HTTP/3 (cont.)",
+      id: "d86", date: "2027-06-05", week: "w31", title: "QUIC internals beyond HTTP/3 (cont.)",
       theme: "Finish “QUIC internals beyond HTTP/3” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d85", obj: NET, cat: "read", est: 55,
@@ -1991,7 +1991,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d87", date: "2027-05-24", week: "w31", title: "Account abstraction: EIP-4337 & EIP-7702",
+      id: "d87", date: "2027-06-07", week: "w31", title: "Account abstraction: EIP-4337 & EIP-7702",
       theme: "Blockchain · part 10 — smart-account superpowers, two ways.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 90,
@@ -2013,7 +2013,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d88", date: "2027-05-28", week: "w31", title: "Review: the Python GIL & free-threading (3.14)",
+      id: "d88", date: "2027-06-11", week: "w31", title: "Review: the Python GIL & free-threading (3.14)",
       theme: "Review · what the lock protects, and the no-GIL build that's now supported.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -2036,7 +2036,7 @@ registerRoadmap({
 
     /* ---------------- Week 32 ---------------- */
     {
-      id: "d89", date: "2027-05-31", week: "w32", title: "Supply-chain security: Sigstore, SLSA & SBOM",
+      id: "d89", date: "2027-06-14", week: "w32", title: "Supply-chain security: Sigstore, SLSA & SBOM",
       theme: "DevOps · part 10 — prove what's in the artifact and how it was built.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 80,
@@ -2058,7 +2058,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d90", date: "2027-06-02", week: "w32", title: "Distributed transactions: 2PC & the Saga pattern",
+      id: "d90", date: "2027-06-16", week: "w32", title: "Distributed transactions: 2PC & the Saga pattern",
       theme: "Distributed systems · part 5 — atomicity across services, and its price.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 90,
@@ -2080,7 +2080,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d91", date: "2027-06-03", week: "w32", title: "Replication: physical vs logical, sync vs async",
+      id: "d91", date: "2027-06-17", week: "w32", title: "Replication: physical vs logical, sync vs async",
       theme: "Databases · part 10 — replication lag is your failover data-loss window.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 40, lead: `<b>Databases ⑩</b> — how a standby stays current, and what you lose on failover. (1/2)`,
@@ -2096,7 +2096,7 @@ registerRoadmap({
 
     /* ---------------- Week 33 ---------------- */
     {
-      id: "d92", date: "2027-06-06", week: "w33", title: "Replication: physical vs logical, sync vs async (cont.)",
+      id: "d92", date: "2027-06-20", week: "w33", title: "Replication: physical vs logical, sync vs async (cont.)",
       theme: "Finish “Replication: physical vs logical, sync vs async” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d91", obj: DATA, cat: "read", est: 35, lead: `<b>Databases ⑩</b> — how a standby stays current, and what you lose on failover. (2/2)`, model: `<b>Physical</b> replication ships the WAL byte-for-byte (whole cluster, same version). <b>Logical</b> replicates changes by <b>replication identity</b> (usually PK) — selective, cross-version, upgrade-friendly. With <b>async</b> commit, a commit is acked before the standby has it, so <b>replication lag = the failover data-loss window</b>; <b>synchronous</b> closes it at the cost of commit latency (PACELC's C-over-L).`, cards: [
@@ -2109,7 +2109,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d93", date: "2027-06-08", week: "w33", title: "CDC & the transactional outbox",
+      id: "d93", date: "2027-06-22", week: "w33", title: "CDC & the transactional outbox",
       theme: "Messaging · part 5 — kill the dual-write with one local transaction.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 75, lead: `<b>Messaging ⑤</b> — reliably publish an event AND update your DB, atomically.`, model: `The <b>dual-write problem</b>: writing to the DB and to Kafka separately can partially fail. Fix: write the business change <i>and</i> an event row into an <b>outbox</b> table in the <b>same local ACID transaction</b>; <b>CDC</b> (Debezium tailing the WAL) captures the outbox insert and forwards it to Kafka. The row is just a vehicle — capture is from the log, so it can be deleted immediately.`, cards: [
@@ -2129,7 +2129,7 @@ registerRoadmap({
 
     /* ---------------- Week 34 ---------------- */
     {
-      id: "d94", date: "2027-06-12", week: "w34", title: "ZK proofs: SNARKs vs STARKs (intuition)",
+      id: "d94", date: "2027-06-26", week: "w34", title: "ZK proofs: SNARKs vs STARKs (intuition)",
       theme: "Blockchain · part 11 — prove you ran the computation, reveal nothing.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 65,
@@ -2145,7 +2145,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d95", date: "2027-06-14", week: "w34", title: "Distributed locks & the Redlock debate",
+      id: "d95", date: "2027-06-28", week: "w34", title: "Distributed locks & the Redlock debate",
       theme: "Caching · part 4 — a lock without a fencing token isn't safe.",
       tasks: [
         { id: "t1", carried: "d94", obj: CHAIN, cat: "read", est: 45,
@@ -2169,7 +2169,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d96", date: "2027-06-17", week: "w34", title: "Distributed locks & the Redlock debate (cont.)",
+      id: "d96", date: "2027-07-01", week: "w34", title: "Distributed locks & the Redlock debate (cont.)",
       theme: "Finish “Distributed locks & the Redlock debate” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d95", obj: CACHE, cat: "read", est: 55, lead: `<b>Caching ④</b> — why a Redis lock can fail, and the fix both sides accept. (2/2)`, model: `A lock alone isn't enough: a stalled client (GC pause, network delay) can act <i>after</i> its lease expired while another holds the lock. The fix is a monotonically increasing <b>fencing token</b> the protected resource checks — rejecting any write with a stale (lower) token. Redlock doesn't issue fencing tokens — Kleppmann's central objection.`, cards: [
@@ -2185,7 +2185,7 @@ registerRoadmap({
 
     /* ---------------- Week 35 ---------------- */
     {
-      id: "d97", date: "2027-06-20", week: "w35", title: "io_uring vs epoll: completion beats readiness",
+      id: "d97", date: "2027-07-04", week: "w35", title: "io_uring vs epoll: completion beats readiness",
       theme: "Systems · part 6 — batch I/O with (almost) no syscalls.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 80, lead: `<b>Systems ⑥</b> — the modern async I/O interface, and why it's different (callback d44).`, model: `<b>epoll</b> is <b>readiness-based</b> — it says a fd is ready, you still issue a separate <code>read</code>/<code>write</code> per event (and it's useless for regular files, always "ready"). <b>io_uring</b> is <b>completion-based</b> — place SQEs in a ring shared with the kernel, submit a batch with one (or zero) syscalls, reap CQEs saying the op already <i>finished</i>. It collapses per-op syscall overhead and works for files.`, cards: [
@@ -2203,7 +2203,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d98", date: "2027-06-22", week: "w35", title: "Quorums (R + W > N) & tunable consistency",
+      id: "d98", date: "2027-07-06", week: "w35", title: "Quorums (R + W > N) & tunable consistency",
       theme: "Distributed systems · part 6 — dial consistency vs latency per read/write.",
       tasks: [
         { id: "t1", obj: DIST, cat: "read", est: 80, lead: `<b>Distributed systems ⑥</b> — the Dynamo model of replicated reads/writes.`, model: `With N replicas and tunable read/write quorums, <b>R + W &gt; N</b> forces every read quorum to overlap every write quorum — so a read sees the latest write. Operators dial latency vs consistency vs durability. But Dynamo uses <b>sloppy</b> quorums + hinted handoff, so R+W&gt;N is <i>not</i> linearizable under partitions — reads can return concurrent versions the client reconciles (vector clocks, d83).`, cards: [
@@ -2221,7 +2221,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d99", date: "2027-06-23", week: "w35", title: "B-tree vs LSM-tree storage engines",
+      id: "d99", date: "2027-07-07", week: "w35", title: "B-tree vs LSM-tree storage engines",
       theme: "Databases · part 11 — write-optimized vs read-optimized, and amplification.",
       tasks: [
         { id: "t1", obj: DATA, cat: "read", est: 35,
@@ -2238,7 +2238,7 @@ registerRoadmap({
 
     /* ---------------- Week 36 ---------------- */
     {
-      id: "d100", date: "2027-06-26", week: "w36", title: "B-tree vs LSM-tree storage engines (cont.)",
+      id: "d100", date: "2027-07-10", week: "w36", title: "B-tree vs LSM-tree storage engines (cont.)",
       theme: "Finish “B-tree vs LSM-tree storage engines” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d99", obj: DATA, cat: "read", est: 60,
@@ -2255,7 +2255,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d101", date: "2027-07-01", week: "w36", title: "eBPF & XDP: programmable packets in the kernel",
+      id: "d101", date: "2027-07-15", week: "w36", title: "eBPF & XDP: programmable packets in the kernel",
       theme: "Networking · part 10 — run verified code before the packet even becomes an skb.",
       tasks: [
         { id: "t1", obj: NET, cat: "read", est: 75, lead: `<b>Networking ⑩</b> — the technology under Cilium, modern LBs and DDoS filters.`, model: `<b>XDP</b> runs a verified BPF program at the earliest point — in the NIC driver's RX path, <b>before</b> the kernel allocates an <code>skb</code> — so it can drop/redirect/rewrite at line rate. Verdicts: <code>XDP_DROP</code>, <code>XDP_PASS</code> (up the stack), <code>XDP_TX</code> (bounce out), <code>XDP_REDIRECT</code>. tc/BPF hooks run later (after skb alloc) but see more context.`, cards: [
@@ -2273,7 +2273,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d102", date: "2027-07-02", week: "w36", title: "eBPF & XDP: programmable packets in the kernel (cont.)",
+      id: "d102", date: "2027-07-16", week: "w36", title: "eBPF & XDP: programmable packets in the kernel (cont.)",
       theme: "Finish “eBPF & XDP: programmable packets in the kernel” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d101", obj: COMP, cat: "read", est: 55, lead: `<b>Compiler lens</b> — before that BPF program runs, a verifier <i>proves</i> it safe and a JIT compiles it. A compiler pipeline living in ring 0.`, model: `Loading eBPF is a two-stage <b>compiler back-end</b> inside the kernel. First the <b>verifier</b> does a static, path-sensitive analysis — it symbolically walks every path (a DAG, with <b>state pruning</b> so it doesn't explode), proving bounded loops, in-bounds memory, and correct register types; anything it can't prove safe is rejected, not loaded. Only then does a per-architecture <b>JIT</b> lower the accepted bytecode to native instructions, so it runs at near-C speed. It's the same <i>front-end checks → back-end codegen</i> shape you'll meet in the JVM and V8 — the difference is the kernel <b>can't trust</b> the input, so the "type checker" is a safety proof.`, cards: [
@@ -2290,7 +2290,7 @@ registerRoadmap({
 
     /* ---------------- Week 37 ---------------- */
     {
-      id: "d103", date: "2027-07-04", week: "w37", title: "Solana under the hood: Firedancer & Alpenglow",
+      id: "d103", date: "2027-07-18", week: "w37", title: "Solana under the hood: Firedancer & Alpenglow",
       theme: "Blockchain · part 12 — client diversity and a faster consensus.",
       tasks: [
         { id: "t1", obj: CHAIN, cat: "read", est: 75, lead: `<b>Blockchain ⑫</b> — where Solana's performance and resilience are heading.`, model: `<b>Firedancer</b> = Jump's independent, high-performance C/C++ validator client — throughput + <b>client diversity</b> (vs the Agave/Anza client). <b>Alpenglow</b> = a proposed replacement for TowerBFT+PoH-style consensus (Votor/Rotor) targeting ~150 ms-class finality. Two different layers — a <i>client</i> vs a <i>consensus protocol</i> — often conflated.`, cards: [
@@ -2308,7 +2308,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d104", date: "2027-07-06", week: "w37", title: "Review: C++ memory model & std::atomic ordering",
+      id: "d104", date: "2027-07-20", week: "w37", title: "Review: C++ memory model & std::atomic ordering",
       theme: "Review · the same acquire/release you met in Rust, at the metal.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 80,
@@ -2330,7 +2330,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d105", date: "2027-07-09", week: "w37", title: "Review: C++ memory model & std::atomic ordering (cont.)",
+      id: "d105", date: "2027-07-23", week: "w37", title: "Review: C++ memory model & std::atomic ordering (cont.)",
       theme: "Finish “Review: C++ memory model & std::atomic ordering” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d104", obj: COMP, cat: "read", est: 55, lead: `<b>Compiler lens</b> — half of "memory ordering" is the <i>compiler</i> reordering your code. Meet the <b>as-if rule</b> and why <code>-O2</code> is allowed to move things.`, model: `A compiler may perform <b>any</b> transformation as long as the program's <b>observable behavior</b> is unchanged — that's the <b>as-if rule</b>. On a single thread "observable" means I/O + volatile access + final state, so the optimizer freely reorders, folds, inlines, and keeps values in registers (<b>register allocation</b> — graph-coloring / linear-scan, spilling to the stack when it runs out). The catch: "as-if" reasons about <i>one</i> thread, so it will happily reorder ordinary loads/stores that another thread is watching. <code>std::atomic</code> with an ordering is how you tell the compiler (and CPU) "this access <b>is</b> observable — don't reorder across it." So <code>volatile</code> ≠ a fence: it blocks the compiler for that one variable but orders nothing else and emits no barrier.`, cards: [
@@ -2347,7 +2347,7 @@ registerRoadmap({
 
     /* ---------------- Week 38 ---------------- */
     {
-      id: "d106", date: "2027-07-10", week: "w38", title: "Stream processing: event time & watermarks",
+      id: "d106", date: "2027-07-24", week: "w38", title: "Stream processing: event time & watermarks",
       theme: "Messaging · part 6 — the clock that matters is in the data, not the wall.",
       tasks: [
         { id: "t1", obj: MSG, cat: "read", est: 80, lead: `<b>Messaging ⑥</b> — windowing unbounded, out-of-order streams correctly.`, model: `<b>Processing time</b> = wall clock (low latency, non-deterministic); <b>event time</b> = timestamps in the records (deterministic, reproducible). A <b>watermark</b>(t) declares "event time has reached t — expect no more elements ≤ t", firing event-time windows; later records are "late". Dataflow frames it as <i>what</i> / <i>where</i> / <i>when</i> / <i>how</i>.`, cards: [
@@ -2365,7 +2365,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d107", date: "2027-07-11", week: "w38", title: "Performance analysis: perf, flame graphs & eBPF",
+      id: "d107", date: "2027-07-25", week: "w38", title: "Performance analysis: perf, flame graphs & eBPF",
       theme: "DevOps · part 11 — find where time actually goes, not where you guess.",
       tasks: [
         { id: "t1", obj: OPS, cat: "read", est: 75, lead: `<b>DevOps ⑪</b> — the observability that shows you the hot path.`, model: `Sample CPU stacks with <code>perf</code>, visualize as a <b>flame graph</b>: the x-axis is <b>not time</b> — frames are alphabetical and box width ∝ how often that stack was sampled (time on-CPU); read it by the widest plateaus near the top. eBPF (bpftrace/BCC) adds programmable low-overhead kernel+user tracing.`, cards: [
@@ -2384,7 +2384,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d108", date: "2027-07-13", week: "w38", title: "Signature replay & EIP-712 typed signing",
+      id: "d108", date: "2027-07-27", week: "w38", title: "Signature replay & EIP-712 typed signing",
       theme: "Security · part 6 — a signature must be bound to one chain, one contract, once.",
       tasks: [
         { id: "t1", obj: SEC, cat: "read", est: 45, lead: `<b>Security ⑥</b> — how off-chain signatures get replayed, and how to stop it. (1/2)`,
@@ -2400,7 +2400,7 @@ registerRoadmap({
 
     /* ---------------- Week 39 ---------------- */
     {
-      id: "d109", date: "2027-07-18", week: "w39", title: "Signature replay & EIP-712 typed signing (cont.)",
+      id: "d109", date: "2027-08-01", week: "w39", title: "Signature replay & EIP-712 typed signing (cont.)",
       theme: "Finish “Signature replay & EIP-712 typed signing” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d108", obj: SEC, cat: "read", est: 35, lead: `<b>Security ⑥</b> — how off-chain signatures get replayed, and how to stop it. (2/2)`, model: `Replay protection = <b>domain separator</b> (name, version, <b>chainId</b>, verifying contract) + a <b>nonce</b>. EIP-712 hashes structured data with that domain, so a signature is bound to one contract on one chain and shown human-readably. Omit or reuse either and it replays cross-chain, cross-contract, or twice — the nonce must be consumed on use, chainId read dynamically (to survive forks).`, cards: [
@@ -2413,7 +2413,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d110", date: "2027-07-21", week: "w39", title: "🎓 Review: Rust async — Future, Pin & the state machine",
+      id: "d110", date: "2027-08-04", week: "w39", title: "🎓 Review: Rust async — Future, Pin & the state machine",
       theme: "Review · why async fn desugars to a self-referential state machine.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 70,
@@ -2446,7 +2446,7 @@ registerRoadmap({
      *  Dates 2027-07-26 → 2027-08-26.
      * ================================================================== */
     {
-      id: "d111", date: "2027-07-26", week: "w40", title: "Amortized O(1): dynamic arrays & the doubling trick",
+      id: "d111", date: "2027-08-09", week: "w40", title: "Amortized O(1): dynamic arrays & the doubling trick",
       theme: "Data-structure internals · part 1 — a rare O(n) resize, amortized to nothing.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2470,7 +2470,7 @@ registerRoadmap({
       note: "Extension II begins — the 'cool internals': the data structures and runtime machinery under the code you write daily.",
     },
     {
-      id: "d112", date: "2027-07-27", week: "w40", title: "NUMA, cache coherence (MESI) & false sharing",
+      id: "d112", date: "2027-08-10", week: "w40", title: "NUMA, cache coherence (MESI) & false sharing",
       theme: "Systems · part 7 — you never own a variable, you own its 64-byte cache line.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 70,
@@ -2486,7 +2486,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d113", date: "2027-07-30", week: "w40", title: "NUMA, cache coherence (MESI) & false sharing (cont.)",
+      id: "d113", date: "2027-08-13", week: "w40", title: "NUMA, cache coherence (MESI) & false sharing (cont.)",
       theme: "Finish “NUMA, cache coherence (MESI) & false sharing” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d112", obj: SYS, cat: "read", est: 25,
@@ -2512,7 +2512,7 @@ registerRoadmap({
 
     /* ---------------- Week 41 ---------------- */
     {
-      id: "d114", date: "2027-07-31", week: "w41", title: "Hash maps: why O(1), collisions & Swiss tables",
+      id: "d114", date: "2027-08-14", week: "w41", title: "Hash maps: why O(1), collisions & Swiss tables",
       theme: "Data-structure internals · part 2 — expected O(1), and how it degrades to O(n).",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2541,7 +2541,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d115", date: "2027-08-03", week: "w41", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC",
+      id: "d115", date: "2027-08-17", week: "w41", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC",
       theme: "Review · the engine under every line of JavaScript you ship.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65,
@@ -2564,7 +2564,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d116", date: "2027-08-04", week: "w41", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC (cont.)",
+      id: "d116", date: "2027-08-18", week: "w41", title: "Review: V8 & the JS heap — shapes, inline caches & Orinoco GC (cont.)",
       theme: "Finish “Review: V8 & the JS heap — shapes, inline caches & Orinoco GC” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d115", obj: COMP, cat: "read", est: 65, lead: `<b>Compiler lens</b> — the shapes above only pay off because V8 <i>compiles</i> hot JS. Walk the Ignition → TurboFan tiering.`, model: `V8 is a <b>tiered JIT</b>, not "an interpreter". Source is parsed to an AST, then <b>Ignition</b> compiles it to compact <b>bytecode</b> and interprets it while collecting <b>type feedback</b> (which shapes actually flow through each site). Hot functions are handed to optimizing compilers — <b>Sparkplug</b> (fast baseline), <b>Maglev</b> (mid-tier), <b>TurboFan</b> (top-tier, speculative) — which <b>speculate</b> on that feedback (e.g. "this is always a small int") and emit specialized machine code. If a speculation later breaks (a different shape appears), it <b>deoptimizes</b> — bails back to Ignition bytecode. This is exactly why monomorphic, stable-shape code is fast: it keeps the inline caches and the JIT's speculation valid.`, cards: [
@@ -2581,7 +2581,7 @@ registerRoadmap({
 
     /* ---------------- Week 42 ---------------- */
     {
-      id: "d117", date: "2027-08-08", week: "w42", title: "Garbage collection: tracing, generational & tri-color",
+      id: "d117", date: "2027-08-22", week: "w42", title: "Garbage collection: tracing, generational & tri-color",
       theme: "Data-structure internals · part 3 — reclaim the unreachable without stopping the world.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2603,7 +2603,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d118", date: "2027-08-12", week: "w42", title: "The heap allocator: malloc, size classes & fragmentation",
+      id: "d118", date: "2027-08-26", week: "w42", title: "The heap allocator: malloc, size classes & fragmentation",
       theme: "Systems · part 8 — what actually happens on malloc(), and why free() doesn't shrink RSS.",
       tasks: [
         { id: "t1", carried: "d117", obj: CORE, cat: "read", est: 25,
@@ -2630,7 +2630,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d119", date: "2027-08-13", week: "w42", title: "The heap allocator: malloc, size classes & fragmentation (cont.)",
+      id: "d119", date: "2027-08-27", week: "w42", title: "The heap allocator: malloc, size classes & fragmentation (cont.)",
       theme: "Finish “The heap allocator: malloc, size classes & fragmentation” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d118", obj: SYS, cat: "read", est: 35,
@@ -2649,7 +2649,7 @@ registerRoadmap({
 
     /* ---------------- Week 43 ---------------- */
     {
-      id: "d120", date: "2027-08-17", week: "w43", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
+      id: "d120", date: "2027-08-31", week: "w43", title: "IEEE 754: why 0.1 + 0.2 ≠ 0.3",
       theme: "Data-structure internals · part 4 — floats are exact binary fractions, just not the ones you typed.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 85,
@@ -2672,7 +2672,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d121", date: "2027-08-18", week: "w43", title: "Review: the JVM — tiered JIT, warmup & deoptimization",
+      id: "d121", date: "2027-09-01", week: "w43", title: "Review: the JVM — tiered JIT, warmup & deoptimization",
       theme: "Review · why the JVM starts slow, gets fast, and can briefly re-slow.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 80,
@@ -2695,7 +2695,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d122", date: "2027-08-20", week: "w43", title: "Unicode, UTF-8 & grapheme clusters",
+      id: "d122", date: "2027-09-03", week: "w43", title: "Unicode, UTF-8 & grapheme clusters",
       theme: "Data-structure internals · part 5 — 'length' has four different answers.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2720,7 +2720,7 @@ registerRoadmap({
 
     /* ---------------- Week 44 ---------------- */
     {
-      id: "d123", date: "2027-08-22", week: "w44", title: "Branch prediction & speculative execution (Spectre)",
+      id: "d123", date: "2027-09-05", week: "w44", title: "Branch prediction & speculative execution (Spectre)",
       theme: "Systems · part 9 — the CPU guesses your branches, and Spectre is the bill.",
       tasks: [
         { id: "t1", obj: SYS, cat: "read", est: 80,
@@ -2743,7 +2743,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d124", date: "2027-08-26", week: "w44", title: "🎓 Bloom filters & probabilistic data structures",
+      id: "d124", date: "2027-09-09", week: "w44", title: "🎓 Bloom filters & probabilistic data structures",
       theme: "Data-structure internals · part 6 — trade a little accuracy for enormous space savings.",
       tasks: [
         { id: "t1", obj: CORE, cat: "read", est: 80,
@@ -2779,7 +2779,7 @@ registerRoadmap({
      *  d104 (the as-if rule) and d115 (Ignition/TurboFan).
      * ==================================================================== */
     {
-      id: "d125", date: "2027-08-31", week: "w45", dow: "Tue", title: "A map of the territory: interpreters, compilers & JITs",
+      id: "d125", date: "2027-09-14", week: "w45", dow: "Tue", title: "A map of the territory: interpreters, compilers & JITs",
       theme: "Compilers · part 1 — the whole pipeline, and the words for each stage.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 75, lead: `<b>Compilers ①</b> — the vocabulary and the shape of every language implementation, before we build one.`, model: `Every implementation climbs the same mountain: <b>scanning</b> (text → tokens) → <b>parsing</b> (tokens → AST) → <b>static analysis</b> (binding/typing) → an <b>intermediate representation</b> → down the far side to <b>code generation</b>. Where you stop and how you run it names the tool: a <b>tree-walking interpreter</b> executes the AST directly; a <b>bytecode VM</b> lowers to its own instruction set and interprets that; an <b>AOT compiler</b> emits native code ahead of time; a <b>JIT</b> compiles hot code to native <i>at runtime</i> using profiling. "Compiler vs interpreter" is a false binary — CPython compiles <i>to bytecode</i> then interprets; V8 interprets <i>then</i> JITs. It's a spectrum of when you translate.`, cards: [
@@ -2798,7 +2798,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d126", date: "2027-09-03", week: "w45", dow: "Fri", title: "Review: how CPython runs your code — bytecode & the eval loop",
+      id: "d126", date: "2027-09-17", week: "w45", dow: "Fri", title: "Review: how CPython runs your code — bytecode & the eval loop",
       theme: "Review · the interpreter you use daily, opened up.",
       tasks: [
         { id: "t1", obj: REV, cat: "review", est: 65, lead: `<b>Review</b> — Python isn't "interpreted line by line": it's compiled to bytecode and run by a loop. See it.`, model: `CPython <b>compiles</b> each function to a <code>code</code> object of stack-based <b>bytecode</b> (see it with <code>dis</code>), then the eval loop (<code>_PyEval_EvalFrameDefault</code>, historically "ceval") executes it: a big dispatch over opcodes operating on a per-call <b>frame</b> (its own value stack + locals). It's a <b>stack machine</b> — <code>LOAD_FAST</code> pushes, <code>BINARY_OP</code> pops two and pushes the result. 3.11+ made it much faster via a faster frame layout and <b>adaptive specializing</b> (PEP 659): hot opcodes rewrite themselves in place to type-specialized variants (<code>BINARY_OP</code> → <code>BINARY_OP_ADD_INT</code>) — a small in-interpreter JIT-of-sorts, and 3.13+ ships an experimental real JIT.`, cards: [
@@ -2819,7 +2819,7 @@ registerRoadmap({
 
     /* ---------------- Week 46 ---------------- */
     {
-      id: "d127", date: "2027-09-04", week: "w46", dow: "Sat", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
+      id: "d127", date: "2027-09-18", week: "w46", dow: "Sat", title: "Lexing & parsing: tokens, grammars, recursive descent & Pratt",
       theme: "Compilers · part 2 — turning flat text into a tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 70, lead: `<b>Compilers ②</b> — the front end: scan characters into tokens, then tokens into an AST that encodes precedence. (1/2)`,
@@ -2834,7 +2834,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d128", date: "2027-09-06", week: "w46", dow: "Mon", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
+      id: "d128", date: "2027-09-20", week: "w46", dow: "Mon", title: "Review: the Go compiler — parse → type-check → SSA → machine code",
       theme: "Review · the toolchain that builds everything you ship in Go.",
       tasks: [
         { id: "t1", carried: "d127", obj: COMP, cat: "read", est: 30, lead: `<b>Compilers ②</b> — the front end: scan characters into tokens, then tokens into an AST that encodes precedence. (2/2)`, model: `The <b>lexer/scanner</b> turns a character stream into <b>tokens</b> (<code>IDENT("x")</code>, <code>NUMBER(12)</code>, <code>PLUS</code>) — token shapes are a <b>regular</b> language, so a lexer is essentially a DFA (regexes compile to DFAs too). The <b>parser</b> turns tokens into an <b>AST</b> per a <b>context-free grammar</b>. <b>Recursive descent</b> writes one function per grammar rule (top-down, LL) — readable, and what gcc/Clang/V8 actually use. Precedence is the hard part: pure recursive descent needs one level of function per precedence tier, while <b>Pratt parsing</b> (top-down operator precedence) attaches a <i>binding power</i> to each operator token and folds precedence into one compact loop — the trick most handwritten parsers reach for.`, cards: [
@@ -2861,7 +2861,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d129", date: "2027-09-09", week: "w46", dow: "Thu", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
+      id: "d129", date: "2027-09-23", week: "w46", dow: "Thu", title: "Tree-walking interpreters: evaluating an AST, scope & closures",
       theme: "Compilers · part 3 — the simplest way to actually run the tree.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 70, lead: `<b>Compilers ③</b> — walk the AST and execute it: environments, lexical scope, and how closures capture. (1/2)`,
@@ -2878,7 +2878,7 @@ registerRoadmap({
 
     /* ---------------- Week 47 ---------------- */
     {
-      id: "d130", date: "2027-09-11", week: "w47", dow: "Sat", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
+      id: "d130", date: "2027-09-25", week: "w47", dow: "Sat", title: "Review: the JVM — javac, tiered JIT (C1/C2), warmup & deopt",
       theme: "Review · the other great managed runtime, next to V8.",
       tasks: [
         { id: "t1", carried: "d129", obj: COMP, cat: "read", est: 30, lead: `<b>Compilers ③</b> — walk the AST and execute it: environments, lexical scope, and how closures capture. (2/2)`, model: `A <b>tree-walking interpreter</b> recursively visits AST nodes (the Visitor pattern) and returns values: a <code>+</code> node evaluates its two children and adds them. State lives in an <b>environment</b> — a map of name → value, <b>chained</b> to its enclosing scope, so a lookup walks outward (lexical scoping). A <b>closure</b> is a function value that holds a reference to the environment where it was <i>defined</i> (not called) — that's how an inner function still sees an outer variable after the outer call returns. The upside: tiny and direct. The downside: you re-walk the tree and re-resolve names on every execution — pointer-chasing, no locality — which is exactly why the next tier compiles to bytecode.`, cards: [
@@ -2905,7 +2905,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d131", date: "2027-09-12", week: "w47", dow: "Sun", title: "Bytecode compilers & a stack VM (the clox model)",
+      id: "d131", date: "2027-09-26", week: "w47", dow: "Sun", title: "Bytecode compilers & a stack VM (the clox model)",
       theme: "Compilers · part 4 — why every fast interpreter compiles to its own instruction set.",
       tasks: [
         { id: "t1", obj: COMP, cat: "read", est: 70, lead: `<b>Compilers ④</b> — trade the AST for a flat bytecode array and a stack machine: locality, speed, portability. (1/2)`,
@@ -2922,7 +2922,7 @@ registerRoadmap({
 
     /* ---------------- Week 48 ---------------- */
     {
-      id: "d132", date: "2027-09-18", week: "w48", dow: "Sat", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
+      id: "d132", date: "2027-10-02", week: "w48", dow: "Sat", title: "Review: LLVM — IR, SSA & the shared backend behind Clang & rustc",
       theme: "Review · the compiler infrastructure under half the languages you use.",
       tasks: [
         { id: "t1", carried: "d131", obj: COMP, cat: "read", est: 30, lead: `<b>Compilers ④</b> — trade the AST for a flat bytecode array and a stack machine: locality, speed, portability. (2/2)`, model: `Instead of re-walking a tree of scattered pointers, compile the AST (or even parse straight) into a flat array of <b>bytecode</b> — one-byte opcodes + operands — and run a <b>virtual machine</b>: a loop that fetches an opcode, dispatches (a <code>switch</code>, or a computed-goto "threaded" dispatch for speed), and mutates a <b>value stack</b>. Most VMs are <b>stack machines</b> (<code>OP_CONSTANT</code> pushes, <code>OP_ADD</code> pops two and pushes) because they're simple to compile to; some (Lua, Dalvik) are <b>register machines</b> (fewer instructions, more per-instruction work). The win is <b>locality</b> — sequential bytes, no pointer chasing — plus a portable artifact you can ship and, later, JIT. This is the leap CPython, the JVM, and Lua all make; the tree-walker (d129) was the on-ramp.`, cards: [
@@ -2944,7 +2944,7 @@ registerRoadmap({
       ],
     },
     {
-      id: "d133", date: "2027-09-21", week: "w48", dow: "Tue", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
+      id: "d133", date: "2027-10-05", week: "w48", dow: "Tue", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule",
       theme: "Compilers · part 5 (capstone) — the back end that makes it fast, and the rule that lets it.",
       tasks: [
         { id: "t1", carried: "d132", obj: REV, cat: "review", est: 45, lead: `<b>Review</b> — how one optimizer + backend serves C, C++, Rust, Swift and more: a shared IR. (2/2)`, model: `LLVM's idea: define one well-specified, typed, <b>SSA</b> <b>intermediate representation</b>, and split every compiler into a language <b>front end</b> (Clang for C/C++, <code>rustc</code>, <code>swiftc</code> → LLVM IR) and a shared <b>middle/back end</b> (target-independent optimization passes, then per-target codegen). Write your optimizer and register allocator <b>once</b> against the IR; every language and every CPU benefits. <b>SSA</b> — static single assignment, each virtual register assigned exactly once, with <code>phi</code> nodes merging values at control-flow joins — is what makes those passes clean: data-flow questions have a single definition to follow. That's why a new language can get a serious optimizing compiler by just emitting LLVM IR.`, cards: [
@@ -2967,7 +2967,7 @@ registerRoadmap({
       note: "🏁 Bedrock complete — 32 weeks across 12 threads. From \"there is no OSI layer 5 on the wire\" to \"the as-if rule is why -O2 is allowed\": your interview-and-tech-talk bedrock, wire to compiler.",
     },
     {
-      id: "d134", date: "2027-09-24", week: "w48", dow: "Fri", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule (cont.)",
+      id: "d134", date: "2027-10-08", week: "w48", dow: "Fri", title: "🎓 Optimization & codegen: SSA, register allocation & the as-if rule (cont.)",
       theme: "Finish “🎓 Optimization & codegen: SSA, register allocation & the as-if rule” — the part that didn't fit its first session.",
       tasks: [
         { id: "t1", carried: "d133", obj: COMP, cat: "read", est: 60, lead: `<b>Compilers ⑤ (capstone)</b> — how an optimizer is <i>allowed</i> to rewrite your code, and the last mile to machine instructions. (2/2)`, model: `The back end earns the speed. On an <b>SSA</b> IR, classic passes fall out cheaply: constant folding/propagation, dead-code elimination, common-subexpression elimination, loop-invariant code motion — each easy because every value has one definition. Then the machine-specific mile: <b>instruction selection</b> (map IR ops to real opcodes — often tree/DAG tiling), <b>instruction scheduling</b> (reorder to hide latency), and <b>register allocation</b> (fit unbounded virtual registers into a handful of physical ones — modeled as <b>graph coloring</b>, or <b>linear scan</b> in JITs; when it can't, it <b>spills</b> to the stack). All of this is licensed by one rule: the <b>as-if rule</b> — transform however you like as long as <b>observable behavior</b> is preserved. That single principle is why <code>-O2</code> can delete, reorder, and vectorize your code, and why (d104) it needs <code>atomic</code>/<code>volatile</code> to know what it must NOT touch.`, cards: [
